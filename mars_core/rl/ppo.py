@@ -7,8 +7,9 @@ from torch.distributions import Categorical
 import argparse
 import numpy as np
 from .networks import PolicyMLP, ValueMLP, PolicyCNN, ValueCNN
+from agent import Agent
 
-class PPODiscrete(nn.Module):
+class PPODiscrete(Agent):
     def __init__(self, state_space, action_space, func_approx = 'MLP', learner_args={}, **kwargs):
         super(PPODiscrete, self).__init__()
         self.learning_rate = kwargs['learning_rate']
