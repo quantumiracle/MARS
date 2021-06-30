@@ -116,6 +116,7 @@ def _create_single_env(env_name: str, env_type: str, args):
             
             # assign observation and action spaces
             env.observation_space = list(env.observation_spaces.values())[0]
+            print(env.observation_space)
             env.action_space = list(env.action_spaces.values())[0]
             env.agents = env_agents
             env = Dict2TupleWrapper(env, keep_info=keep_info) 
@@ -148,8 +149,9 @@ def _create_single_env(env_name: str, env_type: str, args):
         print(f"Error: {env_name} environment in type {env_type} not found!")
         return 
 
-    print(f'Load {env_name} environment in type {env_type}.')
-
+    print(f'Load {env_name} environment in type {env_type}.')    
+    env.seed(args.seed)
+    return env
 
 def make_env(args):
     env_name = args.name

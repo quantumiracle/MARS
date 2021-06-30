@@ -246,6 +246,7 @@ class Dict2TupleWrapper():
             return self.observation_swapaxis(tuple(obs_dict.values()))
 
     def step(self, actions): 
+        actions = {agent_name: action for agent_name, action in zip(self.agents, actions)}
         obs, rewards, dones, infos = self.env.step(actions)
         if self.obs_type == 'ram':
             o = tuple(obs.values())

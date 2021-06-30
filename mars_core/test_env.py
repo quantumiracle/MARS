@@ -4,7 +4,11 @@ from utils.data_struct import AttrDict
 EnvArgs = {
     'name': None,
     'type': None,
-    'num_envs': 1, 'ram': True, 'against_baseline': False}
+    'num_envs': 2, 
+    'ram': True, 
+    'against_baseline': False,
+    'seed': 1223,
+    }
 
 envs = {
     'slimevolley': [
@@ -28,17 +32,19 @@ envs = {
     ['Pong-ram-v0', 'LunarLander-v2', 'CartPole-v1', 'HalfCheetah-v2']
 }
 
-cnt, fail_cnt = 0, 0
-for env_type, envs in envs.items():
-    for env_name in envs:
-        cnt += 1
-        EnvArgs['name'] = env_name
-        EnvArgs['type'] = env_type
-        env_args = AttrDict(EnvArgs)
 
-        try:
-            test_env = make_env(env_args)
-        except:
-            fail_cnt += 1
-            print(f'Failed to load env {env_name} in type {env_type}.')
-        print(f"{cnt-fail_cnt}/{cnt} succeed.")
+if __name__ == "__main__":
+    cnt, fail_cnt = 0, 0
+    for env_type, envs in envs.items():
+        for env_name in envs:
+            cnt += 1
+            EnvArgs['name'] = env_name
+            EnvArgs['type'] = env_type
+            env_args = AttrDict(EnvArgs)
+
+            try:
+                test_env = make_env(env_args)
+            except:
+                fail_cnt += 1
+                print(f'Failed to load env {env_name} in type {env_type}.')
+            print(f"{cnt-fail_cnt}/{cnt} succeed.")
