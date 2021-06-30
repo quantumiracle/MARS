@@ -212,7 +212,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
 class Dict2TupleWrapper():
     """ Wrap the PettingZoo envs to have a similar style as LaserFrame in NFSP """
     def __init__(self, env, keep_info=False):
-        super(NFSPPettingZooWrapper, self).__init__()
+        super(Dict2TupleWrapper, self).__init__()
         self.env = env
         self.keep_info = keep_info  # if True keep info as dict
         if len(env.observation_space.shape) > 1: # image
