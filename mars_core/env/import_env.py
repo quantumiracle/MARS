@@ -1,0 +1,137 @@
+"""
+Supported Environments in MARS:
+
+Single-agent:
+* Openai Gym: https://gym.openai.com/
+    type: 'gym'
+
+Multi-agent:
+* PettingZoo: https://github.com/PettingZoo-Team/PettingZoo
+    type: 'pettingzoo'
+* LaserTag: https://github.com/younggyoseo/pytorch-nfsp
+    type: 'lasertag'
+* SlimeVolley: https://github.com/hardmaru/slimevolleygym 
+    type: 'slimevolley'
+
+"""
+import pettingzoo
+import slimevolleygym  # https://github.com/hardmaru/slimevolleygym
+import supersuit
+from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, wrap_pytorch
+from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
+     Atari2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper
+from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
+ 
+
+# PettingZoo envs
+Atari = [
+    'basketball_pong_v1', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
+    'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
+    'flag_capture_v1', 'foozpong_v1', 'ice_hockey_v1', 'joust_v2',
+    'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v1', 'pong_v2',
+    'quadrapong_v2', 'space_invaders_v1', 'space_war_v1', 'surround_v1',
+    'tennis_v2', 'video_checkers_v3', 'volleyball_pong_v1', 'warlords_v2',
+    'wizard_of_wor_v2'
+]
+Classic = [
+    'dou_dizhu_v3', 'go_v3', 'leduc_holdem_v3', 'rps_v1',
+    'texas_holdem_no_limit_v3', 'texas_holdem_v3', 'tictactoe_v3', 'uno_v3'
+]
+
+
+def import_pettingzoo_env(env_name: str, env_type: str) -> None:
+    try:
+        exec("from pettingzoo.{} import {}".format(env_type.lower(), env_name))
+        print("Successfully import env: ", env_name)
+    except:
+        print("Cannot import pettingzoo env: ", env_name)
+
+
+def create_single_env(env_name: str, env_type: str):
+    if env_type == 'slimevolley':
+        env = gym.make(env_name)
+        if env_name in ['SlimeVolleySurvivalNoFrameskip-v0', 'SlimeVolleyNoFrameskip-v0', 'SlimeVolleyPixel-v0']:
+            # For image-based envs, apply following wrappers (from gym atari) to achieve pettingzoo style env, 
+            # or use supersuit (requires input env to be either pettingzoo or gym env).
+            # same as: https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ppo_pixel.py
+            # TODO Note: this cannot handle the two obervations in above SlimeVolley envs, 
+            # since the wrappers are for single agent.
+            if env_name != 'SlimeVolleyPixel-v0':
+                env = NoopResetEnv(env, noop_max=30)
+            env = MaxAndSkipEnv(env, skip=4)
+            env = WarpFrame(env) 
+            # #env = ClipRewardEnv(env)
+            env = FrameStack(env, 4)
+
+        env = SlimeVolleyWrapper(env, args.against_baseline)  # slimevolley to pettingzoo style
+        env = Dict2TupleWrapper(env, keep_info=keep_info)  # pettingzoo to nfsp style, keep_info True to maintain dict type for parallel envs
+
+    elif env_type == 'pettingzoo':
+        if env_name in Atari:
+            import_pettingzoo_env(env_name, env_type)
+            if args.ram:
+                obs_type = 'ram'
+            else:
+                obs_type = 'rgb_image'
+
+            # initialize the env
+            env = eval(env_name).parallel_env(obs_type=obs_type)
+            env_agents = env.unwrapped.agents  # this cannot go through supersuit wrapper, so get it first and reassign it
+
+            # assign necessary wrappers
+            if obs_type == 'rgb_image':
+                env = supersuit.max_observation_v0(env, 2)  # as per openai baseline's MaxAndSKip wrapper, maxes over the last 2 frames to deal with frame flickering
+                env = supersuit.sticky_actions_v0(env, repeat_action_probability=0.25) # repeat_action_probability is set to 0.25 to introduce non-determinism to the system
+                env = supersuit.frame_skip_v0(env, 4) # skip frames for faster processing and less control to be compatable with gym, use frame_skip(env, (2,5))
+                env = supersuit.resize_v0(env, 84, 84) # downscale observation for faster processing
+                env = supersuit.frame_stack_v1(env, 4) # allow agent to see everything on the screen despite Atari's flickering screen problem
+            else:
+                env = supersuit.frame_skip_v0(env, 4)  # RAM version also need frame skip, essential for boxing-v1, etc
+                    
+            # normalize the observation of Atari for both image or RAM 
+            env = supersuit.dtype_v0(env, 'float32') # need to transform uint8 to float first for normalizing observation: https://github.com/PettingZoo-Team/SuperSuit
+            env = supersuit.normalize_obs_v0(env, env_min=0, env_max=1) # normalize the observation to (0,1)
+            
+            # assign observation and action spaces
+            env.observation_space = list(env.observation_spaces.values())[0]
+            env.action_space = list(env.action_spaces.values())[0]
+            env.agents = env_agents
+            env = Dict2TupleWrapper(env, keep_info=keep_info) 
+
+        elif env_name in Classic:
+            if env_name in ['rps_v1', 'rpsls_v1']:
+                env = eval(env_name).parallel_env()
+                env = PettingzooClassicWrapper(env, observation_mask=1.)
+            else: # only rps_v1 can use parallel_env at present
+                env = eval(env_name).env()
+                env = PettingzooClassic_Iterate2Parallel(env, observation_mask=None)  # since Classic games do not support Parallel API yet
+                
+            env = Dict2TupleWrapper(env, keep_info=keep_info)
+
+    elif env_type == 'lasertag':
+        env = gym.make(env_name)
+        env = wrap_pytorch(env) 
+
+    elif env_type == 'gym':
+        try:
+            env = gym.make(env_name)
+        except:
+            print(f"Error: No such env in Openai Gym: {env_name}!") 
+        # may need more wrappers here, e.g. Pong-ram-v0 need scaled observation!
+        # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
+        env = Atari2AgentWrapper(env, keep_info = keep_info)
+
+    else:
+        print(f"Error: {env_name} environment in type {env_type} not found!")
+        return 
+
+    print('Load {env_name} environment in type {env_type}.')
+
+
+def make_env(args):
+    if args.num_envs == 1:
+        env = create_single_env(args)  
+    else:
+        VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
+        env = VectorEnv([lambda: create_single_env(args) for _ in range(args.num_envs)])
+    return env
