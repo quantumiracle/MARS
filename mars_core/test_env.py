@@ -1,15 +1,10 @@
 from env.import_env import make_env
+from utils.data_struct import AttrDict
 
-Args = {'num_envs': 1, 'ram': True, 'against_baseline': False}
-
-
-class AttrDict(dict):
-    def __init__(self, *args, **kwargs):
-        super(AttrDict, self).__init__(*args, **kwargs)
-        self.__dict__ = self
-
-
-args = AttrDict(Args)
+EnvArgs = {
+    'name': None,
+    'type': None,
+    'num_envs': 1, 'ram': True, 'against_baseline': False}
 
 envs = {
     'slimevolley': [
@@ -37,8 +32,12 @@ cnt, fail_cnt = 0, 0
 for env_type, envs in envs.items():
     for env_name in envs:
         cnt += 1
+        EnvArgs['name'] = env_name
+        EnvArgs['type'] = env_type
+        env_args = AttrDict(EnvArgs)
+
         try:
-            test_env = make_env(env_name, env_type, args)
+            test_env = make_env(env_args)
         except:
             fail_cnt += 1
             print(f'Failed to load env {env_name} in type {env_type}.')
