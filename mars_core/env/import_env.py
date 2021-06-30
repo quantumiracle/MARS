@@ -4,18 +4,33 @@ Supported Environments in MARS:
 Single-agent:
 * Openai Gym: https://gym.openai.com/
     type: 'gym'
+    envs: see https://gym.openai.com/envs/
 
 Multi-agent:
 * PettingZoo: https://github.com/PettingZoo-Team/PettingZoo
     type: 'pettingzoo'
-* LaserTag: https://github.com/younggyoseo/pytorch-nfsp
+    envs: [ 'basketball_pong_v1', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
+        'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
+        'flag_capture_v1', 'foozpong_v1', 'ice_hockey_v1', 'joust_v2',
+        'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v1', 'pong_v2',
+        'quadrapong_v2', 'space_invaders_v1', 'space_war_v1', 'surround_v1',
+        'tennis_v2', 'video_checkers_v3', 'volleyball_pong_v1', 'warlords_v2',
+        'wizard_of_wor_v2', 
+        'dou_dizhu_v3', 'go_v3', 'leduc_holdem_v3',
+        'rps_v1', 'texas_holdem_no_limit_v3', 'texas_holdem_v3',
+        'tictactoe_v3', 'uno_v3']
+* LaserTag: https://github.com/younggyoseo/lasertag-v0
     type: 'lasertag'
+    envs: ['LaserTag-small2-v0', 'LaserTag-small3-v0', 'LaserTag-small4-v0' ]
 * SlimeVolley: https://github.com/hardmaru/slimevolleygym 
     type: 'slimevolley'
+    envs: ['SlimeVolley-v0', 'SlimeVolleySurvivalNoFrameskip-v0',
+        'SlimeVolleyNoFrameskip-v0', 'SlimeVolleyPixel-v0']
 
 """
 import pettingzoo
 import slimevolleygym  # https://github.com/hardmaru/slimevolleygym
+import gym
 import supersuit
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
@@ -24,30 +39,38 @@ from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
  
 
 # PettingZoo envs
-Atari = [
-    'basketball_pong_v1', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
-    'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
-    'flag_capture_v1', 'foozpong_v1', 'ice_hockey_v1', 'joust_v2',
-    'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v1', 'pong_v2',
-    'quadrapong_v2', 'space_invaders_v1', 'space_war_v1', 'surround_v1',
-    'tennis_v2', 'video_checkers_v3', 'volleyball_pong_v1', 'warlords_v2',
-    'wizard_of_wor_v2'
-]
-Classic = [
-    'dou_dizhu_v3', 'go_v3', 'leduc_holdem_v3', 'rps_v1',
-    'texas_holdem_no_limit_v3', 'texas_holdem_v3', 'tictactoe_v3', 'uno_v3'
-]
+pettingzoo_envs = {
+    'atari': [
+        'basketball_pong_v1', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
+        'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
+        'flag_capture_v1', 'foozpong_v1', 'ice_hockey_v1', 'joust_v2',
+        'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v1', 'pong_v2',
+        'quadrapong_v2', 'space_invaders_v1', 'space_war_v1', 'surround_v1',
+        'tennis_v2', 'video_checkers_v3', 'volleyball_pong_v1', 'warlords_v2',
+        'wizard_of_wor_v2'
+    ],
 
+    'classic': [
+        'dou_dizhu_v3', 'go_v3', 'leduc_holdem_v3', 'rps_v1',
+        'texas_holdem_no_limit_v3', 'texas_holdem_v3', 'tictactoe_v3', 'uno_v3'
+    ]
+}
 
-def import_pettingzoo_env(env_name: str, env_type: str) -> None:
-    try:
-        exec("from pettingzoo.{} import {}".format(env_type.lower(), env_name))
-        print("Successfully import env: ", env_name)
-    except:
-        print("Cannot import pettingzoo env: ", env_name)
+for env_type, envs in pettingzoo_envs.items():
+    for env_name in envs:
+        try:
+            exec("from pettingzoo.{} import {}".format(env_type.lower(), env_name))
+            # print(f"Successfully import {env_type} env in PettingZoo: ", env_name)
+        except:
+            print("Cannot import pettingzoo env: ", env_name)
 
+def create_single_env(env_name: str, env_type: str, args):
+    # TODO
+    if args.num_envs > 1:
+        keep_info = True  # keep_info True to maintain dict type for parallel envs (otherwise cannot pass VectorEnv wrapper)
+    else:
+        keep_info = False
 
-def create_single_env(env_name: str, env_type: str):
     if env_type == 'slimevolley':
         env = gym.make(env_name)
         if env_name in ['SlimeVolleySurvivalNoFrameskip-v0', 'SlimeVolleyNoFrameskip-v0', 'SlimeVolleyPixel-v0']:
@@ -67,8 +90,7 @@ def create_single_env(env_name: str, env_type: str):
         env = Dict2TupleWrapper(env, keep_info=keep_info)  # pettingzoo to nfsp style, keep_info True to maintain dict type for parallel envs
 
     elif env_type == 'pettingzoo':
-        if env_name in Atari:
-            import_pettingzoo_env(env_name, env_type)
+        if env_name in pettingzoo_envs['atari']:
             if args.ram:
                 obs_type = 'ram'
             else:
@@ -98,7 +120,7 @@ def create_single_env(env_name: str, env_type: str):
             env.agents = env_agents
             env = Dict2TupleWrapper(env, keep_info=keep_info) 
 
-        elif env_name in Classic:
+        elif env_name in pettingzoo_envs['classic']:
             if env_name in ['rps_v1', 'rpsls_v1']:
                 env = eval(env_name).parallel_env()
                 env = PettingzooClassicWrapper(env, observation_mask=1.)
@@ -109,6 +131,7 @@ def create_single_env(env_name: str, env_type: str):
             env = Dict2TupleWrapper(env, keep_info=keep_info)
 
     elif env_type == 'lasertag':
+        import lasertag
         env = gym.make(env_name)
         env = wrap_pytorch(env) 
 
@@ -125,13 +148,13 @@ def create_single_env(env_name: str, env_type: str):
         print(f"Error: {env_name} environment in type {env_type} not found!")
         return 
 
-    print('Load {env_name} environment in type {env_type}.')
+    print(f'Load {env_name} environment in type {env_type}.')
 
 
-def make_env(args):
+def make_env(env_name, env_type, args):
     if args.num_envs == 1:
-        env = create_single_env(args)  
+        env = create_single_env(env_name, env_type, args)  
     else:
         VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
-        env = VectorEnv([lambda: create_single_env(args) for _ in range(args.num_envs)])
+        env = VectorEnv([lambda: create_single_env(env_name, env_type, args) for _ in range(args.num_envs)])
     return env

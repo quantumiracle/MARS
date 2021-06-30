@@ -1,4 +1,6 @@
 import gym
+import numpy as np
+from collections import deque
 
 class ImageToPyTorch(gym.ObservationWrapper):
     """
@@ -33,7 +35,7 @@ class FrameStack(gym.Wrapper):
     self.n_frames = n_frames
     self.frames = deque([], maxlen=n_frames)
     shp = env.observation_space.shape
-    self.observation_space = spaces.Box(low=0, high=255, shape=(shp[0], shp[1], shp[2] * n_frames),
+    self.observation_space = gym.spaces.Box(low=0, high=255, shape=(shp[0], shp[1], shp[2] * n_frames),
                                         dtype=env.observation_space.dtype)
 
   def reset(self):
@@ -136,7 +138,7 @@ class WarpFrame(gym.ObservationWrapper):
     gym.ObservationWrapper.__init__(self, env)
     self.width = 84
     self.height = 84
-    self.observation_space = spaces.Box(low=0, high=255, shape=(self.height, self.width, 1),
+    self.observation_space = gym.spaces.Box(low=0, high=255, shape=(self.height, self.width, 1),
                                         dtype=env.observation_space.dtype)
 
   def observation(self, frame):
