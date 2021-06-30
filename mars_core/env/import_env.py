@@ -44,7 +44,7 @@ pettingzoo_envs = {
         'basketball_pong_v1', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
         'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
         'flag_capture_v1', 'foozpong_v1', 'ice_hockey_v1', 'joust_v2',
-        'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v1', 'pong_v2',
+        'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v1', 
         'quadrapong_v2', 'space_invaders_v1', 'space_war_v1', 'surround_v1',
         'tennis_v2', 'video_checkers_v3', 'volleyball_pong_v1', 'warlords_v2',
         'wizard_of_wor_v2'
@@ -64,7 +64,7 @@ for env_type, envs in pettingzoo_envs.items():
         except:
             print("Cannot import pettingzoo env: ", env_name)
 
-def create_single_env(env_name: str, env_type: str, args):
+def _create_single_env(env_name: str, env_type: str, args):
     # TODO
     if args.num_envs > 1:
         keep_info = True  # keep_info True to maintain dict type for parallel envs (otherwise cannot pass VectorEnv wrapper)
@@ -151,10 +151,14 @@ def create_single_env(env_name: str, env_type: str, args):
     print(f'Load {env_name} environment in type {env_type}.')
 
 
-def make_env(env_name, env_type, args):
+def make_env(args):
+    env_name = args.name
+    env_type = args.type
+    print(env_name, env_type)
+
     if args.num_envs == 1:
-        env = create_single_env(env_name, env_type, args)  
+        env = _create_single_env(env_name, env_type, args)  
     else:
         VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
-        env = VectorEnv([lambda: create_single_env(env_name, env_type, args) for _ in range(args.num_envs)])
+        env = VectorEnv([lambda: _create_single_env(env_name, env_type, args) for _ in range(args.num_envs)])
     return env
