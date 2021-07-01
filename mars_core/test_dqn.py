@@ -18,7 +18,11 @@ AgentArgs = {
         {'dueling': True,
         'replay_buffer_size': 1e5,
         'gamma': 0.99,
-        'multi_step': 1
+        'multi_step': 1,
+        'target_update_interval': 1000,
+        'eps_start': 1.,
+        'eps_final': 0.01,
+        'eps_decay': 30000
         },  
 }
 
@@ -28,7 +32,11 @@ TrainArgs = {
     'max_steps_per_episode': 10000,
     'optimizer': 'adam',
     'learning_rate': 1e-4,
-    'device': 'gpu'
+    'device': 'gpu',
+    'update_itr': 1,
+    'log_avg_window': 5,
+    'log_interval': 20,
+    'render': False
 }
 
 AgentArgs.update(TrainArgs)

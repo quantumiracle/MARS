@@ -1,17 +1,17 @@
 import numpy as np
 
-def init_logger(env):
-    logger = Logger(env)
+def init_logger(env, args):
+    logger = Logger(env, args)
     return logger
 
 class Logger():
-    def __init__(self, env): 
+    def __init__(self, env, args): 
         super(Logger, self).__init__()
         self.keys = env.agents
         self.epi_rewards = self._clear_dict_as_list(self.keys)
         self.rewards = self._clear_dict(self.keys)
         self.losses = self._clear_dict_as_list(self.keys)
-        self.avg_window = 5  # average over the past
+        self.avg_window = args.log_avg_window  # average over the past
 
         self._create_log_dir()
 

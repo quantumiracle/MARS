@@ -12,6 +12,10 @@ class Agent(object):
             self.device =  torch.device("cuda:0")
         elif args.device == 'cpu':
             self.device = torch.device("cpu") 
+        self.not_learnable = False # whether the model is fixed (not learnable) or not
+
+    def fix(self,):
+        self.not_learnable = True
 
     def choose_action(self, state, *args):
         pass
@@ -53,6 +57,16 @@ class MultiAgent(Agent):
     def __init__(self, env, agents, args):
         super(MultiAgent, self).__init__(env, args)
         self.agents = agents
+        not_learnable_list = []
+        for i, agent in enumerate(agents):
+            if agent.not_learnable:
+                not_learnable_list.append(i)
+        if len(not_learnable_list) < 1:
+            prefix = 'No'
+
+        else:
+            prefix = f'Agents No. {not_learnable_list}'
+        print(prefix+" are not learnable.")
 
     def choose_action(self, states):
         actions = []
