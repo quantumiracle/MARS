@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-
+import numpy as np
 class Agent(object):
     """
     A standard agent class.
@@ -13,10 +13,15 @@ class Agent(object):
         elif args.device == 'cpu':
             self.device = torch.device("cpu") 
 
-    def choose_action(self, state, args):
+    def choose_action(self, state, *args):
         pass
 
-    def store(self):
+    def scheduler_step(self, frame):
+        """ Learning rate scheduler, epsilon scheduler, etc"""
+        for scheduler in self.schedulers:
+            scheduler.step(frame)
+
+    def store(self, *args):
         """ Store a sample for either on-policy or off-policy algorithms."""
         pass
 
@@ -24,7 +29,7 @@ class Agent(object):
         """ Update the agent. """
         pass
 
-    def update_target(current_model, target_model):
+    def update_target(self, current_model, target_model):
         """
         Update the target model when necessary.
         """
@@ -34,6 +39,10 @@ class Agent(object):
         pass
 
     def load_model(self, path=None):
+        pass
+
+    @property
+    def ready_to_update(self):
         pass
 
 
@@ -51,6 +60,20 @@ class MultiAgent(Agent):
             action = agent.choose_action(state)
             actions.append(action)
         return actions
+
+    def scheduler_step(self, frame):
+        for agent in self.agents:
+            agent.scheduler_step(frame)
+
+    def store(self, sample):
+        for agent, *s in zip(self.agents, *sample):
+            agent.store(tuple(s))
+
+    def update(self):
+        losses = []
+        for agent in self.agents:
+            losses.append(agent.update())
+        return losses
     
     def save_model(self, path=None):
         for agent in self.agents:
@@ -59,6 +82,16 @@ class MultiAgent(Agent):
     def load_model(self, path=None):
         for agent in self.agents:
             agent.load_model(path)
+
+    @property
+    def ready_to_update(self):
+        ready_state = []
+        for agent in self.agents:
+            ready_state.append(agent.ready_to_update)
+        if np.all(ready_state):
+            return True 
+        else:
+            return False
 
 
 

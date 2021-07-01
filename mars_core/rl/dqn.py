@@ -7,7 +7,7 @@ import random, copy
 from .agent import Agent
 from .nn_components import cReLU, Flatten
 from .storage import ReplayBuffer
-from .rl_utils import choose_optimizer
+from .rl_utils import choose_optimizer, EpsilonScheduler
 from .networks import NetBase
 class DQN(Agent):
     """
@@ -15,14 +15,19 @@ class DQN(Agent):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.model = self._select_type(env, args)
-        self.target = copy.deepcopy(self.model)
+        self.model = self._select_type(env, args).to(self.device)
+        self.target = copy.deepcopy(self.model).to(self.device)
 
-        self.buffer = ReplayBuffer(int(args.algorithm_spec['replay_buffer_size']))
-        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=args.learning_rate)
-        
-        self.gamma = args.algorithm_spec['gamma']
+        self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
+        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
+        self.epsilon_scheduler = EpsilonScheduler(args.algorithm_spec['eps_start'], args.algorithm_spec['eps_final'], args.algorithm_spec['eps_decay'])
+        self.schedulers = [self.epsilon_scheduler]
+
+        self.gamma = float(args.algorithm_spec['gamma'])
         self.multi_step = args.algorithm_spec['multi_step']  # TODO
+        self.target_update_interval = args.algorithm_spec['target_update_interval']
+
+        self.update_cnt = 1
 
     def _select_type(self, env, args):
         if args.num_envs == 1:
@@ -37,12 +42,23 @@ class DQN(Agent):
                 model = ParallelDQN(env, args.hidden_dim, args.num_envs)
         return model
 
-    def choose_action(self, state, epsilon=0.):
+    def choose_action(self, state, epsilon=None):
+        if epsilon is None:
+            epsilon = self.epsilon_scheduler.get_epsilon()
+        if not isinstance(state, torch.Tensor):
+            state = torch.Tensor(state).to(self.device)
         action = self.model.choose_action(state, epsilon)
         return action
 
     def store(self, sample):
         self.buffer.push(*sample)
+
+    @property
+    def ready_to_update(self):
+        if len(self.buffer) > self.batch_size:
+            return True
+        else:
+            return False
 
     def update(self):
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
@@ -70,7 +86,13 @@ class DQN(Agent):
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-        return loss
+
+        if self.update_cnt % self.target_update_interval == 0:
+            self.update_target(self.model, self.target)
+            self.update_cnt = 0
+        self.update_cnt += 1
+
+        return loss.item()
 
     def save_model(self, path):
         torch.save(self.policy.state_dict(), path+'_model')
@@ -147,8 +169,6 @@ class DQNBase(NetBase):
         """
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
-                if not isinstance(state, torch.Tensor):
-                    state = torch.Tensor(state)
                 state   = state.unsqueeze(0)
                 q_value = self.forward(state)
                 action  = q_value.max(1)[1].item()
