@@ -1,19 +1,35 @@
-import gym
+import torch
 import torch.nn as nn
 
-class Agent(nn.Module):
+class Agent(object):
     """
     A standard agent class.
     """
-    def __init__(self, env):
+    def __init__(self, env, args):
         super(Agent, self).__init__()
-        self.observation_shape = env.observation_space.shape
-        self.action_shape = env.action_space.shape or env.action_space.n
-        print(f"observation shape: {self.observation_shape}, action shape: {self.action_shape}")
-    
+        self.batch_size = args.batch_size
+        if args.device == 'gpu':
+            self.device =  torch.device("cuda:0")
+        elif args.device == 'cpu':
+            self.device = torch.device("cpu") 
+
     def choose_action(self, state, args):
         pass
-    
+
+    def store(self):
+        """ Store a sample for either on-policy or off-policy algorithms."""
+        pass
+
+    def update(self):
+        """ Update the agent. """
+        pass
+
+    def update_target(current_model, target_model):
+        """
+        Update the target model when necessary.
+        """
+        target_model.load_state_dict(current_model.state_dict())
+        
     def save_model(self, path=None):
         pass
 
@@ -21,14 +37,12 @@ class Agent(nn.Module):
         pass
 
 
-class MultiAgent():
+class MultiAgent(Agent):
     """
     A class containing all agents in a game.
     """
-    def __init__(self, env, agents):
-        super(MultiAgent, self).__init__()
-        # self.observation_spaces = env.observation_spaces
-        # self.action_spaces = env.action_spaces
+    def __init__(self, env, agents, args):
+        super(MultiAgent, self).__init__(env, args)
         self.agents = agents
 
     def choose_action(self, states):

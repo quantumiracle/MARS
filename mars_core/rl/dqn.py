@@ -3,26 +3,91 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import numpy as np
-import random
+import random, copy
 from .agent import Agent
 from .nn_components import cReLU, Flatten
-
-def DQN(env, args):
-    if args.num_envs == 1:
-        if args.algorithm_spec['dueling']:
-            model = DuelingDQN(env, args.hidden_dim)
-        else:
-            model = DQNBase(env, args.hidden_dim)
-    else:
-        if args.algorithm_spec['dueling']:
-            model = ParallelDuelingDQN(env, args.hidden_dim, args.num_envs)
-        else:
-            model = ParallelDQN(env, args.hidden_dim, args.num_envs)
-    return model
-
-class DQNBase(Agent):
+from .storage import ReplayBuffer
+from .rl_utils import choose_optimizer
+from .networks import NetBase
+class DQN(Agent):
     """
-    Basic DQN
+    DQN algorithm
+    """
+    def __init__(self, env, args):
+        super().__init__(env, args)
+        self.model = self._select_type(env, args)
+        self.target = copy.deepcopy(self.model)
+
+        self.buffer = ReplayBuffer(int(args.algorithm_spec['replay_buffer_size']))
+        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=args.learning_rate)
+        
+        self.gamma = args.algorithm_spec['gamma']
+        self.multi_step = args.algorithm_spec['multi_step']  # TODO
+
+    def _select_type(self, env, args):
+        if args.num_envs == 1:
+            if args.algorithm_spec['dueling']:
+                model = DuelingDQN(env, args.hidden_dim)
+            else:
+                model = DQNBase(env, args.hidden_dim)
+        else:
+            if args.algorithm_spec['dueling']:
+                model = ParallelDuelingDQN(env, args.hidden_dim, args.num_envs)
+            else:
+                model = ParallelDQN(env, args.hidden_dim, args.num_envs)
+        return model
+
+    def choose_action(self, state, epsilon=0.):
+        action = self.model.choose_action(state, epsilon)
+        return action
+
+    def store(self, sample):
+        self.buffer.push(*sample)
+
+    def update(self):
+        state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
+        weights = torch.ones(self.batch_size)
+
+        state = torch.FloatTensor(np.float32(state)).to(self.device)
+        next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
+        action = torch.LongTensor(action).to(self.device)
+        reward = torch.FloatTensor(reward).to(self.device)
+        done = torch.FloatTensor(done).to(self.device)
+        weights = torch.FloatTensor(weights).to(self.device)
+
+        # Q-Learning with target network
+        q_values = self.model(state)
+        target_next_q_values = self.target(next_state)
+
+        q_value = q_values.gather(1, action.unsqueeze(1)).squeeze(1)
+        next_q_value = target_next_q_values.max(1)[0]
+        expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
+
+        # Huber Loss
+        loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
+        loss = (loss * weights).mean()
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+        return loss
+
+    def save_model(self, path):
+        torch.save(self.policy.state_dict(), path+'_model')
+        torch.save(self.policy.state_dict(), path+'_target')
+
+    def load_model(self, path, eval=True):
+        self.model.load_state_dict(torch.load(path+'_model'))
+        self.target.load_state_dict(torch.load(path+'_target'))
+
+        if eval:
+            self.model.eval()
+            self.target.eval()
+
+
+class DQNBase(NetBase):
+    """
+    Basic Q network
 
     parameters
     ---------
@@ -36,9 +101,9 @@ class DQNBase(Agent):
         self.flatten = Flatten()
         self.hidden_dim = hidden_dim
         
-        if len(self.observation_shape) <= 1: # not image
+        if len(self._observation_shape) <= 1: # not image
             self.features = nn.Sequential(
-                nn.Linear(self.observation_shape[0], hidden_dim),
+                nn.Linear(self._observation_shape[0], hidden_dim),
                 activation,
                 nn.Linear(hidden_dim, hidden_dim),
                 activation,
@@ -47,7 +112,7 @@ class DQNBase(Agent):
             )
         else:
             self.features = nn.Sequential(
-                nn.Conv2d(self.observation_shape[0], 8, kernel_size=4, stride=2),
+                nn.Conv2d(self._observation_shape[0], 8, kernel_size=4, stride=2),
                 activation,
                 nn.Conv2d(16, 8, kernel_size=5, stride=1),
                 activation,
@@ -58,7 +123,7 @@ class DQNBase(Agent):
         self.fc = nn.Sequential(
             nn.Linear(self._feature_size(), hidden_dim),
             activation,
-            nn.Linear(hidden_dim, self.action_shape)
+            nn.Linear(hidden_dim, self._action_shape)
         )
         
     def forward(self, x):
@@ -68,10 +133,10 @@ class DQNBase(Agent):
         return x
     
     def _feature_size(self):
-        if isinstance(self.observation_shape, int):
-            return self.features(torch.zeros(1, self.observation_shape)).view(1, -1).size(1)
+        if isinstance(self._observation_shape, int):
+            return self.features(torch.zeros(1, self._observation_shape)).view(1, -1).size(1)
         else:
-            return self.features(torch.zeros(1, *self.observation_shape)).view(1, -1).size(1)
+            return self.features(torch.zeros(1, *self._observation_shape)).view(1, -1).size(1)
     
     def choose_action(self, state, epsilon=0.):
         """
@@ -88,7 +153,7 @@ class DQNBase(Agent):
                 q_value = self.forward(state)
                 action  = q_value.max(1)[1].item()
         else:
-            action = random.randrange(self.action_shape)
+            action = random.randrange(self._action_shape)
         return action
 
 class DuelingDQN(DQNBase):
@@ -137,8 +202,9 @@ class ParallelDQN(DQNBase):
                 q_value = self.forward(state)
                 action = q_value.max(1)[1].detach().cpu().numpy()
         else:
-            action = np.random.randint(self.action_shape, size=self.number_envs)
+            action = np.random.randint(self._action_shape, size=self.number_envs)
         return action
+
 class ParallelDuelingDQN(DuelingDQN, ParallelDQN):
     """
     DuelingDQN for parallel env sampling
