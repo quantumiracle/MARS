@@ -4,8 +4,8 @@ from rl.agent import MultiAgent
 from utils.data_struct import AttrDict
 
 EnvArgs = {
-    'name': 'pong_v1',
-    'type': 'pettingzoo',
+    'env_name': 'pong_v1',
+    'env_type': 'pettingzoo',
     'num_envs': 1, 
     'ram': True, 
     'against_baseline': False,
@@ -14,8 +14,24 @@ EnvArgs = {
 
 AgentArgs = {
     'hidden_dim': 64,
-    'algorithm_spec': {'dueling': True},  # algorithm specific configurations
+    'algorithm_spec':  # algorithm specific configurations
+        {'dueling': True,
+        'replay_buffer_size': 1e5,
+        'gamma': 0.99,
+        'multi_step': 1
+        },  
 }
+
+TrainArgs = {
+    'batch_size': 64,
+    'max_episodes': 10000,
+    'max_steps_per_episode': 10000,
+    'optimizer': 'adam',
+    'learning_rate': 1e-4,
+    'device': 'gpu'
+}
+
+AgentArgs.update(TrainArgs)
 
 AgentArgs.update(EnvArgs)
 
@@ -39,6 +55,6 @@ if __name__ == "__main__":
     model1 = DQN(test_env, args)
     model2 = DQN(test_env, args)
 
-    model = MultiAgent(test_env, [model1, model2])
+    model = MultiAgent(test_env, [model1, model2], args)
 
     rollout(test_env, model)

@@ -21,4 +21,4 @@ model2 = DQN(env, args)
 model = MultiAgent(env, [model1, model2])
 
 ### Rollout
-rollout(env, model)
+rollout(env, model, args)

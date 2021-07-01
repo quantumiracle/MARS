@@ -4,21 +4,23 @@ import torch
 
 class NetBase(nn.Module):
     """ Base network class for policy/value function """
-    def __init__(self, state_space, action_space=None):
+    def __init__(self, env):
         super(NetBase, self).__init__()
-        self._state_space = state_space
-        self._state_shape = state_space.shape
-        if len(self._state_shape) == 1:
-            self._state_dim = self._state_shape[0]
+        self._observation_space = env.observation_space
+        self._observation_shape = env.observation_space.shape
+        if len(self._observation_shape) == 1:
+            self._observation_dim = self._observation_shape[0]
         else:  # high-dim state
             pass  
-        if action_space is not None:
-            self._action_space = action_space
-            self._action_shape = action_space.shape
-            if len(self._action_shape) < 1:  # Discrete space
-                self._action_dim = action_space.n
-            else:
-                self._action_dim = self._action_shape[0]
+
+        self._action_space = env.action_space
+        self._action_shape = env.action_space.shape or env.action_space.n
+        if isinstance(self._action_shape, int): # Discrete space
+            self._action_dim = self._action_shape
+        else:
+            self._action_dim = self._action_shape[0]
+
+        print(f"observation shape: {self._observation_shape}, action shape: {self._action_shape}")
 
     def forward(self,):
         """ need to be overwritten by the subclass """
@@ -28,7 +30,7 @@ class NetBase(nn.Module):
 class PolicyMLP(NetBase):
     def __init__(self, state_space, action_space, hidden_dim, device):
         super().__init__( state_space, action_space)
-        self.fc1   = nn.Linear(self._state_dim, hidden_dim)
+        self.fc1   = nn.Linear(self._observation_dim, hidden_dim)
         self.fc2   = nn.Linear(hidden_dim, hidden_dim)
         self.fc3   = nn.Linear(hidden_dim, self._action_dim)
         self.device = device
@@ -45,7 +47,7 @@ class ValueMLP(NetBase):
     def __init__(self, state_space, hidden_dim, init_w=3e-3):
         super().__init__(state_space)
         
-        self.linear1 = nn.Linear(self._state_dim, hidden_dim)
+        self.linear1 = nn.Linear(self._observation_dim, hidden_dim)
         self.linear2 = nn.Linear(hidden_dim, hidden_dim)
         # self.linear3 = nn.Linear(hidden_dim, hidden_dim)
         self.linear4 = nn.Linear(hidden_dim, 1)
@@ -65,9 +67,9 @@ SiLU = lambda x: x*torch.sigmoid(x)
 class PolicyCNN(NetBase):
     def __init__(self, state_space, action_space, hidden_dim, device):
         super().__init__(state_space, action_space)
-        X_channel = self._state_space.shape[2]
-        X_dim = self._state_space.shape[1]
-        assert self._state_space.shape[0] == self._state_space.shape[1]
+        X_channel = self._observation_space.shape[2]
+        X_dim = self._observation_space.shape[1]
+        assert self._observation_space.shape[0] == self._observation_space.shape[1]
         self.CONV_NUM_FEATURE_MAP=8
         self.CONV_KERNEL_SIZE=4
         self.CONV_STRIDE=2
@@ -103,9 +105,9 @@ class PolicyCNN(NetBase):
 class ValueCNN(NetBase):
     def __init__(self, state_space, hidden_dim):
         super().__init__(state_space)
-        X_channel = self._state_space.shape[2]
-        X_dim = self._state_space.shape[1]
-        assert self._state_space.shape[0] == self._state_space.shape[1]
+        X_channel = self._observation_space.shape[2]
+        X_dim = self._observation_space.shape[1]
+        assert self._observation_space.shape[0] == self._observation_space.shape[1]
         self.CONV_NUM_FEATURE_MAP=8
         self.CONV_KERNEL_SIZE=4
         self.CONV_STRIDE=2
