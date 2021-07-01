@@ -154,8 +154,8 @@ def _create_single_env(env_name: str, env_type: str, args):
     return env
 
 def make_env(args):
-    env_name = args.name
-    env_type = args.type
+    env_name = args.env_name
+    env_type = args.env_type
     print(env_name, env_type)
 
     if args.num_envs == 1:
