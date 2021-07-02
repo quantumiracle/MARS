@@ -14,3 +14,11 @@ Algorithms to do:
 - [ ] qtran
 - [ ] mappo
 - [ ] nash-dqn
+
+Supported environments:
+- [x] Mars
+<!-- - [x] Openai Gym -->
+<!-- - [x] PettingZoo
+- [x] LaserTag
+- [x] SlimeVolley
+- [ ] SMAC -->
