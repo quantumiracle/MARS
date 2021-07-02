@@ -57,15 +57,16 @@ class MultiAgent(Agent):
     def __init__(self, env, agents, args):
         super(MultiAgent, self).__init__(env, args)
         self.agents = agents
-        not_learnable_list = []
+        self.number_of_agents = len(self.agents)
+        self.not_learnable_list = []
         for i, agent in enumerate(agents):
             if agent.not_learnable:
-                not_learnable_list.append(i)
-        if len(not_learnable_list) < 1:
+                self.not_learnable_list.append(i)
+        if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
 
         else:
-            prefix = f'Agents No. {not_learnable_list}'
+            prefix = f'Agents No. {self.not_learnable_list} (index starting from 0)'
         print(prefix+" are not learnable.")
 
     def choose_action(self, states):
@@ -80,13 +81,17 @@ class MultiAgent(Agent):
             agent.scheduler_step(frame)
 
     def store(self, sample):
-        for agent, *s in zip(self.agents, *sample):
-            agent.store(tuple(s))
+        for i, agent, *s in zip(np.arange(self.number_of_agents), self.agents, *sample):
+            if i not in self.not_learnable_list: # no need to store samples for not learnable models
+                agent.store(tuple(s))
 
     def update(self):
         losses = []
-        for agent in self.agents:
-            losses.append(agent.update())
+        for i, agent in enumerate(self.agents):
+            if i not in self.not_learnable_list:
+                losses.append(agent.update())
+            else:
+                losses.append(0.)
         return losses
     
     def save_model(self, path=None):
@@ -100,8 +105,9 @@ class MultiAgent(Agent):
     @property
     def ready_to_update(self):
         ready_state = []
-        for agent in self.agents:
-            ready_state.append(agent.ready_to_update)
+        for i, agent in enumerate(self.agents):
+            if i not in self.not_learnable_list:
+                ready_state.append(agent.ready_to_update)
         if np.all(ready_state):
             return True 
         else:

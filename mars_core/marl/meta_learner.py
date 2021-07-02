@@ -1,8 +1,15 @@
-from selfplay import selfpaly_meta_learn
+from .selfplay import SelfPlayMetaLearner
 
-def call_meta_learner(args, *kargs):
-    if args.marl_method = 'selfplay':
-        return selfpaly_meta_learn(args, *kargs)
+class MetaLearner():
+    def __init__(self,):
+        pass
+        
+    def step(self, *kargs):
+        pass
+
+def init_meta_learner(logger, args, *kargs):
+    if args.marl_method == 'selfplay':
+        return SelfPlayMetaLearner(logger, args, *kargs)
 
     else:
-        raise NotImplementedError
+        return MetaLearner()

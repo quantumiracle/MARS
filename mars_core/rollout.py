@@ -1,10 +1,12 @@
-from utils.logger import init_logger
 import numpy as np
+from utils.logger import init_logger
+from marl.meta_learner import init_meta_learner
 
 def rollout(env, model, args):
     print("Arguments: ", args)
     overall_steps = 0
     logger = init_logger(env, args)
+    meta_learner = init_meta_learner(logger, args)
     for epi in range(args.max_episodes):
         obs = env.reset()
         epi_reward = 0
@@ -34,6 +36,8 @@ def rollout(env, model, args):
                 elif overall_steps*args.update_itr % 1 == 0:
                     loss = model.update()
                     logger.log_loss(loss)
+
+                meta_learner.step(model, logger)
 
         if epi % args.log_interval == 0:
             logger.print(epi)
