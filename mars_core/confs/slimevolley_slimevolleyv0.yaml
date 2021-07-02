@@ -1,12 +1,13 @@
 env_args:
-    env_name: None
-    env_type: None
+    env_name: SlimeVolley-v0
+    env_type: slimevolley
     num_envs: 1
+    against_baseline: True
     ram: True
     seed: 1122
 
 agent_args:
-    hidden_dim: 64
+    hidden_dim: 256
     algorithm: DQN
     algorithm_spec:
         dueling: False
@@ -23,7 +24,7 @@ train_args:
     batch_size: 32
     max_episodes: 10000
     max_steps_per_episode: 10000
-    train_start_frame: 10000
+    train_start_frame: 0
     optimizer: adam
     learning_rate: 1e-4
     device: gpu
@@ -31,6 +32,3 @@ train_args:
     log_avg_window: 20 # average window length in logging
     log_interval: 20  # log print interval 
     render: False
-
-    marl_method: None
-    marl_spec: None
