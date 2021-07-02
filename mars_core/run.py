@@ -6,7 +6,7 @@ from rl.agent import MultiAgent
 
 ### Load configurations
 # yaml_file = 'confs/pettingzoo_pongv1_selfplay'
-yaml_file = 'confs/pettingzoo_boxingv1_selfplay'
+yaml_file = 'confs/pettingzoo_boxingv1'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
 print(args)
