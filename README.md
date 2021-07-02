@@ -3,3 +3,21 @@
 
 
 *If life exists on Mars, shall we human cooperate or compete with it?* 
+
+Algorithms to do:
+- [ ] self-play
+- [ ] fictitious self-play
+- [ ] neural fictitious self-play
+- [ ] policy space reponse oracle
+- [ ] maddpg
+- [ ] qmix
+- [ ] qtran
+- [ ] mappo
+- [ ] nash-dqn
+
+Supported environments:
+- [x] Openai Gym
+- [x] PettingZoo
+- [x] LaserTag
+- [x] SlimeVolley
+- [ ] SMAC
