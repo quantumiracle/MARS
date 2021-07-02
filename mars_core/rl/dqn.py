@@ -17,8 +17,7 @@ class DQN(Agent):
     def __init__(self, env, args):
         super().__init__(env, args)
         self.model = self._select_type(env, args).to(self.device)
-        # self.target = copy.deepcopy(self.model).to(self.device)
-        self.target = self._select_type(env, args).to(self.device)
+        self.target = copy.deepcopy(self.model).to(self.device)
         self.update_target(self.model, self.target)
 
         self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
