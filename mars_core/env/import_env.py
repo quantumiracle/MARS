@@ -143,7 +143,7 @@ def _create_single_env(env_name: str, env_type: str, args):
             print(f"Error: No such env in Openai Gym: {env_name}!") 
         # may need more wrappers here, e.g. Pong-ram-v0 need scaled observation!
         # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
-        env = Atari2AgentWrapper(env, keep_info = keep_info)
+        env = Atari2AgentWrapper(env)
 
     else:
         print(f"Error: {env_name} environment in type {env_type} not found!")
