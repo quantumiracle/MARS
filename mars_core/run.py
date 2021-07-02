@@ -8,7 +8,7 @@ from rl.agent import MultiAgent
 # yaml_file = 'confs/pettingzoo_pongv1_selfplay'
 yaml_file = 'confs/pettingzoo_boxingv1_selfplay'
 
-args = LoadYAML2Dict(yaml_file, toAttr=True)
+args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
 print(args)
 
 
