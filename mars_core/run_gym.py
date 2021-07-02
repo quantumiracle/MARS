@@ -5,8 +5,7 @@ from rl.dqn import DQN
 from rl.agent import MultiAgent
 
 ### Load configurations
-# yaml_file = 'confs/pettingzoo_pongv1_selfplay'
-yaml_file = 'confs/pettingzoo_boxingv1_selfplay'
+yaml_file = 'confs/gym_cartpolev1'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 print(args)
@@ -18,10 +17,8 @@ print(env)
 
 ### Specify models for each agent
 model1 = DQN(env, args)
-model2 = DQN(env, args)
-model1.fix()  # fix model1
 
-model = MultiAgent(env, [model1, model2], args)
+model = MultiAgent(env, [model1], args)
 
 ### Rollout
 rollout(env, model, args)

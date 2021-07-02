@@ -1,4 +1,5 @@
 from utils.logger import init_logger
+import numpy as np
 
 def rollout(env, model, args):
     print("Arguments: ", args)
@@ -12,19 +13,22 @@ def rollout(env, model, args):
             action = model.choose_action(obs)
             model.scheduler_step(overall_steps)
             obs_, reward, done, info = env.step(action)
-            obs = obs_
-            logger.log_reward(reward)
             if args.render:
                 env.render()
 
-            done_ = [done, done] # TODO
+            # done_ = [done, done] # TODO
+            done_ = done
             sample = [obs, action, reward, obs_, done_]
             model.store(sample)
 
-            if done:
+            obs = obs_
+            logger.log_reward(reward)
+
+            if np.any(done):
+                logger.log_episode_reward(step)
                 break
             
-            if model.ready_to_update:
+            if model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
                     for _ in range(args.update_itr):
                         loss = model.update()
@@ -32,8 +36,6 @@ def rollout(env, model, args):
                 elif overall_steps*args.update_itr % 1 == 0:
                     loss = model.update()
                     logger.log_loss(loss)
-
-        logger.log_episode_reward()
 
         if epi % args.log_interval == 0:
             logger.print(epi)

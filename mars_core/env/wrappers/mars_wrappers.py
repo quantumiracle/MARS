@@ -105,20 +105,19 @@ class PettingzooClassic_Iterate2Parallel():
         return obs_dict, reward_dict, done_dict, info_dict
 
 class Atari2AgentWrapper():
-    """ Wrap single agent OpenAI gym atari game to be two-agent version """
-    def __init__(self, env, keep_info=False):
+    """ Wrap single agent OpenAI gym atari game to be multi-agent version """
+    def __init__(self, env):
         super(Atari2AgentWrapper, self).__init__()
         self.env = env
-        self.keep_info = keep_info
-        self.agents = ['first_0', 'second_0']
+        self.agents = ['first_0']
         self.observation_space = self.env.observation_space
         self.observation_spaces = {name: self.env.observation_space for name in self.agents}
         self.action_space = self.env.action_space
         self.action_spaces = {name: self.action_space for name in self.agents}
 
-    def reset(self, observation=None):
-        obs1 = self.env.reset()
-        return (obs1, obs1)
+    def reset(self):
+        obs = self.env.reset()
+        return [obs]
 
     def seed(self, SEED):
         self.env.seed(SEED)
@@ -127,15 +126,47 @@ class Atari2AgentWrapper():
         self.env.render()
 
     def step(self, actions):
-        action = list(actions.values())[0]
-        next_state, reward, done, info = self.env.step(action)
-        if self.keep_info:
-            return [next_state, next_state], [reward, reward], done, info
-        else:
-            return [next_state, next_state], [reward, reward], done, [info, info]
+        assert len(actions) == 1
+        action = actions[0]
+        obs, reward, done, info = self.env.step(action)
+        return [obs], [reward], [done], [info]
 
     def close(self):
         self.env.close()
+
+# class Atari2AgentWrapper():
+#     """ Wrap single agent OpenAI gym atari game to be two-agent version """
+#     def __init__(self, env, keep_info=False):
+#         super(Atari2AgentWrapper, self).__init__()
+#         self.env = env
+#         self.keep_info = keep_info
+#         self.agents = ['first_0', 'second_0']
+#         self.observation_space = self.env.observation_space
+#         self.observation_spaces = {name: self.env.observation_space for name in self.agents}
+#         self.action_space = self.env.action_space
+#         self.action_spaces = {name: self.action_space for name in self.agents}
+
+#     def reset(self, observation=None):
+#         obs1 = self.env.reset()
+#         return (obs1, obs1)
+
+#     def seed(self, SEED):
+#         self.env.seed(SEED)
+
+#     def render(self,):
+#         self.env.render()
+
+#     def step(self, actions):
+#         print(actions)
+#         action = list(actions.values())[0]
+#         next_state, reward, done, info = self.env.step(action)
+#         if self.keep_info:
+#             return [next_state, next_state], [reward, reward], done, info
+#         else:
+#             return [next_state, next_state], [reward, reward], done, [info, info]
+
+#     def close(self):
+#         self.env.close()
 
 class SlimeVolleyWrapper(gym.Wrapper):
     """ 

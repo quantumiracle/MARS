@@ -62,7 +62,7 @@ class MultiAgent(Agent):
             if agent.not_learnable:
                 not_learnable_list.append(i)
         if len(not_learnable_list) < 1:
-            prefix = 'No'
+            prefix = 'No agent'
 
         else:
             prefix = f'Agents No. {not_learnable_list}'

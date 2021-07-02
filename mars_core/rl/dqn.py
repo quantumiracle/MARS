@@ -9,6 +9,7 @@ from .nn_components import cReLU, Flatten
 from .storage import ReplayBuffer
 from .rl_utils import choose_optimizer, EpsilonScheduler
 from .networks import NetBase
+
 class DQN(Agent):
     """
     DQN algorithm
@@ -16,7 +17,9 @@ class DQN(Agent):
     def __init__(self, env, args):
         super().__init__(env, args)
         self.model = self._select_type(env, args).to(self.device)
-        self.target = copy.deepcopy(self.model).to(self.device)
+        # self.target = copy.deepcopy(self.model).to(self.device)
+        self.target = self._select_type(env, args).to(self.device)
+        self.update_target(self.model, self.target)
 
         self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
@@ -68,7 +71,7 @@ class DQN(Agent):
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
         action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
-        done = torch.FloatTensor(done).to(self.device)
+        done = torch.FloatTensor(np.float32(done)).to(self.device)
         weights = torch.FloatTensor(weights).to(self.device)
 
         # Q-Learning with target network
@@ -126,8 +129,6 @@ class DQNBase(NetBase):
         if len(self._observation_shape) <= 1: # not image
             self.features = nn.Sequential(
                 nn.Linear(self._observation_shape[0], hidden_dim),
-                activation,
-                nn.Linear(hidden_dim, hidden_dim),
                 activation,
                 nn.Linear(hidden_dim, hidden_dim),
                 activation,
