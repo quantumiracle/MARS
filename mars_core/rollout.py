@@ -16,15 +16,13 @@ def rollout(env, model, args):
             if args.render:
                 env.render()
 
-            # done_ = [done, done] # TODO
-            done_ = done
-            sample = [obs, action, reward, obs_, done_]
+            sample = [obs, action, reward, obs_, done]
             model.store(sample)
 
             obs = obs_
             logger.log_reward(reward)
 
-            if np.any(done):
+            if np.any(done):  # if any player in a game is done, the game episode done; may not be correct for some envs
                 logger.log_episode_reward(step)
                 break
             
