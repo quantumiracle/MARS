@@ -16,9 +16,8 @@ Algorithms to do:
 - [ ] nash-dqn
 
 Supported environments:
-- [x] Mars
-<!-- - [x] Openai Gym -->
-<!-- - [x] PettingZoo
+- [x] Openai Gym
+- [x] PettingZoo
 - [x] LaserTag
 - [x] SlimeVolley
-- [ ] SMAC -->
+- [ ] SMAC
