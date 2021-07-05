@@ -8,7 +8,7 @@ from .agent import Agent
 from .nn_components import cReLU, Flatten
 from .storage import ReplayBuffer
 from .rl_utils import choose_optimizer, EpsilonScheduler
-from .networks import NetBase
+from .networks import NetBase, get_model
 
 class DQN(Agent):
     """
@@ -34,14 +34,14 @@ class DQN(Agent):
     def _select_type(self, env, args):
         if args.num_envs == 1:
             if args.algorithm_spec['dueling']:
-                model = DuelingDQN(env, args.hidden_dim)
+                model = DuelingDQN(env, args)
             else:
-                model = DQNBase(env, args.hidden_dim)
+                model = DQNBase(env, args)
         else:
             if args.algorithm_spec['dueling']:
-                model = ParallelDuelingDQN(env, args.hidden_dim, args.num_envs)
+                model = ParallelDuelingDQN(env, args, args.num_envs)
             else:
-                model = ParallelDQN(env, args.hidden_dim, args.num_envs)
+                model = ParallelDQN(env, args, args.num_envs)
         return model
 
     def choose_action(self, state, epsilon=None):
@@ -117,49 +117,49 @@ class DQNBase(NetBase):
     ---------
     env         environment(openai gym)
     """
-    def __init__(self, env, hidden_dim=64):
+    def __init__(self, env, args):
         super().__init__(env)
-        self.construct_net(hidden_dim, nn.Tanh())
-
-    def construct_net(self, hidden_dim, activation=nn.ReLU()):
-        self.flatten = Flatten()
-        self.hidden_dim = hidden_dim
-        
         if len(self._observation_shape) <= 1: # not image
-            self.features = nn.Sequential(
-                nn.Linear(self._observation_shape[0], hidden_dim),
-                activation,
-                nn.Linear(hidden_dim, hidden_dim),
-                activation,
-            )
+            self.net = get_model('mlp')(env, args)
         else:
-            self.features = nn.Sequential(
-                nn.Conv2d(self._observation_shape[0], 8, kernel_size=4, stride=2),
-                activation,
-                nn.Conv2d(16, 8, kernel_size=5, stride=1),
-                activation,
-                nn.Conv2d(16, 8, kernel_size=3, stride=1),
-                activation,
-            )
+            self.net = get_model('cnn')(env, args)
+
+    #     self.construct_net(hidden_dim, nn.Tanh())
+
+    # def construct_net(self, hidden_dim_list, hidden_activation=nn.ReLU()):
+    #     self.flatten = Flatten()
+    #     self.hidden_dim = hidden_dim
         
-        self.fc = nn.Sequential(
-            nn.Linear(self._feature_size(), hidden_dim),
-            activation,
-            nn.Linear(hidden_dim, self._action_shape)
-        )
+    #     if len(self._observation_shape) <= 1: # not image
+    #         self.features = nn.Sequential(
+    #             nn.Linear(self._observation_shape[0], hidden_dim),
+    #             activation,
+    #             nn.Linear(hidden_dim, hidden_dim),
+    #             activation,
+    #         )
+    #     else:
+    #         self.features = nn.Sequential(
+    #             nn.Conv2d(self._observation_shape[0], 8, kernel_size=4, stride=2),
+    #             activation,
+    #             nn.Conv2d(16, 8, kernel_size=5, stride=1),
+    #             activation,
+    #             nn.Conv2d(16, 8, kernel_size=3, stride=1),
+    #             activation,
+    #         )
         
-    def forward(self, x):
-        x = self.features(x)
-        x = self.flatten(x)
-        x = self.fc(x)
-        return x
+    #     self.fc = nn.Sequential(
+    #         nn.Linear(self._feature_size(), hidden_dim),
+    #         activation,
+    #         nn.Linear(hidden_dim, self._action_shape)
+    #     )
+        
+    # def forward(self, x):
+    #     x = self.features(x)
+    #     x = self.flatten(x)
+    #     x = self.fc(x)
+    #     return x
     
-    def _feature_size(self):
-        if isinstance(self._observation_shape, int):
-            return self.features(torch.zeros(1, self._observation_shape)).view(1, -1).size(1)
-        else:
-            return self.features(torch.zeros(1, *self._observation_shape)).view(1, -1).size(1)
-    
+
     def choose_action(self, state, epsilon=0.):
         """
         Parameters
@@ -170,7 +170,7 @@ class DQNBase(NetBase):
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
                 state   = state.unsqueeze(0)
-                q_value = self.forward(state)
+                q_value = self.net(state)
                 action  = q_value.max(1)[1].item()
         else:
             action = random.randrange(self._action_shape)
