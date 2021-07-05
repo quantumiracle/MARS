@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
+
+
 class Agent(object):
     """
     A standard agent class.
@@ -9,12 +11,12 @@ class Agent(object):
         super(Agent, self).__init__()
         self.batch_size = args.batch_size
         if args.device == 'gpu':
-            self.device =  torch.device("cuda:0")
+            self.device = torch.device("cuda:0")
         elif args.device == 'cpu':
-            self.device = torch.device("cpu") 
-        self.not_learnable = False # whether the model is fixed (not learnable) or not
+            self.device = torch.device("cpu")
+        self.not_learnable = False  # whether the model is fixed (not learnable) or not
 
-    def fix(self,):
+    def fix(self, ):
         self.not_learnable = True
 
     def choose_action(self, state, *args):
@@ -38,7 +40,7 @@ class Agent(object):
         Update the target model when necessary.
         """
         target_model.load_state_dict(current_model.state_dict())
-        
+
     def save_model(self, path=None):
         pass
 
@@ -72,11 +74,11 @@ class MultiAgent(Agent):
 
         else:
             prefix = f'Agents No. {self.not_learnable_list} (index starting from 0)'
-        print(prefix+" are not learnable.")
+        print(prefix + " are not learnable.")
 
     def choose_action(self, states):
         actions = []
-        for state, agent in zip(states, self.agents): 
+        for state, agent in zip(states, self.agents):
             action = agent.choose_action(state)
             actions.append(action)
         return actions
@@ -86,8 +88,9 @@ class MultiAgent(Agent):
             agent.scheduler_step(frame)
 
     def store(self, sample):
-        for i, agent, *s in zip(np.arange(self.number_of_agents), self.agents, *sample):
-            if i not in self.not_learnable_list: # no need to store samples for not learnable models
+        for i, agent, *s in zip(np.arange(self.number_of_agents), self.agents,
+                                *sample):
+            if i not in self.not_learnable_list:  # no need to store samples for not learnable models
                 agent.store(tuple(s))
 
     def update(self):
@@ -98,7 +101,7 @@ class MultiAgent(Agent):
             else:
                 losses.append(0.)
         return losses
-    
+
     def save_model(self, path=None):
         for agent in self.agents:
             agent.save_model(path)
@@ -118,11 +121,6 @@ class MultiAgent(Agent):
             if i not in self.not_learnable_list:
                 ready_state.append(agent.ready_to_update)
         if np.all(ready_state):
-            return True 
+            return True
         else:
             return False
-
-
-
-    
-        
