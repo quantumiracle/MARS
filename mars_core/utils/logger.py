@@ -1,4 +1,8 @@
 import numpy as np
+from datetime import datetime
+import os
+from torch.utils.tensorboard import SummaryWriter
+
 
 def init_logger(env, args):
     logger = Logger(env, args)
@@ -15,10 +19,26 @@ class Logger():
         self.epi_length = []
         self.current_episode = 0
 
-        self._create_log_dir()
+        self._create_dirs(args)
+        self.writer = SummaryWriter(self.runs_dir)
 
-    def _create_log_dir(self):
-        pass
+    def _create_dirs(self, args):
+        """
+        Create saving directories for:
+        * logging
+        * tensorboard running information
+        * models
+        """
+        now = datetime.now()
+        dt_string = now.strftime("%d%m%Y%H%M%S")
+        post_fix = f"{args.env_type}_{args.env_name}_marl_method_{dt_string}/"
+
+        self.log_dir = f'../data/log/'+post_fix
+        self.runs_dir = f'../data/tensorboard/'+post_fix
+        self.model_dir = f'../model/'+post_fix
+        os.makedirs(self.log_dir, exist_ok=True)
+        os.makedirs(self.runs_dir, exist_ok=True)
+        os.makedirs(self.model_path, exist_ok=True)
 
     def _clear_dict(self, keys, v=0.):
         return {a:v for a in keys}
@@ -33,13 +53,16 @@ class Logger():
     def log_episode_reward(self, step):
         for k, v in self.rewards.items():
             self.epi_rewards[k].append(v)
+            self.writer.add_scalars(f"Episode Reward/{k}", self.epi_rewards[k][-1], self.current_episode)
         self.rewards =  self._clear_dict(self.keys)
         self.epi_length.append(step)
         self.current_episode += 1
 
+
     def log_loss(self, loss):
         for k, l in zip(self.losses.keys(), loss):
             self.losses[k].append(l)
+            self.writer.add_scalars(f"RL Loss/{k}", self.losses[k][-1], self.current_episode)
 
     def print(self):
         print(f'Episode: {self.current_episode}, avg. length {np.mean(self.epi_length[-self.avg_window:])}')
