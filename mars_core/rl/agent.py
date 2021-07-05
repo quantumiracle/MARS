@@ -11,7 +11,7 @@ class Agent(object):
         super(Agent, self).__init__()
         self.batch_size = args.batch_size
         if args.device == 'gpu':
-            self.device = torch.device("cuda:0")
+            self.device = torch.device("cuda:0")  # TODO
         elif args.device == 'cpu':
             self.device = torch.device("cpu")
         self.not_learnable = False  # whether the model is fixed (not learnable) or not

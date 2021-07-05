@@ -33,6 +33,18 @@ train_args:
     render: False
     test: False
     load_model_idx: None
+    net_architecture: 
+        hidden_dim_list: [64, 64, 64] 
+        hidden_activation: ReLU
+        output_activation: None
+
+    # net_architecture: 
+    #     channel_list: [8, 8, 16]   # the first channel number is from the input
+    #     kernel_size_list: [4, 4, 4]
+    #     stride_list: [2, 1, 1]
+    #     hidden_activation: ReLU
+    #     hidden_dim_list: [64, ]   # MLP after CNN 
+    #     output_activation: None
 
     marl_method: None
     marl_spec: {}  # MARL method specific configurations, empty dict
