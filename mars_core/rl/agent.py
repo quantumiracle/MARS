@@ -63,6 +63,7 @@ class MultiAgent(Agent):
     def __init__(self, env, agents, args):
         super(MultiAgent, self).__init__(env, args)
         self.agents = agents
+        self.args = args
         self.number_of_agents = len(self.agents)
         self.not_learnable_list = []
         for i, agent in enumerate(agents):
@@ -75,6 +76,10 @@ class MultiAgent(Agent):
         else:
             prefix = f'Agents No. {self.not_learnable_list} (index starting from 0)'
         print(prefix + " are not learnable.")
+
+        if args.test:
+            model_path =  f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.load_model_idx}"
+            self.load_model(model_path)
 
     def choose_action(self, states):
         actions = []
@@ -106,9 +111,9 @@ class MultiAgent(Agent):
         for agent in self.agents:
             agent.save_model(path)
 
-    def load_model(self, path=None):
+    def load_model(self, path=None, eval=True):
         for agent in self.agents:
-            agent.load_model(path)
+            agent.load_model(path, eval)
 
     @property
     def ready_to_update(self) -> bool:
@@ -116,11 +121,14 @@ class MultiAgent(Agent):
         A function returns whether all learnable agents are ready to be updated, 
         called from the main rollout function.
         """
-        ready_state = []
-        for i, agent in enumerate(self.agents):
-            if i not in self.not_learnable_list:
-                ready_state.append(agent.ready_to_update)
-        if np.all(ready_state):
-            return True
-        else:
+        if self.args.test:  # no model is updated in test mode
             return False
+        else:
+            ready_state = []
+            for i, agent in enumerate(self.agents):
+                if i not in self.not_learnable_list:
+                    ready_state.append(agent.ready_to_update)
+            if np.all(ready_state):
+                return True
+            else:
+                return False

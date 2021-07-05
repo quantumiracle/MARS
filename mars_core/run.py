@@ -11,10 +11,7 @@ from rl.agent import MultiAgent
 # yaml_file = 'confs/slimevolley_slimevolleyv0'
 yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay'
 
-
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
-print(args)
-
 
 ### Create env
 env = make_env(args)
