@@ -9,11 +9,6 @@ class SelfPlayMetaLearner():
     """
     def __init__(self, logger, args, save_checkpoint=True):
         super(SelfPlayMetaLearner, self).__init__()
-        # create model checkpoint save directory
-        # now = datetime.now()
-        # dt_string = now.strftime("%d%m%Y%H%M%S")
-        # self.model_path = f'../model/{args.env_type}_{args.env_name}_marl_method_{dt_string}/'
-        # os.makedirs(self.model_path, exist_ok=True)
         self.model_path = logger.model_dir
 
         # get names
