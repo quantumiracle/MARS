@@ -2,6 +2,7 @@ import numpy as np
 from utils.logger import init_logger
 from marl.meta_learner import init_meta_learner
 
+
 def rollout(env, model, args):
     print("Arguments: ", args)
     overall_steps = 0
@@ -24,20 +25,24 @@ def rollout(env, model, args):
             obs = obs_
             logger.log_reward(reward)
 
-            if np.any(done):  # if any player in a game is done, the game episode done; may not be correct for some envs
+            if np.any(
+                    done
+            ):  # if any player in a game is done, the game episode done; may not be correct for some envs
                 logger.log_episode_reward(step)
                 break
-            
+
             if model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
                     for _ in range(args.update_itr):
                         loss = model.update()
                         logger.log_loss(loss)
-                elif overall_steps*args.update_itr % 1 == 0:
+                elif overall_steps * args.update_itr % 1 == 0:
                     loss = model.update()
                     logger.log_loss(loss)
 
-        meta_learner.step(model, logger)  # metalearner for selfplay need just one step per episode
+        meta_learner.step(
+            model,
+            logger)  # metalearner for selfplay need just one step per episode
 
         if epi % args.log_interval == 0:
-            logger.print()
+            logger.print_and_save()
