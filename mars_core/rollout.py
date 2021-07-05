@@ -37,7 +37,7 @@ def rollout(env, model, args):
                     loss = model.update()
                     logger.log_loss(loss)
 
-                meta_learner.step(model, logger)
+        meta_learner.step(model, logger)  # metalearner for selfplay need just one step per episode
 
         if epi % args.log_interval == 0:
-            logger.print(epi)
+            logger.print()

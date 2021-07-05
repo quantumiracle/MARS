@@ -97,8 +97,8 @@ class DQN(Agent):
         return loss.item()
 
     def save_model(self, path):
-        torch.save(self.policy.state_dict(), path+'_model')
-        torch.save(self.policy.state_dict(), path+'_target')
+        torch.save(self.model.state_dict(), path+'_model')
+        torch.save(self.target.state_dict(), path+'_target')
 
     def load_model(self, path, eval=True):
         self.model.load_state_dict(torch.load(path+'_model'))

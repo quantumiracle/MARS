@@ -53,6 +53,10 @@ class Agent(object):
 class MultiAgent(Agent):
     """
     A class containing all agents in a game.
+
+    Definition of 'not_learnable': the agent is not self-updating using
+    the RL loss, it's either never updated (i.e., 'fixed') or updated as
+    a delayed copy of other learnable agents with the MARL learning scheme.
     """
     def __init__(self, env, agents, args):
         super(MultiAgent, self).__init__(env, args)
@@ -60,7 +64,8 @@ class MultiAgent(Agent):
         self.number_of_agents = len(self.agents)
         self.not_learnable_list = []
         for i, agent in enumerate(agents):
-            if agent.not_learnable:
+            if agent.not_learnable or \
+                (args.marl_method is not None and i != args.marl_spec['trainable_agent_idx']):
                 self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
@@ -103,7 +108,11 @@ class MultiAgent(Agent):
             agent.load_model(path)
 
     @property
-    def ready_to_update(self):
+    def ready_to_update(self) -> bool:
+        """ 
+        A function returns whether all learnable agents are ready to be updated, 
+        called from the main rollout function.
+        """
         ready_state = []
         for i, agent in enumerate(self.agents):
             if i not in self.not_learnable_list:
