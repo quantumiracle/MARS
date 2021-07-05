@@ -1,12 +1,13 @@
 env_args:
-    env_name: None
-    env_type: None
+    env_name: SlimeVolley-v0
+    env_type: slimevolley
     num_envs: 1
+    against_baseline: False
     ram: True
     seed: 1122
 
 agent_args:
-    hidden_dim: 64
+    hidden_dim: 256
     algorithm: DQN
     algorithm_spec:
         dueling: False
@@ -32,5 +33,8 @@ train_args:
     log_interval: 20  # log print interval 
     render: False
 
-    marl_method: None
-    marl_spec: {}  # MARL method specific configurations, empty dict
+    marl_method: selfplay
+    marl_spec:  # configurations for specific MARL method
+        selfplay_score_delta: 1. # the score that current learning agent must beat its opponent to update opponent's policy
+        trainable_agent_idx: 0   # the index of trainable agent, with its opponent delayed updated
+        opponent_idx: 1          # the one to be updated from trainable agent

@@ -11,8 +11,9 @@ class Logger():
         self.epi_rewards = self._clear_dict_as_list(self.keys)
         self.rewards = self._clear_dict(self.keys)
         self.losses = self._clear_dict_as_list(self.keys)
-        self.epi_length = []
         self.avg_window = args.log_avg_window  # average over the past
+        self.epi_length = []
+        self.current_episode = 0
 
         self._create_log_dir()
 
@@ -34,13 +35,14 @@ class Logger():
             self.epi_rewards[k].append(v)
         self.rewards =  self._clear_dict(self.keys)
         self.epi_length.append(step)
+        self.current_episode += 1
 
     def log_loss(self, loss):
         for k, l in zip(self.losses.keys(), loss):
             self.losses[k].append(l)
 
-    def print(self, epi):
-        print(f'Episode: {epi}, avg. length {np.mean(self.epi_length[-self.avg_window:])}')
+    def print(self):
+        print(f'Episode: {self.current_episode}, avg. length {np.mean(self.epi_length[-self.avg_window:])}')
         for k in self.keys:
             print(f"{k}: \
                 episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}, \
