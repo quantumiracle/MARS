@@ -120,9 +120,9 @@ class DQNBase(NetBase):
     def __init__(self, env, net_args):
         super().__init__(env)
         if len(self._observation_shape) <= 1: # not image
-            self.net = get_model('mlp')(env, net_args)
+            self.net = get_model('mlp')(env, net_args, model_for='discrete_q')
         else:
-            self.net = get_model('cnn')(env, net_args)
+            self.net = get_model('cnn')(env, net_args, model_for='discrete_q')
 
     def forward(self, x):
         return self.net(x)

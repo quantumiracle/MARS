@@ -1,8 +1,7 @@
 from utils.func import LoadYAML2Dict
 from env.import_env import make_env
 from rollout import rollout
-from rl.dqn import DQN
-from rl.agent import MultiAgent
+from rl.algorithm import *
 
 ### Load configurations
 # yaml_file = 'confs/pettingzoo_pongv1_selfplay'
