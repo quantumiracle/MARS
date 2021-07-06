@@ -10,8 +10,8 @@ class NetBase(nn.Module):
     def __init__(self, env):
         super(NetBase, self).__init__()
         self._preprocess(env)
-        self.net = None
         self.features = None
+        self.body = None
 
     def _preprocess(self, env):
         self._observation_space = env.observation_space
@@ -28,6 +28,16 @@ class NetBase(nn.Module):
         else:
             self._action_dim = self._action_shape[0]
         # print(f"observation shape: {self._observation_shape}, action shape: {self._action_shape}")
+    
+    def _get_output_dim(self, model_for):  
+        if model_for == 'gaussian_policy':  # diagonal Gaussian: means and stds
+            return 2*self._action_dim 
+        elif model_for == 'discrete_policy':  # categorical
+            return self._action_dim
+        elif model_for == 'discrete_q': 
+            return self._action_dim
+        elif model_for == 'continuous_q' or 'value':
+            return 1
 
     def _construct_net(self, args):
         pass
@@ -36,7 +46,7 @@ class NetBase(nn.Module):
         """ need to be overwritten by the subclass """
         if self.features is not None:
             x = self.features(x)
-        x = self.net(x)
+        x = self.body(x)
         return x
 
     def _feature_size(self):
@@ -50,13 +60,14 @@ class NetBase(nn.Module):
 
 
 class MLP(NetBase):
-    def __init__(self, env, args):
+    def __init__(self, env, net_args, model_for):
         super().__init__(env)
-        layers_config = copy.deepcopy(args['net_architecture'])
+        layers_config = copy.deepcopy(net_args)
         layers_config['hidden_dim_list'].insert(0, self._observation_dim)
-        layers_config['hidden_dim_list'].append(self._action_dim)
-        self.net = self._construct_net(layers_config)
+        output_dim = self._get_output_dim(model_for)
+        layers_config['hidden_dim_list'].append(output_dim)
         self.features = None
+        self.body = self._construct_net(layers_config)
 
     def _construct_net(self, layers_config):
         layers = []
@@ -65,23 +76,25 @@ class MLP(NetBase):
                 nn.Linear(layers_config['hidden_dim_list'][j],
                           layers_config['hidden_dim_list'][j + 1])
             ]
-            if layers_config['hidden_activation'] is not None and layers_config['hidden_activation'] != 'None':
+            if layers_config['hidden_activation']:
                 tmp.append(
                     getattr(torch.nn, layers_config['hidden_activation'])())
             layers += tmp
-        if layers_config['output_activation'] is not None and layers_config['output_activation'] != 'None':
+        if layers_config['output_activation']:
             layers += [getattr(torch.nn, layers_config['output_activation'])()]
         return nn.Sequential(*layers)
 
 
 class CNN(NetBase):
-    def __init__(self, env, args):
+    def __init__(self, env, net_args, model_for):
         super().__init__(env)
-        layers_config = copy.deepcopy(args.net_architecture)
+        layers_config = copy.deepcopy(net_args)
         layers_config['channel_list'].insert(0, self._observation_shape[0])
         self.features = self._construct_cnn_net(layers_config)
         layers_config['hidden_dim_list'].insert(0, self._feature_size())
-        self.net = self._construct_net(layers_config)
+        output_dim = self._get_output_dim(model_for)
+        layers_config['hidden_dim_list'].append(output_dim)
+        self.body = self._construct_net(layers_config)
 
     def _construct_cnn_net(self, layers_config):
         layers = []
@@ -90,7 +103,7 @@ class CNN(NetBase):
                 nn.Conv2d(layers_config["channel_list"][i],
                           layers_config["channel_list"][i + 1])
             ]
-            if layers_config['hidden_activation'] is not None and layers_config['hidden_activation'] != 'None':
+            if layers_config['hidden_activation']:
                 tmp.append(
                     getattr(torch.nn, layers_config["hidden_activation"])())
             # TODO add pooling
@@ -105,16 +118,19 @@ class CNN(NetBase):
                 nn.Linear(layers_config['hidden_dim_list'][j],
                           layers_config['hidden_dim_list'][j + 1])
             ]
-            if layers_config['hidden_activation'] is not None and layers_config['hidden_activation'] != 'None':
+            if layers_config['hidden_activation']:
                 tmp.append(
                     getattr(torch.nn, layers_config['hidden_activation'])())
             layers += tmp
-        if layers_config['output_activation'] is not None and layers_config['output_activation'] != 'None':
+        if layers_config['output_activation']:
             layers += [getattr(torch.nn, layers_config['output_activation'])()]
         return nn.Sequential(*layers)
 
 
-def get_model(model_type="mlp"):
+def get_model(model_type="mlp", model_for='value'):
+    """
+        :param str model_for: 'value' or 'policy'
+    """
     if model_type == "mlp":
         handler = MLP
     elif model_type == "rnn":
@@ -126,8 +142,8 @@ def get_model(model_type="mlp"):
     else:
         raise NotImplementedError
 
-    def builder(env, args):
-        model = handler(env, copy.deepcopy(args))
+    def builder(env, net_args):
+        model = handler(env, copy.deepcopy(net_args), model_for)
         return model
 
     return builder

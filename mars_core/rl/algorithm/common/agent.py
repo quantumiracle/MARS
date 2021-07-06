@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-
 class Agent(object):
     """
     A standard agent class.
@@ -10,6 +9,7 @@ class Agent(object):
     def __init__(self, env, args):
         super(Agent, self).__init__()
         self.batch_size = args.batch_size
+        self.schedulers = []
         if args.device == 'gpu':
             self.device = torch.device("cuda:0")  # TODO
         elif args.device == 'cpu':
@@ -68,7 +68,7 @@ class MultiAgent(Agent):
         self.not_learnable_list = []
         for i, agent in enumerate(agents):
             if agent.not_learnable or \
-                (args.marl_method is not None and i != args.marl_spec['trainable_agent_idx']):
+                (args.marl_method and i != args.marl_spec['trainable_agent_idx']):
                 self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
@@ -104,7 +104,7 @@ class MultiAgent(Agent):
             if i not in self.not_learnable_list:
                 losses.append(agent.update())
             else:
-                losses.append(0.)
+                losses.append(np.nan)
         return losses
 
     def save_model(self, path=None):

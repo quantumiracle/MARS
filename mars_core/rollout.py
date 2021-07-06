@@ -15,11 +15,20 @@ def rollout(env, model, args):
             overall_steps += 1
             action = model.choose_action(obs)
             model.scheduler_step(overall_steps)
-            obs_, reward, done, info = env.step(action)
+            try:
+                obs_, reward, done, info = env.step(action)
+                other_info=None
+            except:
+                # action contains additional information like log probability
+                action, other_info = np.vstack(action).T
+                obs_, reward, done, info = env.step(action)
             if args.render:
                 env.render()
 
-            sample = [obs, action, reward, obs_, done]
+            if other_info is None: 
+                sample = [obs, action, reward, obs_, done]
+            else:
+                sample = [obs, action, reward, obs_, other_info, done]
             model.store(sample)
 
             obs = obs_

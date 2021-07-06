@@ -4,11 +4,11 @@ import torch.nn.functional as F
 
 import numpy as np
 import random, copy
-from .agent import Agent
-from .nn_components import cReLU, Flatten
-from .storage import ReplayBuffer
-from .rl_utils import choose_optimizer, EpsilonScheduler
-from .networks import NetBase, get_model
+from .common.agent import Agent
+from .common.nn_components import cReLU, Flatten
+from .common.storage import ReplayBuffer
+from .common.rl_utils import choose_optimizer, EpsilonScheduler
+from .common.networks import NetBase, get_model
 
 class DQN(Agent):
     """
@@ -23,7 +23,7 @@ class DQN(Agent):
         self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
         self.epsilon_scheduler = EpsilonScheduler(args.algorithm_spec['eps_start'], args.algorithm_spec['eps_final'], args.algorithm_spec['eps_decay'])
-        self.schedulers = [self.epsilon_scheduler]
+        self.schedulers.append(self.epsilon_scheduler)
 
         self.gamma = float(args.algorithm_spec['gamma'])
         self.multi_step = args.algorithm_spec['multi_step']  # TODO
@@ -34,14 +34,14 @@ class DQN(Agent):
     def _select_type(self, env, args):
         if args.num_envs == 1:
             if args.algorithm_spec['dueling']:
-                model = DuelingDQN(env, args)
+                model = DuelingDQN(env, args.net_architecture)
             else:
-                model = DQNBase(env, args)
+                model = DQNBase(env, args.net_architecture)
         else:
             if args.algorithm_spec['dueling']:
-                model = ParallelDuelingDQN(env, args, args.num_envs)
+                model = ParallelDuelingDQN(env, args.net_architecture, args.num_envs)
             else:
-                model = ParallelDQN(env, args, args.num_envs)
+                model = ParallelDQN(env, args.net_architecture, args.num_envs)
         return model
 
     def choose_action(self, state, epsilon=None):
@@ -117,48 +117,15 @@ class DQNBase(NetBase):
     ---------
     env         environment(openai gym)
     """
-    def __init__(self, env, args):
+    def __init__(self, env, net_args):
         super().__init__(env)
         if len(self._observation_shape) <= 1: # not image
-            self.net = get_model('mlp')(env, args)
+            self.net = get_model('mlp')(env, net_args)
         else:
-            self.net = get_model('cnn')(env, args)
+            self.net = get_model('cnn')(env, net_args)
 
-    #     self.construct_net(hidden_dim, nn.Tanh())
-
-    # def construct_net(self, hidden_dim_list, hidden_activation=nn.ReLU()):
-    #     self.flatten = Flatten()
-    #     self.hidden_dim = hidden_dim
-        
-    #     if len(self._observation_shape) <= 1: # not image
-    #         self.features = nn.Sequential(
-    #             nn.Linear(self._observation_shape[0], hidden_dim),
-    #             activation,
-    #             nn.Linear(hidden_dim, hidden_dim),
-    #             activation,
-    #         )
-    #     else:
-    #         self.features = nn.Sequential(
-    #             nn.Conv2d(self._observation_shape[0], 8, kernel_size=4, stride=2),
-    #             activation,
-    #             nn.Conv2d(16, 8, kernel_size=5, stride=1),
-    #             activation,
-    #             nn.Conv2d(16, 8, kernel_size=3, stride=1),
-    #             activation,
-    #         )
-        
-    #     self.fc = nn.Sequential(
-    #         nn.Linear(self._feature_size(), hidden_dim),
-    #         activation,
-    #         nn.Linear(hidden_dim, self._action_shape)
-    #     )
-        
-    # def forward(self, x):
-    #     x = self.features(x)
-    #     x = self.flatten(x)
-    #     x = self.fc(x)
-    #     return x
-    
+    def forward(self, x):
+        return self.net(x)
 
     def choose_action(self, state, epsilon=0.):
         """
@@ -176,27 +143,79 @@ class DQNBase(NetBase):
             action = random.randrange(self._action_shape)
         return action
 
+
 class DuelingDQN(DQNBase):
     """
     Dueling Network Architectures for Deep Reinforcement Learning
     https://arxiv.org/abs/1511.06581
     """
-    def __init__(self, env, hidden_dim=64, activation=nn.Tanh(), **kw):
-        super().__init__(env, hidden_dim, **kw)
-        self.advantage = self.fc
+    def __init__(self, env, args):
+        super().__init__(env)
+        # Here I use separate networks for advantage and value heads 
+        # due to the usage of internal network builder, they should use
+        # a shared network body with two heads.
+        if len(self._observation_shape) <= 1: # not image
+            self.advantage = get_model('mlp')(env, args)
+            self.value = get_model('mlp')(env, args)
+        else:  
+            self.advantage = get_model('cnn')(env, args)
+            self.value = get_model('cnn')(env, args)
 
-        self.value = nn.Sequential(
-            nn.Linear(self._feature_size(), hidden_dim),
-            activation,
-            nn.Linear(hidden_dim, 1)
-        )
-    
-    def forward(self, x):
-        x = self.features(x)
-        x = self.flatten(x)
+    def net(self, x):
         advantage = self.advantage(x)
         value = self.value(x)
         return value + advantage - advantage.mean(1, keepdim=True)
+
+# class DuelingDQN(DQNBase):
+#     """
+#     Dueling Network Architectures for Deep Reinforcement Learning
+#     https://arxiv.org/abs/1511.06581
+#     Different from above, a self-contained version, using a shared network body for advantage and value heads.
+#     """
+#     def __init__(self, env, hidden_dim=64, activation=nn.Tanh(), **kw):
+#         super().__init__(env, hidden_dim, **kw)
+#         self.construct_net(hidden_dim, nn.Tanh())
+        
+#         self.advantage = self.fc
+
+#         self.value = nn.Sequential(
+#             nn.Linear(self._feature_size(), hidden_dim),
+#             activation,
+#             nn.Linear(hidden_dim, 1))
+        
+#     def construct_net(self, hidden_dim=64, activation=nn.ReLU()):
+#         self.flatten = Flatten()
+#         activation = nn.Tanh()
+        
+#         if len(self._observation_shape) <= 1: # not image
+#             self.features = nn.Sequential(
+#                 nn.Linear(self._observation_shape[0], hidden_dim),
+#                 activation,
+#                 nn.Linear(hidden_dim, hidden_dim),
+#                 activation,
+#             )
+#         else:
+#             self.features = nn.Sequential(
+#                 nn.Conv2d(self._observation_shape[0], 8, kernel_size=4, stride=2),
+#                 activation,
+#                 nn.Conv2d(16, 8, kernel_size=5, stride=1),
+#                 activation,
+#                 nn.Conv2d(16, 8, kernel_size=3, stride=1),
+#                 activation,
+#             )
+        
+#         self.fc = nn.Sequential(
+#             nn.Linear(self._feature_size(), hidden_dim),
+#             activation,
+#             nn.Linear(hidden_dim, self._action_shape)
+#         )
+
+#     def net(self, x):
+#         x = self.features(x)
+#         x = self.flatten(x)
+#         advantage = self.advantage(x)
+#         value = self.value(x)
+#         return value + advantage - advantage.mean(1, keepdim=True)
 
 class ParallelDQN(DQNBase):
     """
@@ -206,8 +225,8 @@ class ParallelDQN(DQNBase):
     ---------
     env         environment(openai gym)
     """
-    def __init__(self, env, hidden_dim=64, number_envs=2):
-        super(ParallelDQN, self).__init__(env, hidden_dim)
+    def __init__(self, env, args, number_envs=2):
+        super(ParallelDQN, self).__init__(env, args)
         self.number_envs = number_envs
 
     def choose_action(self, state, epsilon):
@@ -219,7 +238,7 @@ class ParallelDQN(DQNBase):
         """
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
-                q_value = self.forward(state)
+                q_value = self.net(state)
                 action = q_value.max(1)[1].detach().cpu().numpy()
         else:
             action = np.random.randint(self._action_shape, size=self.number_envs)

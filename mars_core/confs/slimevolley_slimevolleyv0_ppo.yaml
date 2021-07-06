@@ -8,17 +8,13 @@ env_args:
 
 agent_args:
     hidden_dim: 256
-    algorithm: DQN
+    algorithm: PPO
     algorithm_spec:
-        dueling: False
         replay_buffer_size: 1e5
         gamma: 0.99
-        multi_step: 1
-        target_update_interval: 1000 # updates skipped to update the target
-        eps_start: 1.
-        eps_final: 0.01
-        eps_decay: 30000  # tune according to env
-
+        lambda: 0.95
+        eps_clip: 0.2
+        K_epoch: 4
 
 train_args:
     batch_size: 32
@@ -32,7 +28,12 @@ train_args:
     log_avg_window: 20 # average window length in logging
     log_interval: 20  # log print interval 
     render: False
-    net_architecture: 
-        hidden_dim_list: [64, 64, 64]  
-        hidden_activation: Tanh
-        output_activation: False
+    net_architecture:   
+        policy:
+            hidden_dim_list: [256, 256, 256]  
+            hidden_activation: Tanh
+            output_activation: Softmax
+        value:
+            hidden_dim_list: [256, 256, 256]  
+            hidden_activation: Tanh
+            output_activation: False
