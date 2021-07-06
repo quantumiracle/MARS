@@ -1,49 +1,48 @@
-import gym
+import copy
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
-import argparse
 import numpy as np
-from .networks import PolicyMLP, ValueMLP, PolicyCNN, ValueCNN
-from agent import Agent
+from .common.networks import MLP, CNN
+from .common.agent import Agent
+from .common.rl_utils import choose_optimizer
+
+def PPO(env, args):
+    if True: # discrete TODO
+        return PPODiscrete(env, args)
+    else:
+        return None
 
 class PPODiscrete(Agent):
-    def __init__(self, state_space, action_space, func_approx = 'MLP', learner_args={}, **kwargs):
-        super(PPODiscrete, self).__init__()
-        self.learning_rate = kwargs['learning_rate']
-        self.gamma = kwargs['gamma']
-        self.lmbda = kwargs['lmbda']
-        self.eps_clip = kwargs['eps_clip']
-        self.K_epoch = kwargs['K_epoch']
-        self.device = torch.device(learner_args['device'])
-        hidden_dim = kwargs['hidden_dim']
+    def __init__(self, env, args):
+        super().__init__(env, args)
+        self.learning_rate = args.learning_rate
+        self.gamma = float(args.algorithm_spec['gamma'])
+        self.lmbda = float(args.algorithm_spec['lambda'])
+        self.eps_clip = float(args.algorithm_spec['eps_clip'])
+        self.K_epoch = args.algorithm_spec['K_epoch']
 
-        self.data = []
-        if func_approx == 'MLP':
-            self.policy = PolicyMLP(state_space, action_space, hidden_dim, self.device).to(self.device)
-            self.policy_old = PolicyMLP(state_space, action_space, hidden_dim, self.device).to(self.device)
-            self.policy_old.load_state_dict(self.policy.state_dict())
+        if len(env.observation_space.shape) <= 1:
+            self.policy = MLP(env, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+            self.policy_old = copy.deepcopy(self.policy).to(self.device)
+            # self.policy_old.load_state_dict(self.policy.state_dict())
+            self.value = MLP(env, args.net_architecture['value'], model_for='discrete_q').to(self.device)
 
-            self.value = ValueMLP(state_space, hidden_dim).to(self.device)
-
-        elif func_approx == 'CNN':
-            self.policy = PolicyCNN(state_space, action_space, hidden_dim, self.device).to(self.device)
-            self.policy_old = PolicyCNN(state_space, action_space, hidden_dim, self.device).to(self.device)
-            self.policy_old.load_state_dict(self.policy.state_dict())
-
-            self.value = ValueCNN(state_space, hidden_dim).to(self.device)
         else:
-            raise NotImplementedError
+            self.policy = CNN(env, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+            self.policy_old = copy.deepcopy(self.policy).to(self.device)
+            # self.policy_old.load_state_dict(self.policy.state_dict())
+            self.value = CNN(env, args.net_architecture['value'], model_for='discrete_q').to(self.device)
 
         # cannot use lambda in multiprocessing
         # self.pi = lambda x: self.policy.forward(x, softmax_dim=-1)
         # self.v = lambda x: self.value.forward(x)            
 
         # TODO a single optimizer for two nets may be problematic
-        self.optimizer = optim.Adam(list(self.value.parameters())+list(self.policy.parameters()), lr=self.learning_rate, betas=(0.9, 0.999))
+        self.optimizer = choose_optimizer(args.optimizer)(list(self.value.parameters())+list(self.policy.parameters()), lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
+        self.data = []
 
     def pi(self, x):
         return self.policy.forward(x, softmax_dim=-1)
@@ -74,7 +73,7 @@ class PPODiscrete(Agent):
         self.data = []
         return s, a, r, s_prime, done_mask, prob_a
         
-    def train_net(self, GAE=False):
+    def update(self, GAE=False):
         s, a, r, s_prime, done_mask, oldlogprob = self.make_batch()
 
         if not GAE:
@@ -159,12 +158,12 @@ class MultiPPODiscrete(nn.Module):
     Input: observation (dict) {agent_name: agent_observation}
     Output: action (dict) {agent_name: agent_action}
     """
-    def __init__(self, agents, state_spaces, action_spaces, func_approx = 'MLP', fixed_agents=[], learner_args={}, **kwargs):
+    def __init__(self, agents, observation_spaces, action_spaces, func_approx = 'MLP', fixed_agents=[], learner_args={}, **kwargs):
         super(MultiPPODiscrete, self).__init__()
         self.fixed_agents = fixed_agents
         self.agents = {}
-        for agent_name, state_space, action_space in zip(agents, state_spaces.values(), action_spaces.values()):
-            self.agents[agent_name] = PPODiscrete(state_space, action_space, func_approx, learner_args, **kwargs).to(learner_args['device'])
+        for agent_name, observation_space, action_space in zip(agents, observation_spaces.values(), action_spaces.values()):
+            self.agents[agent_name] = PPODiscrete(observation_space, action_space, func_approx, learner_args, **kwargs).to(learner_args['device'])
         # validation check 
         for agent in fixed_agents:
             assert agent in self.agents
@@ -210,11 +209,11 @@ class ParallelPPODiscrete(nn.Module):
     """
     PPO handles parallel envs wrapped with ***VectorEnv wrapper.
     """
-    def __init__(self, num_envs, state_space, action_space, func_approx = 'MLP', learner_args={}, **kwargs):
+    def __init__(self, num_envs, observation_space, action_space, func_approx = 'MLP', learner_args={}, **kwargs):
         super(ParallelPPODiscrete, self).__init__()
         self.learning_rate = kwargs['learning_rate']
         self.gamma = kwargs['gamma']
-        self.lmbda = kwargs['lmbda']
+        self.lmbda = kwargs['lambda']
         self.eps_clip = kwargs['eps_clip']
         self.K_epoch = kwargs['K_epoch']
         self.device = torch.device(learner_args['device'])
@@ -223,18 +222,18 @@ class ParallelPPODiscrete(nn.Module):
 
         self.data = [[] for _ in range(self.num_envs)]
         if func_approx == 'MLP':
-            self.policy = PolicyMLP(state_space, action_space, hidden_dim, self.device).to(self.device)
-            self.policy_old = PolicyMLP(state_space, action_space, hidden_dim, self.device).to(self.device)
+            self.policy = PolicyMLP(observation_space, action_space, hidden_dim, self.device).to(self.device)
+            self.policy_old = PolicyMLP(observation_space, action_space, hidden_dim, self.device).to(self.device)
             self.policy_old.load_state_dict(self.policy.state_dict())
 
-            self.value = ValueMLP(state_space, hidden_dim).to(self.device)
+            self.value = ValueMLP(observation_space, hidden_dim).to(self.device)
 
         elif func_approx == 'CNN':
-            self.policy = PolicyCNN(state_space, action_space, hidden_dim, self.device).to(self.device)
-            self.policy_old = PolicyCNN(state_space, action_space, hidden_dim, self.device).to(self.device)
+            self.policy = PolicyCNN(observation_space, action_space, hidden_dim, self.device).to(self.device)
+            self.policy_old = PolicyCNN(observation_space, action_space, hidden_dim, self.device).to(self.device)
             self.policy_old.load_state_dict(self.policy.state_dict())
 
-            self.value = ValueCNN(state_space, hidden_dim).to(self.device)
+            self.value = ValueCNN(observation_space, hidden_dim).to(self.device)
         else:
             raise NotImplementedError
 
@@ -360,13 +359,13 @@ class ParallelMultiPPODiscrete(nn.Module):
     Input: observation (list of dict) [{agent_name: agent_observation}, {agent_name: agent_observation}], each dict for a single env;
     Output: action (list of dict) [{agent_name: agent_action}, {agent_name: agent_observation}], each dict for a single env.
     """
-    def __init__(self, num_envs, agents, state_spaces, action_spaces, func_approx = 'MLP', fixed_agents=[], learner_args={}, **kwargs):
+    def __init__(self, num_envs, agents, observation_spaces, action_spaces, func_approx = 'MLP', fixed_agents=[], learner_args={}, **kwargs):
         super(ParallelMultiPPODiscrete, self).__init__()
         self.fixed_agents = fixed_agents
         self.num_envs = num_envs
         self.agents = {}
-        for agent_name, state_space, action_space in zip(agents, state_spaces.values(), action_spaces.values()):
-            self.agents[agent_name] = ParallelPPODiscrete(num_envs, state_space, action_space, func_approx, learner_args, **kwargs).to(learner_args['device'])
+        for agent_name, observation_space, action_space in zip(agents, observation_spaces.values(), action_spaces.values()):
+            self.agents[agent_name] = ParallelPPODiscrete(num_envs, observation_space, action_space, func_approx, learner_args, **kwargs).to(learner_args['device'])
         # validation check 
         for agent in fixed_agents:
             assert agent in self.agents

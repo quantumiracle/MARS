@@ -212,7 +212,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
 
     def step(self, actions):
         obs, rewards, dones, infos = {},{},{},{}
-        actions_ = [self.env.discreteToBox(a) for a in actions.values()]  # from discrete to multibinary action
+        actions_ = [self.env.discreteToBox(int(a)) for a in actions.values()]  # from discrete to multibinary action
         if self.against_baseline:
             obs1, reward, done, info = self.env.step(actions_[1])
             obs0 = obs1

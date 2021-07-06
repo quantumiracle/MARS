@@ -48,7 +48,7 @@ class TestLogger():
         pass
 
     def print_and_save(self, *args):
-        # print out info
+        # print out info only
         print(
             f'Episode: {self.current_episode}, avg. length {np.mean(self.epi_length[-self.avg_window:])}'
         )
@@ -112,8 +112,9 @@ class Logger(TestLogger):
 
         # save process data
         process_data = {
-            'episode reward': self.epi_rewards,
+            'episode_reward': self.epi_rewards,
             'loss': self.losses,
+            'episode_length': self.epi_length,
         }
         json.dump(process_data, open(self.log_dir + "process.json", 'w'))
 
