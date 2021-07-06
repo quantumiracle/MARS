@@ -40,16 +40,22 @@ def rollout(env, model, args):
                 logger.log_episode_reward(step)
                 break
 
-            if model.ready_to_update and overall_steps > args.train_start_frame:
+            if not args.algorithm_spec['episodic_update'] and \
+                 model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
+                    loss = 0.
                     for _ in range(args.update_itr):
-                        loss = model.update()
-                        logger.log_loss(loss)
+                        loss += model.update()
                 elif overall_steps * args.update_itr % 1 == 0:
                     loss = model.update()
+                if overall_steps % 1000 == 0:  # loss logging interval
                     logger.log_loss(loss)
 
         if model.ready_to_update:
+            if args.algorithm_spec['episodic_update']:
+                loss = model.update()
+                logger.log_loss(loss)
+
             meta_learner.step(
                 model,
                 logger)  # metalearner for selfplay need just one step per episode

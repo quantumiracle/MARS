@@ -127,7 +127,7 @@ class CNN(NetBase):
         return nn.Sequential(*layers)
 
 
-def get_model(model_type="mlp", model_for='value'):
+def get_model(model_type="mlp"):
     """
         :param str model_for: 'value' or 'policy'
     """
@@ -142,7 +142,7 @@ def get_model(model_type="mlp", model_for='value'):
     else:
         raise NotImplementedError
 
-    def builder(env, net_args):
+    def builder(env, net_args, model_for):
         model = handler(env, copy.deepcopy(net_args), model_for)
         return model
 

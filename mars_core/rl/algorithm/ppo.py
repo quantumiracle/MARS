@@ -22,18 +22,19 @@ class PPODiscrete(Agent):
         self.lmbda = float(args.algorithm_spec['lambda'])
         self.eps_clip = float(args.algorithm_spec['eps_clip'])
         self.K_epoch = args.algorithm_spec['K_epoch']
+        self.GAE = args.algorithm_spec['GAE']
 
         if len(env.observation_space.shape) <= 1:
             self.policy = MLP(env, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
             self.policy_old = copy.deepcopy(self.policy).to(self.device)
             # self.policy_old.load_state_dict(self.policy.state_dict())
-            self.value = MLP(env, args.net_architecture['value'], model_for='discrete_q').to(self.device)
+            self.value = MLP(env, args.net_architecture['value'], model_for='value').to(self.device)
 
         else:
             self.policy = CNN(env, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
             self.policy_old = copy.deepcopy(self.policy).to(self.device)
             # self.policy_old.load_state_dict(self.policy.state_dict())
-            self.value = CNN(env, args.net_architecture['value'], model_for='discrete_q').to(self.device)
+            self.value = CNN(env, args.net_architecture['value'], model_for='value').to(self.device)
 
         # cannot use lambda in multiprocessing
         # self.pi = lambda x: self.policy.forward(x, softmax_dim=-1)
@@ -45,12 +46,12 @@ class PPODiscrete(Agent):
         self.data = []
 
     def pi(self, x):
-        return self.policy.forward(x, softmax_dim=-1)
+        return self.policy.forward(x)
 
     def v(self, x):
         return self.value.forward(x)  
 
-    def put_data(self, transition):
+    def store(self, transition):
         self.data.append(transition)
         
     def make_batch(self):
@@ -73,10 +74,10 @@ class PPODiscrete(Agent):
         self.data = []
         return s, a, r, s_prime, done_mask, prob_a
         
-    def update(self, GAE=False):
+    def update(self):
         s, a, r, s_prime, done_mask, oldlogprob = self.make_batch()
 
-        if not GAE:
+        if not self.GAE:
             rewards = []
             discounted_r = 0
             for reward, is_continue in zip(reversed(r), reversed(done_mask)):
@@ -88,10 +89,11 @@ class PPODiscrete(Agent):
             rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
             rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
+        total_loss = 0.
         for _ in range(self.K_epoch):
             vs = self.v(s)
 
-            if GAE:
+            if self.GAE:
                 # use generalized advantage estimation
                 vs_target = r + self.gamma * self.v(s_prime) * done_mask
                 delta = vs_target - self.v(s)
@@ -123,14 +125,18 @@ class PPODiscrete(Agent):
             loss = -torch.min(surr1, surr2) + 0.5*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
 
             self.optimizer.zero_grad()
-            loss.mean().backward()
+            mean_loss = loss.mean()
+            mean_loss.backward()
             self.optimizer.step()
+
+            total_loss += mean_loss.item()
 
         # Copy new weights into old policy:
         self.policy_old.load_state_dict(self.policy.state_dict())
+        return total_loss
 
     def choose_action(self, s, Greedy=False):
-        prob = self.policy_old(torch.from_numpy(s).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
+        prob = self.policy(torch.from_numpy(s).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
         if Greedy:
             a = torch.argmax(prob, dim=-1).item()
             return a
@@ -168,22 +174,22 @@ class MultiPPODiscrete(nn.Module):
         for agent in fixed_agents:
             assert agent in self.agents
 
-    def put_data(self, transition):
+    def store(self, transition):
         (observations, actions, rewards, observations_, logprobs, dones) = transition
         data = (observations.values(), actions.values(), rewards.values(), observations_.values(), logprobs.values(), dones.values())
         for agent_name, *sample in zip(self.agents, *data):
             if agent_name not in self.fixed_agents:
-                self.agents[agent_name].put_data(tuple(sample))
+                self.agents[agent_name].store(tuple(sample))
         
     def make_batch(self):
         for agent_name in self.agents:
             if agent_name not in self.fixed_agents:
                 self.agents[agent_name].make_batch()
 
-    def train_net(self, GAE=False):
+    def update(self):
         for agent_name in self.agents:
             if agent_name not in self.fixed_agents:
-                self.agents[agent_name].train_net(GAE)
+                self.agents[agent_name].update()
 
     def choose_action(self, observations, Greedy=False):
         actions={}
@@ -251,7 +257,7 @@ class ParallelPPODiscrete(nn.Module):
     def v(self, x):
         return self.value.forward(x)  
 
-    def put_data(self, transition):
+    def store(self, transition):
         for i, trans in enumerate(transition): # iterate over the list of envs
             self.data[i].append(trans)
 
@@ -332,7 +338,7 @@ class ParallelPPODiscrete(nn.Module):
         self.policy_old.load_state_dict(self.policy.state_dict())
 
     def choose_action(self, s, Greedy=False):
-        prob = self.policy_old(torch.from_numpy(s).float().to(self.device)).squeeze()  # make sure input state shape is correct
+        prob = self.policy(torch.from_numpy(s).float().to(self.device)).squeeze()  # make sure input state shape is correct
         if Greedy:
             a = torch.argmax(prob, dim=-1).item()
             return a
@@ -370,7 +376,7 @@ class ParallelMultiPPODiscrete(nn.Module):
         for agent in fixed_agents:
             assert agent in self.agents
 
-    def put_data(self, transition):
+    def store(self, transition):
         (observations, actions, rewards, observations_, logprobs, dones) = transition
         
         data = [[] for _ in range(len(self.agents))]  # first dimension is the agent
@@ -381,7 +387,7 @@ class ParallelMultiPPODiscrete(nn.Module):
 
         for agent_name, sample in zip(self.agents, data): # each sample is a list of data (containing different envs) for one agent
             if agent_name not in self.fixed_agents:
-                self.agents[agent_name].put_data(sample)
+                self.agents[agent_name].store(sample)
         
     def make_batch(self):
         for agent_name in self.agents:

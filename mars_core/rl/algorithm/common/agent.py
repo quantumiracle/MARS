@@ -49,7 +49,7 @@ class Agent(object):
 
     @property
     def ready_to_update(self):
-        pass
+        return True
 
 
 class MultiAgent(Agent):
@@ -102,7 +102,8 @@ class MultiAgent(Agent):
         losses = []
         for i, agent in enumerate(self.agents):
             if i not in self.not_learnable_list:
-                losses.append(agent.update())
+                loss = agent.update()
+                losses.append(loss)
             else:
                 losses.append(np.nan)
         return losses
