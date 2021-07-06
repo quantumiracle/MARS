@@ -4,7 +4,13 @@
 
 *If life exists on Mars, shall we human cooperate or compete with it?* 
 
-Algorithms to do:
+Basic RL Algorithms to do:
+- [x] DQN
+- [ ] PPO
+- [ ] PMOE
+- [ ] DDPG
+
+MARL Algorithms to do:
 - [ ] self-play
 - [ ] fictitious self-play
 - [ ] neural fictitious self-play
