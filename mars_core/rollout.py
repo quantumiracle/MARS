@@ -43,9 +43,8 @@ def rollout(env, model, args):
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
-                    loss = 0.
                     for _ in range(args.update_itr):
-                        loss += model.update()
+                        loss = model.update()  # only log loss for once, loss is a list
                 elif overall_steps * args.update_itr % 1 == 0:
                     loss = model.update()
                 if overall_steps % 1000 == 0:  # loss logging interval
