@@ -6,12 +6,13 @@
 
 Basic RL Algorithms to do:
 - [x] DQN
-- [ ] PPO
+- [x] PPO
+- [x] Genetic Algorithm
 - [ ] PMOE
 - [ ] DDPG
 
 MARL Algorithms to do:
-- [ ] self-play
+- [x] self-play
 - [ ] fictitious self-play
 - [ ] neural fictitious self-play
 - [ ] policy space reponse oracle
