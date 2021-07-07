@@ -7,8 +7,9 @@ from rl.algorithm import *
 # yaml_file = 'confs/pettingzoo_pongv1_selfplay'
 # yaml_file = 'confs/pettingzoo_boxingv1'
 # yaml_file = 'confs/pettingzoo_boxingv1_selfplay'
-# yaml_file = 'confs/slimevolley_slimevolleyv0'
-yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay'
+# yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay'
+# yaml_file = 'confs/slimevolley_slimevolleyv0_dqn'
+yaml_file = 'confs/slimevolley_slimevolleyv0_ppo'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
 
@@ -17,9 +18,9 @@ env = make_env(args)
 print(env)
 
 ### Specify models for each agent
-model1 = DQN(env, args)
-model2 = DQN(env, args)
-# model1.fix()  # fix model1
+model1 = eval(args.algorithm)(env, args)
+model2 = eval(args.algorithm)(env, args)
+model1.fix()  # fix model1
 
 model = MultiAgent(env, [model1, model2], args)
 
