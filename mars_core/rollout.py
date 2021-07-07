@@ -64,3 +64,5 @@ def rollout(env, model, args):
 
         if epi % args.log_interval == 0:
             logger.print_and_save()
+            if not args.marl_method:
+                model.save_model(logger.model_dir)
