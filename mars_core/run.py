@@ -5,7 +5,7 @@ from rl.algorithm import *
 
 ### Load configurations
 # yaml_file = 'confs/pettingzoo_pongv1_selfplay'
-# yaml_file = 'confs/pettingzoo_boxingv1'
+# yaml_file = 'confs/pettingzoo_boxingv1_dqn'
 # yaml_file = 'confs/pettingzoo_boxingv1_selfplay'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_dqn'

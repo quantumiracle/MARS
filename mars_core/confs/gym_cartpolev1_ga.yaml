@@ -1,0 +1,32 @@
+env_args:
+    env_name: CartPole-v1
+    env_type: gym
+    num_envs: 1
+    ram: True
+    seed: 1122
+
+agent_args:
+    algorithm: GA
+    num_agents: 500
+    algorithm_spec:
+        rollout_episodes_per_selection: 3
+        mutation_power: 0.2  #hyper-parameter, set from https://arxiv.org/pdf/1712.06567.pdf
+        max_generations: 1000
+        top_limit: 20 # number of top agents to consider as parents
+
+train_args:
+    batch_size: 32
+    max_episodes: 10000
+    max_steps_per_episode: 10000
+    train_start_frame: 10000
+    optimizer: adam
+    learning_rate: 1e-4
+    device: gpu
+    update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
+    log_avg_window: 20 # average window length in logging
+    log_interval: 20  # log print interval 
+    render: False
+    net_architecture: 
+        hidden_dim_list: [128]  
+        hidden_activation: ReLU
+        output_activation: Softmax

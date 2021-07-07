@@ -119,6 +119,9 @@ class DQNBase(NetBase):
     """
     def __init__(self, env, net_args):
         super().__init__(env)
+        self._construct_net(env, net_args)
+
+    def _construct_net(self, env, net_args):
         if len(self._observation_shape) <= 1: # not image
             self.net = get_model('mlp')(env, net_args, model_for='discrete_q')
         else:
@@ -149,17 +152,20 @@ class DuelingDQN(DQNBase):
     Dueling Network Architectures for Deep Reinforcement Learning
     https://arxiv.org/abs/1511.06581
     """
-    def __init__(self, env, args):
-        super().__init__(env)
+    def __init__(self, env, net_args):
+        super().__init__(env, net_args)
+        self._construct_net(env, net_args)
+    
+    def _construct_net(self, env, net_args):
         # Here I use separate networks for advantage and value heads 
         # due to the usage of internal network builder, they should use
         # a shared network body with two heads.
         if len(self._observation_shape) <= 1: # not image
-            self.advantage = get_model('mlp')(env, args)
-            self.value = get_model('mlp')(env, args)
+            self.advantage = get_model('mlp')(env, net_args, model_for='discrete_q')
+            self.value = get_model('mlp')(env, net_args, model_for='discrete_q')
         else:  
-            self.advantage = get_model('cnn')(env, args)
-            self.value = get_model('cnn')(env, args)
+            self.advantage = get_model('cnn')(env, net_args, model_for='discrete_q')
+            self.value = get_model('cnn')(env, net_args, model_for='discrete_q')
 
     def net(self, x):
         advantage = self.advantage(x)
