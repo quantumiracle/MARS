@@ -1,11 +1,11 @@
 from utils.func import LoadYAML2Dict
 from env.import_env import make_env
 from rollout import rollout
-from rl.dqn import DQN
-from rl.agent import MultiAgent
+from rl.algorithm import *
 
 ### Load configurations
-yaml_file = 'confs/gym_cartpolev1'
+# yaml_file = 'confs/gym_cartpolev1_dqn'
+yaml_file = 'confs/gym_cartpolev1_ppo'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 print(args)
@@ -16,7 +16,7 @@ env = make_env(args)
 print(env)
 
 ### Specify models for each agent
-model1 = DQN(env, args)
+model1 = eval(args.algorithm)(env, args)
 
 model = MultiAgent(env, [model1], args)
 

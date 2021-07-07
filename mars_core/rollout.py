@@ -13,15 +13,18 @@ def rollout(env, model, args):
         epi_reward = 0
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
-            action = model.choose_action(obs)
+            action_ = model.choose_action(obs)
             model.scheduler_step(overall_steps)
-            try:
-                obs_, reward, done, info = env.step(action)
-                other_info=None
-            except:
-                # action contains additional information like log probability
-                action, other_info = np.vstack(action).T
-                obs_, reward, done, info = env.step(action)
+            if isinstance(action_[0], tuple): # action item contains additional information like log probability
+                action, other_info = [], []
+                for (a, info) in action_:
+                    action.append(a)
+                    other_info.append(info)
+            else:
+                action = action_
+                other_info = None
+            obs_, reward, done, info = env.step(action)
+
             if args.render:
                 env.render()
 
