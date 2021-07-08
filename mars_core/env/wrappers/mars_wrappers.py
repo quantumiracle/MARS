@@ -47,7 +47,6 @@ class PettingzooClassicWrapper():
             observation = {a:self.observation_mask for a in observation.keys()}
         return observation, reward, done, info
 
-
 class PettingzooClassic_Iterate2Parallel():
     def __init__(self, env, observation_mask=1.):  
         """
@@ -134,21 +133,41 @@ class Atari2AgentWrapper():
     def close(self):
         self.env.close()
 
-# class Atari2AgentWrapper():
-#     """ Wrap single agent OpenAI gym atari game to be two-agent version """
-#     def __init__(self, env, keep_info=False):
-#         super(Atari2AgentWrapper, self).__init__()
+# class SlimeVolleyWrapper(gym.Wrapper):
+#     """ 
+#     Wrapper to transform SlimeVolley environment (https://github.com/hardmaru/slimevolleygym) 
+#     into PettingZoo (https://github.com/PettingZoo-Team/PettingZoo) env style. 
+#     Specifically, most important changes are:
+#     1. to make reset() return a dictionary of obsevations: {'agent1_name': obs1, 'agent2_name': obs2}
+#     2. to make step() return dict of obs, dict of rewards, dict of dones, dict of infos, in a similar format as above.
+#     """
+#     # action transformation of SlimeVolley, the inner action is MultiBinary, which can be transformed into Discrete
+#     action_table = [[0, 0, 0], # NOOP
+#                     [1, 0, 0], # LEFT (forward)
+#                     [1, 0, 1], # UPLEFT (forward jump)
+#                     [0, 0, 1], # UP (jump)
+#                     [0, 1, 1], # UPRIGHT (backward jump)
+#                     [0, 1, 0]] # RIGHT (backward)
+
+
+#     def __init__(self, env, against_baseline=False):
+#         # super(SlimeVolleyWrapper, self).__init__()
+#         super().__init__(env)
 #         self.env = env
-#         self.keep_info = keep_info
 #         self.agents = ['first_0', 'second_0']
 #         self.observation_space = self.env.observation_space
 #         self.observation_spaces = {name: self.env.observation_space for name in self.agents}
-#         self.action_space = self.env.action_space
+#         self.action_space = gym.spaces.Discrete(len(self.action_table))
 #         self.action_spaces = {name: self.action_space for name in self.agents}
+#         self.against_baseline = against_baseline
 
 #     def reset(self, observation=None):
 #         obs1 = self.env.reset()
-#         return (obs1, obs1)
+#         obs2 = obs1 # both sides always see the same initial observation.
+#         obs = {}
+#         obs[self.agents[0]] = obs1
+#         obs[self.agents[1]] = obs2
+#         return obs
 
 #     def seed(self, SEED):
 #         self.env.seed(SEED)
@@ -157,16 +176,35 @@ class Atari2AgentWrapper():
 #         self.env.render()
 
 #     def step(self, actions):
-#         print(actions)
-#         action = list(actions.values())[0]
-#         next_state, reward, done, info = self.env.step(action)
-#         if self.keep_info:
-#             return [next_state, next_state], [reward, reward], done, info
+#         obs, rewards, dones, infos = {},{},{},{}
+#         actions_ = [self.env.discreteToBox(int(a)) for a in actions.values()]  # from discrete to multibinary action
+#         if self.against_baseline:
+#             obs1, reward, done, info = self.env.step(actions_[1])
+#             obs0 = obs1
+#             rewards[self.agents[0]] = -reward
+#             rewards[self.agents[1]] = reward # the reward is for the learnable agent (second)
 #         else:
-#             return [next_state, next_state], [reward, reward], done, [info, info]
+#             # normal 2-player setting
+#             if len(self.observation_space.shape)>1: 
+#                 # for image-based env, fake the action list as one input to pass through NoopResetEnv, etc wrappers
+#                 obs0, reward, done, info = self.env.step(actions_)
+#             else:
+#                 obs0, reward, done, info = self.env.step(*actions_)
+#             obs1 = info['otherObs']
+#             rewards[self.agents[0]] = reward
+#             rewards[self.agents[1]] = -reward # the reward is for the learnable agent (second)
+#         obs[self.agents[0]] = obs0
+#         obs[self.agents[1]] = obs1
+#         dones[self.agents[0]] = done
+#         dones[self.agents[1]] = done
+#         infos[self.agents[0]] = info
+#         infos[self.agents[1]] = info
+
+#         return obs, rewards, dones, infos
 
 #     def close(self):
 #         self.env.close()
+
 
 class SlimeVolleyWrapper(gym.Wrapper):
     """ 
@@ -184,12 +222,10 @@ class SlimeVolleyWrapper(gym.Wrapper):
                     [0, 1, 1], # UPRIGHT (backward jump)
                     [0, 1, 0]] # RIGHT (backward)
 
-
     def __init__(self, env, against_baseline=False):
-        # super(SlimeVolleyWrapper, self).__init__()
         super().__init__(env)
         self.env = env
-        self.agents = ['first_0', 'second_0']
+        self.agents = ['second_0'] if against_baseline else ['first_0', 'second_0'] # when against baseline the learnable agent is on the right side (second)
         self.observation_space = self.env.observation_space
         self.observation_spaces = {name: self.env.observation_space for name in self.agents}
         self.action_space = gym.spaces.Discrete(len(self.action_table))
@@ -197,12 +233,15 @@ class SlimeVolleyWrapper(gym.Wrapper):
         self.against_baseline = against_baseline
 
     def reset(self, observation=None):
-        obs1 = self.env.reset()
-        obs2 = obs1 # both sides always see the same initial observation.
-        obs = {}
-        obs[self.agents[0]] = obs1
-        obs[self.agents[1]] = obs2
-        return obs
+        obs0 = self.env.reset()
+        if self.against_baseline: 
+            return {self.agents[0]: obs0}
+        else:
+            obs1 = obs0 # both sides always see the same initial observation.
+            obs = {}
+            obs[self.agents[0]] = obs0
+            obs[self.agents[1]] = obs1
+            return obs
 
     def seed(self, SEED):
         self.env.seed(SEED)
@@ -211,11 +250,14 @@ class SlimeVolleyWrapper(gym.Wrapper):
         self.env.render()
 
     def step(self, actions):
-        obs, rewards, dones, infos = {},{},{},{}
+        obss, rewards, dones, infos = {},{},{},{}
         actions_ = [self.env.discreteToBox(int(a)) for a in actions.values()]  # from discrete to multibinary action
         if self.against_baseline:
-            obs1, reward, done, info = self.env.step(actions_[1])
-            obs0 = obs1
+            obs, reward, done, info = self.env.step(actions_[0])
+            obss[self.agents[0]] = obs
+            rewards[self.agents[0]] = reward
+            dones[self.agents[0]] = done
+            infos[self.agents[0]] = info
         else:
             # normal 2-player setting
             if len(self.observation_space.shape)>1: 
@@ -224,17 +266,16 @@ class SlimeVolleyWrapper(gym.Wrapper):
             else:
                 obs0, reward, done, info = self.env.step(*actions_)
             obs1 = info['otherObs']
+            rewards[self.agents[0]] = reward
+            rewards[self.agents[1]] = -reward # the reward is for the learnable agent (second)
+            obss[self.agents[0]] = obs0
+            obss[self.agents[1]] = obs1
+            dones[self.agents[0]] = done
+            dones[self.agents[1]] = done
+            infos[self.agents[0]] = info
+            infos[self.agents[1]] = info
 
-        obs[self.agents[0]] = obs0
-        obs[self.agents[1]] = obs1
-        rewards[self.agents[0]] = -reward
-        rewards[self.agents[1]] = reward # the reward is for the learnable agent (second)
-        dones[self.agents[0]] = done
-        dones[self.agents[1]] = done
-        infos[self.agents[0]] = info
-        infos[self.agents[1]] = info
-
-        return obs, rewards, dones, infos
+        return obss, rewards, dones, infos
 
     def close(self):
         self.env.close()

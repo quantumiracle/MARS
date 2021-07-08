@@ -6,7 +6,9 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 def init_logger(env, args):
-    if args.test:
+    if args.algorithm == 'GA':
+        logger = DummyLogger(env, args)
+    elif args.test:
         logger = TestLogger(env, args)
     else:
         logger = Logger(env, args)
@@ -75,7 +77,7 @@ class Logger(TestLogger):
         """
         now = datetime.now()
         dt_string = now.strftime("%Y%m%d%H%M%S")
-        post_fix = f"{args.env_type}_{args.env_name}_{args.marl_method}_{dt_string}/"
+        post_fix = f"{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{dt_string}/"
 
         self.log_dir = f'../data/log/' + post_fix
         self.runs_dir = f'../data/tensorboard/' + post_fix
@@ -121,3 +123,38 @@ class Logger(TestLogger):
         # read the data with:
         # data = json.load( open(self.log_dir+"process.json"))
 
+class DummyLogger(Logger):
+    """ Single-agent simple logger"""
+    def __init__(self, env, args):
+        super().__init__(env, args)
+        self.avg_window = args.log_avg_window 
+        self.reward = 0
+        self.current_episode = 0
+        self.epi_rewards = []
+        self.epi_length = []
+        self.model_dir = None
+
+    def log_reward(self, reward):
+        self.reward += reward
+
+    def log_episode_reward(self, step, episode_reward=None):
+        if episode_reward is not None:
+            self.epi_rewards.append(episode_reward)
+        else:
+            self.epi_rewards.append(self.reward)
+        self.epi_length.append(step)
+        self.reward = 0
+        self.current_episode += 1
+
+    def print_and_save(self):
+        # print out info
+        print(
+            f'Episode: {self.current_episode}, avg. reward: {np.mean(self.epi_rewards[-self.avg_window:]):.4f}, avg. length {np.mean(self.epi_length[-self.avg_window:])}'
+        )
+
+        # save process data
+        process_data = {
+            'episode_reward': self.epi_rewards,
+            'episode_length': self.epi_length,
+        }
+        json.dump(process_data, open(self.log_dir + "process.json", 'w'))
