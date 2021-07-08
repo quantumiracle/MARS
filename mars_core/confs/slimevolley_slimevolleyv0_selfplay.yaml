@@ -7,7 +7,6 @@ env_args:
     seed: 1122
 
 agent_args:
-    hidden_dim: 256
     algorithm: DQN
     algorithm_spec:
         dueling: False
@@ -23,7 +22,7 @@ train_args:
     batch_size: 32
     max_episodes: 10000
     max_steps_per_episode: 10000
-    train_start_frame: 10000
+    train_start_frame: 0
     optimizer: adam
     learning_rate: 1e-4
     device: gpu
@@ -37,10 +36,10 @@ train_args:
         output_activation: False
     # render: True
     # test: True
-    # load_model_idx: 20210706133854/9059
+    # load_model_idx: 20210707185814/9541
 
     marl_method: selfplay
     marl_spec:  # configurations for specific MARL method
-        selfplay_score_delta: 2. # the score that current learning agent must beat its opponent to update opponent's policy
-        trainable_agent_idx: 0   # the index of trainable agent, with its opponent delayed updated
-        opponent_idx: 1          # the one to be updated from trainable agent
+        selfplay_score_delta: 4. # the score that current learning agent must beat its opponent to update opponent's policy
+        trainable_agent_idx: 1   # the index of trainable agent, with its opponent delayed updated
+        opponent_idx: 0          # the one to be updated from trainable agent

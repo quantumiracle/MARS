@@ -16,5 +16,5 @@ print(env)
 model = eval(args.algorithm)(env, args)
 
 ### Rollout
-rollout_ga(env, args, model)
+rollout_ga(env, model, args)
 

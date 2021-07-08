@@ -42,16 +42,19 @@ class GA(Agent):
     def num_agents(self):
         return len(self.agents)
 
-    def choose_action(self, agent_id, s, Greedy=False):
-        prob = self.agents[agent_id](torch.from_numpy(s).unsqueeze(0).float(
-        ).to(self.device)).squeeze()  # make sure input state shape is correct
-        if Greedy:
-            a = torch.argmax(prob, dim=-1).item()
-            return a
-        else:
-            dist = Categorical(prob)
-            a = dist.sample()
-            return a.detach().item()
+    def choose_action(self, agent_ids, s, Greedy=False):
+        a_list = []
+        for i  in agent_ids:
+            prob = self.agents[i](torch.from_numpy(s).unsqueeze(0).float(
+            ).to(self.device)).squeeze()  # make sure input state shape is correct
+            if Greedy:
+                a = torch.argmax(prob, dim=-1).item()
+                a_list.append(a)
+            else:
+                dist = Categorical(prob)
+                a = dist.sample().detach().item()
+                a_list.append(a)
+        return a_list
 
     def return_children(self, sorted_parent_indexes):
         """ We do not use the elite without noise in our implementation. """
