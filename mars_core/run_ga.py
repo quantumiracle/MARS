@@ -5,6 +5,8 @@ from rl.algorithm import *
 
 ### Load configurations
 yaml_file = 'confs/gym_cartpolev1_ga'
+# yaml_file = 'confs/pettingzoo_boxingv1_selfplay_ga'
+
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
 

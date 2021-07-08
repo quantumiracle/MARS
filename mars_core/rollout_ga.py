@@ -8,7 +8,7 @@ def run_agent_single_episode(env, args, model, agent_ids):
     observation = env.reset()
     r=0        
     for s in range(args.max_steps_per_episode):
-        action = model.choose_action(agent_ids, np.squeeze(observation))  # squeeze list of obs for multiple agents (only one here)
+        action = model.choose_action(agent_ids, observation)  # squeeze list of obs for multiple agents (only one here)
         new_observation, reward, done, info = env.step(action) # unsqueeze
         r=r+reward[0]  # squeeze
         
@@ -39,10 +39,10 @@ def rollout_ga(env, model, args):
         """ Self-play with genetic algorithm, modified from https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ga_selfplay.py
             Difference: use the torch model like standard RL policies rather than a handcrafted model.
         """
-        winning_streak = [0] * model.number_agents # store the number of wins for this agent (including mutated ones)
+        winning_streak = [0] * model.num_agents # store the number of wins for this agent (including mutated ones)
 
         for generation in range(args.algorithm_spec['max_generations']): # the 'generation' here is rollout of one agent
-            selected_agent_ids = np.random.choice(model.number_agents, len(env.agents), replace=False)
+            selected_agent_ids = np.random.choice(model.num_agents, len(env.agents), replace=False)
             first_agent_reward = run_agent_single_episode(env, args, model, selected_agent_ids)
             if first_agent_reward == 0: # if the game is tied, add noise to one of the agents: the first one selected
                 model.mutate(model.agents[selected_agent_ids[0]])

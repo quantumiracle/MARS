@@ -23,7 +23,7 @@ class GA(Agent):
 
     def _init_agents(self, env, args):
         agents = []
-        for _ in range(args.num_agents):
+        for _ in range(args.algorithm_spec['num_agents']):
             agent = MLP(env,
                         args.net_architecture,
                         model_for='discrete_policy').to(self.device)
@@ -44,8 +44,8 @@ class GA(Agent):
 
     def choose_action(self, agent_ids, s, Greedy=False):
         a_list = []
-        for i  in agent_ids:
-            prob = self.agents[i](torch.from_numpy(s).unsqueeze(0).float(
+        for i, obs in zip(agent_ids, s):
+            prob = self.agents[i](torch.from_numpy(obs).unsqueeze(0).float(
             ).to(self.device)).squeeze()  # make sure input state shape is correct
             if Greedy:
                 a = torch.argmax(prob, dim=-1).item()

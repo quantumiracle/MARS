@@ -8,15 +8,9 @@ env_args:
 agent_args:
     algorithm: GA
     algorithm_spec:
-        dueling: True
-        replay_buffer_size: 1e5
-        gamma: 0.99
-        multi_step: 1
-        target_update_interval: 1000 # updates skipped to update the target
-        eps_start: 1.0
-        eps_final: 0.01
-        eps_decay: 30000  # tune according to env
-
+        num_agents: 500
+        mutation_power: 0.2  #hyper-parameter, set from https://arxiv.org/pdf/1712.06567.pdf
+        max_generations: 1000
 
 train_args:
     max_episodes: 10000
@@ -32,7 +26,7 @@ train_args:
         hidden_dim_list: [128, 128]  
         hidden_activation: ReLU
         output_activation: Softmax
-        
+
     marl_method: selfplay
     marl_spec:  # configurations for specific MARL method
         selfplay_score_delta: 10  # the score that current learning agent must beat its opponent to update opponent's policy
