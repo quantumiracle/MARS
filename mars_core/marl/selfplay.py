@@ -27,7 +27,6 @@ class SelfPlayMetaLearner():
         score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
         score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
              - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
-        # print(score_delta)
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
              and logger.current_episode - self.last_update_epi > min_update_interval:
             # update the opponent with current model, assume they are of the same type
@@ -36,4 +35,3 @@ class SelfPlayMetaLearner():
                 model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+str(logger.current_episode))
 
             self.last_update_epi = logger.current_episode
-

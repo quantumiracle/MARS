@@ -10,7 +10,6 @@ def rollout(env, model, args):
     meta_learner = init_meta_learner(logger, args)
     for epi in range(args.max_episodes):
         obs = env.reset()
-        epi_reward = 0
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
             action_ = model.choose_action(obs)
