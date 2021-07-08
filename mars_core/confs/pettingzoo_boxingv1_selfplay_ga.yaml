@@ -6,7 +6,7 @@ env_args:
     seed: 1122
 
 agent_args:
-    algorithm: DQN
+    algorithm: GA
     algorithm_spec:
         dueling: True
         replay_buffer_size: 1e5
@@ -19,7 +19,6 @@ agent_args:
 
 
 train_args:
-    batch_size: 32
     max_episodes: 10000
     max_steps_per_episode: 10000
     optimizer: adam
@@ -29,3 +28,13 @@ train_args:
     log_avg_window: 5 # average window length in logging
     log_interval: 20  # log print interval 
     render: False
+    net_architecture: 
+        hidden_dim_list: [128, 128]  
+        hidden_activation: ReLU
+        output_activation: Softmax
+        
+    marl_method: selfplay
+    marl_spec:  # configurations for specific MARL method
+        selfplay_score_delta: 10  # the score that current learning agent must beat its opponent to update opponent's policy
+        trainable_agent_idx: 0   # the index of trainable agent, with its opponent delayed updated
+        opponent_idx: 1          # the one to be updated from trainable agent
