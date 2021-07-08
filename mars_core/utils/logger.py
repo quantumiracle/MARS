@@ -132,7 +132,6 @@ class DummyLogger(Logger):
         self.current_episode = 0
         self.epi_rewards = []
         self.epi_length = []
-        self.model_dir = None
 
     def log_reward(self, reward):
         self.reward += reward
