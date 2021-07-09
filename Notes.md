@@ -36,6 +36,18 @@
 * When you use SlimeVolley environments and want to exploit a trained model in this type of environment, you need to set the *yaml* file with *against_baseline* as *False*, so that you can input two models to the *MultiAgent* object, one is the trained model you want to exploit, another one is the exploiter with whatever model you want to use. A typical example would be: 
 
   ```python
+  args = LoadYAML2Dict(yaml_file, toAttr=True)
+  print(args)
+  
+  ## Change/specify some arguments if necessary
+  args.against_baseline = False
+  args.exploit = True
+  args.load_model_full_path = 'PATH TO THE TRAINED MODEL'
+  
+  ### Create env
+  env = make_env(args)
+  print(env)
+  
   ### Specify models for each agent
   trained_model = eval(args.algorithm)(env, args)
   exploiter = DQN(env, args)

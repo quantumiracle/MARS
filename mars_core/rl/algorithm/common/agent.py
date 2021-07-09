@@ -77,8 +77,11 @@ class MultiAgent(Agent):
             prefix = f'Agents No. {self.not_learnable_list} (index starting from 0)'
         print(prefix + " are not learnable.")
 
-        if args.test:
-            model_path =  f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.load_model_idx}"
+        if args.test or args.exploit:
+            if args.load_model_full_path: # if the full path is specified, it has higher priority than the model index
+                model_path = args.load_model_full_path
+            else:
+                model_path =  f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.load_model_idx}"
             self.load_model(model_path)
             print('load model from: ', model_path)
 
@@ -117,8 +120,13 @@ class MultiAgent(Agent):
             agent.save_model(path)
 
     def load_model(self, path=None, eval=True):
-        for agent in self.agents:
-            agent.load_model(path, eval)
+        for i, agent in enumerate(self.agents):
+            if self.args.exploit:
+                # in EXPLOIT mode, the exploiter is learnable, thus not loaded from anywhere
+                if i in self.not_learnable_list: 
+                    agent.load_model(path, eval)
+            else:
+                agent.load_model(path, eval)
 
     @property
     def ready_to_update(self) -> bool:
