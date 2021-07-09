@@ -32,4 +32,8 @@ Supported environments:
 ## Self-play
 <img src="https://github.com/quantumiracle/MARS/blob/master/img/slimevolley-selfplay.gif" height=400 width=1000 >
 
-Two agents in *SlimeVolley* trained with self-play. 
+Two agents in *SlimeVolley-v0* trained with self-play. 
+
+<img src="https://github.com/quantumiracle/MARS/blob/master/img/boxing-selfplay.gif" height=500 width=400 >
+
+Two agents in *Boxing-v1 PettingZoo* trained with self-play. 
