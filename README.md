@@ -37,3 +37,5 @@ Two agents in *SlimeVolley-v0* trained with self-play.
 <img src="https://github.com/quantumiracle/MARS/blob/master/img/boxing-selfplay.gif" height=500 width=400 >
 
 Two agents in *Boxing-v1 PettingZoo* trained with self-play. 
+
+[Exploitability](exploit.md) tests are also conducted.
