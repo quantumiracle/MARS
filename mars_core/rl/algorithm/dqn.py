@@ -44,8 +44,10 @@ class DQN(Agent):
                 model = ParallelDQN(env, args.net_architecture, args.num_envs)
         return model
 
-    def choose_action(self, state, epsilon=None):
-        if epsilon is None:
+    def choose_action(self, state, Greedy=False, epsilon=None):
+        if Greedy:
+            epsilon = 0.
+        elif epsilon is None:
             epsilon = self.epsilon_scheduler.get_epsilon()
         if not isinstance(state, torch.Tensor):
             state = torch.Tensor(state).to(self.device)
