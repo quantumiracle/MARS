@@ -67,7 +67,7 @@ class MultiAgent(Agent):
         self.number_of_agents = len(self.agents)
         self.not_learnable_list = []
         for i, agent in enumerate(agents):
-            if agent.not_learnable or \
+            if args.test or agent.not_learnable or \
                 (args.marl_method and i != args.marl_spec['trainable_agent_idx']):
                 self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
@@ -80,11 +80,15 @@ class MultiAgent(Agent):
         if args.test:
             model_path =  f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.load_model_idx}"
             self.load_model(model_path)
+            print('load model from: ', model_path)
 
     def choose_action(self, states):
         actions = []
         for state, agent in zip(states, self.agents):
-            action = agent.choose_action(state)
+            if self.args.test:
+                action = agent.choose_action(state, Greedy=True)
+            else:
+                action = agent.choose_action(state)
             actions.append(action)
         return actions
 

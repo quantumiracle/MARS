@@ -169,7 +169,7 @@ def rollout_ga(env, model, args):
             # kill all agents, and replace them with their children
             model.agents = children_agents
 
-            if generation % (10*args.log_interval) == 0 and generation > 0: 
+            if generation % args.log_interval == 0 and generation > 0: 
                 logger.print_and_save()
 
                 if generation % (10*args.log_interval) == 0:
