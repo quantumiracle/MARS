@@ -28,3 +28,7 @@ Supported environments:
 - [x] LaserTag
 - [x] SlimeVolley
 - [ ] SMAC
+
+## Self-play
+<img src="https://github.com/quantumiracle/MARS/blob/master/img/slimevolley-selfplay.gif" height=400 width=1000 >
+Two agents trained with self-play. 
