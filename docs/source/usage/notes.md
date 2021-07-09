@@ -90,10 +90,45 @@ Note:
 
 ### Training
 
-* Typical usage:
+* The followings are required in the main script, for either training/testing/exploitation:
+
+  ```python
+  from utils.func import LoadYAML2Dict
+  from env.import_env import make_env
+  from rollout import rollout
+  from rl.algorithm import *
+  ```
+
+  
+
+* Typical usage for a single-agent game, e.g. *CartPole-v1 OpenAI Gym*:
+
+  ```python
+  ### Load configurations
+  yaml_file = 'PATH TO YAML'
+  args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+  
+  ### Create env
+  env = make_env(args)
+  print(env)
+  
+  ### Specify models for each agent
+  model = eval(args.algorithm)(env, args)
+  
+  model = MultiAgent(env, [model], args)
+  
+  ### Rollout
+  rollout(env, model, args)
+  
+  ```
+
+  
+
+* Typical usage for a two-agent game, e.g. *boxing-v1 PettingZoo*:
 
   ````python
   ### Load configurations
+  yaml_file = 'PATH TO YAML'
   args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
   
   ### Create env
@@ -112,6 +147,61 @@ Note:
   
   ````
 
+### Testing
+
+* Typical usage for a single-agent game, e.g. *CartPole-v1 OpenAI Gym*:
+
+  ```python
+  ### Load configurations
+  yaml_file = 'PATH TO YAML'
+  args = LoadYAML2Dict(yaml_file, toAttr=True)
+  print(args)
+  
+  ## Change/specify some arguments if necessary
+  args.test = True  # the test mode will automatically fix all models
+  args.render = True
+  args.load_model_full_path = 'PATH TO THE TRAINED MODEL' # or use args.load_model_idx
+  
+  ### Create env
+  env = make_env(args)
+  print(env)
+  
+  ### Specify models for each agent
+  model = eval(args.algorithm)(env, args)
+  
+  model = MultiAgent(env, [model], args)
+  
+  ### Rollout
+  rollout(env, model, args)
+  ```
+
+* Typical usage for a two-agent game, e.g. *boxing-v1 PettingZoo*:
+
+  ```python
+  ### Load configurations
+  yaml_file = 'PATH TO YAML'
+  args = LoadYAML2Dict(yaml_file, toAttr=True)
+  print(args)
+  
+  ## Change/specify some arguments if necessary
+  args.test = True  # the test mode will automatically fix all models
+  args.render = True
+  args.load_model_full_path = 'PATH TO THE TRAINED MODEL' # or use args.load_model_idx
+  
+  ### Create env
+  env = make_env(args)
+  print(env)
+  
+  ### Specify models for each agent
+  model1 = eval(args.algorithm)(env, args)
+  model2 = eval(args.algorithm)(env, args)
+  
+  model = MultiAgent(env, [model1, model2], args)
+  
+  ### Rollout
+  rollout(env, model, args)
+  ```
+
   
 
 ### Exploitation
@@ -120,6 +210,7 @@ Note:
 
   ```python
   ### Load configurations
+  yaml_file = 'PATH TO YAML'
   args = LoadYAML2Dict(yaml_file, toAttr=True)
   print(args)
   
@@ -147,3 +238,4 @@ Note:
 
 ### Model Zoo
 
+​	We provide a zoo of trained agents using default *yaml* configuration files with either single-agent RL or self-play. 
