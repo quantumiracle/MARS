@@ -33,5 +33,6 @@ class SelfPlayMetaLearner():
             if self.save_checkpoint:
                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path)
                 model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path)
+            print(f'Score delta: {score_delta}, udpate the opponent.')
 
             self.last_update_epi = logger.current_episode
