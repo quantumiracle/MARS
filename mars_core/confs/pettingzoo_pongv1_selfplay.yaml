@@ -27,12 +27,16 @@ train_args:
     learning_rate: 1e-4
     device: gpu
     update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
-    log_avg_window: 5 # average window length in logging
+    log_avg_window: 20 # average window length in logging
     log_interval: 20  # log print interval 
     render: False
+    net_architecture: 
+        hidden_dim_list: [64, 64, 64]  
+        hidden_activation: Tanh
+        output_activation: False
 
     marl_method: selfplay
     marl_spec:  # configurations for specific MARL method
-        selfplay_score_delta: 1  # the score that current learning agent must beat its opponent to update opponent's policy
+        selfplay_score_delta: 20  # the score that current learning agent must beat its opponent to update opponent's policy
         trainable_agent_idx: 0   # the index of trainable agent, with its opponent delayed updated
         opponent_idx: 1          # the one to be updated from trainable agent
