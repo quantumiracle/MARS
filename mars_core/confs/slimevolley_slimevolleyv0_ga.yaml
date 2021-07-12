@@ -8,14 +8,14 @@ env_args:
 
 agent_args:
     algorithm: GA
-    num_agents: 500
     algorithm_spec:
         rollout_episodes_per_selection: 3
         mutation_power: 0.2  #hyper-parameter, set from https://arxiv.org/pdf/1712.06567.pdf
+        num_agents: 500
+        max_generations: 500000
+        top_limit: 20 # number of top agents to consider as parents
 
 train_args:
-    batch_size: 32
-    max_episodes: 10000
     max_steps_per_episode: 10000
     train_start_frame: 10000
     optimizer: adam
@@ -26,6 +26,6 @@ train_args:
     log_interval: 20  # log print interval 
     render: False
     net_architecture: 
-        hidden_dim_list: [64, 64, 64]  
+        hidden_dim_list: [20, 20]  
         hidden_activation: ReLU
         output_activation: Softmax

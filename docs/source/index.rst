@@ -31,6 +31,7 @@ We also provide novices friendly `DRL Tutorials <https://github.com/tensorlayer/
    :caption: Usage
 
    usage/quick_start
+   usage/notes
 
 
 Contributing

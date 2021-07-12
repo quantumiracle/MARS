@@ -10,7 +10,7 @@ agent_args:
     algorithm: GA
     algorithm_spec:
         num_agents: 500
-        mutation_power: 0.2  #hyper-parameter, set from https://arxiv.org/pdf/1712.06567.pdf
+        mutation_power: 0.1  #hyper-parameter, set from https://arxiv.org/pdf/1712.06567.pdf
         max_generations: 500000
 
 train_args:
@@ -23,7 +23,7 @@ train_args:
     log_interval: 20  # log print interval 
     render: False
     net_architecture: 
-        hidden_dim_list: [10, 10]  # according to slimevolleylite: https://github.com/hardmaru/slimevolleygym/blob/master/slimevolleygym/mlp.py
+        hidden_dim_list: [20, 20]  # [10, 10] according to slimevolleylite: https://github.com/hardmaru/slimevolleygym/blob/master/slimevolleygym/mlp.py
         hidden_activation: Tanh
         output_activation: Softmax
 
