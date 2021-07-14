@@ -24,19 +24,19 @@ train_args:
     max_steps_per_episode: 10000
     train_start_frame: 0
     optimizer: adam
-    learning_rate: 1e-4
+    learning_rate: 2e-5
     device: gpu
     update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
     log_avg_window: 20 # average window length in logging
     log_interval: 20  # log print interval 
     net_architecture: 
-        hidden_dim_list: [1024, 1024, 1024, 1024, 1024]
+        hidden_dim_list: [1024, 1024, 1024, 1024]
         #hidden_dim_list: [64, 64, 64]  
         hidden_activation: Tanh
         output_activation: False
-    render: True
-    test: True
-    load_model_idx: 0/1  # in model/zoo, 0/0 is less trained model, 0/1 is well-trained model
+    # render: True
+    # test: True
+    # load_model_idx: 0/1  # in model/zoo, 0/0 is less trained model, 0/1 is well-trained model
 
     marl_method: selfplay
     marl_spec:  # configurations for specific MARL method
