@@ -116,7 +116,6 @@ def _create_single_env(env_name: str, env_type: str, args):
             
             # assign observation and action spaces
             env.observation_space = list(env.observation_spaces.values())[0]
-            print(env.observation_space)
             env.action_space = list(env.action_spaces.values())[0]
             env.agents = env_agents
             env = Dict2TupleWrapper(env, keep_info=keep_info) 

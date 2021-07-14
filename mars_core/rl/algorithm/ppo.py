@@ -51,8 +51,9 @@ class PPODiscrete(Agent):
     def v(self, x):
         return self.value.forward(x)  
 
-    def store(self, transition):
-        self.data.append(transition)
+    def store(self, transitions):
+        # self.data.append(transition)
+        self.data.extend(transitions)  # tuple of transitions
         
     def make_batch(self):
         s_lst, a_lst, r_lst, s_prime_lst, prob_a_lst, done_lst = [], [], [], [], [], []
