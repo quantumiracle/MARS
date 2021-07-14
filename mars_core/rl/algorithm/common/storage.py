@@ -26,31 +26,31 @@ class ReplayBuffer(object):
     def __len__(self):
         return len(self.buffer)
 
-class ParallelReplayBuffer(object):
-    def __init__(self, capacity):
-        self.buffer = deque(maxlen=capacity)
+# class ParallelReplayBuffer(object):
+#     def __init__(self, capacity):
+#         self.buffer = deque(maxlen=capacity)
     
-    # def push(self, state, action, reward, next_state, done):
-    #     """
-    #     For parallel buffer with samples from multiple envs, each time
-    #     the sample contains a list of sample for each env, for example,
-    #     state = [state1, state2, ... ]
-    #     """
-    #     # [[s1, s2], [a1, a2], ...] to [[s1, a1, ...], [s2, a2, ...]]
-    #     self.buffer.extend([*zip(state, action, reward, next_state, done)])
+#     # def push(self, state, action, reward, next_state, done):
+#     #     """
+#     #     For parallel buffer with samples from multiple envs, each time
+#     #     the sample contains a list of sample for each env, for example,
+#     #     state = [state1, state2, ... ]
+#     #     """
+#     #     # [[s1, s2], [a1, a2], ...] to [[s1, a1, ...], [s2, a2, ...]]
+#     #     self.buffer.extend([*zip(state, action, reward, next_state, done)])
 
-    def push(self, samples):
-        """
-        Samples contain [[s1, a1, r1, s_1, d1], [s2, a2, r2, s_2, d2], ...]
-        """
-        self.buffer.extend(samples)
+#     def push(self, samples):
+#         """
+#         Samples contain [[s1, a1, r1, s_1, d1], [s2, a2, r2, s_2, d2], ...]
+#         """
+#         self.buffer.extend(samples)
     
-    def sample(self, batch_size):
-        state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
-        return state, action, reward, next_state, done
+#     def sample(self, batch_size):
+#         state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
+#         return state, action, reward, next_state, done
 
-    def __len__(self):
-        return len(self.buffer)
+#     def __len__(self):
+#         return len(self.buffer)
 
 class ReservoirBuffer(object):
     def __init__(self, capacity):

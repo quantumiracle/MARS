@@ -31,8 +31,11 @@ class SelfPlayMetaLearner():
              and logger.current_episode - self.last_update_epi > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path)
-                model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path)
+                # model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+str(logger.current_episode)) # save all checkpoints
+                # model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+str(logger.current_episode))
+
+                model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+'1')  # save only the latest checkpoint
+                model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+'1')
             print(f'Score delta: {score_delta}, udpate the opponent.')
 
             self.last_update_epi = logger.current_episode
