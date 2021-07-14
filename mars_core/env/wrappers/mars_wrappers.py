@@ -285,6 +285,7 @@ class Dict2TupleWrapper():
     def __init__(self, env, keep_info=False):
         super(Dict2TupleWrapper, self).__init__()
         self.env = env
+        self.num_agents = env.num_agents
         self.keep_info = keep_info  # if True keep info as dict
         if len(env.observation_space.shape) > 1: # image
             old_shape = env.observation_space.shape

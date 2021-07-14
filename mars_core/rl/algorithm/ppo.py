@@ -43,7 +43,9 @@ class PPODiscrete(Agent):
         # TODO a single optimizer for two nets may be problematic
         self.optimizer = choose_optimizer(args.optimizer)(list(self.value.parameters())+list(self.policy.parameters()), lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
-        self.data = []
+
+        self.num_channel = max(args.num_envs, env.num_agents)
+        self.data = [[] for _ in range(self.num_channel)]
 
     def pi(self, x):
         return self.policy.forward(x)
@@ -53,11 +55,13 @@ class PPODiscrete(Agent):
 
     def store(self, transitions):
         # self.data.append(transition)
-        self.data.extend(transitions)  # tuple of transitions
+        # self.data.extend(transitions)
+        for i, transition in enumerate(transitions): # iterate over the list
+            self.data[i].append(transition)
         
-    def make_batch(self):
+    def make_batch(self, data):
         s_lst, a_lst, r_lst, s_prime_lst, prob_a_lst, done_lst = [], [], [], [], [], []
-        for transition in self.data:
+        for transition in data:
             s, a, r, s_prime, prob_a, done = transition
             
             s_lst.append(s)
@@ -72,65 +76,69 @@ class PPODiscrete(Agent):
         s,a,r,s_prime,done_mask, prob_a = torch.tensor(s_lst, dtype=torch.float).to(self.device), torch.tensor(a_lst).to(self.device), \
                                           torch.tensor(r_lst).to(self.device), torch.tensor(s_prime_lst, dtype=torch.float).to(self.device), \
                                           torch.tensor(done_lst, dtype=torch.float).to(self.device), torch.tensor(prob_a_lst).to(self.device)
-        self.data = []
         return s, a, r, s_prime, done_mask, prob_a
         
     def update(self):
-        s, a, r, s_prime, done_mask, oldlogprob = self.make_batch()
-
-        if not self.GAE:
-            rewards = []
-            discounted_r = 0
-            for reward, is_continue in zip(reversed(r), reversed(done_mask)):
-                if not is_continue:
-                    discounted_r = 0
-                discounted_r = reward + self.gamma * discounted_r
-                rewards.insert(0, discounted_r)  # insert in front, cannot use append
-
-            rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
-            rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
-
         total_loss = 0.
-        for _ in range(self.K_epoch):
-            vs = self.v(s)
+        self.data = [x for x in self.data if x]  # remove empty
+        for data in self.data: # iterate over the list of envs
+            s, a, r, s_prime, done_mask, oldlogprob = self.make_batch(data)
 
-            if self.GAE:
-                # use generalized advantage estimation
-                vs_target = r + self.gamma * self.v(s_prime) * done_mask
-                delta = vs_target - self.v(s)
-                delta = delta.detach()
+            if not self.GAE:
+                rewards = []
+                discounted_r = 0
+                for reward, is_continue in zip(reversed(r), reversed(done_mask)):
+                    if not is_continue:
+                        discounted_r = 0
+                    discounted_r = reward + self.gamma * discounted_r
+                    rewards.insert(0, discounted_r)  # insert in front, cannot use append
 
-                advantage_lst = []
-                advantage = 0.0
-                for delta_t in torch.flip(delta, [0]):
-                    advantage = self.gamma * self.lmbda * advantage + delta_t[0]
-                    advantage_lst.append(advantage)
-                advantage_lst.reverse()
-                advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
+                rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
-            else:
-                advantage = rewards - vs.squeeze(dim=-1).detach()
-                vs_target = rewards
-
-            pi = self.pi(s)
-            dist = Categorical(pi)
-            dist_entropy = dist.entropy()
-            logprob = dist.log_prob(a)
-            # pi_a = pi.gather(1,a)
             
-            # ratio = torch.exp(torch.log(pi_a) - torch.log(prob_a))  # a/b == exp(log(a)-log(b))
-            ratio = torch.exp(logprob - oldlogprob)
-            surr1 = ratio * advantage
-            surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-            # loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs , vs_target.detach()) - 0.01*dist_entropy
-            loss = -torch.min(surr1, surr2) + 0.5*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
+            for _ in range(self.K_epoch):
+                vs = self.v(s)
 
-            self.optimizer.zero_grad()
-            mean_loss = loss.mean()
-            mean_loss.backward()
-            self.optimizer.step()
+                if self.GAE:
+                    # use generalized advantage estimation
+                    vs_target = r + self.gamma * self.v(s_prime) * done_mask
+                    delta = vs_target - self.v(s)
+                    delta = delta.detach()
+
+                    advantage_lst = []
+                    advantage = 0.0
+                    for delta_t in torch.flip(delta, [0]):
+                        advantage = self.gamma * self.lmbda * advantage + delta_t[0]
+                        advantage_lst.append(advantage)
+                    advantage_lst.reverse()
+                    advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+
+                else:
+                    advantage = rewards - vs.squeeze(dim=-1).detach()
+                    vs_target = rewards
+
+                pi = self.pi(s)
+                dist = Categorical(pi)
+                dist_entropy = dist.entropy()
+                logprob = dist.log_prob(a)
+                # pi_a = pi.gather(1,a)
+                
+                # ratio = torch.exp(torch.log(pi_a) - torch.log(prob_a))  # a/b == exp(log(a)-log(b))
+                ratio = torch.exp(logprob - oldlogprob)
+                surr1 = ratio * advantage
+                surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
+                # loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs , vs_target.detach()) - 0.01*dist_entropy
+                loss = -torch.min(surr1, surr2) + 0.5*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
+
+                self.optimizer.zero_grad()
+                mean_loss = loss.mean()
+                mean_loss.backward()
+                self.optimizer.step()
 
             total_loss += mean_loss.item()
+
+        self.data = [[] for _ in range(self.num_channel)]
 
         # Copy new weights into old policy:
         self.policy_old.load_state_dict(self.policy.state_dict())
