@@ -102,8 +102,9 @@ class MultiAgent(Agent):
     def store(self, sample):
         for i, agent, *s in zip(np.arange(self.number_of_agents), self.agents,
                                 *sample):
+            agent.store((tuple(s),))
             if i not in self.not_learnable_list:  # no need to store samples for not learnable models
-                agent.store(tuple(s))
+                agent.store((tuple(s),))
 
     def update(self):
         losses = []

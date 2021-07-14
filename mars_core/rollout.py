@@ -2,6 +2,7 @@ import numpy as np
 from utils.logger import init_logger
 from marl.meta_learner import init_meta_learner
 import torch
+import time
 
 def rollout(env, model, args):
     if args.algorithm == 'GA':
@@ -29,10 +30,8 @@ def rollout_normal(env, model, args):
                 action = action_
                 other_info = None
             obs_, reward, done, info = env.step(action)
-
             if args.render:
                 env.render()
-
             if other_info is None: 
                 sample = [obs, action, reward, obs_, done]
             else:

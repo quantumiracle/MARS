@@ -55,7 +55,8 @@ class DQN(Agent):
         return action
 
     def store(self, sample):
-        self.buffer.push(*sample)
+        # self.buffer.push(*sample)
+        self.buffer.push(sample)
 
     @property
     def ready_to_update(self):
@@ -82,7 +83,6 @@ class DQN(Agent):
         q_value = q_values.gather(1, action.unsqueeze(1)).squeeze(1)
         next_q_value = target_next_q_values.max(1)[0]
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
-
         # Huber Loss
         loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
         loss = (loss * weights).mean()
