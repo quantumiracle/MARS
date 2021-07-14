@@ -226,6 +226,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
         super().__init__(env)
         self.env = env
         self.agents = ['second_0'] if against_baseline else ['first_0', 'second_0'] # when against baseline the learnable agent is on the right side (second)
+        self.num_agents = len(self.agents)
         self.observation_space = self.env.observation_space
         self.observation_spaces = {name: self.env.observation_space for name in self.agents}
         self.action_space = gym.spaces.Discrete(len(self.action_table))
