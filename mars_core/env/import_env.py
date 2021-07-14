@@ -98,6 +98,7 @@ def _create_single_env(env_name: str, env_type: str, args):
 
             # initialize the env
             env = eval(env_name).parallel_env(obs_type=obs_type)
+            env = supersuit.agent_indicator_v0(env) # for selfplay, agent from two sides can use the same model; see https://github.com/PettingZoo-Team/PettingZoo/issues/423
             env_agents = env.unwrapped.agents  # this cannot go through supersuit wrapper, so get it first and reassign it
 
             # assign necessary wrappers
