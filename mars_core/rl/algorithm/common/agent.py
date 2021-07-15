@@ -88,6 +88,8 @@ class MultiAgent(Agent):
         if args.marl_method == 'selfplay':
             # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
             self.mergeAllSamplesInOne = True 
+        else:
+            self.mergeAllSamplesInOne = False 
 
     def choose_action(self, states):
         actions = []
@@ -112,7 +114,8 @@ class MultiAgent(Agent):
                 all_s.append(tuple(s))
             elif i not in self.not_learnable_list:  # no need to store samples for not learnable models
                 agent.store((tuple(s),))
-        self.agents[self.args.marl_spec['trainable_agent_idx']].store(all_s)
+        if self.mergeAllSamplesInOne:
+            self.agents[self.args.marl_spec['trainable_agent_idx']].store(all_s)
 
     def update(self):
         losses = []
