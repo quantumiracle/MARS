@@ -32,8 +32,9 @@ class PettingzooClassicWrapper():
         else:
             return obs
 
-    def seed(self, SEED):
-        self.env.seed(SEED)
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
 
     def render(self,):
         self.env.render()
@@ -74,8 +75,9 @@ class PettingzooClassic_Iterate2Parallel():
             else:
                 return {a: obs[a]['observation'] for a in self.agents}
 
-    def seed(self, SEED):
-        self.env.seed(SEED)
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
 
     def render(self,):
         self.env.render()
@@ -118,8 +120,9 @@ class Atari2AgentWrapper():
         obs = self.env.reset()
         return [obs]
 
-    def seed(self, SEED):
-        self.env.seed(SEED)
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
 
     def render(self,):
         self.env.render()
@@ -169,8 +172,9 @@ class Atari2AgentWrapper():
 #         obs[self.agents[1]] = obs2
 #         return obs
 
-#     def seed(self, SEED):
-#         self.env.seed(SEED)
+    # def seed(self, seed):
+    #     self.env.seed(seed)
+    #     np.random.seed(seed)
 
 #     def render(self,):
 #         self.env.render()
@@ -244,8 +248,9 @@ class SlimeVolleyWrapper(gym.Wrapper):
             obs[self.agents[1]] = obs1
             return obs
 
-    def seed(self, SEED):
-        self.env.seed(SEED)
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
 
     def render(self,):
         self.env.render()
@@ -334,8 +339,9 @@ class Dict2TupleWrapper():
         del obs,rewards, dones, infos
         return o, r, d, info
 
-    def seed(self, SEED):
-        self.env.seed(SEED)
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
 
     def render(self,):
         self.env.render()

@@ -18,7 +18,16 @@ def init_logger(env, args):
 class TestLogger():
     def __init__(self, env, args):
         super(TestLogger, self).__init__()
-        self.keys = env.agents
+
+        # if using parallel environment, env.agents is list of list,
+        # we flatten it in to a simple list. For example, it changes
+        # [['env1_player1', 'env1_player2'], ['env2_player1', 'env2_player2']]
+        # to be ['env1_player1', 'env1_player2', 'env2_player1', 'env2_player2'].
+        if all(isinstance(i, list) for i in env.agents):
+            self.keys = [item for sublist in env.agents for item in sublist]
+        else:
+            self.keys = env.agents
+
         self.avg_window = args.log_avg_window  # average over the past
         self.epi_rewards = self._clear_dict_as_list(self.keys)
         self.rewards = self._clear_dict(self.keys)
