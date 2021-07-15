@@ -4,19 +4,17 @@ from rollout import rollout
 from rl.algorithm import *
 
 ### Load configurations
+yaml_file = 'confs/gym_pongramv0_dqn'
 # yaml_file = 'confs/gym_cartpolev1_dqn'
-yaml_file = 'confs/gym_cartpolev1_ppo'
+# yaml_file = 'confs/gym_cartpolev1_ppo'
 # yaml_file = 'confs/pettingzoo_boxingv1_dqn'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_dqn'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_ppo'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
-print(args)
-
 
 ### Create env
 env = make_env(args)
-print(env)
 
 ### Specify models for each agent
 model1 = eval(args.algorithm)(env, args)

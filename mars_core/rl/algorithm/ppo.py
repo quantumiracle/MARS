@@ -25,16 +25,16 @@ class PPODiscrete(Agent):
         self.GAE = args.algorithm_spec['GAE']
 
         if len(env.observation_space.shape) <= 1:
-            self.policy = MLP(env, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+            self.policy = MLP(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
             self.policy_old = copy.deepcopy(self.policy).to(self.device)
             # self.policy_old.load_state_dict(self.policy.state_dict())
-            self.value = MLP(env, args.net_architecture['value'], model_for='value').to(self.device)
+            self.value = MLP(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         else:
-            self.policy = CNN(env, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+            self.policy = CNN(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
             self.policy_old = copy.deepcopy(self.policy).to(self.device)
             # self.policy_old.load_state_dict(self.policy.state_dict())
-            self.value = CNN(env, args.net_architecture['value'], model_for='value').to(self.device)
+            self.value = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         # cannot use lambda in multiprocessing
         # self.pi = lambda x: self.policy.forward(x, softmax_dim=-1)
@@ -123,7 +123,6 @@ class PPODiscrete(Agent):
                 dist_entropy = dist.entropy()
                 logprob = dist.log_prob(a)
                 # pi_a = pi.gather(1,a)
-                
                 # ratio = torch.exp(torch.log(pi_a) - torch.log(prob_a))  # a/b == exp(log(a)-log(b))
                 ratio = torch.exp(logprob - oldlogprob)
                 surr1 = ratio * advantage

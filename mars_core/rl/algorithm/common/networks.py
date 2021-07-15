@@ -7,22 +7,33 @@ from .nn_components import cReLU, Flatten
 
 class NetBase(nn.Module):
     """ Base network class for policy/value function """
-    def __init__(self, env):
+    def __init__(self, input_space, output_space):
         super(NetBase, self).__init__()
-        self._preprocess(env)
+        self._preprocess(input_space, output_space)
         self.features = None
         self.body = None
 
-    def _preprocess(self, env):
-        self._observation_space = env.observation_space
-        self._observation_shape = env.observation_space.shape
+    def _preprocess(self, input_space, output_space):
+        """
+        In general RL setting, 
+        input_space: observation_space
+        output_space: action_space
+        """
+        # if pass in list of spaces, then take the first one
+        if isinstance(input_space, list):
+            input_space = input_space[0]
+        if isinstance(output_space, list):
+            output_space = output_space[0]     
+               
+        self._observation_space = input_space
+        self._observation_shape = input_space.shape
         if len(self._observation_shape) == 1:
             self._observation_dim = self._observation_shape[0]
         else:  # high-dim state
             pass
 
-        self._action_space = env.action_space
-        self._action_shape = env.action_space.shape or env.action_space.n
+        self._action_space = output_space
+        self._action_shape = output_space.shape or output_space.n
         if isinstance(self._action_shape, int):  # Discrete space
             self._action_dim = self._action_shape
         else:
@@ -60,8 +71,8 @@ class NetBase(nn.Module):
 
 
 class MLP(NetBase):
-    def __init__(self, env, net_args, model_for):
-        super().__init__(env)
+    def __init__(self, input_space, output_space, net_args, model_for):
+        super().__init__(input_space, output_space)
         layers_config = copy.deepcopy(net_args)
         layers_config['hidden_dim_list'].insert(0, self._observation_dim)
         output_dim = self._get_output_dim(model_for)
@@ -86,8 +97,8 @@ class MLP(NetBase):
 
 
 class CNN(NetBase):
-    def __init__(self, env, net_args, model_for):
-        super().__init__(env)
+    def __init__(self, input_space, output_space, net_args, model_for):
+        super().__init__(input_space, output_space)
         layers_config = copy.deepcopy(net_args)
         layers_config['channel_list'].insert(0, self._observation_shape[0])
         self.features = self._construct_cnn_net(layers_config)
@@ -142,8 +153,8 @@ def get_model(model_type="mlp"):
     else:
         raise NotImplementedError
 
-    def builder(env, net_args, model_for):
-        model = handler(env, copy.deepcopy(net_args), model_for)
+    def builder(input_space, output_space, net_args, model_for):
+        model = handler(input_space, output_space, copy.deepcopy(net_args), model_for)
         return model
 
     return builder

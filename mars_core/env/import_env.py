@@ -28,10 +28,12 @@ Multi-agent:
         'SlimeVolleyNoFrameskip-v0', 'SlimeVolleyPixel-v0']
 
 """
+from typing import Dict
 import pettingzoo
 import slimevolleygym  # https://github.com/hardmaru/slimevolleygym
 import gym
 import supersuit
+import numpy as np
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
      Atari2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper
@@ -64,7 +66,7 @@ for env_type, envs in pettingzoo_envs.items():
         except:
             print("Cannot import pettingzoo env: ", env_name)
 
-def _create_single_env(env_name: str, env_type: str, args):
+def _create_single_env(env_name: str, env_type: str, args: Dict):
     # TODO
     if args.num_envs > 1:
         keep_info = True  # keep_info True to maintain dict type for parallel envs (otherwise cannot pass VectorEnv wrapper)
@@ -150,7 +152,6 @@ def _create_single_env(env_name: str, env_type: str, args):
         return 
 
     print(f'Load {env_name} environment in type {env_type}.')    
-    env.seed(args.seed)
     return env
 
 def make_env(args):
@@ -163,4 +164,5 @@ def make_env(args):
     else:
         VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
         env = VectorEnv([lambda: _create_single_env(env_name, env_type, args) for _ in range(args.num_envs)])
+    env.seed(args.seed)  # seed can be either int or list of int
     return env
