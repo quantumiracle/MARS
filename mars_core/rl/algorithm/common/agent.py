@@ -85,7 +85,7 @@ class MultiAgent(Agent):
             if args.load_model_full_path: # if the full path is specified, it has higher priority than the model index
                 model_path = args.load_model_full_path
             else:
-                model_path =  f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.load_model_idx}"
+                model_path =  f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{args.load_model_idx}"
             self.load_model(model_path)
 
         if args.marl_method == 'selfplay':
