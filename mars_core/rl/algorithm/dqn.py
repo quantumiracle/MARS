@@ -120,14 +120,14 @@ class DQNBase(NetBase):
     env         environment(openai gym)
     """
     def __init__(self, env, net_args):
-        super().__init__(env)
+        super().__init__(env.observation_space, env.action_space)
         self._construct_net(env, net_args)
 
     def _construct_net(self, env, net_args):
         if len(self._observation_shape) <= 1: # not image
-            self.net = get_model('mlp')(env, net_args, model_for='discrete_q')
+            self.net = get_model('mlp')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
         else:
-            self.net = get_model('cnn')(env, net_args, model_for='discrete_q')
+            self.net = get_model('cnn')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
 
     def forward(self, x):
         return self.net(x)
@@ -163,11 +163,11 @@ class DuelingDQN(DQNBase):
         # due to the usage of internal network builder, they should use
         # a shared network body with two heads.
         if len(self._observation_shape) <= 1: # not image
-            self.advantage = get_model('mlp')(env, net_args, model_for='discrete_q')
-            self.value = get_model('mlp')(env, net_args, model_for='discrete_q')
+            self.advantage = get_model('mlp')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
+            self.value = get_model('mlp')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
         else:  
-            self.advantage = get_model('cnn')(env, net_args, model_for='discrete_q')
-            self.value = get_model('cnn')(env, net_args, model_for='discrete_q')
+            self.advantage = get_model('cnn')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
+            self.value = get_model('cnn')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
 
     def net(self, x):
         advantage = self.advantage(x)
@@ -233,8 +233,8 @@ class ParallelDQN(DQNBase):
     ---------
     env         environment(openai gym)
     """
-    def __init__(self, env, args, number_envs=2):
-        super(ParallelDQN, self).__init__(env, args)
+    def __init__(self, env, net_args, number_envs=2):
+        super(ParallelDQN, self).__init__(env, net_args)
         self.number_envs = number_envs
 
     def choose_action(self, state, epsilon):

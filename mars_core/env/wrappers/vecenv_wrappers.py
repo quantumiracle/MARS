@@ -343,7 +343,7 @@ class BaseVectorEnv(gym.Env):
             result = []
             for j in id:
                 obs, rew, done, info = self.workers[j].get_result()
-                info["env_id"] = j
+                # info["env_id"] = j
                 result.append((obs, rew, done, info))
         else:
             if action is not None:
