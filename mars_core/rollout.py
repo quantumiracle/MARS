@@ -59,7 +59,7 @@ def rollout_normal(env, model, args):
                 sample = [obs_to_take, action_to_take, reward_to_take, obs__to_take, other_info_to_take, done_to_take]
             model.store(sample)
             obs = obs_
-            logger.log_reward(np.array(reward_to_take).reshape(-1))
+            logger.log_reward(np.array(reward).reshape(-1))
 
             if np.any(
                     done
