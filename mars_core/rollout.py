@@ -5,6 +5,12 @@ import torch
 import time
 
 def rollout(env, model, args):
+    """
+    Function to rollout the interaction of agents and environments.
+
+    Due to the strong heterogeneity of Genetic algorithm and Reinforcement Learning
+    algorithm, the function is separeted into two types. 
+    """
     if args.algorithm == 'GA':
         rollout_ga(env, model, args)
     else:
@@ -20,43 +26,43 @@ def rollout_normal(env, model, args):
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
             
-            obs_to_take=obs.swapaxes(0,1) if args.num_envs > 1 else obs # transform from (envs, agents, dim) to (agents, envs, dim)
-            action_ = model.choose_action(obs_to_take)
+            obs_to_store=obs.swapaxes(0,1) if args.num_envs > 1 else obs # transform from (envs, agents, dim) to (agents, envs, dim)
+            action_ = model.choose_action(obs_to_store) # action: (agent, env, action_dim)
             model.scheduler_step(overall_steps)
 
             if isinstance(action_[0], tuple): # action item contains additional information like log probability
-                action_to_take, other_info = [], []
+                action_to_store, other_info = [], []
                 for (a, info) in action_:
-                    action_to_take.append(a)
+                    action_to_store.append(a)
                     other_info.append(info)
             else:
-                action_to_take = action_
+                action_to_store = action_
                 other_info = None
 
             if args.num_envs > 1:
-                action = np.array(action_to_take).swapaxes(0,1) # transform from (agents, envs, dim) to (envs, agents, dim)
+                action = np.array(action_to_store).swapaxes(0,1) # transform from (agents, envs, dim) to (envs, agents, dim)
             else:
-                action = action_to_take
+                action = action_to_store
 
-            obs_, reward, done, info = env.step(action)
-            obs__to_take = obs_.swapaxes(0,1) if args.num_envs > 1 else obs_ # transform from (envs, agents, dim) to (agents, envs, dim)
+            obs_, reward, done, info = env.step(action)  # requires action: (envs, agents, dim)
+            obs__to_store = obs_.swapaxes(0,1) if args.num_envs > 1 else obs_ # transform from (envs, agents, dim) to (agents, envs, dim)
             # time.sleep(0.05)
             if args.render:
                 env.render()
             
             if args.num_envs > 1: # transform from (envs, agents, dim) to (agents, envs, dim)
-                reward_to_take = reward.swapaxes(0,1) 
-                done_to_take = done.swapaxes(0,1)
-                other_info_to_take = done.swapaxes(0,1) 
+                reward_to_store = reward.swapaxes(0,1) 
+                done_to_store = done.swapaxes(0,1)
+                other_info_to_store = done.swapaxes(0,1) 
             else:
-                reward_to_take = reward
-                done_to_take = done
-                other_info_to_take = other_info
+                reward_to_store = reward
+                done_to_store = done
+                other_info_to_store = other_info
 
             if other_info is None: 
-                sample = [obs_to_take, action_to_take, reward_to_take, obs__to_take, done_to_take]
+                sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, done_to_store]
             else:
-                sample = [obs_to_take, action_to_take, reward_to_take, obs__to_take, other_info_to_take, done_to_take]
+                sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, other_info_to_store, done_to_store]
             model.store(sample)
             obs = obs_
             logger.log_reward(np.array(reward).reshape(-1))

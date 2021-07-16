@@ -1,6 +1,6 @@
 import nashpy as nash
 import numpy as np
-from gamegenerator import getCorrelatedEquilibria, getMixedNashEquilibria, getPureNashEquilibria 
+from .gamegenerator import getCorrelatedEquilibria, getMixedNashEquilibria, getPureNashEquilibria 
 from .lamke_howson_lex import lemke_howson_lex 
 
 def NashEquilibriaSolver(A,B=None):

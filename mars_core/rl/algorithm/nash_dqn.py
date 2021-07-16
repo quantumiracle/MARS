@@ -19,8 +19,14 @@ class NashDQN(DQN):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.model = self.NashDQNBase(env, args.net_architecture, args.num_envs).to(self.device)
+        self.num_envs = args.num_envs
+        self.model = NashDQNBase(env, args.net_architecture, args.num_envs).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
+        self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
+        try:
+            self.action_dims = env.action_space[0].n
+        except:
+            self.action_dims = env.action_space.n
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -29,18 +35,32 @@ class NashDQN(DQN):
             epsilon = self.epsilon_scheduler.get_epsilon()
         if not isinstance(state, torch.Tensor):
             state = torch.Tensor(state).to(self.device)
+        print(state.shape)
+        if self.num_envs == 1: # state: (agents, state_dim)
+            # change state from (agents, state_dim) to (1, agents*state_dim)
+            state = state.unsqueeze(0).view(1, -1) 
+        else: # state: (agents, envs, state_dim)
+            state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
+            state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
 
+        # print(state.shape)
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
-                q_values = self.model(state).detach().cpu().numpy()
-            if self.args.cce:
-                actions = self.compute_cce(q_values)
-            else:
-                actions = self.compute_nash(q_values) 
+                q_values = self.model(state).detach().cpu().numpy()  # needs state: (batch, agents*state_dim)
+            # if self.args.cce:
+            #     actions = self.compute_cce(q_values)
+            # else:
+            actions = self.compute_nash(q_values) 
 
         else:
-            actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_player))
-        return actions     
+            actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
+        
+        if self.num_envs == 1:
+            actions = actions[0]
+        else:
+            actions = np.array(actions).T
+        print(actions)
+        return actions[0]    # TODO this does not work when paralle envs  
 
     def compute_nash(self, q_values, return_dist=False):
         """
@@ -62,7 +82,7 @@ class NashDQN(DQN):
 
             except:  # some cases NE cannot be solved
                 print('No Nash solution for: ', np.linalg.det(qs), qs)
-                ne = self.num_player*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
+                ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
             
             actions = []
                 
@@ -125,6 +145,7 @@ class NashDQN(DQN):
         weights = torch.FloatTensor(weights).to(self.device)
 
         # Q-Learning with target network
+        print(state.shape)
         q_values = self.model(state)
         # target_next_q_values_ = self.model(next_state)  # or use this one
         target_next_q_values_ = self.target(next_state)
@@ -175,7 +196,7 @@ class NashDQNBase(DQNBase):
     env         environment(openai gym)
     """
     def __init__(self, env, net_args, number_envs=2):
-        # super().__init__(env, net_args)
+        super().__init__(env, net_args)
         self.number_envs = number_envs
         try:
             self._observation_shape = tuple(map(operator.add, env.observation_space.shape, env.observation_space.shape)) # double the shape
@@ -183,10 +204,10 @@ class NashDQNBase(DQNBase):
         except:
             self._observation_shape = tuple(map(operator.add, env.observation_space[0].shape, env.observation_space[0].shape)) # double the shape
             self._action_shape = (env.action_space[0].n)**2
-        self._construct_net(self, env, net_args)
+        self._construct_net(env, net_args)
 
     def _construct_net(self, env, net_args):
-            input_space = gym.spaces.Box(self._observation_shape)
+            input_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = self._observation_shape)
             output_space = gym.spaces.Discrete(self._action_shape)
             if len(self._observation_shape) <= 1: # not image
                 self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')

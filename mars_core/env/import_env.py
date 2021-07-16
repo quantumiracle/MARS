@@ -151,7 +151,8 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
         print(f"Error: {env_name} environment in type {env_type} not found!")
         return 
 
-    print(f'Load {env_name} environment in type {env_type}.')    
+    print(f'Load {env_name} environment in type {env_type}.')  
+    print(f'Env observation space: {env.observation_space} action space: {env.action_space}')  
     return env
 
 def make_env(args):

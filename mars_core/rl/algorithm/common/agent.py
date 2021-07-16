@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+
 class Agent(object):
     """
     A standard agent class.
@@ -72,7 +73,7 @@ class MultiAgent(Agent):
         self.not_learnable_list = []
         for i, agent in enumerate(agents):
             if args.test or agent.not_learnable or \
-                (args.marl_method and i != args.marl_spec['trainable_agent_idx']):
+                (args.marl_method == 'selfplay' and i != args.marl_spec['trainable_agent_idx']):
                 self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
@@ -82,27 +83,36 @@ class MultiAgent(Agent):
         print(prefix + " are not learnable.")
 
         if args.test or args.exploit:
-            if args.load_model_full_path: # if the full path is specified, it has higher priority than the model index
+            if args.load_model_full_path:  # if the full path is specified, it has higher priority than the model index
                 model_path = args.load_model_full_path
             else:
-                model_path =  f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{args.load_model_idx}"
+                model_path = f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{args.load_model_idx}"
             self.load_model(model_path)
 
         if args.marl_method == 'selfplay':
             # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
-            self.mergeAllSamplesInOne = True 
+            self.mergeAllSamplesInOne = True
         else:
-            self.mergeAllSamplesInOne = False 
-        self.mergeAllSamplesInOne = False   # TODO comment out
+            self.mergeAllSamplesInOne = False
+        # self.mergeAllSamplesInOne = False   # TODO comment out
 
     def choose_action(self, states):
+        """
+        states: (agents, envs, state_dim)
+        """
         actions = []
-        for state, agent in zip(states, self.agents):
-            if self.args.test:
-                action = agent.choose_action(state, Greedy=True)
-            else:
-                action = agent.choose_action(state)
-            actions.append(action)
+        greedy = True if self.args.test else False
+
+        if self.args.marl_method == 'nash':
+            # one model for all agents, the model is the first one
+            # of self.agents, it directly takes states to generate actions
+            actions = self.agents[0].choose_action(states, Greedy=greedy)
+        else:
+            # each agent will take its corresponding state to generate
+            # the corresponding action
+            for state, agent in zip(states, self.agents):
+                action = agent.choose_action(state, Greedy=greedy)
+                actions.append(action)
         return actions
 
     def scheduler_step(self, frame):
@@ -111,26 +121,33 @@ class MultiAgent(Agent):
 
     def store(self, sample):
         all_s = []
-        for i, agent, *s in zip(np.arange(self.number_of_agents), self.agents,
-                                *sample):
-            # when using parallel env, s for each agent can be in shape:
-            # [(state1, state2), (action1, action2), (reward1, reward2), (next_state1, next_state2), (done1, done2)]
-            # where indices 1,2 represent different envs, thus we need to separate the sample before storing it in each 
-            # agent, to have the shape like [[state1, action1, reward1, next_state1, done1], [state2, action2, reward2, next_state2, done2]]
-            try:
-                s = np.stack(zip(*s)) 
-            except:
-                s = tuple([s])
+        if self.args.marl_method == 'nash':
+            # one model for all agents, the model is the first one
+            # of self.agents, it directly stores the sample constaining all
+            self.agents[0].store(sample)
 
-            # if using self-play, use samples from all players to train the model (due to symmetry)
+        else:
+            for i, agent, *s in zip(np.arange(self.number_of_agents),
+                                    self.agents, *sample):
+                # when using parallel env, s for each agent can be in shape:
+                # [(state1, state2), (action1, action2), (reward1, reward2), (next_state1, next_state2), (done1, done2)]
+                # where indices 1,2 represent different envs, thus we need to separate the sample before storing it in each
+                # agent, to have the shape like [[state1, action1, reward1, next_state1, done1], [state2, action2, reward2, next_state2, done2]]
+                try:
+                    s = np.stack(zip(*s))
+                except:
+                    s = tuple([s])
+
+                # if using self-play, use samples from all players to train the model (due to symmetry)
+                if self.mergeAllSamplesInOne:
+                    all_s.extend(s)
+                elif i not in self.not_learnable_list:  # no need to store samples for not learnable models
+                    agent.store(s)
+
+            # store all samples into the trainable agent in self-play
             if self.mergeAllSamplesInOne:
-                all_s.extend(s)
-            elif i not in self.not_learnable_list:  # no need to store samples for not learnable models
-                agent.store(s)
-        
-        # store all samples into the trainable agent in self-play
-        if self.mergeAllSamplesInOne:
-            self.agents[self.args.marl_spec['trainable_agent_idx']].store(all_s)
+                self.agents[self.args.marl_spec['trainable_agent_idx']].store(
+                    all_s)
 
     def update(self):
         losses = []
@@ -150,7 +167,7 @@ class MultiAgent(Agent):
         for i, agent in enumerate(self.agents):
             if self.args.exploit:
                 # in EXPLOIT mode, the exploiter is learnable, thus not loaded from anywhere
-                if i in self.not_learnable_list: 
+                if i in self.not_learnable_list:
                     agent.load_model(path, eval)
                     print(f'Agent No. [{i}] loads model from: ', path)
             else:
