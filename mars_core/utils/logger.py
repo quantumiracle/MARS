@@ -21,10 +21,10 @@ class TestLogger():
 
         # if using parallel environment, env.agents is list of list,
         # we flatten it in to a simple list. For example, it changes
-        # [['env1_player1', 'env1_player2'], ['env2_player1', 'env2_player2']]
+        # [['(env1)player1', '(env1)player2'], ['(env2)player1', '(env2)player2']]
         # to be ['env1_player1', 'env1_player2', 'env2_player1', 'env2_player2'].
         if all(isinstance(i, list) for i in env.agents):
-            self.keys = [item for sublist in env.agents for item in sublist]
+            self.keys = [f'env{env_id}_'+item for env_id, sublist in enumerate(env.agents) for item in sublist]
         else:
             self.keys = env.agents
 

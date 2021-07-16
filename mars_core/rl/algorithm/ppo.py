@@ -104,10 +104,11 @@ class PPODiscrete(Agent):
 
                 if self.GAE:
                     # use generalized advantage estimation
-                    vs_target = r + self.gamma * self.v(s_prime) * done_mask
-                    delta = vs_target - self.v(s)
+                    vs_prime = self.v(s_prime).squeeze(dim=-1)
+                    assert vs_prime.shape == done_mask.shape
+                    vs_target = r + self.gamma * vs_prime * done_mask
+                    delta = vs_target - vs
                     delta = delta.detach()
-
                     advantage_lst = []
                     advantage = 0.0
                     for delta_t in torch.flip(delta, [0]):
