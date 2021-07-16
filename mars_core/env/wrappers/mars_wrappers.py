@@ -15,7 +15,7 @@ class PettingzooClassicWrapper():
         self.action_spaces = self.env.action_spaces
         self.action_space = list(self.action_spaces.values())[0]
         self.agents = list(self.action_spaces.keys())
-
+        self.num_agents = len(self.agents)      
         # for rps_v1, discrete to box, fake space
         self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(1,), dtype=np.uint8)
         self.observation_spaces = {a:self.observation_space for a in self.agents}
@@ -24,6 +24,10 @@ class PettingzooClassicWrapper():
         # obs_space = self.env.observation_spaces.values()
         # obs_len = obs_space.shape[0]-action_space.n
         # self.observation_spaces = Box(shape=(obs_len,),low=obs_space.low[:obs_len],high=obs_space.high[:obs_len])
+
+    @property
+    def spec(self):
+        return self.env.spec
 
     def reset(self, observation=None):
         obs = self.env.reset()
@@ -61,9 +65,13 @@ class PettingzooClassic_Iterate2Parallel():
         self.action_spaces = self.env.action_spaces
         self.action_space = list(self.action_spaces.values())[0]
         self.agents = list(self.action_spaces.keys())
-
+        self.num_agents = len(self.agents)
         self.observation_space = list(self.env.observation_spaces.values())[0]['observation']
         self.observation_spaces = {a:self.observation_space for a in self.agents}
+
+    @property
+    def spec(self):
+        return self.env.spec
 
     def reset(self, observation=None):
         obs = self.env.reset()
@@ -111,10 +119,15 @@ class Atari2AgentWrapper():
         super(Atari2AgentWrapper, self).__init__()
         self.env = env
         self.agents = ['first_0']
+        self.num_agents = len(self.agents)
         self.observation_space = self.env.observation_space
         self.observation_spaces = {name: self.env.observation_space for name in self.agents}
         self.action_space = self.env.action_space
         self.action_spaces = {name: self.action_space for name in self.agents}
+    
+    @property
+    def spec(self):
+        return self.env.spec
 
     def reset(self):
         obs = self.env.reset()
@@ -156,13 +169,17 @@ class Atari2AgentWrapper():
 #     def __init__(self, env, against_baseline=False):
 #         # super(SlimeVolleyWrapper, self).__init__()
 #         super().__init__(env)
-#         self.env = env
+        # self.env = env
 #         self.agents = ['first_0', 'second_0']
 #         self.observation_space = self.env.observation_space
 #         self.observation_spaces = {name: self.env.observation_space for name in self.agents}
 #         self.action_space = gym.spaces.Discrete(len(self.action_table))
 #         self.action_spaces = {name: self.action_space for name in self.agents}
 #         self.against_baseline = against_baseline
+
+    # @property
+    # def spec(self):
+    #     return self.env.spec
 
 #     def reset(self, observation=None):
 #         obs1 = self.env.reset()
@@ -237,6 +254,10 @@ class SlimeVolleyWrapper(gym.Wrapper):
         self.action_spaces = {name: self.action_space for name in self.agents}
         self.against_baseline = against_baseline
 
+    @property
+    def spec(self):
+        return self.env.spec
+
     def reset(self, observation=None):
         obs0 = self.env.reset()
         if self.against_baseline: 
@@ -301,17 +322,21 @@ class Dict2TupleWrapper():
             self.observation_space = env.observation_space
             self.obs_type = 'ram'
         self.action_space = env.action_space
-        fake_env = gym.make('Pong-v0')
-        self.spec = fake_env.spec
+        # fake_env = gym.make('Pong-v0')
+        # self.spec = fake_env.spec
         try:   # both pettingzoo and slimevolley can work with this
             self.agents = env.agents
         except:
             self.agents = env.unwrapped.agents
-        try:
-            self.spec.id = env.env.spec.id
-        except:
-            pass
-        fake_env.close()
+        # try:
+        #     self.spec.id = env.env.spec.id
+        # except:
+        #     pass
+        # fake_env.close()
+
+    @property
+    def spec(self):
+        return self.env.spec
 
     def observation_swapaxis(self, observation):
         return (np.swapaxes(observation[0], 2, 0), np.swapaxes(observation[1], 2, 0))

@@ -154,7 +154,7 @@ class DuelingDQN(DQNBase):
     Dueling Network Architectures for Deep Reinforcement Learning
     https://arxiv.org/abs/1511.06581
     """
-    def __init__(self, env, net_args):
+    def __init__(self, env, net_args, **kwargs):
         super().__init__(env, net_args)
         self._construct_net(env, net_args)
     
@@ -180,8 +180,8 @@ class DuelingDQN(DQNBase):
 #     https://arxiv.org/abs/1511.06581
 #     Different from above, a self-contained version, using a shared network body for advantage and value heads.
 #     """
-#     def __init__(self, env, hidden_dim=64, activation=nn.Tanh(), **kw):
-#         super().__init__(env, hidden_dim, **kw)
+#     def __init__(self, env, hidden_dim=64, activation=nn.Tanh(), **kwargs):
+#         super().__init__(env, hidden_dim, **kwargs)
 #         self.construct_net(hidden_dim, nn.Tanh())
         
 #         self.advantage = self.fc
@@ -233,7 +233,7 @@ class ParallelDQN(DQNBase):
     ---------
     env         environment(openai gym)
     """
-    def __init__(self, env, net_args, number_envs=2):
+    def __init__(self, env, net_args, number_envs=2, **kwargs):
         super(ParallelDQN, self).__init__(env, net_args)
         self.number_envs = number_envs
 
@@ -299,8 +299,8 @@ class ParallelDuelingDQN(DuelingDQN, ParallelDQN):
 
     => 3
     """
-    def __init__(self, env, hidden_dim=64, number_envs=2):
-        super(ParallelDuelingDQN, self).__init__(env=env, hidden_dim=hidden_dim, number_envs=number_envs)
+    def __init__(self, env, net_args, number_envs=2):
+        super(ParallelDuelingDQN, self).__init__(env=env, net_args=net_args, number_envs=number_envs)
 
 # class ParallelNashDQN(DQNBase):
 #     """

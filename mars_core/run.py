@@ -19,7 +19,7 @@ print(env)
 ### Specify models for each agent
 model1 = eval(args.algorithm)(env, args)
 model2 = eval(args.algorithm)(env, args)
-# model1.fix()  # fix a model if you don't want it to learn
+model1.fix()  # fix a model if you don't want it to learn
 
 model = MultiAgent(env, [model1, model2], args)
 

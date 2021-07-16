@@ -56,6 +56,10 @@ class PPODiscrete(Agent):
     def store(self, transitions):
         # self.data.append(transition)
         # self.data.extend(transitions)
+
+        # If several transitions are pushed at the same time,
+        # they are not from the same trajectory, therefore they need
+        # to be stored separately since PPO is on-policy.
         for i, transition in enumerate(transitions): # iterate over the list
             self.data[i].append(transition)
         
@@ -63,14 +67,13 @@ class PPODiscrete(Agent):
         s_lst, a_lst, r_lst, s_prime_lst, prob_a_lst, done_lst = [], [], [], [], [], []
         for transition in data:
             s, a, r, s_prime, prob_a, done = transition
-            
             s_lst.append(s)
             a_lst.append(a)
-            r_lst.append([r])
+            r_lst.append(r)
             s_prime_lst.append(s_prime)
             prob_a_lst.append(prob_a)
             done_mask = 0 if done else 1
-            done_lst.append([done_mask])
+            done_lst.append(done_mask)
 
         # found this step take some time for Pong (not ram), even if no parallel no multiagent
         s,a,r,s_prime,done_mask, prob_a = torch.tensor(s_lst, dtype=torch.float).to(self.device), torch.tensor(a_lst).to(self.device), \
@@ -81,7 +84,7 @@ class PPODiscrete(Agent):
     def update(self):
         total_loss = 0.
         self.data = [x for x in self.data if x]  # remove empty
-        for data in self.data: # iterate over the list of envs
+        for data in self.data: # iterate over data from different environments
             s, a, r, s_prime, done_mask, oldlogprob = self.make_batch(data)
 
             if not self.GAE:
@@ -95,7 +98,6 @@ class PPODiscrete(Agent):
 
                 rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
                 rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
-
             
             for _ in range(self.K_epoch):
                 vs = self.v(s)
