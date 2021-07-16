@@ -19,27 +19,47 @@ def rollout_normal(env, model, args):
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
-            action_ = model.choose_action(obs)
+            
+            obs_to_take=obs.swapaxes(0,1) if args.num_envs > 1 else obs # transform from (envs, agents, dim) to (agents, envs, dim)
+            action_ = model.choose_action(obs_to_take)
             model.scheduler_step(overall_steps)
+
             if isinstance(action_[0], tuple): # action item contains additional information like log probability
-                action, other_info = [], []
+                action_to_take, other_info = [], []
                 for (a, info) in action_:
-                    action.append(a)
+                    action_to_take.append(a)
                     other_info.append(info)
             else:
-                action = action_
+                action_to_take = action_
                 other_info = None
+
+            if args.num_envs > 1:
+                action = np.array(action_to_take).swapaxes(0,1) # transform from (agents, envs, dim) to (envs, agents, dim)
+            else:
+                action = action_to_take
+
             obs_, reward, done, info = env.step(action)
+            obs__to_take = obs_.swapaxes(0,1) if args.num_envs > 1 else obs_ # transform from (envs, agents, dim) to (agents, envs, dim)
+            # time.sleep(0.05)
             if args.render:
                 env.render()
-            if other_info is None: 
-                sample = [obs, action, reward, obs_, done]
+            
+            if args.num_envs > 1: # transform from (envs, agents, dim) to (agents, envs, dim)
+                reward_to_take = reward.swapaxes(0,1) 
+                done_to_take = done.swapaxes(0,1)
+                other_info_to_take = done.swapaxes(0,1) 
             else:
-                sample = [obs, action, reward, obs_, other_info, done]
-            model.store(sample)
+                reward_to_take = reward
+                done_to_take = done
+                other_info_to_take = other_info
 
+            if other_info is None: 
+                sample = [obs_to_take, action_to_take, reward_to_take, obs__to_take, done_to_take]
+            else:
+                sample = [obs_to_take, action_to_take, reward_to_take, obs__to_take, other_info_to_take, done_to_take]
+            model.store(sample)
             obs = obs_
-            logger.log_reward(reward)
+            logger.log_reward(np.array(reward_to_take).reshape(-1))
 
             if np.any(
                     done
