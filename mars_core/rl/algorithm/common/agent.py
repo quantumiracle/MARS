@@ -56,9 +56,13 @@ class MultiAgent(Agent):
     """
     A class containing all agents in a game.
 
-    Definition of 'not_learnable': the agent is not self-updating using
-    the RL loss, it's either never updated (i.e., 'fixed') or updated as
-    a delayed copy of other learnable agents with the MARL learning scheme.
+    'not_learnable': 
+        Definition:
+            The agent is not self-updating using the RL loss, 
+            it's either never updated (i.e., 'fixed') or updated as
+            a delayed copy of other learnable agents with the MARL learning scheme.
+        Utility:
+            Agents in the not_learnable_list will not take the store() and update() functions.
     """
     def __init__(self, env, agents, args):
         super(MultiAgent, self).__init__(env, args)
@@ -89,7 +93,7 @@ class MultiAgent(Agent):
             self.mergeAllSamplesInOne = True 
         else:
             self.mergeAllSamplesInOne = False 
-        self.mergeAllSamplesInOne = False 
+        self.mergeAllSamplesInOne = False   # TODO comment out
 
     def choose_action(self, states):
         actions = []
@@ -106,8 +110,7 @@ class MultiAgent(Agent):
             agent.scheduler_step(frame)
 
     def store(self, sample):
-        if self.mergeAllSamplesInOne:
-            all_s = []
+        all_s = []
         for i, agent, *s in zip(np.arange(self.number_of_agents), self.agents,
                                 *sample):
             # when using parallel env, s for each agent can be in shape:
@@ -124,6 +127,8 @@ class MultiAgent(Agent):
                 all_s.extend(s)
             elif i not in self.not_learnable_list:  # no need to store samples for not learnable models
                 agent.store(s)
+        
+        # store all samples into the trainable agent in self-play
         if self.mergeAllSamplesInOne:
             self.agents[self.args.marl_spec['trainable_agent_idx']].store(all_s)
 
