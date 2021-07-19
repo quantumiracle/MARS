@@ -20,7 +20,7 @@ MARL Algorithms to do:
 - [ ] qmix
 - [ ] qtran
 - [ ] mappo
-- [ ] nash-dqn
+- [x] nash-dqn
 
 Supported environments:
 - [x] Openai Gym
