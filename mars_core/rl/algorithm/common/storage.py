@@ -10,7 +10,6 @@ class ReplayBuffer(object):
         self.buffer = deque(maxlen=capacity)
 
     def push(self, samples):
-        print(samples)
         self.buffer.extend(samples)
 
     def sample(self, batch_size):

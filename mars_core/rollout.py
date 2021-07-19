@@ -94,7 +94,7 @@ def rollout_normal(env, model, args):
 
         if epi % args.log_interval == 0:
             logger.print_and_save()
-            if not args.marl_method:
+            if not args.marl_method == 'selfplay':
                 model.save_model(logger.model_dir)
 
 

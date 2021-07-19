@@ -119,23 +119,31 @@ class MultiAgent(Agent):
         for agent in self.agents:
             agent.scheduler_step(frame)
 
-    def store(self, sample):
+    def store(self, samples):
         all_s = []
         if self.args.marl_method == 'nash':
+            # 'states' (agents, envs, state_dim) -> (envs, agents*state_dim), similar for 'actions', 'rewards' take the first one in all agents,
+            # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
+            [states, actions, rewards, next_states, dones] = samples
+            try:  # when num_envs > 1 
+                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
+            except:  # when num_envs = 1 
+                samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]
             # one model for all agents, the model is the first one
             # of self.agents, it directly stores the sample constaining all
-            self.agents[0].store(sample)
+            for agent in self.agents: # actually only one agent in list
+                agent.store(samples) 
 
         else:
             for i, agent, *s in zip(np.arange(self.number_of_agents),
-                                    self.agents, *sample):
+                                    self.agents, *samples):
                 # when using parallel env, s for each agent can be in shape:
                 # [(state1, state2), (action1, action2), (reward1, reward2), (next_state1, next_state2), (done1, done2)]
                 # where indices 1,2 represent different envs, thus we need to separate the sample before storing it in each
                 # agent, to have the shape like [[state1, action1, reward1, next_state1, done1], [state2, action2, reward2, next_state2, done2]]
-                try:
+                try: # when num_envs > 1 
                     s = np.stack(zip(*s))
-                except:
+                except: # when num_envs = 1 
                     s = tuple([s])
 
                 # if using self-play, use samples from all players to train the model (due to symmetry)

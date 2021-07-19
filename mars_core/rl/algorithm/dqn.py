@@ -302,43 +302,6 @@ class ParallelDuelingDQN(DuelingDQN, ParallelDQN):
     def __init__(self, env, net_args, number_envs=2):
         super(ParallelDuelingDQN, self).__init__(env=env, net_args=net_args, number_envs=number_envs)
 
-# class ParallelNashDQN(DQNBase):
-#     """
-#     Nash-DQN for parallel env sampling
-
-#     parameters
-#     ---------
-#     env         environment(openai gym)
-#     """
-#     def __init__(self, env, hidden_dim=64, number_envs=2):
-#         super(ParallelNashDQN, self).__init__(env, hidden_dim)
-#         self.number_envs = number_envs
-#         try:
-#             self.input_shape = tuple(map(operator.add, env.observation_space.shape, env.observation_space.shape)) # double the shape
-#             self.num_actions = (env.action_space.n)**2
-#         except:
-#             self.input_shape = tuple(map(operator.add, env.observation_space[0].shape, env.observation_space[0].shape)) # double the shape
-#             self.num_actions = (env.action_space[0].n)**2
-#         self.construct_net(hidden_dim)
-
-#     def act(self, state, epsilon, q_value=True):
-#         """
-#         Parameters
-#         ----------
-#         state       torch.Tensor with appropritate device type
-#         epsilon     epsilon for epsilon-greedy
-#         """
-#         if random.random() > epsilon:  # NoisyNet does not use e-greedy
-#             with torch.no_grad():
-#                 q_value = self.forward(state)
-#                 action = q_value.max(1)[1].detach().cpu().numpy()
-#         else:
-#             action = np.random.randint(self.num_actions, size=self.number_envs)
-#         if q_value:
-#             return action, q_value
-#         else:
-#             return action    
-
 # class Policy(DQNBase):
 #     """
 #     Policy with only actors. This is used in supervised learning for NFSP.
