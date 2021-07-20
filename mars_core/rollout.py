@@ -25,11 +25,10 @@ def rollout_normal(env, model, args):
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
-            
             obs_to_store=obs.swapaxes(0,1) if args.num_envs > 1 else obs # transform from (envs, agents, dim) to (agents, envs, dim)
             action_ = model.choose_action(obs_to_store) # action: (agent, env, action_dim)
             model.scheduler_step(overall_steps)
-
+            
             if isinstance(action_[0], tuple): # action item contains additional information like log probability
                 action_to_store, other_info = [], []
                 for (a, info) in action_:
@@ -45,22 +44,23 @@ def rollout_normal(env, model, args):
                 action = action_to_store
 
             obs_, reward, done, info = env.step(action)  # requires action: (envs, agents, dim)
-            obs__to_store = obs_.swapaxes(0,1) if args.num_envs > 1 else obs_ # transform from (envs, agents, dim) to (agents, envs, dim)
             # time.sleep(0.05)
             if args.render:
                 env.render()
             
             if args.num_envs > 1: # transform from (envs, agents, dim) to (agents, envs, dim)
+                obs__to_store = obs_.swapaxes(0,1) 
                 reward_to_store = reward.swapaxes(0,1) 
                 done_to_store = done.swapaxes(0,1)
-                other_info_to_store = other_info.swapaxes(0,1) 
             else:
+                obs__to_store = obs_
                 reward_to_store = reward
                 done_to_store = done
-                other_info_to_store = other_info
+
             if other_info is None: 
                 sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, done_to_store]
             else:
+                other_info_to_store = other_info.swapaxes(0,1) if args.num_envs > 1 else other_info
                 sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, other_info_to_store, done_to_store]
             model.store(sample)
             obs = obs_
