@@ -22,9 +22,6 @@ class ReservoirBuffer(object):
     def __init__(self, capacity):
         self.buffer = deque(maxlen=capacity)
 
-    # def push(self, state, action):
-        # state = np.expand_dims(state, 0)
-        # self.buffer.append((state, action))
     def push(self, samples):
         self.buffer.extend(samples)
     
