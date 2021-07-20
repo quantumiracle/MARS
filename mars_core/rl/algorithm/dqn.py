@@ -155,7 +155,7 @@ class DuelingDQN(DQNBase):
     https://arxiv.org/abs/1511.06581
     """
     def __init__(self, env, net_args, **kwargs):
-        super().__init__(env, net_args)
+        super().__init__(env, net_args, **kwargs)
         self._construct_net(env, net_args)
     
     def _construct_net(self, env, net_args):
@@ -233,8 +233,8 @@ class ParallelDQN(DQNBase):
     ---------
     env         environment(openai gym)
     """
-    def __init__(self, env, net_args, number_envs=2, **kwargs):
-        super(ParallelDQN, self).__init__(env, net_args)
+    def __init__(self, env, net_args, number_envs, **kwargs):
+        super(ParallelDQN, self).__init__(env, net_args, **kwargs)
         self.number_envs = number_envs
 
     def choose_action(self, state, epsilon):
@@ -299,7 +299,7 @@ class ParallelDuelingDQN(DuelingDQN, ParallelDQN):
 
     => 3
     """
-    def __init__(self, env, net_args, number_envs=2):
+    def __init__(self, env, net_args, number_envs):
         super(ParallelDuelingDQN, self).__init__(env=env, net_args=net_args, number_envs=number_envs)
 
 # class Policy(DQNBase):
