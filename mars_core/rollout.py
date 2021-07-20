@@ -44,7 +44,7 @@ def rollout_normal(env, model, args):
                 action = action_to_store
 
             obs_, reward, done, info = env.step(action)  # requires action: (envs, agents, dim)
-            # time.sleep(0.05)
+            time.sleep(0.05)
             if args.render:
                 env.render()
             
