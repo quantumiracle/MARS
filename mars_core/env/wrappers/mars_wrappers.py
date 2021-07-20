@@ -280,7 +280,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
         obss, rewards, dones, infos = {},{},{},{}
         actions_ = [self.env.discreteToBox(int(a)) for a in actions.values()]  # from discrete to multibinary action
         if self.against_baseline:
-            obs, reward, done, info = self.env.step(actions_[0])
+            obs, reward, done, info = self.env.step(actions_[0]) # the reward is for the learnable agent (on the right side)
             obss[self.agents[0]] = obs
             rewards[self.agents[0]] = reward
             dones[self.agents[0]] = done
@@ -294,7 +294,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
                 obs0, reward, done, info = self.env.step(*actions_)
             obs1 = info['otherObs']
             rewards[self.agents[0]] = reward
-            rewards[self.agents[1]] = -reward # the reward is for the learnable agent (second)
+            rewards[self.agents[1]] = -reward 
             obss[self.agents[0]] = obs0
             obss[self.agents[1]] = obs1
             dones[self.agents[0]] = done
