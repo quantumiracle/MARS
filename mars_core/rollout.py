@@ -53,12 +53,11 @@ def rollout_normal(env, model, args):
             if args.num_envs > 1: # transform from (envs, agents, dim) to (agents, envs, dim)
                 reward_to_store = reward.swapaxes(0,1) 
                 done_to_store = done.swapaxes(0,1)
-                other_info_to_store = done.swapaxes(0,1) 
+                other_info_to_store = other_info.swapaxes(0,1) 
             else:
                 reward_to_store = reward
                 done_to_store = done
                 other_info_to_store = other_info
-
             if other_info is None: 
                 sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, done_to_store]
             else:
