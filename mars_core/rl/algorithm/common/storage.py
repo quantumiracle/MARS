@@ -22,9 +22,11 @@ class ReservoirBuffer(object):
     def __init__(self, capacity):
         self.buffer = deque(maxlen=capacity)
 
-    def push(self, state, action):
-        state = np.expand_dims(state, 0)
-        self.buffer.append((state, action))
+    # def push(self, state, action):
+        # state = np.expand_dims(state, 0)
+        # self.buffer.append((state, action))
+    def push(self, samples):
+        self.buffer.extend(samples)
     
     def sample(self, batch_size):
         # Efficient Reservoir Sampling
@@ -48,8 +50,10 @@ class ReservoirBuffer(object):
                 k = random.randint(0, batch_size - 1)
                 reservoir[k] = self.buffer[idx]
             idx += 1
-        state, action = zip(*random.sample(self.buffer, batch_size))
-        return np.concatenate(state), action
+        # state, action = zip(*random.sample(self.buffer, batch_size))
+        # return np.concatenate(state), action
+        state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
+        return state, action, reward, next_state, done
     
     def __len__(self):
         return len(self.buffer)
