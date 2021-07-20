@@ -14,13 +14,14 @@ Basic RL Algorithms to do:
 MARL Algorithms to do:
 - [x] self-play
 - [ ] fictitious self-play
-- [ ] neural fictitious self-play
+- [x] neural fictitious self-play
 - [ ] policy space reponse oracle
 - [ ] maddpg
 - [ ] qmix
 - [ ] qtran
 - [ ] mappo
 - [x] nash-dqn
+- [x] nash-dqn-exploiter
 
 Supported environments:
 - [x] Openai Gym
