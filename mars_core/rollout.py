@@ -44,7 +44,7 @@ def rollout_normal(env, model, args):
                 action = action_to_store
 
             obs_, reward, done, info = env.step(action)  # requires action: (envs, agents, dim)
-            time.sleep(0.05)
+            # time.sleep(0.05)
             if args.render:
                 env.render()
             
@@ -93,7 +93,7 @@ def rollout_normal(env, model, args):
 
         if epi % args.log_interval == 0:
             logger.print_and_save()
-            if not args.marl_method == 'selfplay':
+            if not args.marl_method == 'selfplay' and logger.model_dir is not None:
                 model.save_model(logger.model_dir)
 
 

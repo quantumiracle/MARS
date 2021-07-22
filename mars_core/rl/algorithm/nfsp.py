@@ -24,7 +24,7 @@ class NFSP(Agent):
         self.epsilon_scheduler = self.rl_agent.epsilon_scheduler
         self.schedulers = self.rl_agent.schedulers
 
-        self.eta = float(args.marl_spec['eta'])
+        self.eta = 0. if args.test else float(args.marl_spec['eta'])  # in test mode, only use average policy
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         self.is_best_response = False

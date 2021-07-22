@@ -168,19 +168,23 @@ class MultiAgent(Agent):
         return losses
 
     def save_model(self, path=None):
-        for agent in self.agents:
-            agent.save_model(path)
+        for idx, agent in enumerate(self.agents):
+            agent.save_model(path+f'-{str(idx)}')
 
     def load_model(self, path=None, eval=True):
+            
         for i, agent in enumerate(self.agents):
+            if isinstance(path, list): # if pass in a list of paths, each agent takes one path in order
+                spec_path = path[i]
+
             if self.args.exploit:
                 # in EXPLOIT mode, the exploiter is learnable, thus not loaded from anywhere
                 if i in self.not_learnable_list:
-                    agent.load_model(path, eval)
-                    print(f'Agent No. [{i}] loads model from: ', path)
+                    agent.load_model(spec_path, eval)
+                    print(f'Agent No. [{i}] loads model from: ', spec_path)
             else:
-                agent.load_model(path, eval)
-                print(f'Agent No. [{i}] loads model from: ', path)
+                agent.load_model(spec_path, eval)
+                print(f'Agent No. [{i}] loads model from: ', spec_path)
 
     @property
     def ready_to_update(self) -> bool:
