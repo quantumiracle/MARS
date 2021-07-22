@@ -34,6 +34,7 @@ class TestLogger():
         self.epi_length = []
         self.current_episode = 0
         self.model_dir = None
+        self.additional_logs = []
 
     def _create_dirs(self, *args):
         pass
@@ -66,6 +67,11 @@ class TestLogger():
         for k in self.keys:
             print(f"{k}: \
                 episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}")
+        
+        if len(self.additional_logs) > 0:
+            for log in self.additional_logs:
+                print(log) 
+            self.additional_logs = []
 
 class Logger(TestLogger):
     def __init__(self, env, args):
@@ -120,7 +126,12 @@ class Logger(TestLogger):
             print(f"{k}: \
                 episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}, \
                 loss: {np.mean(self.losses[k][-self.avg_window:]):.4f}")
-
+        
+        if len(self.additional_logs) > 0:
+            for log in self.additional_logs:
+                print(log) 
+            self.additional_logs = []
+        
         # save process data
         process_data = {
             'episode_reward': self.epi_rewards,
@@ -159,6 +170,11 @@ class DummyLogger(Logger):
         print(
             f'Episode: {self.current_episode}, avg. reward: {np.mean(self.epi_rewards[-self.avg_window:]):.4f}, avg. length {np.mean(self.epi_length[-self.avg_window:])}'
         )
+
+        if len(self.additional_logs) > 0:
+            for log in self.additional_logs:
+                print(log) 
+            self.additional_logs = []
 
         # save process data
         process_data = {

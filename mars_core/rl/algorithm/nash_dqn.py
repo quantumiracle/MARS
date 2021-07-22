@@ -210,21 +210,3 @@ class NashDQNBase(DQNBase):
                 self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')
             else:
                 self.net = get_model('cnn')(input_space, output_space, net_args, model_for='discrete_q')
-
-    # def choose_action(self, state, epsilon, q_value=True):
-    #     """
-    #     Parameters
-    #     ----------
-    #     state       torch.Tensor with appropritate device type
-    #     epsilon     epsilon for epsilon-greedy
-    #     """
-    #     if random.random() > epsilon:  # NoisyNet does not use e-greedy
-    #         with torch.no_grad():
-    #             q_value = self.forward(state)
-    #             action = q_value.max(1)[1].detach().cpu().numpy()
-    #     else:
-    #         action = np.random.randint(self._action_shape, size=self.number_envs)
-    #     if q_value:
-    #         return action, q_value
-    #     else:
-    #         return action    
