@@ -24,7 +24,9 @@ class SelfPlayMetaLearner():
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
-        score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
+        # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
+        score_avg_window = 2 # use the same average window as logging for score delta
+
         score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
              - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
@@ -36,6 +38,6 @@ class SelfPlayMetaLearner():
 
                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+'1')  # save only the latest checkpoint
                 model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+'1')
-            print(f'Score delta: {score_delta}, udpate the opponent.')
+            logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
 
             self.last_update_epi = logger.current_episode

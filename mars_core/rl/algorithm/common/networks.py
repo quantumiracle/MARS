@@ -92,7 +92,7 @@ class MLP(NetBase):
                     getattr(torch.nn, layers_config['hidden_activation'])())
             layers += tmp
         if layers_config['output_activation']:
-            layers += [getattr(torch.nn, layers_config['output_activation'])()]
+            layers += [getattr(torch.nn, layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical!
         return nn.Sequential(*layers)
 
 
@@ -134,7 +134,7 @@ class CNN(NetBase):
                     getattr(torch.nn, layers_config['hidden_activation'])())
             layers += tmp
         if layers_config['output_activation']:
-            layers += [getattr(torch.nn, layers_config['output_activation'])()]
+            layers += [getattr(torch.nn, layers_config['output_activation'])(dim=-1)]
         return nn.Sequential(*layers)
 
 

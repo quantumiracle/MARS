@@ -1,7 +1,7 @@
 env_args:
     env_name: boxing_v1
     env_type: pettingzoo
-    num_envs: 2
+    num_envs: 1
     ram: True
     seed: 1122
 
@@ -26,14 +26,14 @@ train_args:
     learning_rate: 1e-4
     device: gpu
     update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
-    log_avg_window: 5 # average window length in logging
-    log_interval: 20  # log print interval 
-    # render: True
+    log_avg_window: 1 # average window length in logging
+    log_interval: 1  # log print interval 
+    render: True
     # test: True
     # load_model_idx: 0/1
 
     marl_method: selfplay
     marl_spec:  # configurations for specific MARL method
-        selfplay_score_delta: 10  # the score that current learning agent must beat its opponent to update opponent's policy
+        selfplay_score_delta: 60  # 10 the score that current learning agent must beat its opponent to update opponent's policy
         trainable_agent_idx: 0   # the index of trainable agent, with its opponent delayed updated
         opponent_idx: 1          # the one to be updated from trainable agent

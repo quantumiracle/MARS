@@ -7,8 +7,8 @@ from rl.algorithm import *
 # yaml_file = 'confs/gym_pongramv0_dqn'
 # yaml_file = 'confs/gym_cartpolev1_dqn'
 # yaml_file = 'confs/gym_cartpolev1_ppo'
-yaml_file = 'confs/slimevolley_slimevolleyv0_dqn'
-# yaml_file = 'confs/slimevolley_slimevolleyv0_ppo'
+# yaml_file = 'confs/slimevolley_slimevolleyv0_dqn'
+yaml_file = 'confs/slimevolley_slimevolleyv0_ppo'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 

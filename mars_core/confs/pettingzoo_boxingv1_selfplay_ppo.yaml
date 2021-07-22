@@ -12,7 +12,7 @@ agent_args:
         gamma: 0.99
         lambda: 0.95
         eps_clip: 0.2
-        K_epoch: 4
+        K_epoch: 40
         GAE: False  # generalized advantage estimation
 
 train_args:
@@ -30,7 +30,7 @@ train_args:
         policy:
             hidden_dim_list: [64, 64, 64]  
             hidden_activation: Tanh
-            output_activation: Softmax
+            output_activation: Softmax  # Softmax
         value:
             hidden_dim_list: [64, 64, 64]  
             hidden_activation: Tanh

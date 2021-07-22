@@ -145,7 +145,6 @@ class MultiAgent(Agent):
                     s = np.stack(zip(*s))
                 except: # when num_envs = 1 
                     s = tuple([s])
-
                 # if using self-play, use samples from all players to train the model (due to symmetry)
                 if self.mergeAllSamplesInOne:
                     all_s.extend(s)
@@ -176,6 +175,8 @@ class MultiAgent(Agent):
         for i, agent in enumerate(self.agents):
             if isinstance(path, list): # if pass in a list of paths, each agent takes one path in order
                 spec_path = path[i]
+            else:
+                spec_path = path
 
             if self.args.exploit:
                 # in EXPLOIT mode, the exploiter is learnable, thus not loaded from anywhere

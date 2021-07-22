@@ -60,7 +60,7 @@ def rollout_normal(env, model, args):
             if other_info is None: 
                 sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, done_to_store]
             else:
-                other_info_to_store = other_info.swapaxes(0,1) if args.num_envs > 1 else other_info
+                other_info_to_store = np.array(other_info).swapaxes(0,1) if args.num_envs > 1 else other_info
                 sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, other_info_to_store, done_to_store]
             model.store(sample)
             obs = obs_
