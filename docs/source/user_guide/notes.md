@@ -16,6 +16,51 @@
   * Openai Gym environments only support single-agent games;
   * PettingZoo environments only support multiple-agent games, unless you can provide some agents as the opponents and set those models with *.fix()* then you can view the learnable agent to play in a single-agent game. 
 
+### RL
+
+The single-agent reinforcement learning is supported in MARS. 
+
+The list of supported algorithms includes: (list here)
+
+### MARL
+
+#### Self-Play
+
+We provide several algorithms, in either reinforcement learning (RL) or evolutionary strategy (ES), with self-play learning mechanism in multi-agent environments, including deep-Q networks (DQN), proximal policy optimization (PPO), genetic algorithm (GA), etc. Therefore, they can be generally classified as **Self-Play + RL** or **Self-Play + ES**.
+
+* Self-Play + RL:
+
+  ```tex
+  Champion List:
+  Initially, this list contains a random policy agent.
+  
+  Environment:
+  At the beginning of each episode, load the most recent agent archived in the Champion List.
+  Set this agent to be the Opponent.
+  
+  Agent:
+  Trains inside the Environment against the Opponent with our choice of RL method.
+  Once the performance exceeds some threshold, checkpoint the agent into the Champion List.
+  ```
+
+  There are some requirements for an environment to be conveniently learned with self-play + RL method: (1) the environment needs to be symmetric for each agent, including their state space, action space, transition dynamics, random start, etc; (2) to conveniently apply the above mechanism for learning a single model controlling the two sides of the game, the perspectives for different agents needs to be the same, which means, the same model could be applied on each side of the game without modification. The *first* point is obviously satisfied in some games like Go, *SlimeVolley*, and most of the Atari games like *Boxing* and *Pong* , etc. The *second* point is not always available for most multi-agent game although it seems rather like a trivial implementation issue. For example, in all Atari games (OpenAI Gym or PettingZoo), there is only one perspective of observation for all agents in the game, which is the full view of the game (either image or RAM) and contains all information for both the current agent and its opponent. Thus, all agents have the same observation in Atari games by default, which makes the model lack of knowledge it is currently taking charge of. An [issue](https://github.com/PettingZoo-Team/PettingZoo/issues/423) for reference is provided. The direct solution for making a game to  provide same observation perspective for each agent is to transform the perspectives of observation from all agents to the same one. If this is hard or infeasible in practice (e.g. transforming and recoloring the Atari games can take considerable efforts),  an alternative to achieve a similar effect is to add an indicator of the agent to its observation, which is a one-hot vector indicating which agent the sample is collected with, and use all samples to update the model. 
+
+  If both the above two points are satisfied in an environment, we can simply learn one model to control each agent in a game. Moreover, samples from all agents will be symmetric for the model, therefore the model can and should learn from all those samples to maximize its learning efficiency. As an example, with DQN algorithm, we should put samples from all agents into the buffer of the model for it to learn from. Due to this reason, the implementation of self-play in our repository is different from [the previous one](https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ppo_selfplay.py). Since the perspective transformation is provide with in the *SlimeVolley* environment, it can use samples from only one agent to update the model.
+
+  
+
+* Self-Play + GA:
+
+  ```tex
+  Create a population of agents with random initial parameters.
+  Play a total of N games. For each game:
+    Randomly choose two agents in the population and have them play against each other.
+    If the game is tied, add a bit of noise to the second agent's parameters.
+    Otherwise, replace the loser with a clone of the winner, and add a bit of noise to the clone.
+  ```
+
+  
+
 ### Configurations
 
 1. In files under the folder `mars_core/confs/`, the configuration entry with value *False* means it is intended to left empty, we do not use *None* since it is not properly recognized as a Python None type but a string type in our file reading process.
