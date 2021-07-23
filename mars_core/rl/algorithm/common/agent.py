@@ -54,18 +54,26 @@ class Agent(object):
 
 
 class MultiAgent(Agent):
-    """
-    A class containing all agents in a game.
+    """A class containing all agents in a game.
 
-    'not_learnable': 
-        Definition:
-            The agent is not self-updating using the RL loss, 
-            it's either never updated (i.e., 'fixed') or updated as
-            a delayed copy of other learnable agents with the MARL learning scheme.
-        Utility:
-            Agents in the not_learnable_list will not take the store() and update() functions.
-    """
+    The 'not_learnable' list is a list containing all not self-learnable agents.
+    
+        Definition of 'not_learnable': The agent is not self-updating using the RL loss, it's either\
+        never updated (i.e., 'fixed') or updated as a delayed copy of other learnable \
+        agents with the MARL learning scheme.
+
+        What happen if an agent is 'not_learnable': Agents in the not_learnable_list will not take the store() and update() functions.
+
+    :param env: env object
+    :type env: object
+    :param agents: list of agent models
+    :type agents: list
+    :param args: all arguments
+    :type args: dict
+    """    
     def __init__(self, env, agents, args):
+        """Initialization
+        """        
         super(MultiAgent, self).__init__(env, args)
         self.agents = agents
         self.args = args
@@ -97,9 +105,14 @@ class MultiAgent(Agent):
         # self.mergeAllSamplesInOne = False   # TODO comment out
 
     def choose_action(self, states):
-        """
-        states: (agents, envs, state_dim)
-        """
+        """Choose actions from given states/observations.
+        Shape of states:  (agents, envs, state_dim)
+
+        :param states: observations for all agents
+        :type states: np.ndarray or list
+        :return: actions for all agents
+        :rtype: list
+        """        
         actions = []
         greedy = True if self.args.test else False
 

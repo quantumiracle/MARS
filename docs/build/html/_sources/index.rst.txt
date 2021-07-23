@@ -40,9 +40,13 @@ We also provide novices friendly `DRL Tutorials <https://github.com/tensorlayer/
    :maxdepth: 3
    :caption: MARS
 
-   mars/agent
-   mars/dqn
-   mars/ppo
+   mars/algorithm/agent
+   mars/algorithm/dqn
+   mars/algorithm/ppo
+
+   mars/utils/data_struct
+   mars/utils/func
+   mars/utils/logger
 
 .. toctree::
    :maxdepth: 3
