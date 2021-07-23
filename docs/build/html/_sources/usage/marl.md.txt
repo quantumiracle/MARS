@@ -1,0 +1,137 @@
+# Multi-agent RL
+
+### MARL algorithms
+
+#### Self-Play
+
+We provide several algorithms, in either reinforcement learning (RL) or evolutionary strategy (ES), with self-play learning mechanism in multi-agent environments, including deep-Q networks (DQN), proximal policy optimization (PPO), genetic algorithm (GA), etc. Therefore, they can be generally classified as **Self-Play + RL** or **Self-Play + ES**.
+
+* Self-Play + RL:
+
+  ```tex
+  Champion List:
+  Initially, this list contains a random policy agent.
+  
+  Environment:
+  At the beginning of each episode, load the most recent agent archived in the Champion List.
+  Set this agent to be the Opponent.
+  
+  Agent:
+  Trains inside the Environment against the Opponent with our choice of RL method.
+  Once the performance exceeds some threshold, checkpoint the agent into the Champion List.
+  ```
+
+  There are some requirements for an environment to be conveniently learned with self-play + RL method: (1) the environment needs to be symmetric for each agent, including their state space, action space, transition dynamics, random start, etc; (2) to conveniently apply the above mechanism for learning a single model controlling the two sides of the game, the perspectives for different agents needs to be the same, which means, the same model could be applied on each side of the game without modification. The *first* point is obviously satisfied in some games like Go, *SlimeVolley*, and most of the Atari games like *Boxing* and *Pong* , etc. The *second* point is not always available for most multi-agent game although it seems rather like a trivial implementation issue. For example, in all Atari games (OpenAI Gym or PettingZoo), there is only one perspective of observation for all agents in the game, which is the full view of the game (either image or RAM) and contains all information for both the current agent and its opponent. Thus, all agents have the same observation in Atari games by default, which makes the model lack of knowledge it is currently taking charge of. An [issue](https://github.com/PettingZoo-Team/PettingZoo/issues/423) for reference is provided. The direct solution for making a game to  provide same observation perspective for each agent is to transform the perspectives of observation from all agents to the same one. If this is hard or infeasible in practice (e.g. transforming and recoloring the Atari games can take considerable efforts),  an alternative to achieve a similar effect is to add an indicator of the agent to its observation, which is a one-hot vector indicating which agent the sample is collected with, and use all samples to update the model. 
+
+  If both the above two points are satisfied in an environment, we can simply learn one model to control each agent in a game. Moreover, samples from all agents will be symmetric for the model, therefore the model can and should learn from all those samples to maximize its learning efficiency. As an example, with DQN algorithm, we should put samples from all agents into the buffer of the model for it to learn from. Due to this reason, the implementation of self-play in our repository is different from [the previous one](https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ppo_selfplay.py). Since the perspective transformation is provide with in the *SlimeVolley* environment, it can use samples from only one agent to update the model.
+
+  
+
+* Self-Play + GA:
+
+  ```tex
+  Create a population of agents with random initial parameters.
+  Play a total of N games. For each game:
+    Randomly choose two agents in the population and have them play against each other.
+    If the game is tied, add a bit of noise to the second agent's parameters.
+    Otherwise, replace the loser with a clone of the winner, and add a bit of noise to the clone.
+  ```
+
+
+### Training
+
+* The followings are required in the main script, for either training/testing/exploitation:
+
+  ```python
+  from utils.func import LoadYAML2Dict
+  from env.import_env import make_env
+  from rollout import rollout
+  from rl.algorithm import *
+  ```
+
+  
+
+* Typical usage for a two-agent game, e.g. *boxing-v1 PettingZoo*:
+
+  ````python
+  ### Load configurations
+  yaml_file = 'PATH TO YAML'
+  args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+  
+  ### Create env
+  env = make_env(args)
+  print(env)
+  
+  ### Specify models for each agent
+  model1 = eval(args.algorithm)(env, args)
+  model2 = eval(args.algorithm)(env, args)
+  # model1.fix()  # fix a model if you don't want it to learn
+  
+  model = MultiAgent(env, [model1, model2], args)
+  
+  ### Rollout
+  rollout(env, model, args)
+  
+  ````
+
+### Testing
+
+* Typical usage for a two-agent game, e.g. *boxing-v1 PettingZoo*:
+
+  ```python
+  ### Load configurations
+  yaml_file = 'PATH TO YAML'
+  args = LoadYAML2Dict(yaml_file, toAttr=True)
+  print(args)
+  
+  ## Change/specify some arguments if necessary
+  args.test = True  # the test mode will automatically fix all models
+  args.render = True
+  args.load_model_full_path = 'PATH TO THE TRAINED MODEL' # or use args.load_model_idx
+  
+  ### Create env
+  env = make_env(args)
+  print(env)
+  
+  ### Specify models for each agent
+  model1 = eval(args.algorithm)(env, args)
+  model2 = eval(args.algorithm)(env, args)
+  
+  model = MultiAgent(env, [model1, model2], args)
+  
+  ### Rollout
+  rollout(env, model, args)
+  ```
+
+
+### Exploitation
+
+* When you use SlimeVolley environments and want to exploit a trained model in this type of environment, you need to set the *yaml* file with *against_baseline* as *False* and *exploit* as *True*, so that you can input two models to the *MultiAgent* object, one is the trained model you want to exploit, another one is the exploiter with whatever model you want to use. A typical example would be: 
+
+  ```python
+  ### Load configurations
+  yaml_file = 'PATH TO YAML'
+  args = LoadYAML2Dict(yaml_file, toAttr=True)
+  print(args)
+  
+  ## Change/specify some arguments if necessary
+  args.against_baseline = False
+  args.exploit = True
+  args.load_model_full_path = 'PATH TO THE TRAINED MODEL'
+  
+  ### Create env
+  env = make_env(args)
+  print(env)
+  
+  ### Specify models for each agent
+  trained_model = eval(args.algorithm)(env, args)
+  exploiter = DQN(env, args)
+  trained_model.fix()
+  
+  model = MultiAgent(env, [trained_model, exploiter], args)
+  
+  ### Rollout
+  rollout(env, model, args)
+  ```
+  
+   
