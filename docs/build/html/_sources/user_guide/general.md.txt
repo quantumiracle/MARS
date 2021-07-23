@@ -44,53 +44,53 @@ Default configurations:
   
   * `env_type`: *(str)* None # type of the environment, one of [gym, pettingzoo, slimevolley, lasertag]
   * `num_envs`: *(int)* 1 # number of environments, >1 when using parallel environment sampling
-  * `ram`: (bool) True # whether using RAM observation (instead of using image observation)
-  * `seed`: (int) 1122 # random seed
+  * `ram`: *(bool)* True # whether using RAM observation (instead of using image observation)
+  * `seed`: *(int)* 1122 # random seed
   
-* `agent_args`: (dict) # arguments for specifying the learning agent
-  * `algorithm`: (str) DQN # the algorithm name, take 'DQN' as an example
-  * `algorithm_spec`: (dict) # algorithm specific hyper-parameters
-    * `episodic_update`: (bool) False # whether using episodic update or not, if not, take the update per timestep
-    * `dueling`: (bool) False # whether using dueling networks in DQN
-    * `replay_buffer_size`: (int) 1e5 # size of experience replay buffer
-    * `gamma`: (float) 0.99 # discount factor, range [0, 1]
-    * `multi_step`: (int) 1 # whether using multi-step reward, i.e. TD(\lambda)
-    * `target_update_interval`: (int) 1000 # how many updates are skipped to update the target
-    * `eps_start`: (float) 1. # the \epsilon value at the start
-    * `eps_final`: (float) 0.01 # the \epsilon value at the end
-    * `eps_decay`: (int) 30000  # approximate episodes required to decay from \epsilon value at the start to the value at the end, this needs to be tuned for specific environment
+* `agent_args`: *(dict)* # arguments for specifying the learning agent
+  * `algorithm`: *(str)* DQN # the algorithm name, take 'DQN' as an example
+  * `algorithm_spec`: *(dict)* # algorithm specific hyper-parameters
+    * `episodic_update`: *(bool)* False # whether using episodic update or not, if not, take the update per timestep
+    * `dueling`: *(bool)* False # whether using dueling networks in DQN
+    * `replay_buffer_size`: *(int)* 1e5 # size of experience replay buffer
+    * `gamma`: *(float)* 0.99 # discount factor, range [0, 1]
+    * `multi_step`: *(int)* 1 # whether using multi-step reward, i.e. TD(![\lambda](https://latex.codecogs.com/svg.latex?\lambda))
+    * `target_update_interval`: *(int)* 1000 # how many updates are skipped to update the target
+    * `eps_start`: *(float)* 1. # the ![\epsilon](https://latex.codecogs.com/svg.latex?\epsilon) value of ![\epsilon](https://latex.codecogs.com/svg.latex?\epsilon)-greedy policy at the start
+    * `eps_final`: *(float)* 0.01 # the ![\epsilon](https://latex.codecogs.com/svg.latex?\epsilon) value of ![\epsilon](https://latex.codecogs.com/svg.latex?\epsilon)-greedy policy at the end
+    * `eps_decay`: *(int)* 30000  # approximate episodes required to decay from \epsilon value at the start to the value at the end, this needs to be tuned for specific environment
 
-* `train_args`: (dict) # arguments for the training/testing/exploiting process
-  * `batch_size`: (int) 32 # training batch size for off-policy algorithms, e.g. DQN
-  * `max_episodes`: (int) 10000 # maximal episodes for training
-  * `max_steps_per_episode`: (int) 10000 # maximal timesteps per episode
-  * `train_start_frame`: (int) 10000 # the number of timesteps skipped before training starts
-  * `optimizer`: (str) adam # optimizer type, one of [adam, sgd]
-  * `learning_rate`: (float) 1e-4 # learning rate for optimizers
-  * `device`: (str) gpu # training device, one of [gpu, cpu]
-  * `update_itr`: (int) 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
-  * `log_avg_window`: (int) 20 # average window length in logging
-  * `log_interval`: (int) 20  # log print interval 
-  * `render`: (bool) False # whether rendering the visualization window
-  * `test`: (bool) False # test mode or not
-  * `exploit`: (bool) False # exploit mode or not, used for exploiting a trained model
-  * `load_model_idx`: (bool/str) False # the index of trained model, default format as 'Timestamp/EpisodeForSavingModel'
-  * `load_model_full_path`: (bool/str) False # the complete path to locate the model
-  * `net_architecture`: (dict) # network architecture
-    * `hidden_dim_list`: (list) [64, 64, 64]  # list of numbers of hidden units
-    * `hidden_activation`: (bool/str) ReLU  # activation function for hidden layers, use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
-    * `output_activation`: (bool/str) False # activation function for output layers, False means nan
+* `train_args`: *(dict)* # arguments for the training/testing/exploiting process
+  * `batch_size`: *(int)* 32 # training batch size for off-policy algorithms, e.g. DQN
+  * `max_episodes`: *(int)* 10000 # maximal episodes for training
+  * `max_steps_per_episode`: *(int)* 10000 # maximal timesteps per episode
+  * `train_start_frame`: *(int)* 10000 # the number of timesteps skipped before training starts
+  * `optimizer`: *(str)* adam # optimizer type, one of [adam, sgd]
+  * `learning_rate`: *(float)* 1e-4 # learning rate for optimizers
+  * `device`: *(str)* gpu # training device, one of [gpu, cpu]
+  * `update_itr`: *(int)* 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
+  * `log_avg_window`: *(int)* 20 # average window length in logging
+  * `log_interval`: *(int)* 20  # log print interval 
+  * `render`: *(bool)* False # whether rendering the visualization window
+  * `test`: *(bool)* False # test mode or not
+  * `exploit`: *(bool)* False # exploit mode or not, used for exploiting a trained model
+  * `load_model_idx`: *(bool/str)* False # the index of trained model, default format as 'Timestamp/EpisodeForSavingModel'
+  * `load_model_full_path`: *(bool/str)* False # the complete path to locate the model
+  * `net_architecture`: *(dict)* # network architecture
+    * `hidden_dim_list`: *(list)* [64, 64, 64]  # list of numbers of hidden units
+    * `hidden_activation`: *(bool/str)* ReLU  # activation function for hidden layers, use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
+    * `output_activation`: *(bool/str)* False # activation function for output layers, False means nan
 
 Note: 
 
 * Different algorithms will have different `algorithm_spec` entries, for example, PPO may use:
-  * `algorithm_spec`: (dict)
-    * `episodic_update`: (bool) True  # as PPO is on-policy, it uses episodic update instead of update per timestep
-    * `gamma`: (float) 0.99 # discount factor
-    * `lambda`: (float) 0.95 # hyper-parameter for GAE
-    * `eps_clip`: (float) 0.2 # clipping factor 
-    * `K_epoch`: (int) 4  # epochs for each update
-    * `GAE`: (bool) False  # generalized advantage estimation
+  * `algorithm_spec`: *(dict)*
+    * `episodic_update`: *(bool)* True  # as PPO is on-policy, it uses episodic update instead of update per timestep
+    * `gamma`: *(float)* 0.99 # discount factor
+    * `lambda`: *(float)* 0.95 # hyper-parameter for GAE
+    * `eps_clip`: *(float)* 0.2 # clipping factor 
+    * `K_epoch`: *(int)* 4  # epochs for each update
+    * `GAE`: *(bool)* False  # generalized advantage estimation
 
 ## Usage
 
