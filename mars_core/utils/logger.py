@@ -6,6 +6,15 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 def init_logger(env, args):
+    """A function to initiate a proper logger.
+
+    :param env: environment object
+    :type env: object
+    :param args: arguments
+    :type args: dict
+    :return: logger
+    :rtype: object
+    """    
     if args.algorithm == 'GA':
         logger = DummyLogger(env, args)
     elif args.test:
@@ -16,6 +25,13 @@ def init_logger(env, args):
 
 
 class TestLogger():
+    """ The logger used for test mode.
+
+    :param env: environment object
+    :type env: object
+    :param args: arguments
+    :type args: dict
+    """    
     def __init__(self, env, args):
         super(TestLogger, self).__init__()
 
@@ -60,7 +76,8 @@ class TestLogger():
         pass
 
     def print_and_save(self, *args):
-        # print out info only
+        """ Print out information only since it usually does not require
+        to save the logging in test mode. """
         print(
             f'Episode: {self.current_episode}, avg. length {np.mean(self.epi_length[-self.avg_window:])}'
         )
@@ -74,6 +91,13 @@ class TestLogger():
             self.additional_logs = []
 
 class Logger(TestLogger):
+    """ The standard logger used for multi-agent training.
+
+    :param env: environment object
+    :type env: object
+    :param args: arguments
+    :type args: dict
+    """ 
     def __init__(self, env, args):
         super().__init__(env, args)
         self.losses = self._clear_dict_as_list(self.keys)
@@ -84,11 +108,13 @@ class Logger(TestLogger):
         json.dump(args, open(self.log_dir + "params.json", 'w'))
 
     def _create_dirs(self, args):
-        """
-        Create saving directories for:
-        * logging
-        * tensorboard running information
-        * models
+        """ Create saving directories for:
+        (1) logging;
+        (2) tensorboard running information;
+        (3) models.
+
+        :param args: arguments
+        :type args: dict
         """
         now = datetime.now()
         dt_string = now.strftime("%Y%m%d%H%M%S")
@@ -118,7 +144,7 @@ class Logger(TestLogger):
                                     self.current_episode)
 
     def print_and_save(self):
-        # print out info
+        """ Print out information and save the logging data. """
         print(
             f'Episode: {self.current_episode}, avg. length {np.mean(self.epi_length[-self.avg_window:])}'
         )
@@ -144,7 +170,13 @@ class Logger(TestLogger):
         # data = json.load( open(self.log_dir+"process.json"))
 
 class DummyLogger(Logger):
-    """ Single-agent simple logger"""
+    """ The logger used for single agent.
+
+    :param env: environment object
+    :type env: object
+    :param args: arguments
+    :type args: dict
+    """ 
     def __init__(self, env, args):
         super().__init__(env, args)
         self.avg_window = args.log_avg_window 
