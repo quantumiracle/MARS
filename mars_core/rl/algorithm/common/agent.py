@@ -104,22 +104,34 @@ class MultiAgent(Agent):
             self.mergeAllSamplesInOne = False
         # self.mergeAllSamplesInOne = False   # TODO comment out
 
+        if self.args.marl_method == 'nash' and self.args.exploit:
+            assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method
+
     def choose_action(self, states):
         """Choose actions from given states/observations.
         Shape of states:  (agents, envs, state_dim)
 
         :param states: observations for all agents
         :type states: np.ndarray or list
-        :return: actions for all agents
+        :return: actions for all agents, shape: (agents, envs, action_dim)
         :rtype: list
         """        
         actions = []
         greedy = True if self.args.test else False
 
         if self.args.marl_method == 'nash':
-            # one model for all agents, the model is the first one
-            # of self.agents, it directly takes states to generate actions
-            actions = self.agents[0].choose_action(states, Greedy=greedy)
+            if self.args.exploit:  # in exploitation mode, nash policy only control one agent
+                for i, (state, agent) in enumerate(zip(states, self.agents)):
+                    if i == 0:  # the first agent must be the model to be exploited
+                        nash_actions = self.agents[i].choose_action(states, Greedy=greedy)  # nash_actions contain all agents
+                        actions.append(nash_actions[i])
+                    else:
+                        action = agent.choose_action(state, Greedy=greedy)
+                        actions.append(action)
+            else:
+                # in training/testing mode, one model for all agents, the model is the first one
+                # of self.agents, it directly takes states to generate actions
+                actions = self.agents[0].choose_action(states, Greedy=greedy)
         else:
             # each agent will take its corresponding state to generate
             # the corresponding action
@@ -134,7 +146,7 @@ class MultiAgent(Agent):
 
     def store(self, samples):
         all_s = []
-        if self.args.marl_method == 'nash':
+        if self.args.marl_method == 'nash' and not self.args.exploit:
             # 'states' (agents, envs, state_dim) -> (envs, agents*state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples

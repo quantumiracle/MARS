@@ -56,7 +56,6 @@ class DQN(Agent):
 
     def store(self, sample):
         # self.buffer.push(*sample)
-        print(sample)
         self.buffer.push(sample)
 
     @property

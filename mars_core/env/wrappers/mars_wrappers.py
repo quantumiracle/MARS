@@ -3,12 +3,14 @@ import gym
 import numpy as np
 
 class PettingzooClassicWrapper():
-    def __init__(self, env, observation_mask=1.):  
-        """
-        Args:
+    """ A class for PettingZoo classic games.
 
-            observation_mask: mask the observation to be anyvalue, if None, no mask. 
-        """
+    :param env: game environment
+    :type env: object
+    :param observation_mask: mask the observation to be anyvalue, defaults to None.
+    :type observation_mask: int or None, optional
+    """   
+    def __init__(self, env, observation_mask=None):  
         super(PettingzooClassicWrapper, self).__init__()
         self.env = env
         self.observation_mask = observation_mask
@@ -53,12 +55,16 @@ class PettingzooClassicWrapper():
         return observation, reward, done, info
 
 class PettingzooClassic_Iterate2Parallel():
-    def __init__(self, env, observation_mask=1.):  
-        """
-        Args:
+    """ A class transforms the iterative environment in PettingZoo
+    to parallel version, i.e., from iterative rollout among each player
+    to their simultaneuous moves at the same step.
 
-            observation_mask: mask the observation to be anyvalue, if None, no mask. 
-        """
+    :param env: game environment
+    :type env: object
+    :param observation_mask: mask the observation to be anyvalue, defaults to None.
+    :type observation_mask: int or None, optional
+    """ 
+    def __init__(self, env, observation_mask=None):         
         super(PettingzooClassic_Iterate2Parallel, self).__init__()
         self.env = env
         self.observation_mask = observation_mask
@@ -231,9 +237,11 @@ class SlimeVolleyWrapper(gym.Wrapper):
     """ 
     Wrapper to transform SlimeVolley environment (https://github.com/hardmaru/slimevolleygym) 
     into PettingZoo (https://github.com/PettingZoo-Team/PettingZoo) env style. 
-    Specifically, most important changes are:
-    1. to make reset() return a dictionary of obsevations: {'agent1_name': obs1, 'agent2_name': obs2}
-    2. to make step() return dict of obs, dict of rewards, dict of dones, dict of infos, in a similar format as above.
+    Specifically, most important changes this wrapper makes are:
+
+        1. to make reset() return a dictionary of obsevations: {'agent1_name': obs1, 'agent2_name': obs2}.
+        
+        2. to make step() return dict of obs, dict of rewards, dict of dones, dict of infos, in a similar format as above.
     """
     # action transformation of SlimeVolley, the inner action is MultiBinary, which can be transformed into Discrete
     action_table = [[0, 0, 0], # NOOP
@@ -259,6 +267,11 @@ class SlimeVolleyWrapper(gym.Wrapper):
         return self.env.spec
 
     def reset(self, observation=None):
+        """Resets the environment to an initial state and returns an initial observation.
+
+        :return: a dictionary of observations for each agent
+        :rtype: dict
+        """        
         obs0 = self.env.reset()
         if self.against_baseline: 
             return {self.agents[0]: obs0}
@@ -270,10 +283,17 @@ class SlimeVolleyWrapper(gym.Wrapper):
             return obs
 
     def seed(self, seed):
+        """Set the seed for environment and numpy.
+
+        :param seed: seed value
+        :type seed: int
+        """        
         self.env.seed(seed)
         np.random.seed(seed)
 
     def render(self,):
+        """ Render the scene.
+        """        
         self.env.render()
 
     def step(self, actions):
@@ -322,17 +342,10 @@ class Dict2TupleWrapper():
             self.observation_space = env.observation_space
             self.obs_type = 'ram'
         self.action_space = env.action_space
-        # fake_env = gym.make('Pong-v0')
-        # self.spec = fake_env.spec
         try:   # both pettingzoo and slimevolley can work with this
             self.agents = env.agents
         except:
             self.agents = env.unwrapped.agents
-        # try:
-        #     self.spec.id = env.env.spec.id
-        # except:
-        #     pass
-        # fake_env.close()
 
     @property
     def spec(self):
