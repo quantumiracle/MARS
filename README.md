@@ -12,16 +12,17 @@ Basic RL Algorithms to do:
 - [ ] DDPG
 
 MARL Algorithms to do:
-- [x] self-play
-- [ ] fictitious self-play
-- [x] neural fictitious self-play
-- [ ] policy space reponse oracle
-- [ ] maddpg
-- [ ] qmix
-- [ ] qtran
-- [ ] mappo
-- [x] nash-dqn
-- [x] nash-dqn-exploiter
+- [x] Self-Play
+- [ ] Fictitious Self-Play
+- [x] Neural Fictitious Self-Play
+- [ ] Policy Space Responce Oracle
+- [ ] [Joint Policy Space Responce Oracle](http://proceedings.mlr.press/v139/marris21a.html)
+- [ ] [MADDPG](https://arxiv.org/abs/1706.02275)
+- [ ] QMIX
+- [ ] QTRAN
+- [ ] MAPPO
+- [x] Nash-DQN
+- [x] Nash-DQN-Exploiter
 
 Supported environments:
 - [x] Openai Gym
