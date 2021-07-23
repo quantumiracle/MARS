@@ -116,6 +116,17 @@
 <li class="toctree-l1"><a class="reference internal" href="marl.html">Multi-Agent RL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes.html">Some Notes</a></li>
 </ul>
+<p class="caption"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../mars/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/ppo.html">PPO</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
 
             
           
@@ -224,50 +235,50 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">env_name</span></code>: <em>(str)</em> None # name of the environment</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">env_type</span></code>: <em>(str)</em> None # type of the environment, one of [gym, pettingzoo, slimevolley, lasertag]</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">num_envs</span></code>: <em>(int)</em> 1 # number of environments, &gt;1 when using parallel environment sampling</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ram</span></code>: (bool) True # whether using RAM observation (instead of using image observation)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">seed</span></code>: (int) 1122 # random seed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ram</span></code>: <em>(bool)</em> True # whether using RAM observation (instead of using image observation)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seed</span></code>: <em>(int)</em> 1122 # random seed</p></li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">agent_args</span></code>: (dict) # arguments for specifying the learning agent</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">agent_args</span></code>: <em>(dict)</em> # arguments for specifying the learning agent</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">algorithm</span></code>: (str) DQN # the algorithm name, take ‘DQN’ as an example</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">algorithm_spec</span></code>: (dict) # algorithm specific hyper-parameters</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">algorithm</span></code>: <em>(str)</em> DQN # the algorithm name, take ‘DQN’ as an example</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">algorithm_spec</span></code>: <em>(dict)</em> # algorithm specific hyper-parameters</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">episodic_update</span></code>: (bool) False # whether using episodic update or not, if not, take the update per timestep</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dueling</span></code>: (bool) False # whether using dueling networks in DQN</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">replay_buffer_size</span></code>: (int) 1e5 # size of experience replay buffer</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code>: (float) 0.99 # discount factor, range [0, 1]</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">multi_step</span></code>: (int) 1 # whether using multi-step reward, i.e. TD(\lambda)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">target_update_interval</span></code>: (int) 1000 # how many updates are skipped to update the target</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">eps_start</span></code>: (float) 1. # the \epsilon value at the start</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">eps_final</span></code>: (float) 0.01 # the \epsilon value at the end</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">eps_decay</span></code>: (int) 30000  # approximate episodes required to decay from \epsilon value at the start to the value at the end, this needs to be tuned for specific environment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">episodic_update</span></code>: <em>(bool)</em> False # whether using episodic update or not, if not, take the update per timestep</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dueling</span></code>: <em>(bool)</em> False # whether using dueling networks in DQN</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">replay_buffer_size</span></code>: <em>(int)</em> 1e5 # size of experience replay buffer</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code>: <em>(float)</em> 0.99 # discount factor, range [0, 1]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">multi_step</span></code>: <em>(int)</em> 1 # whether using multi-step reward, i.e. TD(<img alt="\lambda" src="https://latex.codecogs.com/svg.latex?%5Clambda" />)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_update_interval</span></code>: <em>(int)</em> 1000 # how many updates are skipped to update the target</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">eps_start</span></code>: <em>(float)</em> 1. # the <img alt="\epsilon" src="https://latex.codecogs.com/svg.latex?%5Cepsilon" /> value of <img alt="\epsilon" src="https://latex.codecogs.com/svg.latex?%5Cepsilon" />-greedy policy at the start</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">eps_final</span></code>: <em>(float)</em> 0.01 # the <img alt="\epsilon" src="https://latex.codecogs.com/svg.latex?%5Cepsilon" /> value of <img alt="\epsilon" src="https://latex.codecogs.com/svg.latex?%5Cepsilon" />-greedy policy at the end</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">eps_decay</span></code>: <em>(int)</em> 30000  # approximate episodes required to decay from \epsilon value at the start to the value at the end, this needs to be tuned for specific environment</p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">train_args</span></code>: (dict) # arguments for the training/testing/exploiting process</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">train_args</span></code>: <em>(dict)</em> # arguments for the training/testing/exploiting process</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">batch_size</span></code>: (int) 32 # training batch size for off-policy algorithms, e.g. DQN</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">max_episodes</span></code>: (int) 10000 # maximal episodes for training</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">max_steps_per_episode</span></code>: (int) 10000 # maximal timesteps per episode</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">train_start_frame</span></code>: (int) 10000 # the number of timesteps skipped before training starts</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">optimizer</span></code>: (str) adam # optimizer type, one of [adam, sgd]</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">learning_rate</span></code>: (float) 1e-4 # learning rate for optimizers</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">device</span></code>: (str) gpu # training device, one of [gpu, cpu]</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">update_itr</span></code>: (int) 1  # iterations of updates per frame, 0~inf; &lt;1 means several steps are skipped per update</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">log_avg_window</span></code>: (int) 20 # average window length in logging</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">log_interval</span></code>: (int) 20  # log print interval</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">render</span></code>: (bool) False # whether rendering the visualization window</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test</span></code>: (bool) False # test mode or not</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">exploit</span></code>: (bool) False # exploit mode or not, used for exploiting a trained model</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">load_model_idx</span></code>: (bool/str) False # the index of trained model, default format as ‘Timestamp/EpisodeForSavingModel’</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">load_model_full_path</span></code>: (bool/str) False # the complete path to locate the model</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">net_architecture</span></code>: (dict) # network architecture</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_size</span></code>: <em>(int)</em> 32 # training batch size for off-policy algorithms, e.g. DQN</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_episodes</span></code>: <em>(int)</em> 10000 # maximal episodes for training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_steps_per_episode</span></code>: <em>(int)</em> 10000 # maximal timesteps per episode</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">train_start_frame</span></code>: <em>(int)</em> 10000 # the number of timesteps skipped before training starts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">optimizer</span></code>: <em>(str)</em> adam # optimizer type, one of [adam, sgd]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">learning_rate</span></code>: <em>(float)</em> 1e-4 # learning rate for optimizers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">device</span></code>: <em>(str)</em> gpu # training device, one of [gpu, cpu]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">update_itr</span></code>: <em>(int)</em> 1  # iterations of updates per frame, 0~inf; &lt;1 means several steps are skipped per update</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log_avg_window</span></code>: <em>(int)</em> 20 # average window length in logging</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log_interval</span></code>: <em>(int)</em> 20  # log print interval</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">render</span></code>: <em>(bool)</em> False # whether rendering the visualization window</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test</span></code>: <em>(bool)</em> False # test mode or not</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">exploit</span></code>: <em>(bool)</em> False # exploit mode or not, used for exploiting a trained model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">load_model_idx</span></code>: <em>(bool/str)</em> False # the index of trained model, default format as ‘Timestamp/EpisodeForSavingModel’</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">load_model_full_path</span></code>: <em>(bool/str)</em> False # the complete path to locate the model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">net_architecture</span></code>: <em>(dict)</em> # network architecture</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">hidden_dim_list</span></code>: (list) [64, 64, 64]  # list of numbers of hidden units</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">hidden_activation</span></code>: (bool/str) ReLU  # activation function for hidden layers, use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output_activation</span></code>: (bool/str) False # activation function for output layers, False means nan</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hidden_dim_list</span></code>: <em>(list)</em> [64, 64, 64]  # list of numbers of hidden units</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hidden_activation</span></code>: <em>(bool/str)</em> ReLU  # activation function for hidden layers, use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_activation</span></code>: <em>(bool/str)</em> False # activation function for output layers, False means nan</p></li>
 </ul>
 </li>
 </ul>
@@ -277,14 +288,14 @@
 <ul class="simple">
 <li><p>Different algorithms will have different <code class="docutils literal notranslate"><span class="pre">algorithm_spec</span></code> entries, for example, PPO may use:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">algorithm_spec</span></code>: (dict)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">algorithm_spec</span></code>: <em>(dict)</em></p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">episodic_update</span></code>: (bool) True  # as PPO is on-policy, it uses episodic update instead of update per timestep</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code>: (float) 0.99 # discount factor</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lambda</span></code>: (float) 0.95 # hyper-parameter for GAE</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">eps_clip</span></code>: (float) 0.2 # clipping factor</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">K_epoch</span></code>: (int) 4  # epochs for each update</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">GAE</span></code>: (bool) False  # generalized advantage estimation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">episodic_update</span></code>: <em>(bool)</em> True  # as PPO is on-policy, it uses episodic update instead of update per timestep</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code>: <em>(float)</em> 0.99 # discount factor</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lambda</span></code>: <em>(float)</em> 0.95 # hyper-parameter for GAE</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">eps_clip</span></code>: <em>(float)</em> 0.2 # clipping factor</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">K_epoch</span></code>: <em>(int)</em> 4  # epochs for each update</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GAE</span></code>: <em>(bool)</em> False  # generalized advantage estimation</p></li>
 </ul>
 </li>
 </ul>
