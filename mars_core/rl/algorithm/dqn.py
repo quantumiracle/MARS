@@ -56,6 +56,7 @@ class DQN(Agent):
 
     def store(self, sample):
         # self.buffer.push(*sample)
+        print(sample)
         self.buffer.push(sample)
 
     @property
@@ -112,12 +113,12 @@ class DQN(Agent):
 
 
 class DQNBase(NetBase):
-    """
-    Basic Q network
+    """Basic Q network
 
-    parameters
-    ---------
-    env         environment(openai gym)
+    :param env: env object
+    :type env: object
+    :param net_args: network architecture arguments
+    :type net_args: dict
     """
     def __init__(self, env, net_args):
         super().__init__(env.observation_space, env.action_space)
@@ -133,12 +134,15 @@ class DQNBase(NetBase):
         return self.net(x)
 
     def choose_action(self, state, epsilon=0.):
-        """
-        Parameters
-        ----------
-        state       torch.Tensor with appropritate device type
-        epsilon     epsilon for epsilon-greedy
-        """
+        """Choose action acoording to state.
+
+        :param state: state/observation input
+        :type state:  torch.Tensor
+        :param epsilon: epsilon for epsilon-greedy, defaults to 0.
+        :type epsilon: float, optional
+        :return: action
+        :rtype: int or np.ndarray
+        """        
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
                 state   = state.unsqueeze(0)
@@ -226,24 +230,31 @@ class DuelingDQN(DQNBase):
 #         return value + advantage - advantage.mean(1, keepdim=True)
 
 class ParallelDQN(DQNBase):
-    """
-    DQN for parallel env sampling
+    """ DQN for parallel env sampling
 
-    parameters
-    ---------
-    env         environment(openai gym)
+    :param env: env object
+    :type env: object
+    :param net_args: network architecture arguments
+    :type net_args: dict
+    :param number_envs: number of environments
+    :type number_envs: int
+    :param kwargs: arbitrary keyword arguments.
+    :type kwargs: dict
     """
     def __init__(self, env, net_args, number_envs, **kwargs):
         super(ParallelDQN, self).__init__(env, net_args, **kwargs)
         self.number_envs = number_envs
 
     def choose_action(self, state, epsilon):
-        """
-        Parameters
-        ----------
-        state       torch.Tensor with appropritate device type
-        epsilon     epsilon for epsilon-greedy
-        """
+        """Choose action acoording to state.
+
+        :param state: state/observation input
+        :type state:  torch.Tensor
+        :param epsilon: epsilon for epsilon-greedy, defaults to 0.
+        :type epsilon: float, optional
+        :return: action
+        :rtype: int or np.ndarray
+        """  
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
                 q_value = self.net(state)
@@ -253,77 +264,51 @@ class ParallelDQN(DQNBase):
         return action
 
 class ParallelDuelingDQN(DuelingDQN, ParallelDQN):
-    """
-    DuelingDQN for parallel env sampling
+    """ DuelingDQN for parallel env sampling
 
-    parameters
-    ---------
-    env         environment(openai gym)
+    :param env: env object
+    :type env: object
+    :param net_args: network architecture arguments
+    :type net_args: dict
+    :param number_envs: number of environments
+    :type number_envs: int
+    :param kwargs: other arguments
+    :type kwargs: dict
 
     Note: for mulitple inheritance, see a minimal example:
 
-    class D:
-        def __init__(self,):
-            super(D, self).__init__()
-            self.a=1
-        def f(self):
-            pass
-                
-        def f1(self):
-            pass
+    .. code-block:: python
 
-    class A(D):
-        def __init__(self,):
-            super(A, self).__init__()
-            self.a=1
-            
-        def f1(self):
-            self.a+=2
-            print(self.a)
-        
-    class B(D):
-        def __init__(self,):
-            super(B, self).__init__()
-            self.a=1
-        def f(self):
-            self.a-=1
-            print(self.a)
-        
-    class C(B,A):
-        def __init__(self,):
-            super(C, self).__init__()   
-            
-
-    c=C()
-    c.f1() 
-
-    => 3
+        class D:
+            def __init__(self,):
+                super(D, self).__init__()
+                self.a=1
+            def f(self):
+                pass          
+            def f1(self):
+                pass
+        class A(D):
+            def __init__(self,):
+                super(A, self).__init__()
+                self.a=1     
+            def f1(self):
+                self.a+=2
+                print(self.a)          
+        class B(D):
+            def __init__(self,):
+                super(B, self).__init__()
+                self.a=1
+            def f(self):
+                self.a-=1
+                print(self.a)          
+        class C(B,A):
+            def __init__(self,):
+                super(C, self).__init__()   
+        c=C()
+        c.f1() 
+        => 3
+    
     """
     def __init__(self, env, net_args, number_envs):
         super(ParallelDuelingDQN, self).__init__(env=env, net_args=net_args, number_envs=number_envs)
-
-# class Policy(DQNBase):
-#     """
-#     Policy with only actors. This is used in supervised learning for NFSP.
-#     """
-#     def __init__(self, env, hidden_dim=64):
-#         super(Policy, self).__init__(env, hidden_dim)
-#         self.fc = nn.Sequential(
-#             nn.Linear(self._feature_size(), int(hidden_dim/2)),
-#             nn.ReLU(),
-#             nn.Linear(int(hidden_dim/2), self.num_actions),
-#             nn.Softmax(dim=1)
-#         )
-
-#     def act(self, state):
-#         """
-#         Parameters
-#         ----------
-#         state       torch.Tensor with appropritate device type
-#         """
-#         with torch.no_grad():
-#             state = state.unsqueeze(0)
-#             distribution = self.forward(state)
-#             action = distribution.multinomial(1).item()
-#         return action
 

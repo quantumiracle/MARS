@@ -3,15 +3,20 @@ from utils.data_struct import AttrDict
 import collections.abc
 
 def LoadYAML2Dict(yaml_file, toAttr=False, mergeDefault=True, confs={}):
-    """
-    A function loading the hyper-parameters in yaml file into a dictionary.
-    params:
-        :yaml_file: str, the yaml file name.
-        :toAttr: bool, if True, transform the configuration dictionary into a class,
-        such that each hyperparameter can be called with class.attribute instead of dict['attribute'].
-        :mergeDefault: bool, if True, merge the default yaml file for missing entries.
-        :confs: dict, input a dictionary of configurations from outside the function.
-    """
+    """ A function loading the hyper-parameters in yaml file into a dictionary.
+
+    :param yaml_file: the yaml file name
+    :type yaml_file: str
+    :param toAttr: if True, transform the configuration dictionary into a class,
+        such that each hyperparameter can be called with class.attribute instead of dict['attribute']; defaults to False
+    :type toAttr: bool, optional
+    :param mergeDefault: if True, merge the default yaml file for missing entries, defaults to True
+    :type mergeDefault: bool, optional
+    :param confs: input a dictionary of configurations from outside the function, defaults to {}
+    :type confs: dict, optional
+    :return: a dictionary of configurations, including all hyper-parameters for environment, algorithm and training/testing.
+    :rtype: dict
+    """    
     if mergeDefault:
         with open('confs/default.yaml') as f:
             default = yaml.safe_load(f)
@@ -32,6 +37,17 @@ def LoadYAML2Dict(yaml_file, toAttr=False, mergeDefault=True, confs={}):
 
     
 def UpdateDictAwithB(A, B, withOverwrite=True):
+    """ Update the entries in dictionary A with dictionary B.
+
+    :param A: a dictionary
+    :type A: dict
+    :param B: a dictionary
+    :type B: dict
+    :param withOverwrite: whether replace the same entries in A with B, defaults to True
+    :type withOverwrite: bool, optional
+    :return: an updated dictionary
+    :rtype: dict
+    """
     if withOverwrite:
         InDepthUpdateDictAwithB(A, B)
     else:
@@ -43,8 +59,17 @@ def UpdateDictAwithB(A, B, withOverwrite=True):
 
 
 def InDepthUpdateDictAwithB(A, B):
+    """A function for update nested dictionaries A with B.
+
+    :param A: a nested dictionary, e.g., dict, dict of dict, dict of dict of dict ...
+    :type A: dict
+    :param B: a nested dictionary, e.g., dict, dict of dict, dict of dict of dict ...
+    :type B: dict
+    :return: updated dictionary
+    :rtype: dict
+    """    
     """ 
-    A function for update nested dictionaries A with B.
+    
     """
     for k, v in B.items():
         if isinstance(v, collections.abc.Mapping):
