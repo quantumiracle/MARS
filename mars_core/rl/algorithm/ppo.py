@@ -10,12 +10,26 @@ from .common.agent import Agent
 from .common.rl_utils import choose_optimizer
 
 def PPO(env, args):
+    """[summary]
+
+    :param env: [description]
+    :type env: [type]
+    :param args: [description]
+    :type args: [type]
+    :return: [description]
+    :rtype: [type]
+    """    
     if True: # discrete TODO
         return PPODiscrete(env, args)
     else:
         return None
 
 class PPODiscrete(Agent):
+    """[summary]
+
+    :param Agent: [description]
+    :type Agent: [type]
+    """ 
     def __init__(self, env, args):
         super().__init__(env, args)
         self.learning_rate = args.learning_rate
@@ -56,6 +70,13 @@ class PPODiscrete(Agent):
         return self.policy.forward(x)
 
     def v(self, x):
+        """[summary]
+
+        :param x: [description]
+        :type x: [type]
+        :return: [description]
+        :rtype: [type]
+        """        
         return self.value.forward(x)  
 
     def store(self, transitions):
@@ -96,8 +117,8 @@ class PPODiscrete(Agent):
         prob_a_lst = np.array(prob_a_lst)
         # found this step take some time for Pong (not ram), even if no parallel no multiagent
         s,a,r,s_prime,done_mask, prob_a = torch.tensor(s_lst, dtype=torch.float).to(self.device), torch.tensor(a_lst).to(self.device), \
-                                          torch.tensor(r_lst).to(self.device), torch.tensor(s_prime_lst, dtype=torch.float).to(self.device), \
-                                          torch.tensor(done_lst, dtype=torch.float).to(self.device), torch.tensor(prob_a_lst).to(self.device)
+                                          torch.tensor(r_lst, dtype=torch.float).to(self.device), torch.tensor(s_prime_lst, dtype=torch.float).to(self.device), \
+                                          torch.tensor(done_lst, dtype=torch.float).to(self.device), torch.tensor(prob_a_lst, dtype=torch.float).to(self.device)
         return s, a, r, s_prime, done_mask, prob_a
         
     def update(self):
@@ -150,6 +171,12 @@ class PPODiscrete(Agent):
                 surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
                 loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
                 # loss = -torch.min(surr1, surr2) + 0.5*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
+                
+                # print('vs: ', vs.shape, vs)
+                # print('logprob', logprob.shape, logprob)
+                # print('oldlogprob', oldlogprob.shape, oldlogprob)
+                # print('advantage: ', advantage.shape, advantage)
+                # print('loss', loss)
 
                 self.optimizer.zero_grad()
                 mean_loss = loss.mean()

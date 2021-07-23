@@ -32,7 +32,11 @@ class NFSP(Agent):
             prob = self.policy(torch.from_numpy(state).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
             dist = Categorical(prob)
             action = dist.sample()
-            action = action.detach().cpu().numpy()
+            try:
+                action = action.detach().item()
+            except:
+                action = action.detach().cpu().numpy()  # when parallel envs
+            
         else:
             self.is_best_response = True
             action = self.rl_agent.choose_action(state, Greedy, epsilon)

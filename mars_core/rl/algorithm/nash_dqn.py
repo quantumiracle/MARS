@@ -11,7 +11,7 @@ from .common.storage import ReplayBuffer
 from .common.rl_utils import choose_optimizer, EpsilonScheduler
 from .common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
-from .equilibrium_solver import * 
+from .equilibrium_solver import NashEquilibriumECOSSolver
 
 class NashDQN(DQN):
     """

@@ -1,7 +1,7 @@
 class AttrDict(dict):
     """
-    Dictionary to class attributes.
-    call with dict.attri rather than dict["attri"]
+    Change dictionary entries to class attributes, 
+    then the property can be called with dict.attri rather than dict["attri"].
     """
     def __init__(self, *args, **kwargs):
         super(AttrDict, self).__init__(*args, **kwargs)
