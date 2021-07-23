@@ -160,16 +160,20 @@ class RunningMeanStd(object):
 class BaseVectorEnv(gym.Env):
     """Base class for vectorized environments wrapper.
     Usage:
-    ::
-        env_num = 8
-        envs = DummyVectorEnv([lambda: gym.make(task) for _ in range(env_num)])
-        assert len(envs) == env_num
+    .. code-block:: python
+
+    env_num = 8
+    envs = DummyVectorEnv([lambda: gym.make(task) for _ in range(env_num)])
+    assert len(envs) == env_num
+
     It accepts a list of environment generators. In other words, an environment
     generator ``efn`` of a specific task means that ``efn()`` returns the
     environment of the given task, for example, ``gym.make(task)``.
-    All of the VectorEnv must inherit :class:`~tianshou.env.BaseVectorEnv`.
+    All of the VectorEnv must inherit :class:`BaseVectorEnv`.
     Here are some other usages:
-    ::
+
+    .. code-block:: python
+
         envs.seed(2)  # which is equal to the next line
         envs.seed([2, 3, 4, 5, 6, 7, 8, 9])  # set specific seed for each env
         obs = envs.reset()  # reset all environments
@@ -177,32 +181,41 @@ class BaseVectorEnv(gym.Env):
         obs, rew, done, info = envs.step([1] * 8)  # step synchronously
         envs.render()  # render all environments
         envs.close()  # close all environments
+
     .. warning::
         If you use your own environment, please make sure the ``seed`` method
         is set up properly, e.g.,
-        ::
-            def seed(self, seed):
-                np.random.seed(seed)
-        Otherwise, the outputs of these envs may be the same with each other.
+
+    .. code-block:: python
+
+        def seed(self, seed):
+            np.random.seed(seed)
+
+    Otherwise, the outputs of these envs may be the same with each other.
+
     :param env_fns: a list of callable envs, ``env_fns[i]()`` generates the ith env.
     :param worker_fn: a callable worker, ``worker_fn(env_fns[i])`` generates a
         worker which contains the i-th env.
-    :param int wait_num: use in asynchronous simulation if the time cost of
+    :param wait_num: use in asynchronous simulation if the time cost of
         ``env.step`` varies with time and synchronously waiting for all
         environments to finish a step is time-wasting. In that case, we can
         return when ``wait_num`` environments finish a step and keep on
         simulation in these environments. If ``None``, asynchronous simulation
         is disabled; else, ``1 <= wait_num <= env_num``.
-    :param float timeout: use in asynchronous simulation same as above, in each
+    :type wait_num: int
+    :param timeout: use in asynchronous simulation same as above, in each
         vectorized step it only deal with those environments spending time
         within ``timeout`` seconds.
-    :param bool norm_obs: Whether to track mean/std of data and normalise observation
+    :type timeout: float
+    :param norm_obs: Whether to track mean/std of data and normalise observation
         on return. For now, observation normalization only support observation of
         type np.ndarray.
+    :type norm_obs: bool
     :param obs_rms: class to track mean&std of observation. If not given, it will
         initialize a new one. Usually in envs that is used to evaluate algorithm,
         obs_rms should be passed in. Default to None.
-    :param bool update_obs_rms: Whether to update obs_rms. Default to True.
+    :param update_obs_rms: Whether to update obs_rms. Default to True.
+    :type update_obs_rms: bool
     """
 
     def __init__(
@@ -318,15 +331,16 @@ class BaseVectorEnv(gym.Env):
         responsible for calling reset(id) to reset this environment’s state.
         Accept a batch of action and return a tuple (batch_obs, batch_rew,
         batch_done, batch_info) in numpy format.
-        :param numpy.ndarray action: a batch of action provided by the agent.
+        :param action: a batch of action provided by the agent.
+        :type action: numpy.ndarray
         :return: A tuple including four items:
-            * ``obs`` a numpy.ndarray, the agent's observation of current environments
-            * ``rew`` a numpy.ndarray, the amount of rewards returned after \
-                previous actions
-            * ``done`` a numpy.ndarray, whether these episodes have ended, in \
-                which case further step() calls will return undefined results
-            * ``info`` a numpy.ndarray, contains auxiliary diagnostic \
-                information (helpful for debugging, and sometimes learning)
+        * ``obs`` a numpy.ndarray, the agent's observation of current environments
+        * ``rew`` a numpy.ndarray, the amount of rewards returned after \
+            previous actions
+        * ``done`` a numpy.ndarray, whether these episodes have ended, in \
+            which case further step() calls will return undefined results
+        * ``info`` a numpy.ndarray, contains auxiliary diagnostic \
+            information (helpful for debugging, and sometimes learning)
         For the async simulation:
         Provide the given action to the environments. The action sequence
         should correspond to the ``id`` argument, and the ``id`` argument
@@ -380,8 +394,8 @@ class BaseVectorEnv(gym.Env):
         Accept ``None``, an int (which will extend ``i`` to
         ``[i, i + 1, i + 2, ...]``) or a list.
         :return: The list of seeds used in this env's random number generators.
-            The first value in the list should be the "main" seed, or the value
-            which a reproducer pass to "seed".
+        The first value in the list should be the "main" seed, or the value
+        which a reproducer pass to "seed".
         """
         self._assert_is_not_closed()
         seed_list: Union[List[None], List[int]]
@@ -429,8 +443,11 @@ class BaseVectorEnv(gym.Env):
 
 class DummyVectorEnv(BaseVectorEnv):
     """Dummy vectorized environment wrapper, implemented in for-loop.
+
     .. seealso::
+    
         Please refer to :class:`~tianshou.env.BaseVectorEnv` for other APIs' usage.
+
     """
 
     def __init__(self, env_fns: List[Callable[[], gym.Env]], **kwargs: Any) -> None:
@@ -645,8 +662,11 @@ class SubprocEnvWorker(EnvWorker):
 
 class SubprocVectorEnv(BaseVectorEnv):
     """Vectorized environment wrapper based on subprocess.
+
     .. seealso::
+
         Please refer to :class:`~tianshou.env.BaseVectorEnv` for other APIs' usage.
+
     """
 
     def __init__(self, env_fns: List[Callable[[], gym.Env]], **kwargs: Any) -> None:

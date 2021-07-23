@@ -48,6 +48,8 @@ We also provide novices friendly `DRL Tutorials <https://github.com/tensorlayer/
    mars/utils/func
    mars/utils/logger
 
+   mars/env/env
+
 .. toctree::
    :maxdepth: 3
    :caption: Primal Experiments

@@ -106,9 +106,13 @@
 </ul>
 <p class="caption"><span class="caption-text">MARS</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../mars/agent.html">Agent</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../mars/dqn.html">DQN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../mars/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/algorithm/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/algorithm/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/algorithm/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/env/env.html">Env</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Primal Experiments</span></p>
 <ul>
@@ -192,7 +196,7 @@
 <span class="kn">from</span> <span class="nn">.common.rl_utils</span> <span class="kn">import</span> <span class="n">choose_optimizer</span><span class="p">,</span> <span class="n">EpsilonScheduler</span>
 <span class="kn">from</span> <span class="nn">.common.networks</span> <span class="kn">import</span> <span class="n">NetBase</span><span class="p">,</span> <span class="n">get_model</span>
 
-<div class="viewcode-block" id="DQN"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQN">[docs]</a><span class="k">class</span> <span class="nc">DQN</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+<div class="viewcode-block" id="DQN"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN">[docs]</a><span class="k">class</span> <span class="nc">DQN</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    DQN algorithm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -226,7 +230,7 @@
                 <span class="n">model</span> <span class="o">=</span> <span class="n">ParallelDQN</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
 
-<div class="viewcode-block" id="DQN.choose_action"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQN.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">Greedy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DQN.choose_action"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">Greedy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">Greedy</span><span class="p">:</span>
             <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="k">elif</span> <span class="n">epsilon</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -236,7 +240,7 @@
         <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">choose_action</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">action</span></div>
 
-<div class="viewcode-block" id="DQN.store"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQN.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<div class="viewcode-block" id="DQN.store"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
         <span class="c1"># self.buffer.push(*sample)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span></div>
 
@@ -247,7 +251,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="DQN.update"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQN.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DQN.update"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
 
@@ -280,11 +284,11 @@
 
         <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DQN.save_model"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQN.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="DQN.save_model"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">)</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_target&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DQN.load_model"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQN.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="DQN.load_model"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_target&#39;</span><span class="p">))</span>
 
@@ -293,7 +297,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="DQNBase"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQNBase">[docs]</a><span class="k">class</span> <span class="nc">DQNBase</span><span class="p">(</span><span class="n">NetBase</span><span class="p">):</span>
+<div class="viewcode-block" id="DQNBase"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQNBase">[docs]</a><span class="k">class</span> <span class="nc">DQNBase</span><span class="p">(</span><span class="n">NetBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Basic Q network</span>
 
 <span class="sd">    :param env: env object</span>
@@ -311,10 +315,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;cnn&#39;</span><span class="p">)(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">net_args</span><span class="p">,</span> <span class="n">model_for</span><span class="o">=</span><span class="s1">&#39;discrete_q&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DQNBase.forward"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQNBase.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="DQNBase.forward"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQNBase.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DQNBase.choose_action"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DQNBase.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+<div class="viewcode-block" id="DQNBase.choose_action"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQNBase.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Choose action acoording to state.</span>
 
 <span class="sd">        :param state: state/observation input</span>
@@ -334,7 +338,7 @@
         <span class="k">return</span> <span class="n">action</span></div></div>
 
 
-<div class="viewcode-block" id="DuelingDQN"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DuelingDQN">[docs]</a><span class="k">class</span> <span class="nc">DuelingDQN</span><span class="p">(</span><span class="n">DQNBase</span><span class="p">):</span>
+<div class="viewcode-block" id="DuelingDQN"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DuelingDQN">[docs]</a><span class="k">class</span> <span class="nc">DuelingDQN</span><span class="p">(</span><span class="n">DQNBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dueling Network Architectures for Deep Reinforcement Learning</span>
 <span class="sd">    https://arxiv.org/abs/1511.06581</span>
@@ -354,7 +358,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">advantage</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;cnn&#39;</span><span class="p">)(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">net_args</span><span class="p">,</span> <span class="n">model_for</span><span class="o">=</span><span class="s1">&#39;discrete_q&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="s1">&#39;cnn&#39;</span><span class="p">)(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">net_args</span><span class="p">,</span> <span class="n">model_for</span><span class="o">=</span><span class="s1">&#39;discrete_q&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DuelingDQN.net"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.DuelingDQN.net">[docs]</a>    <span class="k">def</span> <span class="nf">net</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="DuelingDQN.net"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DuelingDQN.net">[docs]</a>    <span class="k">def</span> <span class="nf">net</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">advantage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">advantage</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span> <span class="o">+</span> <span class="n">advantage</span> <span class="o">-</span> <span class="n">advantage</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
@@ -410,7 +414,7 @@
 <span class="c1">#         value = self.value(x)</span>
 <span class="c1">#         return value + advantage - advantage.mean(1, keepdim=True)</span>
 
-<div class="viewcode-block" id="ParallelDQN"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.ParallelDQN">[docs]</a><span class="k">class</span> <span class="nc">ParallelDQN</span><span class="p">(</span><span class="n">DQNBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ParallelDQN"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.ParallelDQN">[docs]</a><span class="k">class</span> <span class="nc">ParallelDQN</span><span class="p">(</span><span class="n">DQNBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; DQN for parallel env sampling</span>
 
 <span class="sd">    :param env: env object</span>
@@ -426,7 +430,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">ParallelDQN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">net_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">number_envs</span> <span class="o">=</span> <span class="n">number_envs</span>
 
-<div class="viewcode-block" id="ParallelDQN.choose_action"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.ParallelDQN.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
+<div class="viewcode-block" id="ParallelDQN.choose_action"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.ParallelDQN.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Choose action acoording to state.</span>
 
 <span class="sd">        :param state: state/observation input</span>
@@ -444,7 +448,7 @@
             <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_shape</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">number_envs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">action</span></div></div>
 
-<div class="viewcode-block" id="ParallelDuelingDQN"><a class="viewcode-back" href="../../../../mars/dqn.html#mars_core.rl.algorithm.dqn.ParallelDuelingDQN">[docs]</a><span class="k">class</span> <span class="nc">ParallelDuelingDQN</span><span class="p">(</span><span class="n">DuelingDQN</span><span class="p">,</span> <span class="n">ParallelDQN</span><span class="p">):</span>
+<div class="viewcode-block" id="ParallelDuelingDQN"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.ParallelDuelingDQN">[docs]</a><span class="k">class</span> <span class="nc">ParallelDuelingDQN</span><span class="p">(</span><span class="n">DuelingDQN</span><span class="p">,</span> <span class="n">ParallelDQN</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; DuelingDQN for parallel env sampling</span>
 
 <span class="sd">    :param env: env object</span>
@@ -455,7 +459,7 @@
 <span class="sd">    :type number_envs: int</span>
 <span class="sd">    :param kwargs: other arguments</span>
 <span class="sd">    :type kwargs: dict</span>
-<span class="sd">    </span>
+
 <span class="sd">    Note: for mulitple inheritance, see a minimal example:</span>
 
 <span class="sd">    .. code-block:: python</span>
