@@ -1,10 +1,9 @@
 env_args:
-    env_name: SlimeVolley-v0
-    env_type: slimevolley
+    env_name: CartPole-v1
+    env_type: gym
     num_envs: 1
-    against_baseline: True
     ram: True
-    seed: 1122
+    seed:  11 # [11, 22]
 
 agent_args:
     algorithm: NFSP
@@ -15,13 +14,13 @@ agent_args:
         target_update_interval: 1000 # updates skipped to update the target
         eps_start: 1.0
         eps_final: 0.01
-        eps_decay: 30000  # tune according to env
+        eps_decay: 1000  # tune according to env
 
 train_args:
     batch_size: 32
     max_episodes: 10000
     max_steps_per_episode: 10000
-    train_start_frame: 1000
+    train_start_frame: 10000
     optimizer: adam
     learning_rate: 1e-4
     device: gpu
