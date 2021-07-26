@@ -64,6 +64,14 @@ class MultiAgent(Agent):
 
         What happen if an agent is 'not_learnable': Agents in the not_learnable_list will not take the store() and update() functions.
 
+    Other things to notice:
+        
+        * In testing or exploiting modes, if `load_model_full_path` is given, it is preferred over `load_model_idx` to load the existing model.
+
+        * `mergeAllSamplesInOne` is True only for Self-Play method, it means samples from all agents can be used for updating each agent due to symmetry.
+
+        * In Nash method and exploitation mode, the first agent in `agents` list needs to be the one to be exploited (pre-trained).
+
     :param env: env object
     :type env: object
     :param agents: list of agent models
@@ -105,7 +113,7 @@ class MultiAgent(Agent):
         # self.mergeAllSamplesInOne = False   # TODO comment out
 
         if self.args.marl_method == 'nash' and self.args.exploit:
-            assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method
+            assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
 
     def choose_action(self, states):
         """Choose actions from given states/observations.
@@ -145,9 +153,32 @@ class MultiAgent(Agent):
             agent.scheduler_step(frame)
 
     def store(self, samples):
+        """Store the samples into each agent.
+        The input samples is for all agents and all environments, we separate and reshape it before calling store() for each agent object. 
+        For each item in samples (like `states`, `actions`), it has the shape: (`agents`, `envs`, `sample_dim`).
+
+        Generally, we want each agent to take its samples by indexing the first dimension, therefore (`envs`, `a complete sample`), `a complete sample`
+        looks like [state, action, reward, next_state, (other_info, ) done].
+        Specifically, for different methods (Self-Play, NFSP, Nash, etc) and different modes (train, test, exploit), the process will be different.
+        
+            1. If using Nash agent, take the `states` item in samples as an example, it has shape (`agents`, `envs`, `sample_dim`) for parallel environments
+            and (`agents`, `sample_dim`) for single environment, we transfer it to be (`envs`, `agents*sample_dim`) for the Nash agent in training and testing modes.
+            For exploitation mode, since the Nash agent is fixed and only provide actions for one agent, it is `not_learnable` and does not store any samples, only its
+            opponent exploiter store samples in a standard way.
+
+            2. If using Self-Play for training/testing, samples from all agents can be stored in one model for learning (due to the symmetry),
+            `mergeAllSamplesInOne` is set to be True. Each agent will take in samples in shape (`envs`, `agents`, `a complete sample`).
+
+            3. If using other methods like single-agent RL or Neural Fictitious Self-Play (NFSP) for training/testing, each agent will only takes their own samples,
+            thus `mergeAllSamplesInOne` is False, and the shape of samples for each agent is (`envs`, `a complete sample`).
+
+        :param samples: list of samples from different environment (if using parallel envs) and
+         for different agents, it consists of [states, actions, rewards, next_states, (other_infos,) dones].
+        :type samples: list
+        """
         all_s = []
         if self.args.marl_method == 'nash' and not self.args.exploit:
-            # 'states' (agents, envs, state_dim) -> (envs, agents*state_dim), similar for 'actions', 'rewards' take the first one in all agents,
+            # 'states' (agents, envs, state_dim) -> (envs, agents, state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples
             try:  # when num_envs > 1 

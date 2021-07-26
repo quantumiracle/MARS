@@ -250,6 +250,14 @@
 
 <span class="sd">        What happen if an agent is &#39;not_learnable&#39;: Agents in the not_learnable_list will not take the store() and update() functions.</span>
 
+<span class="sd">    Other things to notice:</span>
+<span class="sd">        </span>
+<span class="sd">        * In testing or exploiting modes, if `load_model_full_path` is given, it is preferred over `load_model_idx` to load the existing model.</span>
+
+<span class="sd">        * `mergeAllSamplesInOne` is True only for Self-Play method, it means samples from all agents can be used for updating each agent due to symmetry.</span>
+
+<span class="sd">        * In Nash method and exploitation mode, the first agent in `agents` list needs to be the one to be exploited (pre-trained).</span>
+
 <span class="sd">    :param env: env object</span>
 <span class="sd">    :type env: object</span>
 <span class="sd">    :param agents: list of agent models</span>
@@ -291,7 +299,7 @@
         <span class="c1"># self.mergeAllSamplesInOne = False   # TODO comment out</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="o">==</span> <span class="s1">&#39;nash&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span>  <span class="c1"># the first agent must be the model to be exploited in Nash method</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span>  <span class="c1"># the first agent must be the model to be exploited in Nash method, since the first agent stores samples </span>
 
 <div class="viewcode-block" id="MultiAgent.choose_action"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Choose actions from given states/observations.</span>
@@ -331,9 +339,32 @@
             <span class="n">agent</span><span class="o">.</span><span class="n">scheduler_step</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MultiAgent.store"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Store the samples into each agent.</span>
+<span class="sd">        The input samples is for all agents and all environments, we separate and reshape it before calling store() for each agent object. </span>
+<span class="sd">        For each item in samples (like `states`, `actions`), it has the shape: (`agents`, `envs`, `sample_dim`).</span>
+
+<span class="sd">        Generally, we want each agent to take its samples by indexing the first dimension, therefore (`envs`, `a complete sample`), `a complete sample`</span>
+<span class="sd">        looks like [state, action, reward, next_state, (other_info, ) done].</span>
+<span class="sd">        Specifically, for different methods (Self-Play, NFSP, Nash, etc) and different modes (train, test, exploit), the process will be different.</span>
+<span class="sd">        </span>
+<span class="sd">            1. If using Nash agent, take the `states` item in samples as an example, it has shape (`agents`, `envs`, `sample_dim`) for parallel environments</span>
+<span class="sd">            and (`agents`, `sample_dim`) for single environment, we transfer it to be (`envs`, `agents*sample_dim`) for the Nash agent in training and testing modes.</span>
+<span class="sd">            For exploitation mode, since the Nash agent is fixed and only provide actions for one agent, it is `not_learnable` and does not store any samples, only its</span>
+<span class="sd">            opponent exploiter store samples in a standard way.</span>
+
+<span class="sd">            2. If using Self-Play for training/testing, samples from all agents can be stored in one model for learning (due to the symmetry),</span>
+<span class="sd">            `mergeAllSamplesInOne` is set to be True. Each agent will take in samples in shape (`envs`, `agents`, `a complete sample`).</span>
+
+<span class="sd">            3. If using other methods like single-agent RL or Neural Fictitious Self-Play (NFSP) for training/testing, each agent will only takes their own samples,</span>
+<span class="sd">            thus `mergeAllSamplesInOne` is False, and the shape of samples for each agent is (`envs`, `a complete sample`).</span>
+
+<span class="sd">        :param samples: list of samples from different environment (if using parallel envs) and</span>
+<span class="sd">         for different agents, it consists of [states, actions, rewards, next_states, (other_infos,) dones].</span>
+<span class="sd">        :type samples: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">all_s</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="o">==</span> <span class="s1">&#39;nash&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
-            <span class="c1"># &#39;states&#39; (agents, envs, state_dim) -&gt; (envs, agents*state_dim), similar for &#39;actions&#39;, &#39;rewards&#39; take the first one in all agents,</span>
+            <span class="c1"># &#39;states&#39; (agents, envs, state_dim) -&gt; (envs, agents, state_dim), similar for &#39;actions&#39;, &#39;rewards&#39; take the first one in all agents,</span>
             <span class="c1"># if np.all(d) is True, the &#39;states&#39; and &#39;rewards&#39; will be absent for some environments, so remove such sample.</span>
             <span class="p">[</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">next_states</span><span class="p">,</span> <span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span>
             <span class="k">try</span><span class="p">:</span>  <span class="c1"># when num_envs &gt; 1 </span>

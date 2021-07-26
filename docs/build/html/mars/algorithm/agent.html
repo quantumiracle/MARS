@@ -264,6 +264,14 @@
 <div><p>Definition of ‘not_learnable’: The agent is not self-updating using the RL loss, it’s either        never updated (i.e., ‘fixed’) or updated as a delayed copy of other learnable         agents with the MARL learning scheme.</p>
 <p>What happen if an agent is ‘not_learnable’: Agents in the not_learnable_list will not take the store() and update() functions.</p>
 </div></blockquote>
+<p>Other things to notice:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>In testing or exploiting modes, if <cite>load_model_full_path</cite> is given, it is preferred over <cite>load_model_idx</cite> to load the existing model.</p></li>
+<li><p><cite>mergeAllSamplesInOne</cite> is True only for Self-Play method, it means samples from all agents can be used for updating each agent due to symmetry.</p></li>
+<li><p>In Nash method and exploitation mode, the first agent in <cite>agents</cite> list needs to be the one to be exploited (pre-trained).</p></li>
+</ul>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -317,7 +325,28 @@ called from the main rollout function.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mars_core.rl.algorithm.common.agent.MultiAgent.store">
 <span class="sig-name descname"><span class="pre">store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/common/agent.html#MultiAgent.store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.common.agent.MultiAgent.store" title="Permalink to this definition">¶</a></dt>
-<dd><p>Store a sample for either on-policy or off-policy algorithms.</p>
+<dd><p>Store the samples into each agent.
+The input samples is for all agents and all environments, we separate and reshape it before calling store() for each agent object. 
+For each item in samples (like <cite>states</cite>, <cite>actions</cite>), it has the shape: (<cite>agents</cite>, <cite>envs</cite>, <cite>sample_dim</cite>).</p>
+<p>Generally, we want each agent to take its samples by indexing the first dimension, therefore (<cite>envs</cite>, <cite>a complete sample</cite>), <cite>a complete sample</cite>
+looks like [state, action, reward, next_state, (other_info, ) done].
+Specifically, for different methods (Self-Play, NFSP, Nash, etc) and different modes (train, test, exploit), the process will be different.</p>
+<blockquote>
+<div><p>1. If using Nash agent, take the <cite>states</cite> item in samples as an example, it has shape (<cite>agents</cite>, <cite>envs</cite>, <cite>sample_dim</cite>) for parallel environments
+and (<cite>agents</cite>, <cite>sample_dim</cite>) for single environment, we transfer it to be (<cite>envs</cite>, <cite>agents*sample_dim</cite>) for the Nash agent in training and testing modes.
+For exploitation mode, since the Nash agent is fixed and only provide actions for one agent, it is <cite>not_learnable</cite> and does not store any samples, only its
+opponent exploiter store samples in a standard way.</p>
+<p>2. If using Self-Play for training/testing, samples from all agents can be stored in one model for learning (due to the symmetry),
+<cite>mergeAllSamplesInOne</cite> is set to be True. Each agent will take in samples in shape (<cite>envs</cite>, <cite>agents</cite>, <cite>a complete sample</cite>).</p>
+<p>3. If using other methods like single-agent RL or Neural Fictitious Self-Play (NFSP) for training/testing, each agent will only takes their own samples,
+thus <cite>mergeAllSamplesInOne</cite> is False, and the shape of samples for each agent is (<cite>envs</cite>, <cite>a complete sample</cite>).</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>samples</strong> (<em>list</em>) – list of samples from different environment (if using parallel envs) and
+for different agents, it consists of [states, actions, rewards, next_states, (other_infos,) dones].</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
