@@ -40,7 +40,7 @@ from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 # PettingZoo envs
 pettingzoo_envs = {
     'atari': [
-        'basketball_pong_v1', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
+        'basketball_pong_v1', 'basketball_pong_v2', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
         'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
         'flag_capture_v1', 'foozpong_v1', 'ice_hockey_v1', 'joust_v2',
         'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v1', 'pong_v2', 

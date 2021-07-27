@@ -94,6 +94,7 @@ class Logger(TestLogger):
     def __init__(self, env, args: ConfigurationDict) -> None:
         super().__init__(env, args)
         self.losses = self._clear_dict_as_list(self.keys)
+        self.epi_losses = self._clear_dict_as_list(self.keys)
 
         self._create_dirs(args)
         self.writer = SummaryWriter(self.runs_dir)
@@ -113,9 +114,9 @@ class Logger(TestLogger):
         dt_string = now.strftime("%Y%m%d%H%M%S")
         post_fix = f"{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{dt_string}/"
 
-        self.log_dir = f'../data/log/' + post_fix
-        self.runs_dir = f'../data/tensorboard/' + post_fix
-        self.model_dir = f'../model/' + post_fix
+        self.log_dir = f'../{args.save_path}/data/log/' + post_fix
+        self.runs_dir = f'../{args.save_path}/data/tensorboard/' + post_fix
+        self.model_dir = f'../{args.save_path}/model/' + post_fix
         os.makedirs(self.log_dir, exist_ok=True)
         os.makedirs(self.runs_dir, exist_ok=True)
         os.makedirs(self.model_dir, exist_ok=True)
@@ -126,15 +127,19 @@ class Logger(TestLogger):
             self.writer.add_scalar(f"Episode Reward/{k}",
                                    self.epi_rewards[k][-1],
                                    self.current_episode)
+            self.epi_losses[k].append(np.mean(self.losses[k])) # record the episodic mean of loss
+            self.writer.add_scalar(f"RL Loss/{k}", self.epi_losses[k][-1],
+                                   self.current_episode)
         self.rewards = self._clear_dict(self.keys)
+        self.losses = self._clear_dict_as_list(self.keys)
         self.epi_length.append(step)
         self.current_episode += 1
 
     def log_loss(self, loss: List[float]) -> None:
         for k, l in zip(self.losses.keys(), loss):
             self.losses[k].append(l)
-            self.writer.add_scalar(f"RL Loss/{k}", self.losses[k][-1],
-                                   self.current_episode)
+            # self.writer.add_scalar(f"RL Loss/{k}", self.losses[k][-1],
+            #                        self.current_episode)
 
     def print_and_save(self):
         """ Print out information and save the logging data. """
@@ -144,7 +149,7 @@ class Logger(TestLogger):
         for k in self.keys:
             print(f"{k}: \
                 episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}, \
-                loss: {np.mean(self.losses[k][-self.avg_window:]):.4f}")
+                loss: {np.mean(self.epi_losses[k][-self.avg_window:]):.4f}")
 
         if len(self.additional_logs) > 0:
             for log in self.additional_logs:
@@ -154,7 +159,7 @@ class Logger(TestLogger):
         # save process data
         process_data = {
             'episode_reward': self.epi_rewards,
-            'loss': self.losses,
+            'loss': self.epi_losses,
             'episode_length': self.epi_length,
         }
         json.dump(process_data, open(self.log_dir + "process.json", 'w'))

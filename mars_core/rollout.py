@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import time
 from utils.logger import init_logger
 from utils.typing import Union, Dict, Tuple, List, ConfigurationDict
 from marl.meta_learner import init_meta_learner
@@ -92,12 +93,14 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
+                    avg_loss = []
                     for _ in range(args.update_itr):
                         loss = model.update(
-                        )  # only log loss for once, loss is a list
+                        )
+                        avg_loss.append(loss)
+                    loss = np.mean(avg_loss, axis=0)
                 elif overall_steps * args.update_itr % 1 == 0:
                     loss = model.update()
-                if overall_steps % 1000 == 0:  # loss logging interval
                     logger.log_loss(loss)
 
         if model.ready_to_update:
@@ -111,12 +114,11 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
 
         if epi % args.log_interval == 0:
             logger.print_and_save()
-            if not args.marl_method == 'selfplay' and logger.model_dir is not None:
-                model.save_model(logger.model_dir)
+        if epi % args.save_interval == 0 and not args.marl_method == 'selfplay' and logger.model_dir is not None:
+            model.save_model(logger.model_dir+f'_{epi}')
 
 
 ### Genetic algorithm uses a different way of rollout. ###
-
 
 def run_agent_single_episode(env, args: ConfigurationDict, model,
                              agent_ids: List[int]) -> Tuple[float, int]:
