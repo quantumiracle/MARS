@@ -109,9 +109,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../mars/algorithm/agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mars/algorithm/dqn.html">DQN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mars/algorithm/ppo.html">PPO</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/data_struc.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/data_struct.html">Data Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/func.html">Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/env/env.html">Env</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Primal Experiments</span></p>
 <ul>
@@ -186,8 +187,13 @@
 <span></span><span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">utils.data_struct</span> <span class="kn">import</span> <span class="n">AttrDict</span>
 <span class="kn">import</span> <span class="nn">collections.abc</span>
+<span class="kn">from</span> <span class="nn">utils.typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
 
-<div class="viewcode-block" id="LoadYAML2Dict"><a class="viewcode-back" href="../../../mars/utils/func.html#mars_core.utils.func.LoadYAML2Dict">[docs]</a><span class="k">def</span> <span class="nf">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">confs</span><span class="o">=</span><span class="p">{}):</span>
+
+<div class="viewcode-block" id="LoadYAML2Dict"><a class="viewcode-back" href="../../../mars/utils/func.html#mars_core.utils.func.LoadYAML2Dict">[docs]</a><span class="k">def</span> <span class="nf">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                  <span class="n">toAttr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="n">mergeDefault</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="n">confs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="n">AttrDict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; A function loading the hyper-parameters in yaml file into a dictionary.</span>
 
 <span class="sd">    :param yaml_file: the yaml file name</span>
@@ -201,27 +207,32 @@
 <span class="sd">    :type confs: dict, optional</span>
 <span class="sd">    :return: a dictionary of configurations, including all hyper-parameters for environment, algorithm and training/testing.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    &quot;&quot;&quot;</span>    
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">mergeDefault</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;confs/default.yaml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">default</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">UpdateDictAwithB</span><span class="p">(</span><span class="n">confs</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">withOverwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="o">+</span><span class="s1">&#39;.yaml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span> <span class="o">+</span> <span class="s1">&#39;.yaml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="c1"># use safe_load instead load</span>
         <span class="n">loaded</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="n">UpdateDictAwithB</span><span class="p">(</span><span class="n">confs</span><span class="p">,</span> <span class="n">loaded</span><span class="p">,</span> <span class="n">withOverwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">toAttr</span><span class="p">:</span>
-        <span class="n">concat_dict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># concatenate all types of arguments into one dictionary</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">confs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">concat_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">}</span>  <span class="c1"># concatenate all types of arguments into one dictionary</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">confs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">concat_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">AttrDict</span><span class="p">(</span><span class="n">concat_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">confs</span></div>
 
-    
-<div class="viewcode-block" id="UpdateDictAwithB"><a class="viewcode-back" href="../../../mars/utils/func.html#mars_core.utils.func.UpdateDictAwithB">[docs]</a><span class="k">def</span> <span class="nf">UpdateDictAwithB</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">withOverwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UpdateDictAwithB"><a class="viewcode-back" href="../../../mars/utils/func.html#mars_core.utils.func.UpdateDictAwithB">[docs]</a><span class="k">def</span> <span class="nf">UpdateDictAwithB</span><span class="p">(</span>
+    <span class="n">A</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">B</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">withOverwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Update the entries in dictionary A with dictionary B.</span>
 
 <span class="sd">    :param A: a dictionary</span>
@@ -230,8 +241,7 @@
 <span class="sd">    :type B: dict</span>
 <span class="sd">    :param withOverwrite: whether replace the same entries in A with B, defaults to True</span>
 <span class="sd">    :type withOverwrite: bool, optional</span>
-<span class="sd">    :return: an updated dictionary</span>
-<span class="sd">    :rtype: dict</span>
+<span class="sd">    :return: none</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">withOverwrite</span><span class="p">:</span>
         <span class="n">InDepthUpdateDictAwithB</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
@@ -243,16 +253,18 @@
     <span class="k">return</span> <span class="n">A</span></div>
 
 
-<div class="viewcode-block" id="InDepthUpdateDictAwithB"><a class="viewcode-back" href="../../../mars/utils/func.html#mars_core.utils.func.InDepthUpdateDictAwithB">[docs]</a><span class="k">def</span> <span class="nf">InDepthUpdateDictAwithB</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+<div class="viewcode-block" id="InDepthUpdateDictAwithB"><a class="viewcode-back" href="../../../mars/utils/func.html#mars_core.utils.func.InDepthUpdateDictAwithB">[docs]</a><span class="k">def</span> <span class="nf">InDepthUpdateDictAwithB</span><span class="p">(</span>
+    <span class="n">A</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">B</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;A function for update nested dictionaries A with B.</span>
 
 <span class="sd">    :param A: a nested dictionary, e.g., dict, dict of dict, dict of dict of dict ...</span>
 <span class="sd">    :type A: dict</span>
 <span class="sd">    :param B: a nested dictionary, e.g., dict, dict of dict, dict of dict of dict ...</span>
 <span class="sd">    :type B: dict</span>
-<span class="sd">    :return: updated dictionary</span>
-<span class="sd">    :rtype: dict</span>
-<span class="sd">    &quot;&quot;&quot;</span>    
+<span class="sd">    :return: none</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>

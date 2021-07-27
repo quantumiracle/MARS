@@ -271,7 +271,6 @@
         <span class="c1"># Huber Loss</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">smooth_l1_loss</span><span class="p">(</span><span class="n">q_value</span><span class="p">,</span> <span class="n">expected_q_value</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">loss</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
         <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
@@ -281,7 +280,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">update_cnt</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DQN.save_model"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">)</span>
