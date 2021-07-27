@@ -1,10 +1,11 @@
 import numpy as np
-from utils.logger import init_logger
-from marl.meta_learner import init_meta_learner
 import torch
-import time
+from utils.logger import init_logger
+from utils.typing import Union, Dict, Tuple, List, ConfigurationDict
+from marl.meta_learner import init_meta_learner
 
-def rollout(env, model, args):
+
+def rollout(env, model, args: ConfigurationDict) -> None:
     """
     Function to rollout the interaction of agents and environments.
 
@@ -16,7 +17,8 @@ def rollout(env, model, args):
     else:
         rollout_normal(env, model, args)
 
-def rollout_normal(env, model, args):
+
+def rollout_normal(env, model, args: ConfigurationDict) -> None:
     print("Arguments: ", args)
     overall_steps = 0
     logger = init_logger(env, args)
@@ -25,11 +27,16 @@ def rollout_normal(env, model, args):
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
-            obs_to_store=obs.swapaxes(0,1) if args.num_envs > 1 else obs # transform from (envs, agents, dim) to (agents, envs, dim)
-            action_ = model.choose_action(obs_to_store) # action: (agent, env, action_dim)
+            obs_to_store = obs.swapaxes(
+                0, 1
+            ) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
+            action_ = model.choose_action(
+                obs_to_store)  # action: (agent, env, action_dim)
             model.scheduler_step(overall_steps)
-            
-            if isinstance(action_[0], tuple): # action item contains additional information like log probability
+
+            if isinstance(
+                    action_[0], tuple
+            ):  # action item contains additional information like log probability
                 action_to_store, other_info = [], []
                 for (a, info) in action_:
                     action_to_store.append(a)
@@ -39,29 +46,39 @@ def rollout_normal(env, model, args):
                 other_info = None
 
             if args.num_envs > 1:
-                action = np.array(action_to_store).swapaxes(0,1) # transform from (agents, envs, dim) to (envs, agents, dim)
+                action = np.array(action_to_store).swapaxes(
+                    0, 1
+                )  # transform from (agents, envs, dim) to (envs, agents, dim)
             else:
                 action = action_to_store
 
-            obs_, reward, done, info = env.step(action)  # requires action: (envs, agents, dim)
+            obs_, reward, done, info = env.step(
+                action)  # requires action: (envs, agents, dim)
             # time.sleep(0.05)
             if args.render:
                 env.render()
-            
-            if args.num_envs > 1: # transform from (envs, agents, dim) to (agents, envs, dim)
-                obs__to_store = obs_.swapaxes(0,1) 
-                reward_to_store = reward.swapaxes(0,1) 
-                done_to_store = done.swapaxes(0,1)
+
+            if args.num_envs > 1:  # transform from (envs, agents, dim) to (agents, envs, dim)
+                obs__to_store = obs_.swapaxes(0, 1)
+                reward_to_store = reward.swapaxes(0, 1)
+                done_to_store = done.swapaxes(0, 1)
             else:
                 obs__to_store = obs_
                 reward_to_store = reward
                 done_to_store = done
 
-            if other_info is None: 
-                sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, done_to_store]
+            if other_info is None:
+                sample = [
+                    obs_to_store, action_to_store, reward_to_store,
+                    obs__to_store, done_to_store
+                ]
             else:
-                other_info_to_store = np.array(other_info).swapaxes(0,1) if args.num_envs > 1 else other_info
-                sample = [obs_to_store, action_to_store, reward_to_store, obs__to_store, other_info_to_store, done_to_store]
+                other_info_to_store = np.array(other_info).swapaxes(
+                    0, 1) if args.num_envs > 1 else other_info
+                sample = [
+                    obs_to_store, action_to_store, reward_to_store,
+                    obs__to_store, other_info_to_store, done_to_store
+                ]
             model.store(sample)
             obs = obs_
             logger.log_reward(np.array(reward).reshape(-1))
@@ -76,7 +93,8 @@ def rollout_normal(env, model, args):
                  model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
                     for _ in range(args.update_itr):
-                        loss = model.update()  # only log loss for once, loss is a list
+                        loss = model.update(
+                        )  # only log loss for once, loss is a list
                 elif overall_steps * args.update_itr % 1 == 0:
                     loss = model.update()
                 if overall_steps % 1000 == 0:  # loss logging interval
@@ -88,8 +106,8 @@ def rollout_normal(env, model, args):
                 logger.log_loss(loss)
 
             meta_learner.step(
-                model,
-                logger)  # metalearner for selfplay need just one step per episode
+                model, logger
+            )  # metalearner for selfplay need just one step per episode
 
         if epi % args.log_interval == 0:
             logger.print_and_save()
@@ -99,16 +117,20 @@ def rollout_normal(env, model, args):
 
 ### Genetic algorithm uses a different way of rollout. ###
 
-def run_agent_single_episode(env, args, model, agent_ids):
+
+def run_agent_single_episode(env, args: ConfigurationDict, model,
+                             agent_ids: List[int]) -> Tuple[float, int]:
     for i in agent_ids:
         model.agents[i].eval()
     observation = env.reset()
-    epi_r=0        
+    epi_r = 0
     for s in range(args.max_steps_per_episode):
-        action = model.choose_action(agent_ids, observation)  # squeeze list of obs for multiple agents (only one here)
-        new_observation, reward, done, info = env.step(action) # unsqueeze
-        epi_r=epi_r+reward[0]  # squeeze
-        
+        action = model.choose_action(
+            agent_ids, observation
+        )  # squeeze list of obs for multiple agents (only one here)
+        new_observation, reward, done, info = env.step(action)  # unsqueeze
+        epi_r = epi_r + reward[0]  # squeeze
+
         observation = new_observation
 
         if np.any(done):
@@ -116,13 +138,15 @@ def run_agent_single_episode(env, args, model, agent_ids):
     epi_l = s
     return epi_r, epi_l
 
-def run_agents_n_episodes(env, args, model):
+
+def run_agents_n_episodes(env, args: ConfigurationDict, model) -> Tuple[float, float]:
     avg_score = []
     avg_length = []
     for epi in range(args.algorithm_spec['rollout_episodes_per_selection']):
         agent_rewards = []
         for agent_id in range(model.num_agents):
-            reward, length = run_agent_single_episode(env, args, model, [agent_id])
+            reward, length = run_agent_single_episode(env, args, model,
+                                                      [agent_id])
             agent_rewards.append(reward)
             avg_length.append(length)
         avg_score.append(agent_rewards)
@@ -131,7 +155,8 @@ def run_agents_n_episodes(env, args, model):
 
     return avg_score, avg_length
 
-def rollout_ga(env, model, args):
+
+def rollout_ga(env, model, args: ConfigurationDict) -> None:
     #disable gradients as we will not use them
     torch.set_grad_enabled(False)
     logger = init_logger(env, args)
@@ -140,43 +165,61 @@ def rollout_ga(env, model, args):
         """ Self-play with genetic algorithm, modified from https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ga_selfplay.py
             Difference: use the torch model like standard RL policies rather than a handcrafted model.
         """
-        winning_streak = [0] * model.num_agents # store the number of wins for this agent (including mutated ones)
+        winning_streak = [
+            0
+        ] * model.num_agents  # store the number of wins for this agent (including mutated ones)
 
-        for generation in range(args.algorithm_spec['max_generations']): # the 'generation' here is rollout of one agent
-            selected_agent_ids = np.random.choice(model.num_agents, len(env.agents), replace=False)
-            first_agent_reward, epi_length = run_agent_single_episode(env, args, model, selected_agent_ids)
+        for generation in range(
+                args.algorithm_spec['max_generations']
+        ):  # the 'generation' here is rollout of one agent
+            selected_agent_ids = np.random.choice(model.num_agents,
+                                                  len(env.agents),
+                                                  replace=False)
+            first_agent_reward, epi_length = run_agent_single_episode(
+                env, args, model, selected_agent_ids)
             logger.log_episode_reward(epi_length, first_agent_reward)
-            if first_agent_reward == 0: # if the game is tied, add noise to one of the agents: the first one selected
+            if first_agent_reward == 0:  # if the game is tied, add noise to one of the agents: the first one selected
                 model.mutate(model.agents[selected_agent_ids[0]])
-            elif first_agent_reward > 0: # erase the loser, set it to the winner (first) and add some noise
-                model.agents[selected_agent_ids[1]] = model.mutate(model.agents[selected_agent_ids[0]])
-                winning_streak[selected_agent_ids[1]] = winning_streak[selected_agent_ids[0]]
+            elif first_agent_reward > 0:  # erase the loser, set it to the winner (first) and add some noise
+                model.agents[selected_agent_ids[1]] = model.mutate(
+                    model.agents[selected_agent_ids[0]])
+                winning_streak[selected_agent_ids[1]] = winning_streak[
+                    selected_agent_ids[0]]
                 winning_streak[selected_agent_ids[0]] += 1
             else:
-                model.agents[selected_agent_ids[0]] = model.mutate(model.agents[selected_agent_ids[1]])
-                winning_streak[selected_agent_ids[0]] = winning_streak[selected_agent_ids[1]]
+                model.agents[selected_agent_ids[0]] = model.mutate(
+                    model.agents[selected_agent_ids[1]])
+                winning_streak[selected_agent_ids[0]] = winning_streak[
+                    selected_agent_ids[1]]
                 winning_streak[selected_agent_ids[1]] += 1
 
-            if generation % args.log_interval == 0 and generation > 0: 
+            if generation % args.log_interval == 0 and generation > 0:
                 record_holder = np.argmax(winning_streak)
                 record = winning_streak[record_holder]
                 logger.print_and_save()
 
-                if generation % (10*args.log_interval) == 0:
-                    model.save_model(logger.model_dir+str(generation), best_agent_id=record_holder)
-                
+                if generation % (10 * args.log_interval) == 0:
+                    model.save_model(logger.model_dir + str(generation),
+                                     best_agent_id=record_holder)
+
                 # print(f"Generation: {generation}, record holder: {record_holder}")
-    
+
     else:
         """ Single-agent self-play, modified from https://github.com/paraschopra/deepneuroevolution/blob/master/openai-gym-cartpole-neuroevolution.ipynb
             Difference: the add_elite step is removed, so every child is derived with mutation.
         """
-        for generation in range(args.algorithm_spec['max_generations']): # the 'generation' here is rollout of all agents
+        for generation in range(
+                args.algorithm_spec['max_generations']
+        ):  # the 'generation' here is rollout of all agents
             # return rewards of agents
-            rewards, length = run_agents_n_episodes(env, args, model) #return average of 3 runs
+            rewards, length = run_agents_n_episodes(
+                env, args, model)  #return average of 3 runs
 
             # sort by rewards
-            sorted_parent_indexes = np.argsort(rewards)[::-1][:args.algorithm_spec['top_limit']] #reverses and gives top values (argsort sorts by ascending by default) https://stackoverflow.com/questions/16486252/is-it-possible-to-use-argsort-in-descending-order
+            sorted_parent_indexes = np.argsort(
+                rewards
+            )[::-1][:args.algorithm_spec[
+                'top_limit']]  #reverses and gives top values (argsort sorts by ascending by default) https://stackoverflow.com/questions/16486252/is-it-possible-to-use-argsort-in-descending-order
 
             top_rewards = []
             for best_parent in sorted_parent_indexes:
@@ -193,8 +236,9 @@ def rollout_ga(env, model, args):
             # kill all agents, and replace them with their children
             model.agents = children_agents
 
-            if generation % args.log_interval == 0 and generation > 0: 
+            if generation % args.log_interval == 0 and generation > 0:
                 logger.print_and_save()
 
-                if generation % (10*args.log_interval) == 0:
-                    model.save_model(logger.model_dir+str(generation), best_agent_id=sorted_parent_indexes[0])
+                if generation % (10 * args.log_interval) == 0:
+                    model.save_model(logger.model_dir + str(generation),
+                                     best_agent_id=sorted_parent_indexes[0])
