@@ -1,7 +1,7 @@
 import yaml
 from utils.data_struct import AttrDict
 import collections.abc
-from utils.typing import List, Dict, Any, Union, Tuple, Sequence, Callable
+from utils.typing import Dict, Any
 
 
 def LoadYAML2Dict(yaml_file: str,
