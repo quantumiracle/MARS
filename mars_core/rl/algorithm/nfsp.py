@@ -4,7 +4,7 @@ import numpy as np
 import random, copy
 from .common.storage import ReplayBuffer, ReservoirBuffer
 from .common.rl_utils import choose_optimizer, EpsilonScheduler
-from .common.networks import  MLP, CNN
+from .common.networks import  MLP, CNN, get_model
 from .common.agent import Agent
 from .dqn import DQN, DQNBase
 from .equilibrium_solver import * 
@@ -16,12 +16,12 @@ class NFSP(Agent):
     def __init__(self, env, args):
         super().__init__(env, args)
         self.rl_agent = DQN(env, args)  # TODO can also use other RL agents
-        self.policy = MLP(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+        # self.policy = MLP(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+        self.policy = get_model('mlp')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
         self.replay_buffer = self.rl_agent.buffer
         self.reservoir_buffer = ReservoirBuffer(int(float(args.algorithm_spec['replay_buffer_size'])) )
         self.rl_optimizer = self.rl_agent.optimizer
         self.sl_optimizer = choose_optimizer(args.optimizer)(self.policy.parameters(), lr=float(args.learning_rate))
-        self.epsilon_scheduler = self.rl_agent.epsilon_scheduler
         self.schedulers = self.rl_agent.schedulers
 
         self.eta = 0. if args.test else float(args.marl_spec['eta'])  # in test mode, only use average policy
@@ -36,7 +36,6 @@ class NFSP(Agent):
                 action = action.detach().item()
             except:
                 action = action.detach().cpu().numpy()  # when parallel envs
-            
         else:
             self.is_best_response = True
             action = self.rl_agent.choose_action(state, Greedy, epsilon)

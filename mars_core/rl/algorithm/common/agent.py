@@ -1,13 +1,13 @@
 import torch
 import torch.nn as nn
 import numpy as np
-
+from utils.typing import List, Union, StateType, ActionType, SampleType, SamplesType, ConfigurationDict
 
 class Agent(object):
     """
     A standard agent class.
     """
-    def __init__(self, env, args):
+    def __init__(self, env, args: ConfigurationDict):
         super(Agent, self).__init__()
         self.batch_size = args.batch_size
         self.schedulers = []
@@ -20,15 +20,25 @@ class Agent(object):
     def fix(self, ):
         self.not_learnable = True
 
-    def choose_action(self, state, *args):
+    def choose_action(
+        self, 
+        state: StateType, 
+        *args
+        ) -> ActionType:
         pass
 
-    def scheduler_step(self, frame):
+    def scheduler_step(
+        self, 
+        frame: int
+        ) -> None:
         """ Learning rate scheduler, epsilon scheduler, etc"""
         for scheduler in self.schedulers:
             scheduler.step(frame)
 
-    def store(self, *args):
+    def store(
+        self, 
+        sample: SampleType, 
+        *args) -> None:
         """ Store a sample for either on-policy or off-policy algorithms."""
         pass
 
@@ -42,14 +52,16 @@ class Agent(object):
         """
         target_model.load_state_dict(current_model.state_dict())
 
-    def save_model(self, path=None):
+    def save_model(self, path: str = None):
         pass
 
-    def load_model(self, path=None):
+    def load_model(self, path: str = None):
         pass
 
     @property
-    def ready_to_update(self):
+    def ready_to_update(self) -> bool:
+        """ A function return whether the agent is ready to be updated.
+        """
         return True
 
 
@@ -64,6 +76,14 @@ class MultiAgent(Agent):
 
         What happen if an agent is 'not_learnable': Agents in the not_learnable_list will not take the store() and update() functions.
 
+    Other things to notice:
+        
+        * In testing or exploiting modes, if `load_model_full_path` is given, it is preferred over `load_model_idx` to load the existing model.
+
+        * `mergeAllSamplesInOne` is True only for Self-Play method, it means samples from all agents can be used for updating each agent due to symmetry.
+
+        * In Nash method and exploitation mode, the first agent in `agents` list needs to be the one to be exploited (pre-trained).
+
     :param env: env object
     :type env: object
     :param agents: list of agent models
@@ -71,7 +91,7 @@ class MultiAgent(Agent):
     :param args: all arguments
     :type args: dict
     """    
-    def __init__(self, env, agents, args):
+    def __init__(self, env, agents, args: ConfigurationDict):
         """Initialization
         """        
         super(MultiAgent, self).__init__(env, args)
@@ -105,9 +125,12 @@ class MultiAgent(Agent):
         # self.mergeAllSamplesInOne = False   # TODO comment out
 
         if self.args.marl_method == 'nash' and self.args.exploit:
-            assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method
+            assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
 
-    def choose_action(self, states):
+    def choose_action(
+        self, 
+        states: Union[List[StateType], List[List[StateType]]],
+        ) -> Union[List[ActionType], List[List[ActionType]]]:
         """Choose actions from given states/observations.
         Shape of states:  (agents, envs, state_dim)
 
@@ -140,14 +163,40 @@ class MultiAgent(Agent):
                 actions.append(action)
         return actions
 
-    def scheduler_step(self, frame):
+    def scheduler_step(self, frame: int) -> None:
         for agent in self.agents:
             agent.scheduler_step(frame)
 
-    def store(self, samples):
+    def store(
+        self, 
+        samples: SamplesType,
+        ) -> None:
+        """Store the samples into each agent.
+        The input samples is for all agents and all environments, we separate and reshape it before calling store() for each agent object. 
+        For each item in samples (like `states`, `actions`), it has the shape: (`agents`, `envs`, `sample_dim`).
+
+        Generally, we want each agent to take its samples by indexing the first dimension, therefore (`envs`, `a complete sample`), `a complete sample`
+        looks like [state, action, reward, next_state, (other_info, ) done].
+        Specifically, for different methods (Self-Play, NFSP, Nash, etc) and different modes (train, test, exploit), the process will be different.
+        
+            1. If using Nash agent, take the `states` item in samples as an example, it has shape (`agents`, `envs`, `sample_dim`) for parallel environments
+            and (`agents`, `sample_dim`) for single environment, we transfer it to be (`envs`, `agents*sample_dim`) for the Nash agent in training and testing modes.
+            For exploitation mode, since the Nash agent is fixed and only provide actions for one agent, it is `not_learnable` and does not store any samples, only its
+            opponent exploiter store samples in a standard way.
+
+            2. If using Self-Play for training/testing, samples from all agents can be stored in one model for learning (due to the symmetry),
+            `mergeAllSamplesInOne` is set to be True. Each agent will take in samples in shape (`envs`, `agents`, `a complete sample`).
+
+            3. If using other methods like single-agent RL or Neural Fictitious Self-Play (NFSP) for training/testing, each agent will only takes their own samples,
+            thus `mergeAllSamplesInOne` is False, and the shape of samples for each agent is (`envs`, `a complete sample`).
+
+        :param samples: list of samples from different environment (if using parallel envs) and
+         for different agents, it consists of [states, actions, rewards, next_states, (other_infos,) dones].
+        :type samples: list
+        """
         all_s = []
         if self.args.marl_method == 'nash' and not self.args.exploit:
-            # 'states' (agents, envs, state_dim) -> (envs, agents*state_dim), similar for 'actions', 'rewards' take the first one in all agents,
+            # 'states' (agents, envs, state_dim) -> (envs, agents, state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples
             try:  # when num_envs > 1 
@@ -175,13 +224,12 @@ class MultiAgent(Agent):
                     all_s.extend(s)
                 elif i not in self.not_learnable_list:  # no need to store samples for not learnable models
                     agent.store(s)
-
             # store all samples into the trainable agent in self-play
             if self.mergeAllSamplesInOne:
                 self.agents[self.args.marl_spec['trainable_agent_idx']].store(
                     all_s)
 
-    def update(self):
+    def update(self) -> List[float]:
         losses = []
         for i, agent in enumerate(self.agents):
             if i not in self.not_learnable_list:
@@ -191,11 +239,11 @@ class MultiAgent(Agent):
                 losses.append(np.nan)
         return losses
 
-    def save_model(self, path=None):
+    def save_model(self, path: str = None) -> None:
         for idx, agent in enumerate(self.agents):
             agent.save_model(path+f'-{str(idx)}')
 
-    def load_model(self, path=None, eval=True):
+    def load_model(self, path: str = None, eval: bool = True) -> None:
             
         for i, agent in enumerate(self.agents):
             if isinstance(path, list): # if pass in a list of paths, each agent takes one path in order
