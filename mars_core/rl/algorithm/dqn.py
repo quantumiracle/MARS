@@ -5,7 +5,6 @@ import torch.nn.functional as F
 import numpy as np
 import random, copy
 from .common.agent import Agent
-from .common.nn_components import cReLU, Flatten
 from .common.storage import ReplayBuffer
 from .common.rl_utils import choose_optimizer, EpsilonScheduler
 from .common.networks import NetBase, get_model
@@ -86,7 +85,6 @@ class DQN(Agent):
         # Huber Loss
         loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
         loss = (loss * weights).mean()
-
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
@@ -96,7 +94,7 @@ class DQN(Agent):
             self.update_cnt = 0
         self.update_cnt += 1
 
-        return loss.item()
+        return loss.detach().item()
 
     def save_model(self, path):
         torch.save(self.model.state_dict(), path+'_model')
