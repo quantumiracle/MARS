@@ -1,7 +1,7 @@
 env_args:
     env_name: SlimeVolley-v0
     env_type: slimevolley
-    num_envs: 2
+    num_envs: 1
     against_baseline: False
     ram: True
     seed: 1122
@@ -14,7 +14,7 @@ agent_args:
         lambda: 0.95
         eps_clip: 0.2
         K_epoch: 4
-        GAE: True  # generalized advantage estimation
+        GAE: False  # generalized advantage estimation
 
 train_args:
     max_episodes: 100000
@@ -43,5 +43,5 @@ train_args:
     marl_method: selfplay
     marl_spec:  # configurations for specific MARL method
         selfplay_score_delta: 10. # the score that current learning agent must beat its opponent to update opponent's policy
-        trainable_agent_idx: 1   # the index of trainable agent, with its opponent delayed updated
-        opponent_idx: 0          # the one to be updated from trainable agent
+        trainable_agent_idx: 0   # the index of trainable agent, with its opponent delayed updated
+        opponent_idx: 1          # the one to be updated from trainable agent

@@ -14,7 +14,7 @@ agent_args:
         lambda: 0.95
         eps_clip: 0.2
         K_epoch: 4
-        GAE: False  # generalized advantage estimation
+        GAE: True  # generalized advantage estimation
 
 train_args:
     max_episodes: 100000
@@ -25,7 +25,7 @@ train_args:
     device: gpu
     log_avg_window: 20 # average window length in logging
     log_interval: 20  # log print interval 
-    render: False
+    # render: True
     net_architecture:   
         policy:
             hidden_dim_list: [64, 64, 64]  

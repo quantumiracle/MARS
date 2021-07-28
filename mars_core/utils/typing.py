@@ -5,9 +5,8 @@ ConfigurationSimpleDict = Dict[str, Union[bool, int, float, str]]
 ConfigurationSimpleDict = Dict[str, ConfigurationSimpleDict]
 ConfigurationDict = Union[ConfigurationSimpleDict, AttrDict]
 
-StateType = NextStateType = List[float]
+StateType = NextStateType = Union[List[float], List[int]]
 ActionType = OtherInfoType = Union[int, float, List[int], List[float]]
-NextStateType = List[float]
 RewardType = Union[int, List[int]]
 DoneType = Union[int, bool, List[int], List[bool]]
 
