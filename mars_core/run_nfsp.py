@@ -17,7 +17,6 @@ print(env)
 ### Specify models for each agent
 model1 = eval(args.algorithm)(env, args)
 model2 = eval(args.algorithm)(env, args)
-model2.fix()
 
 model = MultiAgent(env, [model1, model2], args)
 
