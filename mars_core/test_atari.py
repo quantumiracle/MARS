@@ -12,6 +12,7 @@ parser_args = parser.parse_args()
 yaml_file = 'confs/pettingzoo_atari_nash_dqn_exploiter'
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
 envs = ['basketball_pong_v2', 'surround_v1', 'boxing_v1']
+# ['double_dunk_v2', 'combat_plane_v1']
 args.env_name = envs[int(parser_args.id)]
 
 ### Create env
