@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import time
 from utils.logger import init_logger
-from utils.typing import Union, Dict, Tuple, List, ConfigurationDict
+from utils.typing import Tuple, List, ConfigurationDict
 from marl.meta_learner import init_meta_learner
 
 
@@ -20,6 +20,16 @@ def rollout(env, model, args: ConfigurationDict) -> None:
 
 
 def rollout_normal(env, model, args: ConfigurationDict) -> None:
+    """Function to rollout experience as interaction of agents and environments, in
+    a typical manner of reinforcement learning. 
+
+    :param env: environment instance
+    :type env: object
+    :param model: the multi-agent model containing models for all agents
+    :type model: MultiAgent
+    :param args: arguments
+    :type args: ConfigurationDict
+    """
     print("Arguments: ", args)
     overall_steps = 0
     logger = init_logger(env, args)
@@ -159,6 +169,18 @@ def run_agents_n_episodes(env, args: ConfigurationDict, model) -> Tuple[float, f
 
 
 def rollout_ga(env, model, args: ConfigurationDict) -> None:
+    """Function to rollout experience as interaction of agents and environments,
+    as well as taking evolution in the agents population with genetic algorithm.
+    It can work for either single-agent environment or multi-agent environments
+    with a self-play scheme.
+
+    :param env: environment instance
+    :type env: object
+    :param model: the multi-agent model containing the genetic algorithm model
+    :type model: MultiAgent
+    :param args: arguments
+    :type args: ConfigurationDict
+    """
     #disable gradients as we will not use them
     torch.set_grad_enabled(False)
     logger = init_logger(env, args)

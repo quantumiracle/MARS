@@ -22,9 +22,9 @@ class Agent(object):
 
     def choose_action(
         self, 
-        state: StateType, 
+        state: List[StateType], 
         *args
-        ) -> ActionType:
+        ) -> List[ActionType]:
         pass
 
     def scheduler_step(

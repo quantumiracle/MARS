@@ -5,19 +5,19 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
 import numpy as np
-from .common.networks import MLP, CNN
+from .common.networks import MLP, CNN, get_model
 from .common.agent import Agent
 from .common.rl_utils import choose_optimizer
+from utils.typing import List, Tuple, StateType, ActionType, SampleType, SingleEnvMultiAgentSampleType
 
 def PPO(env, args):
-    """[summary]
+    """ The function returns a proper class for Proximal Policy Optimization (PPO) algorithm,
+    according to the action space of the environment.
 
-    :param env: [description]
-    :type env: [type]
-    :param args: [description]
-    :type args: [type]
-    :return: [description]
-    :rtype: [type]
+    :param env: environment instance
+    :type env: object
+    :param args: arguments
+    :type args: ConfigurationDict
     """    
     if True: # discrete TODO
         return PPODiscrete(env, args)
@@ -25,10 +25,7 @@ def PPO(env, args):
         return None
 
 class PPODiscrete(Agent):
-    """[summary]
-
-    :param Agent: [description]
-    :type Agent: [type]
+    """ PPO agorithm for environments with discrete action space.
     """ 
     def __init__(self, env, args):
         super().__init__(env, args)
@@ -66,20 +63,38 @@ class PPODiscrete(Agent):
         self._num_channel = args.num_envs*(env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0]) # env.num_agents is a list when using parallel envs 
         self.data = [[] for _ in range(self._num_channel)]
 
-    def pi(self, x):
+    def pi(
+        self, 
+        x: List[StateType]
+        ) -> List[ActionType]:
+        """ Forward the policy network.
+
+        :param x: input of the policy network, i.e. the state
+        :type x: List[StateType]
+        :return: the actions
+        :rtype: List[ActionType]
+        """  
         return self.policy.forward(x)
 
-    def v(self, x):
-        """[summary]
+    def v(
+        self, 
+        x: List[StateType]
+        ) -> List[float]:
+        """ Forward the value network.
 
-        :param x: [description]
-        :type x: [type]
-        :return: [description]
-        :rtype: [type]
+        :param x: input of the value network, i.e. the state
+        :type x: List[StateType]
+        :return: a list of values for each state
+        :rtype: List[float]
         """        
         return self.value.forward(x)  
 
-    def store(self, transitions):
+    def store(self, transitions: SampleType) -> None:
+        """ Store samples in batch.
+
+        :param transitions: a list of samples from different environments (if using parallel env)
+        :type transitions: SampleType
+        """        
         # self.data.append(transition)
         # self.data.extend(transitions)
 
@@ -89,7 +104,20 @@ class PPODiscrete(Agent):
         for i, transition in enumerate(transitions): # iterate over the list
             self.data[i].append(transition)
 
-    def choose_action(self, s, Greedy=False):
+    def choose_action(
+        self, 
+        s: StateType, 
+        Greedy: bool = False
+        ) -> List[ActionType]:
+        """Choose action give state.
+
+        :param s: observed state from the agent
+        :type s: List[StateType]
+        :param Greedy: whether adopt greedy policy (no randomness for exploration) or not, defaults to False
+        :type Greedy: bool, optional
+        :return: the actions
+        :rtype: List[ActionType]
+        """
         prob = self.policy(torch.from_numpy(s).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
         if Greedy:
             a = torch.argmax(prob, dim=-1).detach().cpu().numpy()
@@ -100,7 +128,17 @@ class PPODiscrete(Agent):
             logprob = dist.log_prob(a)
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
         
-    def make_batch(self, data):
+    def make_batch(
+        self, 
+        data: SampleType
+        ) -> SingleEnvMultiAgentSampleType:
+        """ Reshape the data and put it into the computational device, cpu or gpu.
+
+        :param data: unstructured data
+        :type data: SampleType
+        :return: structured data
+        :rtype: SingleEnvMultiAgentSampleType
+        """
         s_lst, a_lst, r_lst, s_prime_lst, prob_a_lst, done_lst = [], [], [], [], [], []
         for trajectory in data:
             s, a, r, s_prime, prob_a, done = trajectory
@@ -116,16 +154,16 @@ class PPODiscrete(Agent):
         done_mask = np.array(done_mask)
         prob_a_lst = np.array(prob_a_lst)
         # found this step take some time for Pong (not ram), even if no parallel no multiagent
-        s,a,r,s_prime,done_mask, prob_a = torch.tensor(s_lst, dtype=torch.float).to(self.device), torch.tensor(a_lst).to(self.device), \
-                                          torch.tensor(r_lst, dtype=torch.float).to(self.device), torch.tensor(s_prime_lst, dtype=torch.float).to(self.device), \
-                                          torch.tensor(done_lst, dtype=torch.float).to(self.device), torch.tensor(prob_a_lst, dtype=torch.float).to(self.device)
-        return s, a, r, s_prime, done_mask, prob_a
+        s,a,r,s_prime,prob_a,done_mask =    torch.tensor(s_lst, dtype=torch.float).to(self.device), torch.tensor(a_lst).to(self.device), \
+                                            torch.tensor(r_lst, dtype=torch.float).to(self.device), torch.tensor(s_prime_lst, dtype=torch.float).to(self.device), \
+                                            torch.tensor(prob_a_lst, dtype=torch.float).to(self.device), torch.tensor(done_lst, dtype=torch.float).to(self.device)
+        return s, a, r, s_prime, prob_a, done_mask
         
     def update(self):
         total_loss = 0.
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data: # iterate over data from different environments
-            s, a, r, s_prime, done_mask, oldlogprob = self.make_batch(data)
+            s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
             if not self.GAE:
                 rewards = []
                 discounted_r = 0
@@ -146,15 +184,16 @@ class PPODiscrete(Agent):
                     vs_prime = self.v(s_prime).squeeze(dim=-1)
                     assert vs_prime.shape == done_mask.shape
                     vs_target = r + self.gamma * vs_prime * done_mask
-                    delta = vs_target - vs
+                    delta = vs_target - vs.squeeze(dim=-1)
                     delta = delta.detach()
                     advantage_lst = []
                     advantage = 0.0
-                    for delta_t in torch.flip(delta, [0]):
-                        advantage = self.gamma * self.lmbda * advantage + delta_t[0]
+                    for delta_t in torch.flip(delta, [-1]): # reverse the delta along the time sequence in an episodic data
+                        advantage = self.gamma * self.lmbda * advantage + delta_t
                         advantage_lst.append(advantage)
                     advantage_lst.reverse()
                     advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
 
                 else:
                     advantage = rewards - vs.squeeze(dim=-1).detach()

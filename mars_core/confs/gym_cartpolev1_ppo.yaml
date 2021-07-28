@@ -13,12 +13,12 @@ agent_args:
         lambda: 0.95
         eps_clip: 0.2
         K_epoch: 4
-        GAE: False  # generalized advantage estimation
+        GAE: True  # generalized advantage estimation
 
 train_args:
     max_episodes: 10000
     max_steps_per_episode: 10000
-    train_start_frame: 10000
+    train_start_frame: 1000
     optimizer: adam
     learning_rate: 1e-4
     device: gpu

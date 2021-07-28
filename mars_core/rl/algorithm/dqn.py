@@ -8,6 +8,7 @@ from .common.agent import Agent
 from .common.storage import ReplayBuffer
 from .common.rl_utils import choose_optimizer, EpsilonScheduler
 from .common.networks import NetBase, get_model
+from utils.typing import List, Union, StateType, ActionType, SampleType, SamplesType, ConfigurationDict
 
 class DQN(Agent):
     """
@@ -43,7 +44,23 @@ class DQN(Agent):
                 model = ParallelDQN(env, args.net_architecture, args.num_envs)
         return model
 
-    def choose_action(self, state, Greedy=False, epsilon=None):
+    def choose_action(
+        self, 
+        state: List[StateType], 
+        Greedy: bool = False, 
+        epsilon: Union[float, None] = None
+        ) -> List[ActionType]:
+        """Choose action give state.
+
+        :param state: observed state from the agent
+        :type state: List[StateType]
+        :param Greedy: whether adopt greedy policy (no randomness for exploration) or not, defaults to False
+        :type Greedy: bool, optional
+        :param epsilon: parameter value for \epsilon-greedy, defaults to None
+        :type epsilon: Union[float, None], optional
+        :return: the actions
+        :rtype: List[ActionType]
+        """
         if Greedy:
             epsilon = 0.
         elif epsilon is None:
@@ -53,7 +70,12 @@ class DQN(Agent):
         action = self.model.choose_action(state, epsilon)
         return action
 
-    def store(self, sample):
+    def store(self, sample: SampleType) -> None:
+        """ Store samples in buffer.
+
+        :param sample: a list of samples from different environments (if using parallel env)
+        :type sample: SampleType
+        """ 
         # self.buffer.push(*sample)
         self.buffer.push(sample)
 
