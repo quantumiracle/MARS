@@ -40,17 +40,17 @@ from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 # PettingZoo envs
 pettingzoo_envs = {
     'atari': [
-        'basketball_pong_v1', 'basketball_pong_v2', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
+        'basketball_pong_v2', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
         'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
-        'flag_capture_v1', 'foozpong_v1', 'ice_hockey_v1', 'joust_v2',
-        'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v1', 'pong_v2', 
-        'quadrapong_v2', 'space_invaders_v1', 'space_war_v1', 'surround_v1',
-        'tennis_v2', 'video_checkers_v3', 'volleyball_pong_v1', 'warlords_v2',
+        'flag_capture_v1', 'foozpong_v2', 'ice_hockey_v1', 'joust_v2',
+        'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v2',
+        'quadrapong_v3', 'space_invaders_v1', 'space_war_v1', 'surround_v1',
+        'tennis_v2', 'video_checkers_v3', 'volleyball_pong_v2', 'warlords_v2',
         'wizard_of_wor_v2'
     ],
 
     'classic': [
-        'dou_dizhu_v3', 'go_v3', 'leduc_holdem_v3', 'rps_v1',
+        'dou_dizhu_v3', 'go_v4', 'leduc_holdem_v3', 'rps_v2',
         'texas_holdem_no_limit_v3', 'texas_holdem_v3', 'tictactoe_v3', 'uno_v3'
     ]
 }
@@ -132,7 +132,7 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
             env = Dict2TupleWrapper(env, keep_info=keep_info) 
 
         elif env_name in pettingzoo_envs['classic']:
-            if env_name in ['rps_v1', 'rpsls_v1']:
+            if env_name in ['rps_v2', 'rpsls_v1']:
                 env = eval(env_name).parallel_env()
                 env = PettingzooClassicWrapper(env, observation_mask=1.)
             else: # only rps_v1 can use parallel_env at present
@@ -142,7 +142,7 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
             env = Dict2TupleWrapper(env, keep_info=keep_info)
 
     elif env_type == 'lasertag':
-        import lasertag
+        import lasertag  # this is essential
         env = gym.make(env_name)
         env = wrap_pytorch(env) 
 
