@@ -97,7 +97,6 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
             if np.any(
                     done
             ):  # if any player in a game is done, the game episode done; may not be correct for some envs
-                logger.log_episode_reward(step)
                 break
 
             if not args.algorithm_spec['episodic_update'] and \
@@ -111,7 +110,7 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
                     loss = np.mean(avg_loss, axis=0)
                 elif overall_steps * args.update_itr % 1 == 0:
                     loss = model.update()
-                    logger.log_loss(loss)
+                logger.log_loss(loss)
 
         if model.ready_to_update:
             if args.algorithm_spec['episodic_update']:
@@ -121,6 +120,8 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
             meta_learner.step(
                 model, logger
             )  # metalearner for selfplay need just one step per episode
+        
+        logger.log_episode_reward(step)
 
         if epi % args.log_interval == 0:
             logger.print_and_save()
