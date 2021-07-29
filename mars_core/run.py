@@ -11,6 +11,7 @@ from rl.algorithm import *
 yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_ppo'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+args.render = True
 
 ### Create env
 env = make_env(args)
