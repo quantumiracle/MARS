@@ -194,6 +194,7 @@
 <span class="kn">from</span> <span class="nn">.common.storage</span> <span class="kn">import</span> <span class="n">ReplayBuffer</span>
 <span class="kn">from</span> <span class="nn">.common.rl_utils</span> <span class="kn">import</span> <span class="n">choose_optimizer</span><span class="p">,</span> <span class="n">EpsilonScheduler</span>
 <span class="kn">from</span> <span class="nn">.common.networks</span> <span class="kn">import</span> <span class="n">NetBase</span><span class="p">,</span> <span class="n">get_model</span>
+<span class="kn">from</span> <span class="nn">utils.typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">ActionType</span><span class="p">,</span> <span class="n">SampleType</span><span class="p">,</span> <span class="n">SamplesType</span><span class="p">,</span> <span class="n">ConfigurationDict</span>
 
 <div class="viewcode-block" id="DQN"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN">[docs]</a><span class="k">class</span> <span class="nc">DQN</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -229,7 +230,23 @@
                 <span class="n">model</span> <span class="o">=</span> <span class="n">ParallelDQN</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
 
-<div class="viewcode-block" id="DQN.choose_action"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">Greedy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DQN.choose_action"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">state</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StateType</span><span class="p">],</span> 
+        <span class="n">Greedy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+        <span class="n">epsilon</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Choose action give state.</span>
+
+<span class="sd">        :param state: observed state from the agent</span>
+<span class="sd">        :type state: List[StateType]</span>
+<span class="sd">        :param Greedy: whether adopt greedy policy (no randomness for exploration) or not, defaults to False</span>
+<span class="sd">        :type Greedy: bool, optional</span>
+<span class="sd">        :param epsilon: parameter value for \epsilon-greedy, defaults to None</span>
+<span class="sd">        :type epsilon: Union[float, None], optional</span>
+<span class="sd">        :return: the actions</span>
+<span class="sd">        :rtype: List[ActionType]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">Greedy</span><span class="p">:</span>
             <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="k">elif</span> <span class="n">epsilon</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -239,7 +256,12 @@
         <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">choose_action</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">action</span></div>
 
-<div class="viewcode-block" id="DQN.store"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<div class="viewcode-block" id="DQN.store"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="n">SampleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Store samples in buffer.</span>
+
+<span class="sd">        :param sample: a list of samples from different environments (if using parallel env)</span>
+<span class="sd">        :type sample: SampleType</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
         <span class="c1"># self.buffer.push(*sample)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span></div>
 
