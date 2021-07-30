@@ -13,7 +13,7 @@ Basic RL Algorithms to do:
 
 MARL Algorithms to do:
 - [x] Self-Play
-- [ ] Fictitious Self-Play
+- [ ] [Fictitious Self-Play](http://proceedings.mlr.press/v37/heinrich15.pdf)
 - [x] Neural Fictitious Self-Play
 - [ ] Policy Space Responce Oracle
 - [ ] [Joint Policy Space Responce Oracle](http://proceedings.mlr.press/v139/marris21a.html)
