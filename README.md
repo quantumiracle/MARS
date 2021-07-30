@@ -4,6 +4,11 @@
 
 *If life exists on Mars, shall we human cooperate or compete with it?* 
 
+## Usage Instruction
+See [here](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html)
+
+
+## Development
 Basic RL Algorithms to do:
 - [x] DQN
 - [x] PPO
