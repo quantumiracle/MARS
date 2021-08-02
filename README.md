@@ -4,6 +4,13 @@
 
 *If life exists on Mars, shall we human cooperate or compete with it?* 
 
+## Usage Instruction
+For usage instruction document, see [here](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html). 
+
+MARS is still under-development and not prepared to release yet. You may find it hard to clone b.c. the author is testing algorithms with some models hosted on Git.
+
+
+## Development
 Basic RL Algorithms to do:
 - [x] DQN
 - [x] PPO

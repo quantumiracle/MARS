@@ -187,13 +187,13 @@
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
+<span class="kn">from</span> <span class="nn">utils.typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">ActionType</span><span class="p">,</span> <span class="n">SampleType</span><span class="p">,</span> <span class="n">SamplesType</span><span class="p">,</span> <span class="n">ConfigurationDict</span>
 
 <div class="viewcode-block" id="Agent"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent">[docs]</a><span class="k">class</span> <span class="nc">Agent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A standard agent class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">ConfigurationDict</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Agent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span> <span class="o">=</span> <span class="p">[]</span>
@@ -206,15 +206,25 @@
 <div class="viewcode-block" id="Agent.fix"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.fix">[docs]</a>    <span class="k">def</span> <span class="nf">fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Agent.choose_action"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Agent.choose_action"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">state</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StateType</span><span class="p">],</span> 
+        <span class="o">*</span><span class="n">args</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">]:</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Agent.scheduler_step"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.scheduler_step">[docs]</a>    <span class="k">def</span> <span class="nf">scheduler_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<div class="viewcode-block" id="Agent.scheduler_step"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.scheduler_step">[docs]</a>    <span class="k">def</span> <span class="nf">scheduler_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">frame</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Learning rate scheduler, epsilon scheduler, etc&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">scheduler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span><span class="p">:</span>
             <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Agent.store"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Agent.store"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">sample</span><span class="p">:</span> <span class="n">SampleType</span><span class="p">,</span> 
+        <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Store a sample for either on-policy or off-policy algorithms.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -228,14 +238,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">current_model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="Agent.save_model"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Agent.save_model"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Agent.load_model"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Agent.load_model"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">ready_to_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ready_to_update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; A function return whether the agent is ready to be updated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
@@ -265,7 +277,7 @@
 <span class="sd">    :param args: all arguments</span>
 <span class="sd">    :type args: dict</span>
 <span class="sd">    &quot;&quot;&quot;</span>    
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">agents</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">agents</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">ConfigurationDict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialization</span>
 <span class="sd">        &quot;&quot;&quot;</span>        
         <span class="nb">super</span><span class="p">(</span><span class="n">MultiAgent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
@@ -301,7 +313,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="o">==</span> <span class="s1">&#39;nash&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
             <span class="k">assert</span> <span class="mi">0</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span>  <span class="c1"># the first agent must be the model to be exploited in Nash method, since the first agent stores samples </span>
 
-<div class="viewcode-block" id="MultiAgent.choose_action"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiAgent.choose_action"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">states</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StateType</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StateType</span><span class="p">]]],</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">]]]:</span>
         <span class="sd">&quot;&quot;&quot;Choose actions from given states/observations.</span>
 <span class="sd">        Shape of states:  (agents, envs, state_dim)</span>
 
@@ -334,11 +349,14 @@
                 <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">actions</span></div>
 
-<div class="viewcode-block" id="MultiAgent.scheduler_step"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.scheduler_step">[docs]</a>    <span class="k">def</span> <span class="nf">scheduler_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiAgent.scheduler_step"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.scheduler_step">[docs]</a>    <span class="k">def</span> <span class="nf">scheduler_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">:</span>
             <span class="n">agent</span><span class="o">.</span><span class="n">scheduler_step</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MultiAgent.store"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiAgent.store"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">samples</span><span class="p">:</span> <span class="n">SamplesType</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Store the samples into each agent.</span>
 <span class="sd">        The input samples is for all agents and all environments, we separate and reshape it before calling store() for each agent object. </span>
 <span class="sd">        For each item in samples (like `states`, `actions`), it has the shape: (`agents`, `envs`, `sample_dim`).</span>
@@ -392,13 +410,12 @@
                     <span class="n">all_s</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>  <span class="c1"># no need to store samples for not learnable models</span>
                     <span class="n">agent</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-
             <span class="c1"># store all samples into the trainable agent in self-play</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mergeAllSamplesInOne</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">store</span><span class="p">(</span>
                     <span class="n">all_s</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MultiAgent.update"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiAgent.update"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
@@ -408,11 +425,11 @@
                 <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">losses</span></div>
 
-<div class="viewcode-block" id="MultiAgent.save_model"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiAgent.save_model"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">):</span>
             <span class="n">agent</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="sa">f</span><span class="s1">&#39;-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MultiAgent.load_model"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiAgent.load_model"><a class="viewcode-back" href="../../../../../mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="c1"># if pass in a list of paths, each agent takes one path in order</span>
