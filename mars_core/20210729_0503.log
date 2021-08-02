@@ -1,0 +1,24 @@
+pygame 2.0.0 (SDL 2.0.12, python 3.7.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+{'env_name': 'SlimeVolley-v0', 'env_type': 'slimevolley', 'num_envs': 1, 'ram': True, 'seed': 1, 'against_baseline': False, 'algorithm': 'NashDQNExploiter', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000}, 'batch_size': 32, 'max_episodes': 10000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 10, 'log_interval': 10, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'save_path': '', 'save_interval': 5000, 'net_architecture': {'hidden_dim_list': [64, 64, 64], 'hidden_activation': 'Tanh', 'output_activation': False}, 'marl_method': 'nash', 'marl_spec': {}}
+SlimeVolley-v0 slimevolley
+Load SlimeVolley-v0 environment in type slimevolley.
+Env observation space: Box(-3.4028234663852886e+38, 3.4028234663852886e+38, (12,), float32) action space: Discrete(6)
+<env.wrappers.mars_wrappers.Dict2TupleWrapper object at 0x7f4fab3cb510>
+Agents No. [0] (index starting from 0) are not learnable.
+Traceback (most recent call last):
+  File "exploit_nash_exploiter.py", line 38, in <module>
+    model = MultiAgent(env, [trained_model, exploiter], args)
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/common/agent.py", line 118, in __init__
+    self.load_model(model_path)
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/common/agent.py", line 257, in load_model
+    agent.load_model(spec_path, eval)
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/nash_dqn_exploiter.py", line 184, in load_model
+    self.normal_nashQ.load_state_dict(torch.load(path+'_normal_model'))
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 581, in load
+    with _open_file_like(f, 'rb') as opened_file:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 230, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 211, in __init__
+    super(_open_file, self).__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '../model/slimevolley_SlimeVolley-v0_nash_NashDQNExploiter_0/-2_normal_model'
