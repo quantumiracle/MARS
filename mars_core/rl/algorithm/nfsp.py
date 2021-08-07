@@ -77,7 +77,10 @@ class NFSP(Agent):
 
     def save_model(self, path):
         self.rl_agent.save_model(path)
-        torch.save(self.policy.state_dict(), path+'_policy')
+        try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
+            torch.save(self.policy.state_dict(), path+'_policy', _use_new_zipfile_serialization=False)
+        except:
+            torch.save(self.policy.state_dict(), path+'_policy')
 
     def load_model(self, path, eval=True):
         self.rl_agent.load_model(path, eval)

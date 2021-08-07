@@ -119,8 +119,12 @@ class DQN(Agent):
         return loss.detach().item()
 
     def save_model(self, path):
-        torch.save(self.model.state_dict(), path+'_model')
-        torch.save(self.target.state_dict(), path+'_target')
+        try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
+            torch.save(self.model.state_dict(), path+'_model', _use_new_zipfile_serialization=False) 
+            torch.save(self.target.state_dict(), path+'_target', _use_new_zipfile_serialization=False)
+        except:  # for lower versions
+            torch.save(self.model.state_dict(), path+'_model')
+            torch.save(self.target.state_dict(), path+'_target')
 
     def load_model(self, path, eval=True):
         self.model.load_state_dict(torch.load(path+'_model'))
