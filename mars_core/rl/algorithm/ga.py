@@ -100,7 +100,10 @@ class GA(Agent):
         return child_agent
 
     def save_model(self, path, best_agent_id):
-        torch.save(self.agents[best_agent_id].state_dict(), path+'_best_agent')
+        try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
+            torch.save(self.agents[best_agent_id].state_dict(), path+'_best_agent', _use_new_zipfile_serialization=False)
+        except:
+            torch.save(self.agents[best_agent_id].state_dict(), path+'_best_agent')
 
     def load_model(self, path, eval=True, default_id=0):
         """Load model into one agent with default id """
