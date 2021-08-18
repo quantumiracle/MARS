@@ -10,6 +10,7 @@ EnvArgs = {
     'seed': 1223,
     }
 
+# names of environments to test
 envs = {
     'slimevolley': [
         'SlimeVolley-v0', 'SlimeVolleySurvivalNoFrameskip-v0',
@@ -22,14 +23,14 @@ envs = {
         'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v2',
         'quadrapong_v3', 'space_invaders_v1', 'space_war_v1', 'surround_v1',
         'tennis_v2', 'video_checkers_v3', 'volleyball_pong_v2', 'warlords_v2',
-        'wizard_of_wor_v2', 'dou_dizhu_v3', 'go_v4', 'leduc_holdem_v3',
-        'rps_v2', 'texas_holdem_no_limit_v3', 'texas_holdem_v3',
-        'tictactoe_v3', 'uno_v3'
+        'wizard_of_wor_v2', 'dou_dizhu_v4', 'go_v5', 'leduc_holdem_v4',
+        'rps_v2', 'texas_holdem_no_limit_v4', 'texas_holdem_v4',
+        'tictactoe_v3', 'uno_v4'
     ],
-    'lasertag':
-    ['LaserTag-small2-v0', 'LaserTag-small3-v0', 'LaserTag-small4-v0'],
+    # 'lasertag':
+    # ['LaserTag-small2-v0', 'LaserTag-small3-v0', 'LaserTag-small4-v0'],
     'gym':
-    ['Pong-ram-v0', 'LunarLander-v2', 'CartPole-v1', 'HalfCheetah-v2']
+    ['Pong-ram-v0', 'LunarLander-v2', 'CartPole-v1' ]  # 'HalfCheetah-v2' requires MuJoCo and mujoco-py to be installed
 }
 
 
