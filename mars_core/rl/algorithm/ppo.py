@@ -231,8 +231,12 @@ class PPODiscrete(Agent):
         return total_loss
 
     def save_model(self, path=None):
-        torch.save(self.policy.state_dict(), path+'_policy')
-        torch.save(self.value.state_dict(), path+'_value')
+        try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
+            torch.save(self.policy.state_dict(), path+'_policy', _use_new_zipfile_serialization=False)
+            torch.save(self.value.state_dict(), path+'_value', _use_new_zipfile_serialization=False)
+        except:
+            torch.save(self.policy.state_dict(), path+'_policy')
+            torch.save(self.value.state_dict(), path+'_value')
 
 
     def load_model(self, path=None):

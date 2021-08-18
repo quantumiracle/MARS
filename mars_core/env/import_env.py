@@ -51,8 +51,8 @@ pettingzoo_envs = {
     ],
 
     'classic': [
-        'dou_dizhu_v3', 'go_v4', 'leduc_holdem_v3', 'rps_v2',
-        'texas_holdem_no_limit_v3', 'texas_holdem_v3', 'tictactoe_v3', 'uno_v3'
+        'dou_dizhu_v4', 'go_v5', 'leduc_holdem_v4', 'rps_v2',
+        'texas_holdem_no_limit_v4', 'texas_holdem_v4', 'tictactoe_v3', 'uno_v4'
     ]
 }
 
