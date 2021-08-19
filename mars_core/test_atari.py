@@ -18,7 +18,9 @@ args.env_name = envs[int(parser_args.id)]
 ### Create env
 env = make_env(args)
 print(env)
-args.load_model_full_path = '../NashDQNExploiter_Atari/model/pettingzoo_double_dunk_v2_nash_NashDQNExploiter_20210728223436/_0-0'
+args.test = True
+# args.load_model_full_path = f'../NashDQNExploiter_Atari/model/pettingzoo_{args.env_name}_nash_NashDQNExploiter_20210727052705/_0-0'
+args.load_model_full_path = f'../NashDQNExploiter_Atari/model/pettingzoo_{args.env_name}_nash_NashDQNExploiter_20210728223436/_0-0'
 
 ### Specify models for each agent
 model1 = eval(args.algorithm)(env, args)
