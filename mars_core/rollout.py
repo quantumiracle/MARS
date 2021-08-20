@@ -62,7 +62,6 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
                 )  # transform from (agents, envs, dim) to (envs, agents, dim)
             else:
                 action = action_to_store
-
             obs_, reward, done, info = env.step(
                 action)  # requires action: (envs, agents, dim)
             # time.sleep(0.05)

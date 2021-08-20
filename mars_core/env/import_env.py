@@ -36,7 +36,7 @@ from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, Frame
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
      Atari2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
- 
+from .wrappers.lasertag_wrappers import LaserTagWrapper 
 
 # PettingZoo envs
 pettingzoo_envs = {
@@ -146,6 +146,7 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
         import lasertag  # this is essential
         env = gym.make(env_name)
         env = wrap_pytorch(env) 
+        env = LaserTagWrapper(env)
 
     elif env_type == 'gym':
         try:
