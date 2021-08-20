@@ -4,6 +4,9 @@ import torch
 
 
 class cReLU(nn.Module):
+    """
+    Note: for cReLU activation function, it doubles the output channels.
+    """
     def forward(self, x):
         return torch.cat((F.relu(x), F.relu(-x)), dim=1)
 

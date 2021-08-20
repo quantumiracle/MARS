@@ -1,0 +1,53 @@
+env_args:
+    env_name: LaserTag-small2-v0
+    env_type: lasertag
+    num_envs: 1
+    against_baseline: False
+    ram: True
+    seed: 1122
+
+agent_args:
+    algorithm: NFSP
+    algorithm_spec:  # needs to cover DQN's specification
+        replay_buffer_size: 1e5
+        gamma: 0.99
+        multi_step: 1
+        target_update_interval: 1000 # updates skipped to update the target
+        eps_start: 1.0
+        eps_final: 0.01
+        eps_decay: 30000  # tune according to env
+
+train_args:
+    batch_size: 32
+    max_episodes: 10000
+    max_steps_per_episode: 10000
+    train_start_frame: 1000
+    optimizer: adam
+    learning_rate: 1e-4
+    device: gpu
+    update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
+    log_avg_window: 10 # average window length in logging
+    log_interval: 10  # log print interval 
+    # render: True
+    # test: True
+    # load_model_idx: 0/1
+
+    net_architecture: 
+        channel_list: [8, 8, 16]   # the first channel number is from the input
+        kernel_size_list: [4, 4, 4]
+        stride_list: [2, 1, 1]
+        hidden_activation: ReLU
+        hidden_dim_list: [32, 32]   # MLP after CNN 
+        output_activation: False
+
+        policy:
+            channel_list: [8, 8, 16]   # the first channel number is from the input
+            kernel_size_list: [4, 4, 4]
+            stride_list: [2, 1, 1]
+            hidden_activation: ReLU
+            hidden_dim_list: [32, 32]   # MLP after CNN 
+            output_activation: Softmax
+
+    marl_method: nfsp
+    marl_spec:  # configurations for specific MARL method
+        eta: 0.1

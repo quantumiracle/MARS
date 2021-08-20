@@ -17,7 +17,15 @@ class NFSP(Agent):
         super().__init__(env, args)
         self.rl_agent = DQN(env, args)  # TODO can also use other RL agents
         # self.policy = MLP(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
-        self.policy = get_model('mlp')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+        if isinstance(env.observation_space, list):  # when using parallel envs
+            observation_space = env.observation_space[0]
+        else:
+            observation_space = env.observation_space
+
+        if len(observation_space.shape) <= 1: # not image
+            self.policy = get_model('mlp')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+        else:
+            self.policy = get_model('cnn')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
         self.replay_buffer = self.rl_agent.buffer
         self.reservoir_buffer = ReservoirBuffer(int(float(args.algorithm_spec['replay_buffer_size'])) )
         self.rl_optimizer = self.rl_agent.optimizer
@@ -25,11 +33,15 @@ class NFSP(Agent):
         self.schedulers = self.rl_agent.schedulers
 
         self.eta = 0. if args.test else float(args.marl_spec['eta'])  # in test mode, only use average policy
-
+        self.args = args
     def choose_action(self, state, Greedy=False, epsilon=None):
         self.is_best_response = False
         if random.random() > self.eta:
-            prob = self.policy(torch.from_numpy(state).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
+            if self.args.num_envs == 1:
+                prob = self.policy(torch.from_numpy(state).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
+            else:
+                prob = self.policy(torch.from_numpy(state).float().to(self.device)).squeeze()  # make sure input state shape is correct
+
             dist = Categorical(prob)
             action = dist.sample()
             try:
