@@ -1,0 +1,24 @@
+pygame 2.0.0 (SDL 2.0.12, python 3.7.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+boxing_v1 pettingzoo
+Load boxing_v1 environment in type pettingzoo.
+Env observation space: Box(0.0, 1.0, (130,), float32) action space: Discrete(18)
+<env.wrappers.mars_wrappers.Dict2TupleWrapper object at 0x7f8ca4c29110>
+No agent are not learnable.
+Arguments:  {'env_name': 'boxing_v1', 'env_type': 'pettingzoo', 'num_envs': 1, 'ram': True, 'seed': 1122, 'algorithm': 'NFSP', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000}, 'batch_size': 32, 'max_episodes': 10000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 10, 'log_interval': 10, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'save_path': '', 'save_interval': 5000, 'net_architecture': {'hidden_dim_list': [64, 64, 64], 'hidden_activation': 'ReLU', 'output_activation': False, 'policy': {'hidden_dim_list': [64, 64], 'hidden_activation': 'Tanh', 'output_activation': 'Softmax'}}, 'marl_method': 'nfsp', 'marl_spec': {'eta': 0.1}}
+Traceback (most recent call last):
+  File "run_nfsp.py", line 24, in <module>
+    rollout(env, model, args)
+  File "/home/zihan/research/MARS/mars_core/rollout.py", line 19, in rollout
+    rollout_normal(env, model, args)
+  File "/home/zihan/research/MARS/mars_core/rollout.py", line 107, in rollout_normal
+    loss = model.update(
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/common/agent.py", line 236, in update
+    loss = agent.update()
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/nfsp.py", line 61, in update
+    state, action, _, _, _ = self.reservoir_buffer.sample(self.batch_size)
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/common/storage.py", line 52, in sample
+    state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/random.py", line 321, in sample
+    raise ValueError("Sample larger than population or is negative")
+ValueError: Sample larger than population or is negative
