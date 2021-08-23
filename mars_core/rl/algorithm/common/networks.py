@@ -89,10 +89,10 @@ class MLP(NetBase):
             ]
             if layers_config['hidden_activation']:
                 tmp.append(
-                    getattr(torch.nn, layers_config['hidden_activation'])())
+                    _get_activation(layers_config['hidden_activation'])())
             layers += tmp
         if layers_config['output_activation']:
-            layers += [getattr(torch.nn, layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical!
+            layers += [_get_activation(layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical!
         return nn.Sequential(*layers)
 
 
@@ -109,14 +109,17 @@ class CNN(NetBase):
 
     def _construct_cnn_net(self, layers_config):
         layers = []
-        for i in range(len(layers_config["channel_list"] - 1)):
+        for i in range(len(layers_config["channel_list"]) - 1):
             tmp = [
                 nn.Conv2d(layers_config["channel_list"][i],
-                          layers_config["channel_list"][i + 1])
+                          layers_config["channel_list"][i + 1],
+                          kernel_size = layers_config["kernel_size_list"][i],
+                          stride = layers_config["stride_list"][i]
+                          )
             ]
             if layers_config['hidden_activation']:
                 tmp.append(
-                    getattr(torch.nn, layers_config["hidden_activation"])())
+                    _get_activation(layers_config['hidden_activation'])())
             # TODO add pooling
             layers += tmp
         return nn.Sequential(*layers)
@@ -130,12 +133,26 @@ class CNN(NetBase):
                           layers_config['hidden_dim_list'][j + 1])
             ]
             if layers_config['hidden_activation']:
-                tmp.append(
-                    getattr(torch.nn, layers_config['hidden_activation'])())
+                tmp.append(_get_activation(layers_config['hidden_activation'])()
+                    )
             layers += tmp
         if layers_config['output_activation']:
-            layers += [getattr(torch.nn, layers_config['output_activation'])(dim=-1)]
+            layers += [_get_activation(layers_config['output_activation'])(dim=-1)]
         return nn.Sequential(*layers)
+
+def _get_activation(activation_type):
+    """
+    Get the activation function.
+        :param str activation_type: like 'ReLU', 'CReLU', 'Softmax', etc
+    """
+    if activation_type == 'CReLU':
+        return cReLU
+    else:
+        try:
+            activation = getattr(torch.nn, activation_type)
+            return activation
+        except:
+            print(f"Activation type {activation_type} not implemented.")
 
 
 def get_model(model_type="mlp"):
