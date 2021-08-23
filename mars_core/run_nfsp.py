@@ -4,9 +4,10 @@ from rollout import rollout
 from rl.algorithm import *
 
 ### Load configurations
-yaml_file = 'confs/pettingzoo_boxingv1_nfsp'
+# yaml_file = 'confs/pettingzoo_boxingv1_nfsp'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_nfsp'
 # yaml_file = 'confs/gym_cartpolev1_nfsp'
+yaml_file = 'confs/lasertag_LaserTagsmall2v0_nfsp'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
 
