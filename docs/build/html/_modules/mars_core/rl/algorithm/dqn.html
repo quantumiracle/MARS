@@ -88,15 +88,15 @@
               
             
             
-              <p class="caption"><span class="caption-text">Introduction</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../introduction/intro.html">Introduction</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Install MARS</span></p>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation/install.html">Installation</a></li>
 </ul>
-<p class="caption"><span class="caption-text">User Guide</span></p>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/quick_start.html">A Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/general.html">General Description</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/marl.html">Multi-Agent RL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/notes.html">Some Notes</a></li>
 </ul>
-<p class="caption"><span class="caption-text">MARS</span></p>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../mars/algorithm/agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../mars/algorithm/dqn.html">DQN</a></li>
@@ -112,9 +112,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/data_struct.html">Data Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/func.html">Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/logger.html">Logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../mars/env/env.html">Env</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Primal Experiments</span></p>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../experiments/single_agent.html">Single-Agent Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../experiments/exploit.html">Exploitability Test</a></li>
@@ -305,8 +304,12 @@
         <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DQN.save_model"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">)</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_target&#39;</span><span class="p">)</span></div>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># for PyTorch &gt;= 1.7 to be compatible with loading models from any lower version</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">,</span> <span class="n">_use_new_zipfile_serialization</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> 
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_target&#39;</span><span class="p">,</span> <span class="n">_use_new_zipfile_serialization</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c1"># for lower versions</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">)</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_target&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DQN.load_model"><a class="viewcode-back" href="../../../../mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">))</span>
