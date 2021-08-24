@@ -31,6 +31,10 @@ train_args:
     # test: True
     # load_model_idx: 0/1
     net_architecture:   
+        hidden_dim_list: [64, 64, 64] 
+        hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
+        output_activation: False # False means nan
+
         policy:
             hidden_dim_list: [64, 64]  
             hidden_activation: Tanh

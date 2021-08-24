@@ -10,7 +10,7 @@ Direct installation:
 
 .. code-block:: bash
    :linenos:
-   conda create -n mars python==3.6
+   conda create -n mars python==3.6 -y
    conda activate mars
    pip3 install -r requirements
    pip3 install mars --upgrade
