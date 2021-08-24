@@ -241,7 +241,7 @@ class MultiAgent(Agent):
 
     def save_model(self, path: str = None) -> None:
         for idx, agent in enumerate(self.agents):
-            agent.save_model(path+f'-{str(idx)}')
+            agent.save_model(path+f'_{str(idx)}')
 
     def load_model(self, path: str = None, eval: bool = True) -> None:
             
