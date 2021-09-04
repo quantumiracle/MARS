@@ -4,7 +4,7 @@ import numpy as np
 import random, copy
 from .common.storage import ReplayBuffer, ReservoirBuffer
 from .common.rl_utils import choose_optimizer, EpsilonScheduler
-from .common.networks import  MLP, CNN, get_model
+from .common.networks import  MLP, CNN, ImpalaCNN, get_model
 from .common.agent import Agent
 from .dqn import DQN, DQNBase
 from .equilibrium_solver import * 
@@ -25,7 +25,8 @@ class NFSP(Agent):
         if len(observation_space.shape) <= 1: # not image
             self.policy = get_model('mlp')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
         else:
-            self.policy = get_model('cnn')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+            self.policy = get_model('impala_cnn')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+            print(self.policy)
         self.replay_buffer = self.rl_agent.buffer
         self.reservoir_buffer = ReservoirBuffer(int(float(args.algorithm_spec['replay_buffer_size'])) )
         self.rl_optimizer = self.rl_agent.optimizer

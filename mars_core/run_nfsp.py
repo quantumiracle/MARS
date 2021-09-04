@@ -13,10 +13,10 @@ parser_args = parser.parse_args()
 
 
 ### Load configurations
-yaml_file = 'confs/pettingzoo_boxingv1_nfsp'
+# yaml_file = 'confs/pettingzoo_boxingv1_nfsp'
 #yaml_file = 'confs/slimevolley_slimevolleyv0_nfsp'
 # yaml_file = 'confs/gym_cartpolev1_nfsp'
-# yaml_file = 'confs/lasertag_LaserTagsmallv0_nfsp'
+yaml_file = 'confs/lasertag_LaserTagsmallv0_nfsp'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
 if parser_args.test:
