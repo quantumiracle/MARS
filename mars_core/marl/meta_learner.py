@@ -1,4 +1,4 @@
-from .selfplay import SelfPlayMetaLearner
+from .selfplay import SelfPlayMetaLearner, FictitiousSelfPlayMetaLearner
 
 class MetaLearner():
     def __init__(self,):
@@ -10,6 +10,9 @@ class MetaLearner():
 def init_meta_learner(logger, args, *kargs):
     if args.marl_method == 'selfplay':
         return SelfPlayMetaLearner(logger, args, *kargs)
+
+    if args.marl_method == 'fictitious_selfplay':
+        return FictitiousSelfPlayMetaLearner(logger, args, *kargs)
 
     else:
         return MetaLearner()
