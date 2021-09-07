@@ -74,13 +74,13 @@ class FictitiousSelfPlayMetaLearner():
         self.last_update_epi= 0
         self.saved_checkpoints = []
 
-    def step(self, model, logger, min_update_interval = 20):
+    def step(self, model, logger, min_update_interval = 50):
         """
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
         # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
-        score_avg_window = 10 # use the same average window as logging for score delta
+        score_avg_window = 30 # use the same average window as logging for score delta
 
         score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
              - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
