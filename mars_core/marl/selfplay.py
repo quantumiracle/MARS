@@ -94,7 +94,7 @@ class FictitiousSelfPlayMetaLearner():
             logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
             self.last_update_epi = logger.current_episode
 
-        # load a model for each step to achieve an empiral average policy
-        if len(self.saved_checkpoints) > 0:
-            random_checkpoint = np.random.choice(self.saved_checkpoints)
-            model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+random_checkpoint)
+            # load a model for each step to achieve an empiral average policy
+            if len(self.saved_checkpoints) > 0:
+                random_checkpoint = np.random.choice(self.saved_checkpoints)
+                model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+random_checkpoint)
