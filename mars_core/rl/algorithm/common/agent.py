@@ -91,10 +91,12 @@ class MultiAgent(Agent):
     :param args: all arguments
     :type args: dict
     """    
-    def __init__(self, env, agents, args: ConfigurationDict):
+    def __init__(self, env, agents, args: ConfigurationDict, *Args, **Kwargs):
         """Initialization
         """        
         super(MultiAgent, self).__init__(env, args)
+        self.Args = Args
+        self.Kwargs = Kwargs
         self.agents = agents
         self.args = args
         self.number_of_agents = len(self.agents)
