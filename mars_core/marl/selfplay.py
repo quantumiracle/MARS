@@ -24,7 +24,7 @@ class SelfPlayMetaLearner():
         self.args = args
         self.last_update_epi= 0
 
-    def step(self, model, logger, min_update_interval = 20):
+    def step(self, model, logger, *Args, min_update_interval = 20):
         """
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
@@ -74,7 +74,7 @@ class FictitiousSelfPlayMetaLearner():
         self.last_update_epi= 0
         self.saved_checkpoints = []
 
-    def step(self, model, logger, min_update_interval = 50):
+    def step(self, model, logger, *Args, min_update_interval = 50):
         """
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
