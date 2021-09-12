@@ -117,7 +117,7 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
                 logger.log_loss(loss)
 
             meta_learner.step(
-                model, logger
+                model, logger, env, args
             )  # metalearner for selfplay need just one step per episode
         
         logger.log_episode_reward(step)
