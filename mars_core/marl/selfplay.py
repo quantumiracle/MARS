@@ -74,7 +74,7 @@ class FictitiousSelfPlayMetaLearner():
         self.last_update_epi= 0
         self.saved_checkpoints = []
 
-    def step(self, model, logger, *Args, min_update_interval = 50):
+    def step(self, model, logger, *Args, min_update_interval = 10):
         """
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
@@ -91,10 +91,11 @@ class FictitiousSelfPlayMetaLearner():
                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+str(logger.current_episode)) # save all checkpoints
                 self.saved_checkpoints.append(str(logger.current_episode))
 
-            logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
+            
             self.last_update_epi = logger.current_episode
 
             # load a model for each step to achieve an empiral average policy
             if len(self.saved_checkpoints) > 0:
                 random_checkpoint = np.random.choice(self.saved_checkpoints)
                 model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+random_checkpoint)
+                logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent from {self.model_path+random_checkpoint}.')
