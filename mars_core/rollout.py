@@ -124,7 +124,7 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
 
         if epi % args.log_interval == 0:
             logger.print_and_save()
-        if epi % args.save_interval == 0 and not args.marl_method == 'selfplay' and logger.model_dir is not None:
+        if epi % args.save_interval == 0 and not args.marl_method in ['selfplay', 'fictitious_selfplay', 'nxdo'] and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{epi}')
 
 
