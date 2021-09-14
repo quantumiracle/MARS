@@ -80,7 +80,7 @@ class FictitiousSelfPlayMetaLearner():
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
         # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
-        score_avg_window = 30 # use the same average window as logging for score delta
+        score_avg_window = 10 # use the same average window as logging for score delta
 
         score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
              - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])

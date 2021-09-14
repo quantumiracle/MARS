@@ -129,6 +129,22 @@ class MultiAgent(Agent):
         if self.args.marl_method == 'nash' and self.args.exploit:
             assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
 
+    def _choose_greedy(self, )->List[bool]:
+        """
+        Determine whether each agent should choose greedy actions under different cases.
+        
+        :return: list of bools indicating greedy action or not for all agents.
+        "rtype: list[bool]
+        """
+        greedy_list = self.number_of_agents*[True] if self.args.test else self.number_of_agents*[False]
+
+        if self.args.exploit:
+            for i in self.not_learnable_list:
+                greedy_list[i] = True
+
+        return greedy_list
+
+    
     def choose_action(
         self, 
         states: Union[List[StateType], List[List[StateType]]],
@@ -142,11 +158,11 @@ class MultiAgent(Agent):
         :rtype: list
         """        
         actions = []
-        greedy = True if self.args.test else False
+        greedy_list = self._choose_greedy()
 
         if self.args.marl_method == 'nash':
             if self.args.exploit:  # in exploitation mode, nash policy only control one agent
-                for i, (state, agent) in enumerate(zip(states, self.agents)):
+                for i, (state, agent, greedy) in enumerate(zip(states, self.agents, greedy_list)):
                     if i == 0:  # the first agent must be the model to be exploited
                         nash_actions = self.agents[i].choose_action(states, Greedy=greedy)  # nash_actions contain all agents
                         actions.append(nash_actions[i])
@@ -156,11 +172,11 @@ class MultiAgent(Agent):
             else:
                 # in training/testing mode, one model for all agents, the model is the first one
                 # of self.agents, it directly takes states to generate actions
-                actions = self.agents[0].choose_action(states, Greedy=greedy)
+                actions = self.agents[0].choose_action(states, Greedy=greedy_list[0])
         else:
             # each agent will take its corresponding state to generate
             # the corresponding action
-            for state, agent in zip(states, self.agents):
+            for state, agent, greedy in zip(states, self.agents, greedy_list):
                 action = agent.choose_action(state, Greedy=greedy)
                 actions.append(action)
         return actions
