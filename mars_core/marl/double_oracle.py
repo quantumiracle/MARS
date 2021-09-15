@@ -33,6 +33,8 @@ class NXDOMetaLearner():
 
     def step(self, model, logger, env, args, min_update_interval = 20):
         """
+        A meta learner step (usually at the end of each episode), update models if available.
+
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
