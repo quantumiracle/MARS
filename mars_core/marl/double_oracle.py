@@ -29,6 +29,8 @@ class NXDOMetaLearner():
         self.saved_checkpoints = []
         self.evaluation_matrix = np.array([[0]])  # the evaluated utility matrix (N*N) of policy league with N policies
 
+        logger.add_extr_log('matrix_equilibrium')
+
     def step(self, model, logger, env, args, min_update_interval = 20):
         """
         params: 
@@ -71,7 +73,7 @@ class NXDOMetaLearner():
                 # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
                 self.nash_meta_strategy = self.nash_meta_strategy[0]
                 # print('nash: ', self.nash_meta_strategy)
-            # update the opponent model with epsilon-meta-NE policy
+                logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.nash_meta_strategy}')
 
         # sample from Nash meta policy in a episode-wise manner
         if len(self.saved_checkpoints) > 1:
