@@ -26,6 +26,8 @@ class SelfPlayMetaLearner():
 
     def step(self, model, logger, *Args, min_update_interval = 20):
         """
+        A meta learner step (usually at the end of each episode), update models if available.
+
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
@@ -76,6 +78,8 @@ class FictitiousSelfPlayMetaLearner():
 
     def step(self, model, logger, *Args, min_update_interval = 40):
         """
+        A meta learner step (usually at the end of each episode), update models if available.
+        
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
