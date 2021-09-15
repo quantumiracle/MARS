@@ -35,7 +35,8 @@ class TestLogger():
         self.epi_length = []
         self.current_episode = 0
         self.model_dir = None
-        self.additional_logs = []
+        self.additional_logs = [] # additional logs are displayed but not saved
+        self.extr_logs = [] # extra logs are saved but not displayed
 
     def _create_dirs(self, *args):
         pass
@@ -96,10 +97,12 @@ class Logger(TestLogger):
         self.losses = self._clear_dict_as_list(self.keys)
         self.epi_losses = self._clear_dict_as_list(self.keys)
 
-        self._create_dirs(args)
+        self.post_fix = self._create_dirs(args)
         self.writer = SummaryWriter(self.runs_dir)
         # save params data
         json.dump(args, open(self.log_dir + "params.json", 'w'))
+
+        self.args = args
 
     def _create_dirs(self, args: ConfigurationDict) -> None:
         """ Create saving directories for:
@@ -120,6 +123,14 @@ class Logger(TestLogger):
         os.makedirs(self.log_dir, exist_ok=True)
         os.makedirs(self.runs_dir, exist_ok=True)
         os.makedirs(self.model_dir, exist_ok=True)
+
+        return post_fix
+
+    def add_extr_log(self, extr_log_name: str):
+        """ Create extra directionary for logging.
+        
+        """
+        self.extr_log_name = extr_log_name
 
     def log_episode_reward(self, step: int) -> None:
         for k, v in self.rewards.items():
@@ -163,6 +174,10 @@ class Logger(TestLogger):
             'episode_length': self.epi_length,
         }
         json.dump(process_data, open(self.log_dir + "process.json", 'w'))
+
+        # save extra data in another file
+        if len(self.extr_logs) > 0:
+            json.dump(self.extr_logs, open(self.log_dir + f"{self.extr_log_name}.json", 'w'))
 
         # read the data with:
         # data = json.load( open(self.log_dir+"process.json"))
