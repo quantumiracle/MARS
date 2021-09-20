@@ -115,10 +115,11 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
             if args.algorithm_spec['episodic_update']:
                 loss = model.update()
                 logger.log_loss(loss)
-
-            meta_learner.step(
-                model, logger, env, args
-            )  # metalearner for selfplay need just one step per episode
+            
+            if not args.test and not args.exploit:
+                meta_learner.step(
+                    model, logger, env, args
+                )  # metalearner for selfplay need just one step per episode
         
         logger.log_episode_reward(step)
 
