@@ -122,8 +122,12 @@ class NXDOMetaLearner():
 
                 obs_, reward, done, info = env.step(actions)
                 obs = obs_
-
                 rewards += np.array(reward)
+
+                if np.any(
+                done
+                    ):  # if any player in a game is done, the game episode done; may not be correct for some envs
+                    break
 
             avg_epi_rewards += rewards
 
