@@ -1,5 +1,5 @@
 from .selfplay import SelfPlayMetaLearner, FictitiousSelfPlayMetaLearner
-from .double_oracle import NXDOMetaLearner
+from .double_oracle import NXDOMetaLearner, NXDO2SideMetaLearner
 
 class MetaLearner():
     def __init__(self,):
@@ -17,6 +17,9 @@ def init_meta_learner(logger, args, *kargs):
 
     if args.marl_method == 'nxdo':
         return NXDOMetaLearner(logger, args, *kargs)
+
+    if args.marl_method == 'nxdo2':
+        return NXDO2SideMetaLearner(logger, args, *kargs)
 
     else:
         return MetaLearner()
