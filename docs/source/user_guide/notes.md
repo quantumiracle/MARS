@@ -284,3 +284,12 @@ Note:
 ### Model Zoo
 
 ​	We provide a zoo of trained agents using default *yaml* configuration files with either single-agent RL or self-play. 
+
+### Others
+
+There are a bunch of points worth of taking care of during usage, which are listed as below:
+
+* For greedy-action selection when using stochastic policy (pseudo-policy), like in DQN or PPO, all agent should be **not** be greedy for training; all agents should be greedy for testing; the trained models should be greedy and the exploiters should **not** be greedy for exploitation.
+
+* In iterative best response algorithms, like self-play, fictitious self-play, NXDO, the `score_avg_window` and `selfplay_score_delta` affect the (minimal) interval for storing the model and updating the opponent thus the number of models in the league, the larger the values the fewer the models stored, so choose proper values for each environment to store a proper number of models. 
+

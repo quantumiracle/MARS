@@ -119,7 +119,7 @@ class MultiAgent(Agent):
                 model_path = f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{args.load_model_idx}"
             self.load_model(model_path)
 
-        if args.marl_method in ['selfplay', 'fictitious_selfplay']:  # self-play based approach
+        if args.marl_method in ['selfplay', 'fictitious_selfplay','nxdo']:  # self-play based approach: train agent from one side only and update its opponent occasionally
             # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
             self.mergeAllSamplesInOne = True
         else:
