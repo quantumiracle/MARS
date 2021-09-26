@@ -97,7 +97,7 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
                     done
             ):  # if any player in a game is done, the game episode done; may not be correct for some envs
                 break
-
+            
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
