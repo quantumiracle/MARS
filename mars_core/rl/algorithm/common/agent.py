@@ -101,9 +101,10 @@ class MultiAgent(Agent):
         self.args = args
         self.number_of_agents = len(self.agents)
         self.not_learnable_list = []
+        SelfplayMethods = ['selfplay', 'fictitious_selfplay','nxdo']  # self-play based approach: train agent from one side only and update its opponent occasionally
         for i, agent in enumerate(agents):
             if args.test or agent.not_learnable or \
-                (args.marl_method == 'selfplay' and i != args.marl_spec['trainable_agent_idx']):
+                (args.marl_method in SelfplayMethods and i != args.marl_spec['trainable_agent_idx']):
                 self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
@@ -119,7 +120,7 @@ class MultiAgent(Agent):
                 model_path = f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{args.load_model_idx}"
             self.load_model(model_path)
 
-        if args.marl_method in ['selfplay', 'fictitious_selfplay','nxdo']:  # self-play based approach: train agent from one side only and update its opponent occasionally
+        if args.marl_method in SelfplayMethods:  
             # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
             self.mergeAllSamplesInOne = True
         else:
