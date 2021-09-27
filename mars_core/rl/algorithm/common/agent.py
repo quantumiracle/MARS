@@ -103,9 +103,15 @@ class MultiAgent(Agent):
         self.not_learnable_list = []
         SelfplayMethods = ['selfplay', 'fictitious_selfplay','nxdo']  # self-play based approach: train agent from one side only and update its opponent occasionally
         for i, agent in enumerate(agents):
-            if args.test or agent.not_learnable or \
-                (args.marl_method in SelfplayMethods and i != args.marl_spec['trainable_agent_idx']):
+            if args.test:
                 self.not_learnable_list.append(i)
+            elif args.exploit:
+                if agent.not_learnable:
+                    self.not_learnable_list.append(i)
+            else: # training mode
+                if agent.not_learnable or (args.marl_method in SelfplayMethods and i != args.marl_spec['trainable_agent_idx']):
+                    self.not_learnable_list.append(i)
+                    
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
 
