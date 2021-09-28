@@ -3,8 +3,6 @@ import torch.nn.functional as F
 import torch
 import copy
 from .nn_components import cReLU, Flatten
-
-
 class NetBase(nn.Module):
     """ Base network class for policy/value function """
     def __init__(self, input_space, output_space):
@@ -72,12 +70,12 @@ class NetBase(nn.Module):
             return self.features_net(torch.zeros(1,
                                              *self._observation_shape)).view(
                                                  1, -1).size(1)
-    def _weight_init(m):
+    def _weight_init(self, m):
         if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d) or isinstance(m, nn.Linear):
             nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('relu'))
             nn.init.normal_(m.bias)
-        else:
-            print(f"{m} is not initialized.")
+        # else:
+        #     print(f"{m} is not initialized.")
 
     def reinit(self, ):
         """Reinitialize the parameters of a network.
@@ -276,19 +274,20 @@ if __name__ == '__main__':
     obs_space = spaces.Box(low=0, high=255, shape=(10,))
     act_space = spaces.Discrete(3)
     net_args = {'hidden_dim_list': [64, 64, 64],  
-        'hidden_activation': 'Tanh',
+        'hidden_activation': 'ReLU',
         'output_activation': False}
     model = get_model('mlp')(obs_space, act_space, net_args, model_for='discrete_q')
     print(model)
     for p in model.parameters():
         print(p)
 
-    def weight_init(m):
-        if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d) or isinstance(m, nn.Linear):
-            nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('relu'))
-            nn.init.normal_(m.bias)
+    # def weight_init(m):
+    #     if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d) or isinstance(m, nn.Linear):
+    #         nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('relu'))
+    #         nn.init.normal_(m.bias)
 
-    model.apply(weight_init)
+    # model.apply(weight_init)
+    model.reinit()
     for p in model.parameters():
         print(p)
 
