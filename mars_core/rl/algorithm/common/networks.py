@@ -72,6 +72,17 @@ class NetBase(nn.Module):
             return self.features_net(torch.zeros(1,
                                              *self._observation_shape)).view(
                                                  1, -1).size(1)
+    def _weight_init(m):
+        if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d) or isinstance(m, nn.Linear):
+            nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('relu'))
+            nn.init.normal_(m.bias)
+        else:
+            print(f"{m} is not initialized.")
+
+    def reinit(self, ):
+        """Reinitialize the parameters of a network.
+        """
+        self.apply(self._weight_init)
 
 
 class MLP(NetBase):
@@ -260,6 +271,26 @@ def get_model(model_type="mlp"):
 
     return builder
 
+if __name__ == '__main__':
+    from gym import spaces
+    obs_space = spaces.Box(low=0, high=255, shape=(10,))
+    act_space = spaces.Discrete(3)
+    net_args = {'hidden_dim_list': [64, 64, 64],  
+        'hidden_activation': 'Tanh',
+        'output_activation': False}
+    model = get_model('mlp')(obs_space, act_space, net_args, model_for='discrete_q')
+    print(model)
+    for p in model.parameters():
+        print(p)
+
+    def weight_init(m):
+        if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d) or isinstance(m, nn.Linear):
+            nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('relu'))
+            nn.init.normal_(m.bias)
+
+    model.apply(weight_init)
+    for p in model.parameters():
+        print(p)
 
 # class PolicyMLP(NetBase):
 #     def __init__(self, state_space, action_space, hidden_dim, device):

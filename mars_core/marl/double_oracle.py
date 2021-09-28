@@ -55,6 +55,10 @@ class NXDOMetaLearner():
             logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
             self.last_update_epi = logger.current_episode
 
+            for scheduler in model.agents[self.args.marl_spec['trainable_agent_idx']].schedulers:
+                scheduler.reset()
+            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit()  # reinitialize the model
+
             ### update the opponent with epsilon meta Nash policy
             # evaluate the N*N utility matrix, N is the number of currently saved models
             added_row = []
@@ -218,6 +222,10 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
                     logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.nash_meta_strategy}')
 
             self._switch_charac()
+            # have to reset scheduler and model parameters after switching characters
+            for scheduler in model.agents[self.current_learnable_model_idx].schedulers:
+                scheduler.reset()
+            model.agents[self.current_learnable_model_idx].reinit()  # reinitialize the model
 
             # change learnable and not learnable to achieve iterative learning
             if not self.current_fixed_opponent_idx in model.not_learnable_list:
