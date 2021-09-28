@@ -88,6 +88,11 @@ class PPODiscrete(Agent):
         :rtype: List[float]
         """        
         return self.value.forward(x)  
+    
+    def reinit(self,):
+        self.policy.reinit()
+        self.policy_old.reinit()
+        self.value.reinit()
 
     def store(self, transitions: SampleType) -> None:
         """ Store samples in batch.

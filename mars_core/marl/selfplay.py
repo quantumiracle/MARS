@@ -49,6 +49,10 @@ class SelfPlayMetaLearner():
 
             self.last_update_epi = logger.current_episode
 
+            for scheduler in model.agents[self.args.marl_spec['trainable_agent_idx']].schedulers:
+                scheduler.reset()
+            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit()  # reinitialize the model
+
 
 class FictitiousSelfPlayMetaLearner():
     """
@@ -96,6 +100,10 @@ class FictitiousSelfPlayMetaLearner():
                 self.saved_checkpoints.append(str(logger.current_episode))
 
             self.last_update_epi = logger.current_episode
+
+            for scheduler in model.agents[self.args.marl_spec['trainable_agent_idx']].schedulers:
+                scheduler.reset()
+            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit()  # reinitialize the model
 
             # load a model for each step to achieve an empiral average policy
             if len(self.saved_checkpoints) > 0:

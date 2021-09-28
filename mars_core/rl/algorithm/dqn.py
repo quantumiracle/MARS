@@ -44,6 +44,11 @@ class DQN(Agent):
                 model = ParallelDQN(env, args.net_architecture, args.num_envs)
         return model
 
+    def reinit(self):
+        self.model.reinit()
+        self.target.reinit()
+        self.update_target(self.model, self.target)
+
     def choose_action(
         self, 
         state: List[StateType], 
@@ -152,6 +157,9 @@ class DQNBase(NetBase):
             self.net = get_model('mlp')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
         else:
             self.net = get_model('cnn')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
+    
+    def reinit(self, ):
+        self.net.reinit()
 
     def forward(self, x):
         return self.net(x)
@@ -195,6 +203,10 @@ class DuelingDQN(DQNBase):
         else:  
             self.advantage = get_model('cnn')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
             self.value = get_model('cnn')(env.observation_space, env.action_space, net_args, model_for='discrete_q')
+
+    def reinit(self, ):
+        self.advantage.reinit()
+        self.value.reinit()
 
     def net(self, x):
         advantage = self.advantage(x)
