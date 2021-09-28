@@ -102,10 +102,16 @@ class MultiAgent(Agent):
         self.number_of_agents = len(self.agents)
         self.not_learnable_list = []
         SelfplayMethods = ['selfplay', 'fictitious_selfplay','nxdo']  # self-play based approach: train agent from one side only and update its opponent occasionally
+        self.mergeAllSamplesInOne = False
         for i, agent in enumerate(agents):
-            if args.test or agent.not_learnable or \
-                (args.marl_method in SelfplayMethods and i != args.marl_spec['trainable_agent_idx']):
+            if args.test:
                 self.not_learnable_list.append(i)
+            elif args.exploit:
+                if agent.not_learnable:
+                    self.not_learnable_list.append(i)
+            else: # training mode
+                if agent.not_learnable or (args.marl_method in SelfplayMethods and i != args.marl_spec['trainable_agent_idx']):
+                    self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
 
@@ -120,12 +126,10 @@ class MultiAgent(Agent):
                 model_path = f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{args.load_model_idx}"
             self.load_model(model_path)
 
-        if args.marl_method in SelfplayMethods:  
-            # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
-            self.mergeAllSamplesInOne = True
-        else:
-            self.mergeAllSamplesInOne = False
-        # self.mergeAllSamplesInOne = False   # TODO comment out
+        else:  # training mode
+            if args.marl_method in SelfplayMethods:  
+                # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
+                self.mergeAllSamplesInOne = True                
 
         if self.args.marl_method == 'nash' and self.args.exploit:
             assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
