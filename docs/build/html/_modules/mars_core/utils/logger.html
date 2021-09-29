@@ -220,7 +220,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">epi_length</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_episode</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">additional_logs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_logs</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># additional logs are displayed but not saved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extr_logs</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># extra logs are saved but not displayed</span>
 
 <div class="viewcode-block" id="TestLogger._create_dirs"><a class="viewcode-back" href="../../../mars/utils/logger.html#mars_core.utils.logger.TestLogger._create_dirs">[docs]</a>    <span class="k">def</span> <span class="nf">_create_dirs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">pass</span></div>
@@ -281,10 +282,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clear_dict_as_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epi_losses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clear_dict_as_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_dirs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_fix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dirs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">)</span>
         <span class="c1"># save params data</span>
         <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span> <span class="o">+</span> <span class="s2">&quot;params.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
 
 <div class="viewcode-block" id="Logger._create_dirs"><a class="viewcode-back" href="../../../mars/utils/logger.html#mars_core.utils.logger.Logger._create_dirs">[docs]</a>    <span class="k">def</span> <span class="nf">_create_dirs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">ConfigurationDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Create saving directories for:</span>
@@ -304,7 +307,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;../</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">save_path</span><span class="si">}</span><span class="s1">/model/&#39;</span> <span class="o">+</span> <span class="n">post_fix</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runs_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">post_fix</span></div>
+
+<div class="viewcode-block" id="Logger.add_extr_log"><a class="viewcode-back" href="../../../mars/utils/logger.html#mars_core.utils.logger.Logger.add_extr_log">[docs]</a>    <span class="k">def</span> <span class="nf">add_extr_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extr_log_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create extra directionary for logging.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extr_log_name</span> <span class="o">=</span> <span class="n">extr_log_name</span></div>
 
 <div class="viewcode-block" id="Logger.log_episode_reward"><a class="viewcode-back" href="../../../mars/utils/logger.html#mars_core.utils.logger.Logger.log_episode_reward">[docs]</a>    <span class="k">def</span> <span class="nf">log_episode_reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -347,7 +358,11 @@
             <span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">epi_losses</span><span class="p">,</span>
             <span class="s1">&#39;episode_length&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">epi_length</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">process_data</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span> <span class="o">+</span> <span class="s2">&quot;process.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span></div></div>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">process_data</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span> <span class="o">+</span> <span class="s2">&quot;process.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span>
+
+        <span class="c1"># save extra data in another file</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extr_logs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extr_logs</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">extr_log_name</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span></div></div>
 
         <span class="c1"># read the data with:</span>
         <span class="c1"># data = json.load( open(self.log_dir+&quot;process.json&quot;))</span>
