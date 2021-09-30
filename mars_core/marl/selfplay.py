@@ -98,6 +98,7 @@ class FictitiousSelfPlayMetaLearner():
             if self.save_checkpoint:
                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+str(logger.current_episode)) # save all checkpoints
                 self.saved_checkpoints.append(str(logger.current_episode))
+                logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {self.model_path+self.saved_checkpoints[-1]}.')
 
             self.last_update_epi = logger.current_episode
 
@@ -105,8 +106,8 @@ class FictitiousSelfPlayMetaLearner():
                 scheduler.reset()
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit()  # reinitialize the model
 
-            # load a model for each step to achieve an empiral average policy
-            if len(self.saved_checkpoints) > 0:
-                random_checkpoint = np.random.choice(self.saved_checkpoints)
-                model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+random_checkpoint)
-                logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent from {self.model_path+random_checkpoint}.')
+        # load a model for each episode to achieve an empiral average policy
+        if len(self.saved_checkpoints) > 0:
+            random_checkpoint = np.random.choice(self.saved_checkpoints)
+            model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+random_checkpoint)
+            logger.additional_logs.append(f'Load the random opponent model from {self.model_path+random_checkpoint}.')
