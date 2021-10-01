@@ -110,4 +110,4 @@ class FictitiousSelfPlayMetaLearner():
         if len(self.saved_checkpoints) > 0:
             random_checkpoint = np.random.choice(self.saved_checkpoints)
             model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+random_checkpoint)
-            logger.additional_logs.append(f'Load the random opponent model from {self.model_path+random_checkpoint}.')
+            # logger.additional_logs.append(f'Load the random opponent model from {self.model_path+random_checkpoint}.')

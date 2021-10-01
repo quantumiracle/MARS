@@ -48,6 +48,7 @@ class DQN(Agent):
         self.model.reinit()
         self.target.reinit()
         self.update_target(self.model, self.target)
+        self.buffer.clear()
 
     def choose_action(
         self, 
