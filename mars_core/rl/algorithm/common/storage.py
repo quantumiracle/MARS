@@ -16,6 +16,9 @@ class ReplayBuffer(object):
         state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
         return state, action, reward, next_state, done
 
+    def clear(self,):
+        self.buffer.clear()
+
     def __len__(self):
         return len(self.buffer)
 class ReservoirBuffer(object):
@@ -51,6 +54,10 @@ class ReservoirBuffer(object):
         # return np.concatenate(state), action
         state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
         return state, action, reward, next_state, done
+
+    def clear(self,):
+        self.buffer.clear()
+
     
     def __len__(self):
         return len(self.buffer)
