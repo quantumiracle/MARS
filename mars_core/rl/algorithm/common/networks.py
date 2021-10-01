@@ -34,7 +34,10 @@ class NetBase(nn.Module):
             pass
 
         self._action_space = output_space
-        self._action_shape = output_space.shape or output_space.n
+        try:
+            self._action_shape = output_space.shape 
+        except:
+            self._action_shape = output_space.n
         if isinstance(self._action_shape, int):  # Discrete space
             self._action_dim = self._action_shape
         else:
