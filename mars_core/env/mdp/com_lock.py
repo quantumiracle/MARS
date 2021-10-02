@@ -1,17 +1,18 @@
 from blackhc import mdp
-from blackhc.mdp import example
-import gym
+from .mdp_wrapper import MDPWrapper
 import numpy as np
-
-class CombinatorialLock2Player():
+class CombinatorialLock():
     def __init__(self, layers=2, wrapped=False):
         self.action_set = ['a0', 'a1']
         num_actions = len(self.action_set)
+        self.num_agents = 2
+        self.max_transition = None # maximum number of transition steps, no limit here
         self.layers = 5
         self.pos_reward = 1
         self.spec = mdp.MDPSpec()
         self.env = self._construct_game()
         setattr(self.env, 'num_actions', num_actions)
+        setattr(self.env, 'action_map', self.action_map)
         if wrapped:
             self.wrap2player()
 
@@ -66,43 +67,9 @@ class CombinatorialLock2Player():
         """
         Wrap the single player game to a two player game.
         """
-        self.env = CombinatorialLock2PlayerWrapper(self.env)
+        self.env = MDPWrapper(self.env)
 
-
-class CombinatorialLock2PlayerWrapper():
-    """ 
-    """   
-    def __init__(self, env):  
-        super(CombinatorialLock2PlayerWrapper, self).__init__()
-        self.env = env
-        # self.action_spaces = self.env.action_spaces
-        self.agents = ['agent0', 'agent1']
-        self.num_agents = len(self.agents)      
-        # for observation, discrete to box, fake space
-        self.observation_space = gym.spaces.Box(low=0.0, high=env.observation_space.n, shape=(1,))
-        self.observation_spaces = {a:self.observation_space for a in self.agents}
-        self.action_space = gym.spaces.Discrete(env.num_actions)
-        self.action_spaces = {a:self.action_space for a in self.agents}
-
-    @property
-    def spec(self):
-        return self.env.spec
-
-    def reset(self, observation=None):
-        obs = self.env.reset()
-        return [[obs, obs]]
-
-    def seed(self, seed):
-        self.env.seed(seed)
-        np.random.seed(seed)
-
-    def render(self,):
-        self.env.render()
-
-    def close(self):
-        self.env.close()
-
-    def step(self, action):
+    def action_map(self, action):
         """Action map from one player to two player.
             p2 0  1
         p1
@@ -119,13 +86,12 @@ class CombinatorialLock2PlayerWrapper():
             a = 2
         else:
             raise NotImplementedError
-        obs, r, done, info = self.env.step(a)
-        return [[obs], [obs]], [r, -r], [done, done], [info, info]
+        return a
 
 
 if __name__ == '__main__':
     # single agent version
-    # env = CombinatorialLock2Player(2, wrapped=False).env
+    # env = CombinatorialLock(2, wrapped=False).env
     # obs = env.reset()
     # print(obs)
     # done = False
@@ -135,7 +101,7 @@ if __name__ == '__main__':
 
     # two agent version
     # env = CombinatorialLock2PlayerWrapper(env)
-    env = CombinatorialLock2Player(2, wrapped=True).env
+    env = CombinatorialLock(2, wrapped=True).env
     print(env.observation_space, env.action_space)
     # env.render()
     obs = env.reset()
