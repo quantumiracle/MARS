@@ -35,7 +35,7 @@ class NetBase(nn.Module):
 
         self._action_space = output_space
         try:
-            self._action_shape = output_space.shape 
+            self._action_shape = output_space.shape or output_space.n # depends on different gym versions, some higher version (like 0.19) can call .shape without throwing an error; some lower version (like 0.9) will throw error for this. 
         except:
             self._action_shape = output_space.n
         if isinstance(self._action_shape, int):  # Discrete space
