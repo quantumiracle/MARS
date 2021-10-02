@@ -38,9 +38,3 @@ if __name__ == '__main__':
     parser.add_argument('--method', type=str, default=None, help='method name')
     parser_args = parser.parse_args()
     launch_rollout(parser_args.env, parser_args.method)
-
-Envs = ['pettingzoo_boxingv1']
-Methods = ['selfplay', 'fictitiousselfplay', 'nxdo', 'nxdo2']
-for env in Envs:
-    for method in Methods:
-        launch_rollout(env, method)
