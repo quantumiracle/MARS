@@ -61,4 +61,12 @@ class ReservoirBuffer(object):
     
     def __len__(self):
         return len(self.buffer)
-    
+
+if __name__ == "__main__":
+    size = 100
+    buffer = ReplayBuffer(size)
+    for _ in range(size):
+        buffer.push([0, 0, 0, 0, 0])
+    print(len(buffer))
+    buffer.clear()
+    print(len(buffer))
