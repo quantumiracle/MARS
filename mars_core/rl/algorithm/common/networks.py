@@ -1,8 +1,10 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
+import math
 import copy
 from .nn_components import cReLU, Flatten
+
 class NetBase(nn.Module):
     """ Base network class for policy/value function """
     def __init__(self, input_space, output_space):
@@ -74,11 +76,22 @@ class NetBase(nn.Module):
                                              *self._observation_shape)).view(
                                                  1, -1).size(1)
     def _weight_init(self, m):
-        if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d) or isinstance(m, nn.Linear):
-            nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('relu'))
+        if isinstance(m, nn.Linear):
+            # Use torch default initialization for Linear here: https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/linear.py#L44-L48
+            nn.init.kaiming_uniform_(m.weight, a=math.sqrt(5))
+            if m.bias is not None:
+                fan_in, _ = nn.init._calculate_fan_in_and_fan_out(m.weight)
+                bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+                nn.init.uniform_(m.bias, -bound, bound)
+
+        elif isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
+            # nn.init.xavier_uniform_(m.weight, gain=nn.init.calculate_gain('relu'))
+            nn.init.kaiming_uniform_(m.weight)
             nn.init.normal_(m.bias)
         # else:
         #     print(f"{m} is not initialized.")
+
+
 
     def reinit(self, ):
         """Reinitialize the parameters of a network.
@@ -293,6 +306,7 @@ if __name__ == '__main__':
     model.reinit()
     for p in model.parameters():
         print(p)
+
 
 # class PolicyMLP(NetBase):
 #     def __init__(self, state_space, action_space, hidden_dim, device):
