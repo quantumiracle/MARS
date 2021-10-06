@@ -252,6 +252,7 @@ class MultiAgent(Agent):
                 self.agents[self.args.marl_spec['trainable_agent_idx']].store(
                     all_s)
 
+
     def update(self) -> List[float]:
         losses = []
         for i, agent in enumerate(self.agents):
