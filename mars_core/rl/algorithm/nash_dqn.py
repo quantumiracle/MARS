@@ -42,7 +42,7 @@ class NashDQN(DQN):
         else: # state: (agents, envs, state_dim)
             state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
             state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
-
+        print(state)
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
                 q_values = self.model(state).detach().cpu().numpy()  # needs state: (batch, agents*state_dim)
@@ -77,6 +77,8 @@ class NashDQN(DQN):
                 # ne = NashEquilibriumCVXPYSolver(qs)
                 # ne = NashEquilibriumGUROBISolver(qs)
                 ne = NashEquilibriumECOSSolver(qs)
+                if not return_dist:
+                    print(ne)
 
             except:  # some cases NE cannot be solved
                 print('No Nash solution for: ', np.linalg.det(qs), qs)
@@ -166,7 +168,7 @@ class NashDQN(DQN):
         nash_dists_  = torch.FloatTensor(nash_dists).to(self.device)
         next_q_value = torch.einsum('bk,bk->b', torch.einsum('bj,bjk->bk', nash_dists_[:, 0], target_next_q_values_), nash_dists_[:, 1])
         # print(next_q_value, target_next_q_values_)
-    
+
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
         
         # Huber Loss
