@@ -45,9 +45,9 @@ class DQN(Agent):
         return model
 
     def reinit(self):
-        self.model.reinit()
-        self.target.reinit()
-        self.update_target(self.model, self.target)
+        # self.model.reinit()  # reinit the networks seem to hurt the overall learning performance
+        # self.target.reinit()
+        # self.update_target(self.model, self.target)
         self.buffer.clear()
 
     def choose_action(

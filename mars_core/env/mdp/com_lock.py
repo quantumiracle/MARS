@@ -13,6 +13,7 @@ class CombinatorialLock():
         self.env = self._construct_game()
         setattr(self.env, 'num_actions', num_actions)
         setattr(self.env, 'action_map', self.action_map)
+        setattr(self.env, 'max_transition', self.max_transition)
         if wrapped:
             self.wrap2player()
 

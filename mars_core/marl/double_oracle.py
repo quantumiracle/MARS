@@ -169,11 +169,17 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         self.nash_meta_strategy = None
         logger.add_extr_log('matrix_equilibrium')
 
-    def _switch_charac(self,):
+    def _switch_charac(self, model):
         """ Iteratively calculate the meta-Nash equilibrium and learn the best response, so switch the characters after each update."""
         idx = self.current_learnable_model_idx
         self.current_learnable_model_idx = self.current_fixed_opponent_idx 
         self.current_fixed_opponent_idx = idx
+
+        # change learnable and not learnable to achieve iterative learning
+        if not self.current_fixed_opponent_idx in model.not_learnable_list:
+            model.not_learnable_list.append(self.current_fixed_opponent_idx)
+        if self.current_learnable_model_idx in model.not_learnable_list:
+            model.not_learnable_list.remove(self.current_learnable_model_idx)
 
     def step(self, model, logger, env, args, min_update_interval = 20):
         """
@@ -189,8 +195,9 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
              - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
 
         # this is an indicator that best response policy is found
-        if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and logger.current_episode - self.last_update_epi > min_update_interval:
+        # if score_delta  > self.args.marl_spec['selfplay_score_delta']\
+        #      and logger.current_episode - self.last_update_epi > min_update_interval:
+        if True:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
                 model.agents[self.current_learnable_model_idx].save_model(self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+str(logger.current_episode)) # save all checkpoints
@@ -221,17 +228,11 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
                     # print('nash: ', self.nash_meta_strategy)
                     logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.nash_meta_strategy}')
 
-            self._switch_charac()
+            self._switch_charac(model)
             # have to reset scheduler and model parameters after switching characters
             for scheduler in model.agents[self.current_learnable_model_idx].schedulers:
                 scheduler.reset()
             model.agents[self.current_learnable_model_idx].reinit()  # reinitialize the model
-
-            # change learnable and not learnable to achieve iterative learning
-            if not self.current_fixed_opponent_idx in model.not_learnable_list:
-                model.not_learnable_list.append(self.current_fixed_opponent_idx)
-            if self.current_learnable_model_idx in model.not_learnable_list:
-                model.not_learnable_list.remove(self.current_learnable_model_idx)
 
         # sample from Nash meta policy in a episode-wise manner
         if len(self.saved_checkpoints[self.current_fixed_opponent_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4 and self.nash_meta_strategy is not None:
