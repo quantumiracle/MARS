@@ -141,9 +141,10 @@ class MultiAgent(Agent):
         :return: list of bools indicating greedy action or not for all agents.
         "rtype: list[bool]
         """
-        greedy_list = self.number_of_agents*[True] if self.args.test else self.number_of_agents*[False]
-
-        if self.args.exploit:
+        greedy_list = self.number_of_agents*[False]
+        if self.args.test:
+            greedy_list = self.number_of_agents*[True]
+        else:  # for train and expoit. Check!!
             for i in self.not_learnable_list:
                 greedy_list[i] = True
 
@@ -187,8 +188,9 @@ class MultiAgent(Agent):
         return actions
 
     def scheduler_step(self, frame: int) -> None:
-        for agent in self.agents:
-            agent.scheduler_step(frame)
+        for i, agent in enumerate(self.agents):
+            if i not in self.not_learnable_list:
+                agent.scheduler_step(frame)
 
     def store(
         self, 

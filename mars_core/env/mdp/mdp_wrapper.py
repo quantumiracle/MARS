@@ -43,6 +43,9 @@ class MDPWrapper():
             done = True
         return [[obs], [obs]], [r, -r], [done, done], [info, info]
 
+    def visualize_MDP(self, ):
+        self.env.visualize_MDP()
+
 
 if __name__ == '__main__':
     # single agent version

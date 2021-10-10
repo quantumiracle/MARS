@@ -91,8 +91,6 @@ class NetBase(nn.Module):
         # else:
         #     print(f"{m} is not initialized.")
 
-
-
     def reinit(self, ):
         """Reinitialize the parameters of a network.
         """
