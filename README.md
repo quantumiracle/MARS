@@ -17,12 +17,14 @@ Basic RL Algorithms to do:
 - [x] Genetic Algorithm
 - [ ] PMOE
 - [ ] DDPG
+- [ ] TD3
+- [ ] SAC
 
 MARL Algorithms to do:
 - [x] Self-Play
 - [x] [Fictitious Self-Play](http://proceedings.mlr.press/v37/heinrich15.pdf)
 - [x] [Neural Fictitious Self-Play](https://arxiv.org/abs/1603.01121)
-- [ ] Policy Space Responce Oracle
+- [x] Policy Space Responce Oracle
 - [ ] [Joint Policy Space Responce Oracle](http://proceedings.mlr.press/v139/marris21a.html)
 - [ ] [MADDPG](https://arxiv.org/abs/1706.02275)
 - [ ] QMIX
