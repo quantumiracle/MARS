@@ -94,14 +94,14 @@ class DQN(Agent):
 
     def update(self):
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
-        weights = torch.ones(self.batch_size)
+        # weights = torch.ones(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
         action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
-        weights = torch.FloatTensor(weights).to(self.device)
+        # weights = torch.FloatTensor(weights).to(self.device)
 
         # Q-Learning with target network
         q_values = self.model(state)
@@ -112,7 +112,8 @@ class DQN(Agent):
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
         # Huber Loss
         loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
-        loss = (loss * weights).mean()
+        # loss = (loss * weights).mean()
+        loss = loss.mean()
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
