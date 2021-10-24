@@ -195,9 +195,8 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
              - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
 
         # this is an indicator that best response policy is found
-        # if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-        #      and logger.current_episode - self.last_update_epi > min_update_interval:
-        if True:
+        if score_delta  > self.args.marl_spec['selfplay_score_delta']\
+             and logger.current_episode - self.last_update_epi > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
                 model.agents[self.current_learnable_model_idx].save_model(self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+str(logger.current_episode)) # save all checkpoints
