@@ -87,10 +87,7 @@ class DQN(Agent):
 
     @property
     def ready_to_update(self):
-        if len(self.buffer) > self.batch_size:
-            return True
-        else:
-            return False
+        return True if len(self.buffer) > self.batch_size else False
 
     def update(self):
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
@@ -101,6 +98,8 @@ class DQN(Agent):
         action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
+
+        reward =  (reward - reward.mean(dim=0)) / (reward.std(dim=0) + 1e-6)
         # weights = torch.FloatTensor(weights).to(self.device)
 
         # Q-Learning with target network
