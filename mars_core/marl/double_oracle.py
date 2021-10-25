@@ -171,11 +171,14 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
 
     def _switch_charac(self, model):
         """ Iteratively calculate the meta-Nash equilibrium and learn the best response, so switch the characters after each update."""
+        # change learnable and not learnable to achieve iterative learning
         idx = self.current_learnable_model_idx
         self.current_learnable_model_idx = self.current_fixed_opponent_idx 
         self.current_fixed_opponent_idx = idx
+        self._change_learnable_list(model)
 
-        # change learnable and not learnable to achieve iterative learning
+    def _change_learnable_list(self, model):
+        """ Change the learnable list according to current learnable/fixed index. """
         if not self.current_fixed_opponent_idx in model.not_learnable_list:
             model.not_learnable_list.append(self.current_fixed_opponent_idx)
         if self.current_learnable_model_idx in model.not_learnable_list:
