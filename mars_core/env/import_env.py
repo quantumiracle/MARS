@@ -182,5 +182,11 @@ def make_env(args):
     else:
         VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
         env = VectorEnv([lambda: _create_single_env(env_name, env_type, args) for _ in range(args.num_envs)])
-    env.seed(args.seed)  # seed can be either int or list of int
+
+    if isinstance(args.seed, (int, list)):
+        env.seed(args.seed)  # seed can be either int or list of int
+    elif args.seed == 'random':
+        random_seed = [int(seed) for seed in np.random.randint(1,100, args.num_envs)]
+        print(f"random seed: {random_seed}")
+        env.seed(random_seed)
     return env

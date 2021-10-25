@@ -1,6 +1,7 @@
 echo "Running DATE:" $(date +"%Y-%m-%d %H:%M")
 
 DATE=`date '+%Y%m%d_%H%M'`
+echo "Save as: " $DATE
 
 declare -a envs=('pettingzoo_boxingv1')
 declare -a methods=('selfplay' 'fictitiousselfplay' 'nxdo' 'nxdo2')
