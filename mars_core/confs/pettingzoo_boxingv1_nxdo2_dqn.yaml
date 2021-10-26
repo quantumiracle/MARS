@@ -42,4 +42,6 @@ train_args:
     marl_spec:  # configurations for specific MARL method
         selfplay_score_delta: 50 # the score that current learning agent must beat its opponent to update opponent's policy
         # both players are updated iteratively, so no trainable and opponent idex
-
+        # both players are updated iteratively, so no trainable and opponent idex
+        trainable_agent_idx: 1   # (for initial stage only) the index of trainable agent, with its opponent delayed updated
+        opponent_idx: 0          # (for initial stage only) the one to be updated from trainable agent
