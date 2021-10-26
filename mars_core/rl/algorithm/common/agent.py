@@ -110,7 +110,7 @@ class MultiAgent(Agent):
                 if agent.not_learnable:
                     self.not_learnable_list.append(i)
             else: # training mode
-                if agent.not_learnable or (args.marl_method in SelfplayMethods and i != args.marl_spec['trainable_agent_idx']):
+                if agent.not_learnable or (args.marl_method in (SelfplayMethods + ['nxdo2']) and i != args.marl_spec['trainable_agent_idx']):  # nxdo2 is special, fixed one side at beginning
                     self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
