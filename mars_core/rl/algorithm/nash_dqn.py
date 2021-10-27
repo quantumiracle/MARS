@@ -13,6 +13,19 @@ from .common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .equilibrium_solver import NashEquilibriumECOSSolver
 
+DEBUG = True
+
+def kl(p, q):
+    """Kullback-Leibler divergence D(P || Q) for discrete distributions
+    Parameters
+    ----------
+    p, q : array-like, dtype=float, shape=n
+    Discrete probability distributions.
+    """
+    p = np.asarray(p, dtype=np.float)
+    q = np.asarray(q, dtype=np.float)
+
+    return np.sum(np.where(p != 0, p * np.log(p / q), 0))
 class NashDQN(DQN):
     """
     Nash-DQN algorithm
@@ -30,6 +43,10 @@ class NashDQN(DQN):
         # don't forget to instantiate an optimizer although there is one in DQN
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
 
+        if DEBUG:
+            self.env = env
+            self.kl_list=[[] for _ in range(3)]
+
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
             epsilon = 0.
@@ -42,14 +59,45 @@ class NashDQN(DQN):
         else: # state: (agents, envs, state_dim)
             state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
             state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
-        print(state)
+
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
                 q_values = self.model(state).detach().cpu().numpy()  # needs state: (batch, agents*state_dim)
             # if self.args.cce:
             #     actions = self.compute_cce(q_values)
             # else:
-            actions = self.compute_nash(q_values) 
+            actions, dists = self.compute_nash(q_values) 
+
+            if DEBUG: ## test on arbitrary MDP
+                id_state =  int(torch.sum(state).cpu().numpy()/2)
+                nash_strategies = np.vstack(self.env.Nash_strategies)
+                if id_state < 3: 
+                    # print(id_state)
+                    # print(self.env.Nash_strategies[0][id_state])
+                    ne_strategy = nash_strategies[id_state]
+                    oracle_first_player_ne_strategy = ne_strategy[0]
+                    nash_dqn_first_player_ne_strategy = dists[0][0]
+                    # print(first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                    kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                    self.kl_list[0].append(kl_dist)
+
+                elif id_state < 6:
+                    ne_strategy = nash_strategies[id_state]
+                    oracle_first_player_ne_strategy = ne_strategy[0]
+                    nash_dqn_first_player_ne_strategy = dists[0][0]
+                    kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                    self.kl_list[1].append(kl_dist)
+
+                elif id_state < 9:
+                    ne_strategy = nash_strategies[id_state]
+                    oracle_first_player_ne_strategy = ne_strategy[0]
+                    nash_dqn_first_player_ne_strategy = dists[0][0]
+                    kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                    self.kl_list[2].append(kl_dist)
+
+                print(f'KL: {kl_dist}， id_state: {id_state}')
+                with open('./data/nash_kl3.npy', 'wb') as f:
+                    np.save(f, self.kl_list)
 
         else:
             actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
@@ -77,8 +125,6 @@ class NashDQN(DQN):
                 # ne = NashEquilibriumCVXPYSolver(qs)
                 # ne = NashEquilibriumGUROBISolver(qs)
                 ne = NashEquilibriumECOSSolver(qs)
-                if not return_dist:
-                    print(ne)
 
             except:  # some cases NE cannot be solved
                 print('No Nash solution for: ', np.linalg.det(qs), qs)
@@ -101,7 +147,7 @@ class NashDQN(DQN):
         if return_dist:
             return all_dists
         else:
-            return np.array(all_actions)
+            return np.array(all_actions), all_dists
 
     def compute_cce(self, q_values, return_dist=False):
         """

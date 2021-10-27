@@ -20,7 +20,7 @@ if parser_args.test:
     args.render = True
     args.load_model_idx = parser_args.model
 args.device = 'cpu'
-
+args.algorithm = 'NashDQN'
 ### Create env
 env = arbitrary_mdp
 env.NEsolver()
