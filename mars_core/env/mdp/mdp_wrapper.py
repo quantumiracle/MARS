@@ -46,6 +46,13 @@ class MDPWrapper():
     def visualize_MDP(self, ):
         self.env.visualize_MDP()
 
+    def NEsolver(self,):
+        try: 
+            self.Nash_v, self.Nash_strategies = self.env.NEsolver()
+            print(self.Nash_strategies)
+        except:
+            pass
+
 
 if __name__ == '__main__':
     # single agent version
