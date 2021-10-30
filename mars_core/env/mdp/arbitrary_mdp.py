@@ -38,7 +38,6 @@ class ArbitraryMDP():
                 reward_matrix.append(reward_matrix_for_s)
             trans_prob_matrices.append(trans_prob_matrix)
             reward_matrices.append(reward_matrix)
-
         return trans_prob_matrices, reward_matrices
 
     def reset(self, ):
@@ -48,11 +47,20 @@ class ArbitraryMDP():
         return obs
 
     def step(self, a):
-        trans_prob = self.trans_prob_matrices[self.trans][self.state][a]
-        next_state = np.random.choice([i for i in range(self.num_states)], p=trans_prob)
+        """The environment transition function.
+        For a given state and action, the transition is stochastic. 
+        For representation of states, considering the num_states=3 case, the first three states are (0,1,2);
+        after one transition, the possible states are (3,4,5), etc. Such that states after different numbers of 
+        transitions can be distinguished. 
+        
+        :param a: action
+        """
+        trans_prob = self.trans_prob_matrices[self.trans][self.state%self.num_states][a]
+        next_state = np.random.choice([i for i in range(self.num_states)], p=trans_prob) + (self.trans+1) * self.num_states
+        reward = self.reward_matrices[self.trans][self.state%self.num_states][a][next_state%self.num_states]
+
         self.state = next_state
         obs = self.state
-        reward = self.reward_matrices[self.trans][self.state][a][next_state]
         self.trans += 1
         done = False if self.trans < self.max_transition else True
 
@@ -60,18 +68,26 @@ class ArbitraryMDP():
 
     def NEsolver(self,):
         self.Nash_v = []
+        self.Nash_strategies = []
         for tm, rm in zip(self.trans_prob_matrices[::-1], self.reward_matrices[::-1]): # inverse enumerate 
             if len(self.Nash_v) > 0:
                 rm = np.array(rm)+np.array(self.Nash_v[-1])  # broadcast sum on rm's last dim, last one in Nash_v is for the next state
             trm = np.einsum("ijk,ijk->ij", tm, rm)  # transition prob * reward for the last dimension in (state, action, next_state)
             trm = trm.reshape(-1, self.num_actions, self.num_actions) # action list to matrix
             ne_values = []
+            ne_strategies = []
             for s_payoff in trm:
                 ne = NashEquilibriumECOSSolver(s_payoff)
+                ne_strategies.append(ne)
                 ne_value = ne[0]@s_payoff@ne[1].T
                 ne_values.append(ne_value)  # each value is a Nash equilibrium value on one state
             self.Nash_v.append(ne_values)  # (trans, state)
+            self.Nash_strategies.append(ne_strategies)
+        self.Nash_v = self.Nash_v[::-1]
+        self.Nash_strategies = self.Nash_strategies[::-1]
         print('Nash values of all states: ', self.Nash_v)
+        print('Nash strategies of all states: ', self.Nash_strategies)
+        return self.Nash_v, self.Nash_strategies
 
     def action_map(self, action):
         """Action map from one player to two player.
