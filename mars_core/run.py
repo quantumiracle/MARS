@@ -13,7 +13,8 @@ parser_args = parser.parse_args()
 
 ### Load configurations
 # yaml_file = 'confs/pettingzoo_pongv1_selfplay_dqn'
-yaml_file = 'confs/pettingzoo_boxingv1_selfplay_dqn' 
+# yaml_file = 'confs/pettingzoo_boxingv1_selfplay_dqn' 
+yaml_file = 'confs/pettingzoo_surroundv1_selfplay_dqn' 
 # yaml_file = 'confs/pettingzoo_boxingv1_selfplay_ppo'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_dqn'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_ppo'
@@ -25,7 +26,7 @@ if parser_args.test:
     args.test = True
     args.render = True
     args.load_model_full_path = '../model/pettingzoo_boxing_v1_fictitious_selfplay_DQN_20210921162239/9971'
-    
+   
 ### Create env
 env = make_env(args)
 print(env)
