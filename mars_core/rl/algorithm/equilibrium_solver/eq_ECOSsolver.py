@@ -45,29 +45,38 @@ def NashEquilibriumECOSSolver(M):
                        
     solution = ecos.solve(c,G,h,dims,A,b, verbose=False)
 
-    p1_value = solution['x'][:row]
-    p2_value = solution['z'][:col] # z is the dual variable of x
+    p1_dist = solution['x'][:row]
+    p2_dist = solution['z'][:col] # z is the dual variable of x
     # There are at least two bad cases with above constrained optimization,
     # where the constraints are not fully satisfied (some numerical issue):
     # 1. the sum of vars is larger than 1.
     # 2. the value of var may be negative.
-    abs_p1_value = np.abs(p1_value)
-    abs_p2_value = np.abs(p2_value)
-    p1_value = abs_p1_value/np.sum(abs_p1_value)
-    p2_value = abs_p2_value/np.sum(abs_p2_value)
+    abs_p1_dist = np.abs(p1_dist)
+    abs_p2_dist = np.abs(p2_dist)
+    normalized_p1_dist = abs_p1_dist/np.sum(abs_p1_dist)
+    normalized_p2_dist = abs_p2_dist/np.sum(abs_p2_dist)
 
-    return (p1_value, p2_value)
+    nash_value = normalized_p1_dist@M@normalized_p2_dist.T
+
+    return (normalized_p1_dist, normalized_p2_dist), nash_value
 
 if __name__ == "__main__":
     # A = np.array([[0, -1, 1], [1, 0, -1], [-1, 1, 0]])
-    A=np.array([[ 0.001,  0.001,  0.00,     0.00,     0.005,  0.01, ],
-    [ 0.033,  0.166,  0.086,  0.002, -0.109,  0.3,  ],
-    [ 0.001,  0.003,  0.023,  0.019, -0.061, -0.131,],
-    [-0.156, -0.039,  0.051,  0.016, -0.028, -0.287,],
-    [ 0.007,  0.029,  0.004,  0.005,  0.003, -0.012],
-    [ 0.014,  0.018, -0.001,  0.008, -0.009,  0.007]])
+    # A=np.array([[ 0.001,  0.001,  0.00,     0.00,     0.005,  0.01, ],
+    # [ 0.033,  0.166,  0.086,  0.002, -0.109,  0.3,  ],
+    # [ 0.001,  0.003,  0.023,  0.019, -0.061, -0.131,],
+    # [-0.156, -0.039,  0.051,  0.016, -0.028, -0.287,],
+    # [ 0.007,  0.029,  0.004,  0.005,  0.003, -0.012],
+    # [ 0.014,  0.018, -0.001,  0.008, -0.009,  0.007]])
+    # A=np.array([[ 0.08333333,  2.08333333 ,-0.91666667],
+    # [-0.91666667,  0.08333333,  1.08333333],
+    # [ 1.08333333, -0.91666667,  0.08333333]])
+    A=np.array([[0, 2, -1],
+    [-1, 0, 1],
+    [ 1, -1, 0]])
     t0=time.time()
-    ne = NashEquilibriumECOSSolver(A)
+    ne, ne_v = NashEquilibriumECOSSolver(A)
     t1 = time.time()
     print(t1-t0)
     print(ne)
+    print(ne_v)

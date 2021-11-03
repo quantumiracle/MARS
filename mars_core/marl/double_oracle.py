@@ -75,7 +75,7 @@ class NXDOMetaLearner():
                 self.update_matrix(np.array(added_row)) # add new evaluation results to matrix
                 # print('matrix: ', self.evaluation_matrix)
                 # rollout with NFSP to learn meta strategy or directly calculate the Nash from the matrix
-                self.nash_meta_strategy = NashEquilibriumECOSSolver(self.evaluation_matrix)
+                self.nash_meta_strategy, _ = NashEquilibriumECOSSolver(self.evaluation_matrix)
                 # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
                 self.nash_meta_strategy = self.nash_meta_strategy[0]
                 # print('nash: ', self.nash_meta_strategy)
