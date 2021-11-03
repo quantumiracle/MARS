@@ -7,7 +7,10 @@ parser = argparse.ArgumentParser(description='Arguments of the general launching
 
 def launch_rollout(env, method):
     prefix = 'confs/'
-    postfix = '_dqn'
+    if 'nash' in method:
+        postfix = ''
+    else:
+        postfix = '_dqn'
     yaml_file = prefix+env+'_'+method+postfix
     args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
     
