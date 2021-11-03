@@ -186,7 +186,10 @@ def make_env(args):
     if isinstance(args.seed, (int, list)):
         env.seed(args.seed)  # seed can be either int or list of int
     elif args.seed == 'random':
-        random_seed = [int(seed) for seed in np.random.randint(1,100, args.num_envs)]
+        if args.num_envs > 1:
+            random_seed = [int(seed) for seed in np.random.randint(1,100, args.num_envs)]
+        else:
+            random_seed = int(np.random.randint(1,100))
         print(f"random seed: {random_seed}")
         env.seed(random_seed)
     return env
