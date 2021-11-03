@@ -14,7 +14,7 @@ from .common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .equilibrium_solver import NashEquilibriumECOSSolver
 
-DEBUG = True
+DEBUG = False
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
@@ -96,11 +96,11 @@ class NashDQN(DQN):
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
 
         if DEBUG:
-            # self.debugger = Debugger(env, "./data/nash_dqn_simple_mdp_log.pkl")
-            self.env = env
-            self.kl_list=[[] for _ in range(3)]
-            self.num_states_per_step = int(self.env.observation_space.high[0]/(self.env.max_transition+1))
-            self.max_transition = self.env.max_transition
+            self.debugger = Debugger(env, "./data/nash_dqn_simple_mdp_log.pkl")
+            # self.env = env
+            # self.kl_list=[[] for _ in range(3)]
+            # self.num_states_per_step = int(self.env.observation_space.high[0]/(self.env.max_transition+1))
+            # self.max_transition = self.env.max_transition
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -124,7 +124,7 @@ class NashDQN(DQN):
             actions, dists, ne_vs = self.compute_nash(q_values) 
 
             if DEBUG: ## test on arbitrary MDP
-                # self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
+                self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
 
                 # id_state =  int(torch.sum(state).cpu().numpy()/2)
                 # nash_strategies = np.vstack(self.env.Nash_strategies)
@@ -138,40 +138,39 @@ class NashDQN(DQN):
                 #         # print(first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                 #         kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                 #         self.kl_list[j].append(kl_dist)
-
                 # print(f'KL: {kl_dist}， id_state: {id_state}')
                 # with open('./data/nash_kl3.npy', 'wb') as f:
                 #     np.save(f, self.kl_list)
 
-                id_state =  int(torch.sum(state).cpu().numpy()/2)  # since two players have the same observation, so sum and divide by 2
-                nash_strategies = np.vstack(self.env.Nash_strategies)
-                if id_state < self.num_states_per_step: 
-                    # print(id_state)
-                    # print(self.env.Nash_strategies[0][id_state])
-                    ne_strategy = nash_strategies[id_state]
-                    oracle_first_player_ne_strategy = ne_strategy[0]
-                    nash_dqn_first_player_ne_strategy = dists[0][0]
-                    # print(first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
-                    kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
-                    self.kl_list[0].append(kl_dist)
+                # id_state =  int(torch.sum(state).cpu().numpy()/2)  # since two players have the same observation, so sum and divide by 2
+                # nash_strategies = np.vstack(self.env.Nash_strategies)
+                # if id_state < self.num_states_per_step: 
+                #     # print(id_state)
+                #     # print(self.env.Nash_strategies[0][id_state])
+                #     ne_strategy = nash_strategies[id_state]
+                #     oracle_first_player_ne_strategy = ne_strategy[0]
+                #     nash_dqn_first_player_ne_strategy = dists[0][0]
+                #     # print(first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                #     kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                #     self.kl_list[0].append(kl_dist)
 
-                elif id_state < 2*self.num_states_per_step:
-                    ne_strategy = nash_strategies[id_state]
-                    oracle_first_player_ne_strategy = ne_strategy[0]
-                    nash_dqn_first_player_ne_strategy = dists[0][0]
-                    kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
-                    self.kl_list[1].append(kl_dist)
+                # elif id_state < 2*self.num_states_per_step:
+                #     ne_strategy = nash_strategies[id_state]
+                #     oracle_first_player_ne_strategy = ne_strategy[0]
+                #     nash_dqn_first_player_ne_strategy = dists[0][0]
+                #     kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                #     self.kl_list[1].append(kl_dist)
 
-                elif id_state < 3*self.num_states_per_step:
-                    ne_strategy = nash_strategies[id_state]
-                    oracle_first_player_ne_strategy = ne_strategy[0]
-                    nash_dqn_first_player_ne_strategy = dists[0][0]
-                    kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
-                    self.kl_list[2].append(kl_dist)
+                # elif id_state < 3*self.num_states_per_step:
+                #     ne_strategy = nash_strategies[id_state]
+                #     oracle_first_player_ne_strategy = ne_strategy[0]
+                #     nash_dqn_first_player_ne_strategy = dists[0][0]
+                #     kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                #     self.kl_list[2].append(kl_dist)
 
-                print(f'KL: {kl_dist}， id_state: {id_state}')
-                with open('./data/nash_kl3.npy', 'wb') as f:
-                    np.save(f, self.kl_list)
+                # print(f'KL: {kl_dist}， id_state: {id_state}')
+                # with open('./data/nash_kl3.npy', 'wb') as f:
+                #     np.save(f, self.kl_list)
 
         else:
             actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
