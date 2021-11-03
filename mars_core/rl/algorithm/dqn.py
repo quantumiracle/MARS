@@ -99,7 +99,8 @@ class DQN(Agent):
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
 
-        reward =  (reward - reward.mean(dim=0)) / (reward.std(dim=0) + 1e-6)
+        # reward normalization
+        # reward =  (reward - reward.mean(dim=0)) / (reward.std(dim=0) + 1e-6)
         # weights = torch.FloatTensor(weights).to(self.device)
 
         # Q-Learning with target network

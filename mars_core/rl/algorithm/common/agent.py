@@ -224,8 +224,10 @@ class MultiAgent(Agent):
             # 'states' (agents, envs, state_dim) -> (envs, agents, state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples
-            try:  # when num_envs > 1 
-                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
+            try:  # Used when num_envs > 1. 
+                ## TODO Here the samples with done as True are filtered out for Nash algorithms!!
+                # samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
+                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), d] for j, d in enumerate(np.array(dones).T)]
             except:  # when num_envs = 1 
                 samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]
             # one model for all agents, the model is the first one

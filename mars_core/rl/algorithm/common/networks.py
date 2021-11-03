@@ -116,7 +116,7 @@ class MLP(NetBase):
                 nn.Linear(layers_config['hidden_dim_list'][j],
                           layers_config['hidden_dim_list'][j + 1])
             ]
-            if layers_config['hidden_activation']:
+            if j < len(layers_config['hidden_dim_list']) - 2 and layers_config['hidden_activation']:  # hidden activation should not be added to last layer
                 tmp.append(
                     _get_activation(layers_config['hidden_activation'])())
             layers += tmp
@@ -164,7 +164,7 @@ class CNN(NetBase):
                 nn.Linear(layers_config['hidden_dim_list'][j],
                           layers_config['hidden_dim_list'][j + 1])
             ]
-            if layers_config['hidden_activation']:
+            if j < len(layers_config['hidden_dim_list']) - 2 and layers_config['hidden_activation']:  # hidden activation should not be added to last layer
                 tmp.append(_get_activation(layers_config['hidden_activation'])()
                     )
             layers += tmp
@@ -211,7 +211,7 @@ class ImpalaCNN(NetBase):
                 nn.Linear(layers_config['hidden_dim_list'][j],
                           layers_config['hidden_dim_list'][j + 1])
             ]
-            if layers_config['hidden_activation']:
+            if j < len(layers_config['hidden_dim_list']) - 2 and layers_config['hidden_activation']:  # hidden activation should not be added to last layer
                 tmp.append(_get_activation(layers_config['hidden_activation'])()
                     )
             layers += tmp

@@ -8,7 +8,8 @@ class MDPWrapper():
         super(MDPWrapper, self).__init__()
         self.env = env
         self.agents = ['agent0', 'agent1']
-        self.num_agents = len(self.agents)      
+        self.num_agents = len(self.agents)   
+        self.max_transition=  self.env.max_transition
         # for observation, discrete to box, fake space
         self.observation_space = gym.spaces.Box(low=0.0, high=env.observation_space.n, shape=(1,))
         self.observation_spaces = {a:self.observation_space for a in self.agents}
@@ -23,7 +24,7 @@ class MDPWrapper():
     def reset(self, observation=None):
         obs = self.env.reset()
         self.curr_step = 0
-        return [[obs, obs]]
+        return [[obs], [obs]]
 
     def seed(self, seed):
         self.env.seed(seed)
@@ -49,7 +50,7 @@ class MDPWrapper():
     def NEsolver(self,):
         try: 
             self.Nash_v, self.Nash_strategies = self.env.NEsolver()
-            print(self.Nash_strategies)
+            # print(self.Nash_strategies)
         except:
             pass
 

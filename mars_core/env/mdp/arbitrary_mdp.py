@@ -3,23 +3,43 @@ import numpy as np
 import gym
 from scipy.sparse import csr_matrix
 from .utils.nash_solver import NashEquilibriumECOSSolver
+# from utils.nash_solver import NashEquilibriumECOSSolver
 
 class ArbitraryMDP():
-    def __init__(self, num_states=3, num_actions_per_player=2, num_trans=3):
-        self.num_states = num_states
+    def __init__(self, num_states=3, num_actions_per_player=2, num_trans=3, given_trans=None, given_rewards=None):
+        self.num_states = num_states  # number of states for each timestep
         self.num_actions = num_actions_per_player
         self.num_actions_total = self.num_actions**2
-        self.observation_space = gym.spaces.Discrete(self.num_states)
+        self.observation_space = gym.spaces.Discrete(self.num_states*(num_trans+1))
         self.action_space = gym.spaces.Discrete(self.num_actions)
         self.max_transition = num_trans
         self.reward_range = [-1,1]
         self.state = None
+        self.given_trans = given_trans
+        self.given_rewards = given_rewards
+        ## A fixed simple test, with: num_states=1, num_actions_per_player=3, num_trans=2
+        # self.given_rewards = [
+        #             [[ [0], [2], [-1],
+        #                 [-1], [0], [1],
+        #                 [1], [-1], [0],]], 
+
+        #             [[  [0], [2], [-1],
+        #                 [-1], [0], [1],
+        #                 [1], [-1], [0],]]
+        #                 ]
         self._construct_game()
 
     def _construct_game(self, ):
         self.trans_prob_matrices, self.reward_matrices = self.generate_random_trans_and_rewards()
+        print(self.trans_prob_matrices, self.reward_matrices)
 
-    def generate_random_trans_and_rewards(self,):
+    def generate_random_trans_and_rewards(self):
+        """Generate arbitrary transition matrix and reward matrix.
+
+        :return: the list of transition matrix and the list of reward matrix, 
+        both in shape: (dim_transition, dim_state, dim_action, dim_state)
+        :rtype: [type]
+        """
         trans_prob_matrices = []
         reward_matrices = []
         for _ in range(self.max_transition):
@@ -38,6 +58,12 @@ class ArbitraryMDP():
                 reward_matrix.append(reward_matrix_for_s)
             trans_prob_matrices.append(trans_prob_matrix)
             reward_matrices.append(reward_matrix)
+
+        if self.given_trans is not None:
+            trans_prob_matrices = self.given_trans
+        if self.given_rewards is not None:
+            reward_matrices = self.given_rewards
+
         return trans_prob_matrices, reward_matrices
 
     def reset(self, ):
@@ -84,9 +110,9 @@ class ArbitraryMDP():
             self.Nash_v.append(ne_values)  # (trans, state)
             self.Nash_strategies.append(ne_strategies)
         self.Nash_v = self.Nash_v[::-1]
-        self.Nash_strategies = self.Nash_strategies[::-1]
-        print('Nash values of all states: ', self.Nash_v)
-        print('Nash strategies of all states: ', self.Nash_strategies)
+        # self.Nash_strategies = self.Nash_strategies[::-1]
+        print('Nash values of all states (from start to end): ', self.Nash_v)
+        print('Nash strategies of all states (from start to end): ', self.Nash_strategies)
         return self.Nash_v, self.Nash_strategies
 
     def action_map(self, action):
@@ -112,12 +138,25 @@ if __name__ == '__main__':
     #     print(obs, r, done)
 
     # two agent version
+    given_rewards = [[[ [0], [2], [-1],
+                        [-1], [0], [1],
+                        [1], [-1], [0],]
+                         ], 
+
+    
+                    [[  [0], [2], [-1],
+                        [-1], [0], [1],
+                        [1], [-1], [0],]
+                    ]]
+    ## a simple test
+    # env = MDPWrapper(ArbitraryMDP(num_states=1, num_actions_per_player=3, num_trans=2, given_rewards=given_rewards))
     env = MDPWrapper(ArbitraryMDP())
+    env.NEsolver()
     print(env.observation_space, env.action_space)
     # env.render()
     obs = env.reset()
     print(obs)
     done = False
     while not np.any(done):
-        obs, r, done, _ = env.step([0,1])
+        obs, r, done, _ = env.step([1,0])
         print(obs, r, done)

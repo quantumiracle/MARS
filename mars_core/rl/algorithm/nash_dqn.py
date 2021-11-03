@@ -6,6 +6,7 @@ import numpy as np
 import gym
 import operator
 import random, copy
+import pickle
 from .common.nn_components import cReLU, Flatten
 from .common.storage import ReplayBuffer
 from .common.rl_utils import choose_optimizer, EpsilonScheduler
@@ -26,6 +27,57 @@ def kl(p, q):
     q = np.asarray(q, dtype=np.float)
 
     return np.sum(np.where(p != 0, p * np.log(p / q), 0))
+
+class Debugger():
+    def __init__(self, env, log_path = None):
+        self.env = env
+        self.num_states_per_step = int(self.env.observation_space.high[0]/(self.env.max_transition+1))
+        self.max_transition = env.max_transition
+        self.kl_dist_list=[[] for _ in range(self.max_transition)]
+        self.mse_v_list=[[] for _ in range(self.max_transition)]
+        self.cnt = 0
+        self.save_interval = 10
+        self.logging = {'num_states_per_step': self.num_states_per_step,
+                        'max_transition': self.max_transition,
+                        'cnt': [],
+                        'kl_nash_dist': [],
+                        'mse_nash_v': []
+                        }
+        self.log_path = log_path 
+
+        self.oracle_nash_strategies = np.vstack(self.env.Nash_strategies) # flatten to shape dim 1
+        self.oracle_nash_values = np.concatenate(self.env.Nash_v) # flatten to shape dim 1
+
+    def compare_with_oracle(self, state, dists, ne_vs, verbose=False):
+        self.cnt+=1
+        id_state =  int(torch.sum(state).cpu().numpy()/2)
+        for j in range(self.max_transition):  # nash value for non-terminal states (before the final timestep)
+            if id_state >= j*self.num_states_per_step and id_state < (j+1)*self.num_states_per_step:  # determine which timestep is current state
+                ne_strategy = self.oracle_nash_strategies[id_state]
+                ne_v = self.oracle_nash_values[id_state]
+                oracle_first_player_ne_strategy = ne_strategy[0]
+                nash_dqn_first_player_ne_strategy = dists[0][0]
+                kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                self.kl_dist_list[j].append(kl_dist)
+                mse_v = float((ne_v - ne_vs)**2) # squared error of Nash values (predicted and oracle)
+                self.mse_v_list[j].append(mse_v)
+
+        self.log([id_state, kl_dist, ne_vs], verbose)
+        if self.cnt % self.save_interval == 0:
+            self.dump_log()
+
+    def log(self, data, verbose=False):
+        if verbose:
+            print('state index: {}， KL: {}'.format(*data))
+
+        self.logging['cnt'].append(self.cnt)
+        self.logging['kl_nash_dist'] = self.kl_dist_list
+        self.logging['mse_nash_v'] = self.mse_v_list
+
+    def dump_log(self,):
+        with open(self.log_path, "wb") as f:
+            pickle.dump(self.logging, f)    
+
 class NashDQN(DQN):
     """
     Nash-DQN algorithm
@@ -44,8 +96,11 @@ class NashDQN(DQN):
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
 
         if DEBUG:
+            # self.debugger = Debugger(env, "./data/nash_dqn_simple_mdp_log.pkl")
             self.env = env
             self.kl_list=[[] for _ in range(3)]
+            self.num_states_per_step = int(self.env.observation_space.high[0]/(self.env.max_transition+1))
+            self.max_transition = self.env.max_transition
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -66,12 +121,31 @@ class NashDQN(DQN):
             # if self.args.cce:
             #     actions = self.compute_cce(q_values)
             # else:
-            actions, dists = self.compute_nash(q_values) 
+            actions, dists, ne_vs = self.compute_nash(q_values) 
 
             if DEBUG: ## test on arbitrary MDP
-                id_state =  int(torch.sum(state).cpu().numpy()/2)
+                # self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
+
+                # id_state =  int(torch.sum(state).cpu().numpy()/2)
+                # nash_strategies = np.vstack(self.env.Nash_strategies)
+                # for j in range(self.max_transition):
+                #     if id_state >= j*self.num_states_per_step and id_state < (j+1)*self.num_states_per_step: 
+                #         # print(id_state)
+                #         # print(self.env.Nash_strategies[0][id_state])
+                #         ne_strategy = nash_strategies[id_state]
+                #         oracle_first_player_ne_strategy = ne_strategy[0]
+                #         nash_dqn_first_player_ne_strategy = dists[0][0]
+                #         # print(first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                #         kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
+                #         self.kl_list[j].append(kl_dist)
+
+                # print(f'KL: {kl_dist}， id_state: {id_state}')
+                # with open('./data/nash_kl3.npy', 'wb') as f:
+                #     np.save(f, self.kl_list)
+
+                id_state =  int(torch.sum(state).cpu().numpy()/2)  # since two players have the same observation, so sum and divide by 2
                 nash_strategies = np.vstack(self.env.Nash_strategies)
-                if id_state < 3: 
+                if id_state < self.num_states_per_step: 
                     # print(id_state)
                     # print(self.env.Nash_strategies[0][id_state])
                     ne_strategy = nash_strategies[id_state]
@@ -81,14 +155,14 @@ class NashDQN(DQN):
                     kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                     self.kl_list[0].append(kl_dist)
 
-                elif id_state < 6:
+                elif id_state < 2*self.num_states_per_step:
                     ne_strategy = nash_strategies[id_state]
                     oracle_first_player_ne_strategy = ne_strategy[0]
                     nash_dqn_first_player_ne_strategy = dists[0][0]
                     kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                     self.kl_list[1].append(kl_dist)
 
-                elif id_state < 9:
+                elif id_state < 3*self.num_states_per_step:
                     ne_strategy = nash_strategies[id_state]
                     oracle_first_player_ne_strategy = ne_strategy[0]
                     nash_dqn_first_player_ne_strategy = dists[0][0]
@@ -108,14 +182,16 @@ class NashDQN(DQN):
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
         return actions
 
-    def compute_nash(self, q_values, return_dist=False):
+    def compute_nash(self, q_values, return_dist_only=False):
         """
         Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
         """
         q_table = q_values.reshape(-1, self.action_dims,  self.action_dims)
         all_actions = []
         all_dists = []
+        all_ne_values = []
         for qs in q_table:  # iterate over envs
+            # Solve Nash equilibrium with solver
             try:
                 # ne = NashEquilibriaSolver(qs)
                 # ne = ne[0]  # take the first Nash equilibria found
@@ -124,15 +200,16 @@ class NashDQN(DQN):
                 # ne = NashEquilibriumLPSolver(qs)
                 # ne = NashEquilibriumCVXPYSolver(qs)
                 # ne = NashEquilibriumGUROBISolver(qs)
-                ne = NashEquilibriumECOSSolver(qs)
-
+                ne, ne_v = NashEquilibriumECOSSolver(qs)
             except:  # some cases NE cannot be solved
                 print('No Nash solution for: ', np.linalg.det(qs), qs)
                 ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
-            
-            actions = []
-                
+                ne_v = 0
             all_dists.append(ne)
+            all_ne_values.append(ne_v)
+
+            # Sample actions from Nash strategies
+            actions = []
             for dist in ne:  # iterate over agents
                 try:
                     sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
@@ -144,10 +221,11 @@ class NashDQN(DQN):
                 a = np.where(sample_hist>0)
                 actions.append(a)
             all_actions.append(np.array(actions).reshape(-1))
-        if return_dist:
+
+        if return_dist_only:
             return all_dists
-        else:
-            return np.array(all_actions), all_dists
+        else: # return samples actions, nash strategies, nash values
+            return np.array(all_actions), all_dists, all_ne_values
 
     def compute_cce(self, q_values, return_dist=False):
         """
@@ -181,14 +259,14 @@ class NashDQN(DQN):
 
     def update(self):
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
-        weights = torch.ones(self.batch_size)
+        # weights = torch.ones(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
         action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
-        weights = torch.FloatTensor(weights).to(self.device)
+        # weights = torch.FloatTensor(weights).to(self.device)
 
         # Q-Learning with target network
         q_values = self.model(state)
@@ -209,17 +287,18 @@ class NashDQN(DQN):
         #     next_q_value = torch.einsum('bij,bij->b', cce_dists_, target_next_q_values_)
 
         # else: # Nash Equilibrium
-        nash_dists = self.compute_nash(target_next_q_values, return_dist=True)  # get the mixed strategy Nash rather than specific actions
+        nash_dists = self.compute_nash(target_next_q_values, return_dist_only=True)  # get the mixed strategy Nash rather than specific actions
         target_next_q_values_ = target_next_q_values_.reshape(-1, action_dim, action_dim)
         nash_dists_  = torch.FloatTensor(nash_dists).to(self.device)
         next_q_value = torch.einsum('bk,bk->b', torch.einsum('bj,bjk->bk', nash_dists_[:, 0], target_next_q_values_), nash_dists_[:, 1])
         # print(next_q_value, target_next_q_values_)
 
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
-        
+
         # Huber Loss
         loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
-        loss = (loss * weights).mean()
+        loss = loss.mean()
+        # loss = (loss * weights).mean()
 
         self.optimizer.zero_grad()
         loss.backward()
