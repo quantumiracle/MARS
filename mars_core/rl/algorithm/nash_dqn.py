@@ -147,7 +147,7 @@ class NashDQN(DQN):
             #     actions = self.compute_cce(q_values)
             # else:
             actions, dists, ne_vs = self.compute_nash(q_values) 
-            print('state: ', state, q_values) # TODO
+            # print('state: ', state, q_values) # TODO
 
             if DEBUG: ## test on arbitrary MDP
                 self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
@@ -317,7 +317,7 @@ class NashDQN(DQN):
         nash_dists_  = torch.FloatTensor(nash_dists).to(self.device)
         next_q_value = torch.einsum('bk,bk->b', torch.einsum('bj,bjk->bk', nash_dists_[:, 0], target_next_q_values_), nash_dists_[:, 1])
         # print(next_q_value, target_next_q_values_)
-
+        
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
 
         # Huber Loss
