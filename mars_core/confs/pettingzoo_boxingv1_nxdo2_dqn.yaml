@@ -2,14 +2,13 @@ env_args:
     env_name: boxing_v1
     env_type: pettingzoo
     num_envs: 1
-    against_baseline: False
     ram: True
     seed: 1122
 
 agent_args:
     algorithm: DQN
     algorithm_spec:
-        dueling: True
+        dueling: False
         replay_buffer_size: 1e5
         gamma: 0.99
         multi_step: 1
@@ -40,8 +39,8 @@ train_args:
 
     marl_method: nxdo2
     marl_spec:  # configurations for specific MARL method
-        selfplay_score_delta: 50 # the score that current learning agent must beat its opponent to update opponent's policy
+        selfplay_score_delta: 60 # the score that current learning agent must beat its opponent to update opponent's policy
         # both players are updated iteratively, so no trainable and opponent idex
         # both players are updated iteratively, so no trainable and opponent idex
-        trainable_agent_idx: 1   # (for initial stage only) the index of trainable agent, with its opponent delayed updated
-        opponent_idx: 0          # (for initial stage only) the one to be updated from trainable agent
+        trainable_agent_idx: 0   # (for initial stage only) the index of trainable agent, with its opponent delayed updated
+        opponent_idx: 1          # (for initial stage only) the one to be updated from trainable agent

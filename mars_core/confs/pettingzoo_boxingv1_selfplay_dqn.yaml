@@ -8,7 +8,7 @@ env_args:
 agent_args:
     algorithm: DQN
     algorithm_spec:
-        dueling: True
+        dueling: False
         replay_buffer_size: 1e5
         gamma: 0.99
         multi_step: 1
@@ -26,8 +26,8 @@ train_args:
     learning_rate: 1e-4
     device: gpu
     update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
-    log_avg_window: 1 # average window length in logging
-    log_interval: 1  # log print interval 
+    log_avg_window: 20 # average window length in logging
+    log_interval: 20  # log print interval 
     render: False
     # test: True
     # load_model_idx: 0/1
