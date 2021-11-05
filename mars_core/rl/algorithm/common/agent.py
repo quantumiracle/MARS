@@ -227,7 +227,7 @@ class MultiAgent(Agent):
             try:  # Used when num_envs > 1. 
                 ## TODO Here the samples with done as True are filtered out for Nash algorithms!!
                 # samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
-                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), d] for j, d in enumerate(np.array(dones).T)]
+                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
             except:  # when num_envs = 1 
                 samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]
             # one model for all agents, the model is the first one
