@@ -14,7 +14,7 @@ from .common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .equilibrium_solver import NashEquilibriumECOSSolver
 
-DEBUG = True
+DEBUG = False
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
