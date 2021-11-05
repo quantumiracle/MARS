@@ -94,11 +94,6 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
             model.store(sample)
             obs = obs_
             logger.log_reward(np.array(reward).reshape(-1))
-
-            if np.any(
-                    done
-            ):  # if any player in a game is done, the game episode done; may not be correct for some envs
-                break
             
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
@@ -112,6 +107,12 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
                 elif overall_steps * args.update_itr % 1 == 0:
                     loss = model.update()
                 logger.log_loss(loss)
+
+            # done break needs to go after everything else， including the update
+            if np.any(
+                    done
+            ):  # if any player in a game is done, the game episode done; may not be correct for some envs
+                break
 
         if model.ready_to_update:
             if args.algorithm_spec['episodic_update']:

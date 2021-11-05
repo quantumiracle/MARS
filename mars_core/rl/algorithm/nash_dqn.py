@@ -14,7 +14,7 @@ from .common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .equilibrium_solver import NashEquilibriumECOSSolver
 
-DEBUG = False
+DEBUG = True
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
@@ -31,7 +31,10 @@ def kl(p, q):
 class Debugger():
     def __init__(self, env, log_path = None):
         self.env = env
-        self.num_states_per_step = int(self.env.observation_space.high[0]/(self.env.max_transition+1))
+        if env.OneHotObs:
+            self.num_states_per_step = int(self.env.observation_space.shape[0])
+        else:
+            self.num_states_per_step = int(self.env.observation_space.high[0]/(self.env.max_transition+1))
         self.max_transition = env.max_transition
         self.kl_dist_list=[[] for _ in range(self.max_transition)]
         self.mse_v_list=[[] for _ in range(self.max_transition)]
@@ -40,37 +43,57 @@ class Debugger():
         self.logging = {'num_states_per_step': self.num_states_per_step,
                         'max_transition': self.max_transition,
                         'cnt': [],
+                        'state_visit': {},
                         'kl_nash_dist': [],
                         'mse_nash_v': []
                         }
         self.log_path = log_path 
+        self.state_list = []
 
         self.oracle_nash_strategies = np.vstack(self.env.Nash_strategies) # flatten to shape dim 1
         self.oracle_nash_values = np.concatenate(self.env.Nash_v) # flatten to shape dim 1
 
     def compare_with_oracle(self, state, dists, ne_vs, verbose=False):
         self.cnt+=1
-        id_state =  int(torch.sum(state).cpu().numpy()/2)
+        if self.env.OneHotObs:
+            state_ = state[0].cpu().numpy()
+            id_state = np.where(state_>0)[0][0]
+        else:
+            id_state =  int(torch.sum(state).cpu().numpy()/2)
+
         for j in range(self.max_transition):  # nash value for non-terminal states (before the final timestep)
             if id_state >= j*self.num_states_per_step and id_state < (j+1)*self.num_states_per_step:  # determine which timestep is current state
                 ne_strategy = self.oracle_nash_strategies[id_state]
                 ne_v = self.oracle_nash_values[id_state]
                 oracle_first_player_ne_strategy = ne_strategy[0]
                 nash_dqn_first_player_ne_strategy = dists[0][0]
+                # print('compare: ', id_state, self.oracle_nash_strategies)  # TODO
+                # print(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                 kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                 self.kl_dist_list[j].append(kl_dist)
                 mse_v = float((ne_v - ne_vs)**2) # squared error of Nash values (predicted and oracle)
                 self.mse_v_list[j].append(mse_v)
 
+        self.state_visit(id_state)
+
         self.log([id_state, kl_dist, ne_vs], verbose)
         if self.cnt % self.save_interval == 0:
             self.dump_log()
 
+    def state_visit(self, state):
+        self.state_list.append(state)
+
+
     def log(self, data, verbose=False):
+        # get state visitation statistics
+        unique, counts = np.unique(self.state_list, return_counts=True)
+        state_stat = dict(zip(unique, counts))
         if verbose:
             print('state index: {}， KL: {}'.format(*data))
+            print('state visitation counts: {}'.format(state_stat))
 
         self.logging['cnt'].append(self.cnt)
+        self.logging['state_visit'] = state_stat
         self.logging['kl_nash_dist'] = self.kl_dist_list
         self.logging['mse_nash_v'] = self.mse_v_list
 
@@ -94,6 +117,8 @@ class NashDQN(DQN):
             self.action_dims = env.action_space.n
         # don't forget to instantiate an optimizer although there is one in DQN
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
+        # lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=50, gamma=0.95)    
+        # self.schedulers.append(lr_scheduler)
 
         if DEBUG:
             self.debugger = Debugger(env, "./data/nash_dqn_simple_mdp_log.pkl")
@@ -122,6 +147,7 @@ class NashDQN(DQN):
             #     actions = self.compute_cce(q_values)
             # else:
             actions, dists, ne_vs = self.compute_nash(q_values) 
+            print('state: ', state, q_values) # TODO
 
             if DEBUG: ## test on arbitrary MDP
                 self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
@@ -274,9 +300,9 @@ class NashDQN(DQN):
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
         action_dim = int(np.sqrt(q_values.shape[-1])) # for two-symmetric-agent case only
-        action = torch.LongTensor([a[0]*action_dim+a[1] for a in action]).to(self.device)
+        action_ = torch.LongTensor([a[0]*action_dim+a[1] for a in action]).to(self.device)
 
-        q_value = q_values.gather(1, action.unsqueeze(1)).squeeze(1)
+        q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
 
         # compute CCE or NE
         # if args.cce: # Coarse Correlated Equilibrium
@@ -293,6 +319,7 @@ class NashDQN(DQN):
         # print(next_q_value, target_next_q_values_)
 
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
+        # expected_q_value = reward
 
         # Huber Loss
         loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
