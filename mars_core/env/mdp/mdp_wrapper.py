@@ -10,9 +10,17 @@ class MDPWrapper():
         self.agents = ['agent0', 'agent1']
         self.num_agents = len(self.agents)   
         self.max_transition=  self.env.max_transition
+        self.OneHotObs = False
+        try:
+            self.OneHotObs = self.env.OneHotObs
+        except:
+            pass
         # for observation, discrete to box, fake space
-        self.observation_space = gym.spaces.Box(low=0.0, high=env.observation_space.n, shape=(1,))
-        self.observation_spaces = {a:self.observation_space for a in self.agents}
+        if self.OneHotObs:
+            self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(env.observation_space.n,))
+        else:
+            self.observation_space = gym.spaces.Box(low=0.0, high=env.observation_space.n, shape=(1,))
+        self.observation_spaces = {ag: self.observation_space for ag in self.agents}
         self.action_space = gym.spaces.Discrete(env.num_actions)
         self.action_spaces = {a:self.action_space for a in self.agents}
         self.curr_step = 0
@@ -24,7 +32,10 @@ class MDPWrapper():
     def reset(self, observation=None):
         obs = self.env.reset()
         self.curr_step = 0
-        return [[obs], [obs]]
+        if self.OneHotObs:
+            return [obs, obs]
+        else:
+            return [[obs], [obs]]
 
     def seed(self, seed):
         self.env.seed(seed)
@@ -42,7 +53,10 @@ class MDPWrapper():
         obs, r, done, info = self.env.step(a)
         if self.env.max_transition is not None and self.curr_step >= self.env.max_transition:
             done = True
-        return [[obs], [obs]], [r, -r], [done, done], [info, info]
+        if self.OneHotObs:
+            return [obs, obs], [r, -r], [done, done], [info, info]
+        else: 
+            return [[obs], [obs]], [r, -r], [done, done], [info, info]
 
     def visualize_MDP(self, ):
         self.env.visualize_MDP()
