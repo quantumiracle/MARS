@@ -288,7 +288,7 @@ class NashDQN(DQN):
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
-        action = torch.LongTensor(action).to(self.device)
+        action = torch.FloatTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
         # weights = torch.FloatTensor(weights).to(self.device)
@@ -319,10 +319,10 @@ class NashDQN(DQN):
         # print(next_q_value, target_next_q_values_)
 
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
-        # expected_q_value = reward
 
         # Huber Loss
-        loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
+        # loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
+        loss = F.mse_loss(q_value, expected_q_value.detach())
         loss = loss.mean()
         # loss = (loss * weights).mean()
 
