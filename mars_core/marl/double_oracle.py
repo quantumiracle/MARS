@@ -155,8 +155,8 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         self.model_path = logger.model_dir
 
         # get names
-        self.current_learnable_model_idx = int(logger.keys[args.marl_spec['trainable_agent_idx']])
-        self.current_fixed_opponent_idx = int(logger.keys[args.marl_spec['opponent_idx']])
+        self.current_learnable_model_idx = int(args.marl_spec['trainable_agent_idx'])
+        self.current_fixed_opponent_idx = int(args.marl_spec['opponent_idx'])
 
         self.save_checkpoint = save_checkpoint
         self.args = args
