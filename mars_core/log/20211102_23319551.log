@@ -1,0 +1,36 @@
+pygame 2.0.0 (SDL 2.0.12, python 3.7.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+boxing_v1 pettingzoo
+Load boxing_v1 environment in type pettingzoo.
+Env observation space: Box(0.0, 1.0, (130,), float32) action space: Discrete(18)
+random seed: [75]
+Traceback (most recent call last):
+  File "general_run.py", line 43, in <module>
+    launch_rollout(parser_args.env, parser_args.method)
+  File "general_run.py", line 18, in launch_rollout
+    env = make_env(args)
+  File "/home/zihan/research/MARS/mars_core/env/import_env.py", line 191, in make_env
+    env.seed(random_seed)
+  File "/home/zihan/research/MARS/mars_core/env/wrappers/mars_wrappers.py", line 381, in seed
+    self.env.seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/pettingzoo/utils/conversions.py", line 52, in seed
+    return self.aec_env.seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/pettingzoo/utils/wrappers/order_enforcing.py", line 38, in seed
+    super().seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/pettingzoo/utils/wrappers/base.py", line 43, in seed
+    self.env.seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/pettingzoo/utils/wrappers/order_enforcing.py", line 38, in seed
+    super().seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/pettingzoo/utils/wrappers/base.py", line 43, in seed
+    self.env.seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/pettingzoo/utils/wrappers/order_enforcing.py", line 38, in seed
+    super().seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/pettingzoo/utils/wrappers/base.py", line 43, in seed
+    self.env.seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/pettingzoo/utils/conversions.py", line 116, in seed
+    self.env.seed(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/supersuit/parallel_wrappers.py", line 92, in seed
+    self.np_random, seed = gym.utils.seeding.np_random(seed)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/gym/utils/seeding.py", line 12, in np_random
+    raise error.Error('Seed must be a non-negative integer or omitted, not {}'.format(seed))
+gym.error.Error: Seed must be a non-negative integer or omitted, not [75]
