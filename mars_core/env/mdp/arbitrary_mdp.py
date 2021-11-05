@@ -1,12 +1,12 @@
 import numpy as np
 import numpy as np
 import gym
-from scipy.sparse import csr_matrix
+# from scipy.sparse import csr_matrix
 from .utils.nash_solver import NashEquilibriumECOSSolver
 # from utils.nash_solver import NashEquilibriumECOSSolver
 
 class ArbitraryMDP():
-    def __init__(self, num_states=3, num_actions_per_player=2, num_trans=3, given_trans=None, given_rewards=None):
+    def __init__(self, num_states=2, num_actions_per_player=3, num_trans=2, given_trans=None, given_rewards=None):
         self.num_states = num_states  # number of states for each timestep
         self.num_actions = num_actions_per_player
         self.num_actions_total = self.num_actions**2
@@ -17,23 +17,79 @@ class ArbitraryMDP():
         self.state = None
         self.given_trans = given_trans
         self.given_rewards = given_rewards
+        self.OneHotObs = False
         ## A fixed simple test, with: num_states=1, num_actions_per_player=3, num_trans=2
         # self.given_rewards = [
         #             [[ [0], [2], [-1],
         #                 [-1], [0], [1],
         #                 [1], [-1], [0],]], 
 
-        #             [[  [0], [2], [-1],
-        #                 [-1], [0], [1],
+        #             [[  [0], [-1], [-1],
+        #                 [2], [0], [1],
         #                 [1], [-1], [0],]]
         #                 ]
+
+        self.given_trans = [
+                    [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+                        [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+                        [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],],
+
+                       [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+                        [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+                        [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],]] ,
+
+                     [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+                        [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+                        [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],],
+
+                       [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+                        [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+                        [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],]] 
+                        ]
+
+                    # [[ [1, 0], [1, 0], [1, 0],
+                    #         [1, 0], [1, 0], [1, 0],
+                    #         [1, 0], [1, 0], [1, 0],],
+
+                    #     [[1, 0], [1, 0], [1, 0],
+                    #         [1, 0], [1, 0], [1, 0],
+                    #         [1, 0], [1, 0], [1, 0],]] ,
+
+                    #     [[ [1, 0], [1, 0], [1, 0],
+                    #         [1, 0], [1, 0], [1, 0],
+                    #         [1, 0], [1, 0], [1, 0],],
+
+                    #     [[1, 0], [1, 0], [1, 0],
+                    #         [1, 0], [1, 0], [1, 0],
+                    #         [1, 0], [1, 0], [1, 0],]] 
+                    #         ]
+
+        self.given_rewards = [
+                    [[ [0, 0], [2, 2], [-1, -1],
+                        [-1, -1], [0,0], [1,1],
+                        [1,1], [-1,-1], [0,0],],
+
+                       [[0, 0], [2, 2], [-1, -1],
+                        [-1, -1], [0,0], [1,1],
+                        [1,1], [-1,-1], [0,0],]] ,
+
+                     [[ [0, 0], [2, -2], [-1, -1],
+                        [-1, -1], [0,0], [1,1],
+                        [1,1], [-1,-1], [0,0],],
+
+                       [[0, 0], [2, -2], [-1, -1],
+                        [-1, -1], [0,0], [1,1],
+                        [1,1], [-1,-1], [0,0],]] 
+                        ]
+
         self._construct_game()
+        self.NEsolver()
 
     def _construct_game(self, ):
         self.trans_prob_matrices, self.reward_matrices = self.generate_random_trans_and_rewards()
         print(self.trans_prob_matrices, self.reward_matrices)
 
-    def generate_random_trans_and_rewards(self):
+    def generate_random_trans_and_rewards(self, SameRewardForNextState=False):
         """Generate arbitrary transition matrix and reward matrix.
 
         :return: the list of transition matrix and the list of reward matrix, 
@@ -52,8 +108,13 @@ class ArbitraryMDP():
                     rands = np.random.uniform(0,1, self.num_states)
                     rand_probs = list(rands/sum(rands))
                     trans_prob_matrix_for_s.append(rand_probs)
-                    rs = np.random.uniform(*self.reward_range, self.num_states)
-                    reward_matrix_for_s.append(list(rs))
+                    if SameRewardForNextState:  # r(s,a) this reduces stochasticity in nash value estimation thus work!
+                        rs = int(self.num_states) * [np.random.uniform(*self.reward_range)]
+                        reward_matrix_for_s.append(rs)
+                    else:  # r(s,a,s')
+                        rs = np.random.uniform(*self.reward_range, self.num_states)
+                        reward_matrix_for_s.append(list(rs))
+ 
                 trans_prob_matrix.append(trans_prob_matrix_for_s)
                 reward_matrix.append(reward_matrix_for_s)
             trans_prob_matrices.append(trans_prob_matrix)
@@ -70,7 +131,10 @@ class ArbitraryMDP():
         self.state = np.random.randint(0, self.num_states)  # randomly pick one state as initial
         self.trans = 0
         obs = self.state
-        return obs
+        if self.OneHotObs:
+            return self._to_one_hot(obs)
+        else:
+            return obs
 
     def step(self, a):
         """The environment transition function.
@@ -89,8 +153,15 @@ class ArbitraryMDP():
         obs = self.state
         self.trans += 1
         done = False if self.trans < self.max_transition else True
+        if self.OneHotObs:
+            return self._to_one_hot(obs), reward, done, None
+        else:
+            return obs, reward, done, None
 
-        return obs, reward, done, None
+    def _to_one_hot(self, s):
+        one_hot_vec = np.zeros(self.num_states*(self.max_transition+1))
+        one_hot_vec[s] = 1
+        return one_hot_vec
 
     def NEsolver(self,):
         self.Nash_v = []
@@ -110,7 +181,7 @@ class ArbitraryMDP():
             self.Nash_v.append(ne_values)  # (trans, state)
             self.Nash_strategies.append(ne_strategies)
         self.Nash_v = self.Nash_v[::-1]
-        # self.Nash_strategies = self.Nash_strategies[::-1]
+        self.Nash_strategies = self.Nash_strategies[::-1]
         print('Nash values of all states (from start to end): ', self.Nash_v)
         print('Nash strategies of all states (from start to end): ', self.Nash_strategies)
         return self.Nash_v, self.Nash_strategies
@@ -138,18 +209,6 @@ if __name__ == '__main__':
     #     print(obs, r, done)
 
     # two agent version
-    given_rewards = [[[ [0], [2], [-1],
-                        [-1], [0], [1],
-                        [1], [-1], [0],]
-                         ], 
-
-    
-                    [[  [0], [2], [-1],
-                        [-1], [0], [1],
-                        [1], [-1], [0],]
-                    ]]
-    ## a simple test
-    # env = MDPWrapper(ArbitraryMDP(num_states=1, num_actions_per_player=3, num_trans=2, given_rewards=given_rewards))
     env = MDPWrapper(ArbitraryMDP())
     env.NEsolver()
     print(env.observation_space, env.action_space)
