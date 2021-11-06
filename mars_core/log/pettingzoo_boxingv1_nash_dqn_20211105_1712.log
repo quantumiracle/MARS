@@ -1,0 +1,24 @@
+pygame 2.0.0 (SDL 2.0.12, python 3.7.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+boxing_v1 pettingzoo
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:26: UserWarning: Converting G to a CSC matrix; may take a while.
+  warn("Converting G to a CSC matrix; may take a while.")
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:29: UserWarning: Converting A to a CSC matrix; may take a while.
+  warn("Converting A to a CSC matrix; may take a while.")
+<SubprocVectorEnv instance>
+No agent are not learnable.
+Arguments:  {'env_name': 'boxing_v1', 'env_type': 'pettingzoo', 'num_envs': 4, 'ram': True, 'seed': 1122, 'algorithm': 'NashDQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000}, 'batch_size': 640, 'max_episodes': 30000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'save_path': '', 'save_interval': 2000, 'net_architecture': {'hidden_dim_list': [64, 64, 64], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'nash', 'marl_spec': {}}
+Traceback (most recent call last):
+  File "general_run.py", line 43, in <module>
+    launch_rollout(parser_args.env, parser_args.method)
+  File "general_run.py", line 37, in launch_rollout
+    rollout(env, model, args)
+  File "/home/zihan/research/MARS/mars_core/rollout.py", line 19, in rollout
+    rollout_normal(env, model, args)
+  File "/home/zihan/research/MARS/mars_core/rollout.py", line 103, in rollout_normal
+    loss = model.update(
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/common/agent.py", line 264, in update
+    loss = agent.update()
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/nash_dqn.py", line 321, in update
+    expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
+RuntimeError: The size of tensor a (640) must match the size of tensor b (2) at non-singleton dimension 1
