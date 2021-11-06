@@ -1,6 +1,7 @@
 from utils.func import LoadYAML2Dict
 from env.import_env import make_env
 from rollout import rollout
+from datetime import datetime
 from rl.algorithm import *
 
 ### Load configurations
@@ -19,5 +20,7 @@ print(env)
 model = eval(args.algorithm)(env, args)
 
 ### Rollout
-rollout(env, model, args)
+now = datetime.now()
+save_id = now.strftime("%Y%m%d%H%M%S")
+rollout(env, model, args, save_id)
 
