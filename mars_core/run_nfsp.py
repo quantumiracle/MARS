@@ -36,4 +36,8 @@ model2 = eval(args.algorithm)(env, args)
 model = MultiAgent(env, [model1, model2], args)
 
 ### Rollout
-rollout(env, model, args)
+from datetime import datetime
+now = datetime.now()
+save_id = now.strftime("%Y%m%d%H%M%S")
+rollout(env, model, args, save_id)
+
