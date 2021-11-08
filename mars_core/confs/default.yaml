@@ -51,4 +51,6 @@ train_args:
     #     output_activation: None
 
     marl_method: False
-    marl_spec: {}  # MARL method specific configurations, empty dict
+    marl_spec: # MARL method specific configurations
+        min_update_interval: 20 # mininal opponent update interval in unit of episodes
+        score_avg_window: 10 # the length of window for averaging the score values

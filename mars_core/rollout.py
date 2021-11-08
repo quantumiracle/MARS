@@ -6,7 +6,7 @@ from utils.typing import Tuple, List, ConfigurationDict
 from marl.meta_learner import init_meta_learner
 
 
-def rollout(env, model, args: ConfigurationDict) -> None:
+def rollout(env, model, args: ConfigurationDict, save_id='0') -> None:
     """
     Function to rollout the interaction of agents and environments.
 
@@ -14,12 +14,12 @@ def rollout(env, model, args: ConfigurationDict) -> None:
     algorithm, the function is separeted into two types. 
     """
     if args.algorithm == 'GA':
-        rollout_ga(env, model, args)
+        rollout_ga(env, model, save_id, args)
     else:
-        rollout_normal(env, model, args)
+        rollout_normal(env, model, save_id, args)
 
 
-def rollout_normal(env, model, args: ConfigurationDict) -> None:
+def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     """Function to rollout experience as interaction of agents and environments, in
     a typical manner of reinforcement learning. 
 
@@ -32,7 +32,7 @@ def rollout_normal(env, model, args: ConfigurationDict) -> None:
     """
     print("Arguments: ", args)
     overall_steps = 0
-    logger = init_logger(env, args)
+    logger = init_logger(env, save_id, args)
     meta_learner = init_meta_learner(logger, args)
     for epi in range(args.max_episodes):
         obs = env.reset()
@@ -171,7 +171,7 @@ def run_agents_n_episodes(env, args: ConfigurationDict, model) -> Tuple[float, f
     return avg_score, avg_length
 
 
-def rollout_ga(env, model, args: ConfigurationDict) -> None:
+def rollout_ga(env, model, save_id, args: ConfigurationDict) -> None:
     """Function to rollout experience as interaction of agents and environments,
     as well as taking evolution in the agents population with genetic algorithm.
     It can work for either single-agent environment or multi-agent environments
@@ -186,7 +186,7 @@ def rollout_ga(env, model, args: ConfigurationDict) -> None:
     """
     #disable gradients as we will not use them
     torch.set_grad_enabled(False)
-    logger = init_logger(env, args)
+    logger = init_logger(env, save_id, args)
 
     if args.marl_method == 'selfplay':
         """ Self-play with genetic algorithm, modified from https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ga_selfplay.py

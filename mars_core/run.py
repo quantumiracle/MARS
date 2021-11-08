@@ -1,6 +1,7 @@
 from utils.func import LoadYAML2Dict
 from env.import_env import make_env
 from rollout import rollout
+from datetime import datetime
 from rl.algorithm import *
 
 import argparse
@@ -13,8 +14,8 @@ parser_args = parser.parse_args()
 
 ### Load configurations
 # yaml_file = 'confs/pettingzoo_pongv1_selfplay_dqn'
-# yaml_file = 'confs/pettingzoo_boxingv1_selfplay_dqn' 
-yaml_file = 'confs/pettingzoo_surroundv1_selfplay_dqn' 
+yaml_file = 'confs/pettingzoo_boxingv1_selfplay_dqn' 
+# yaml_file = 'confs/pettingzoo_surroundv1_selfplay_dqn' 
 # yaml_file = 'confs/pettingzoo_boxingv1_selfplay_ppo'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_dqn'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_ppo'
@@ -39,4 +40,6 @@ model2 = eval(args.algorithm)(env, args)
 model = MultiAgent(env, [model1, model2], args)
 
 ### Rollout
-rollout(env, model, args)
+now = datetime.now()
+save_id = now.strftime("%Y%m%d%H%M%S")
+rollout(env, model, args, save_id)
