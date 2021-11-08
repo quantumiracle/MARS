@@ -141,7 +141,6 @@ class NashDQN(DQN):
             #     actions = self.compute_cce(q_values)
             # else:
             actions, dists, ne_vs = self.compute_nash(q_values) 
-            # print('state: ', state, q_values) # TODO
 
             if DEBUG: ## test on arbitrary MDP
                 self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)

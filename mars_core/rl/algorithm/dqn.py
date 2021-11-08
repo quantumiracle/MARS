@@ -44,11 +44,16 @@ class DQN(Agent):
                 model = ParallelDQN(env, args.net_architecture, args.num_envs)
         return model
 
-    def reinit(self):
-        # self.model.reinit()  # reinit the networks seem to hurt the overall learning performance
-        # self.target.reinit()
-        # self.update_target(self.model, self.target)
-        self.buffer.clear()
+    def reinit(self, nets_init=False, buffer_init=True, schedulers_init=True):
+        if nets_init:
+            self.model.reinit()  # reinit the networks seem to hurt the overall learning performance
+            self.target.reinit()
+            self.update_target(self.model, self.target)
+        if buffer_init:
+            self.buffer.clear()
+        if schedulers_init:
+            for scheduler in self.schedulers:
+                scheduler.reset()
 
     def choose_action(
         self, 

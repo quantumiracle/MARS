@@ -7,7 +7,6 @@ from rl.algorithm import *
 yaml_file = 'confs/pettingzoo_boxingv1_nash_dqn'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
-
 ### Create env
 env = make_env(args)
 print(env)
