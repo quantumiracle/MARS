@@ -31,8 +31,7 @@ class SelfPlayMetaLearner():
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
-        # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
-        # score_avg_window = 10 # use the same average window as logging for score delta
+        agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
 
@@ -51,10 +50,10 @@ class SelfPlayMetaLearner():
 
             self.last_update_epi = logger.current_episode
 
-            for scheduler in model.agents[self.args.marl_spec['trainable_agent_idx']].schedulers:
-                scheduler.reset()
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit()  # reinitialize the model
-
+            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        
+        if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
+            model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
 class FictitiousSelfPlayMetaLearner():
     """
@@ -89,8 +88,7 @@ class FictitiousSelfPlayMetaLearner():
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
-        # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
-        # score_avg_window = 10 # use the same average window as logging for score delta
+        agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
 
@@ -106,12 +104,13 @@ class FictitiousSelfPlayMetaLearner():
 
             self.last_update_epi = logger.current_episode
 
-            for scheduler in model.agents[self.args.marl_spec['trainable_agent_idx']].schedulers:
-                scheduler.reset()
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit()  # reinitialize the model
+            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
         if len(self.saved_checkpoints) > 0:
             random_checkpoint = np.random.choice(self.saved_checkpoints)
             model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+random_checkpoint)
             # logger.additional_logs.append(f'Load the random opponent model from {self.model_path+random_checkpoint}.')
+
+        if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
+            model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model

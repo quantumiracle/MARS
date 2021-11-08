@@ -55,9 +55,7 @@ class NXDOMetaLearner():
             logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
             self.last_update_epi = logger.current_episode
 
-            for scheduler in model.agents[self.args.marl_spec['trainable_agent_idx']].schedulers:
-                scheduler.reset()
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit()  # reinitialize the model
+            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
             ### update the opponent with epsilon meta Nash policy
             # evaluate the N*N utility matrix, N is the number of currently saved models
@@ -230,10 +228,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
                     logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.nash_meta_strategy}')
 
             self._switch_charac(model)
-            # have to reset scheduler and model parameters after switching characters
-            for scheduler in model.agents[self.current_learnable_model_idx].schedulers:
-                scheduler.reset()
-            model.agents[self.current_learnable_model_idx].reinit()  # reinitialize the model
+            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # sample from Nash meta policy in a episode-wise manner
         if len(self.saved_checkpoints[self.current_fixed_opponent_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4 and self.nash_meta_strategy is not None:

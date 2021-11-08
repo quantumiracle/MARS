@@ -94,7 +94,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             model.store(sample)
             obs = obs_
             logger.log_reward(np.array(reward).reshape(-1))
-            
+            loss = None
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
@@ -106,7 +106,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     loss = np.mean(avg_loss, axis=0)
                 elif overall_steps * args.update_itr % 1 == 0:
                     loss = model.update()
-                logger.log_loss(loss)
+                if loss is not None:
+                    logger.log_loss(loss)
 
             # done break needs to go after everything else， including the update
             if np.any(
