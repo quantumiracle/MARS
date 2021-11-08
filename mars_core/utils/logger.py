@@ -11,10 +11,12 @@ class TestLogger():
 
     :param env: environment object
     :type env: object
+    :param save_id: saving identification number
+    :type save_id: string
     :param args: arguments
     :type args: dict
     """
-    def __init__(self, env, args: ConfigurationDict) -> None:
+    def __init__(self, env, save_id, args: ConfigurationDict) -> None:
         super(TestLogger, self).__init__()
         # if using parallel environment, env.agents is list of list,
         # we flatten it in to a simple list. For example, it changes
@@ -89,11 +91,14 @@ class Logger(TestLogger):
 
     :param env: environment object
     :type env: object
+    :param save_id: saving identification number
+    :type save_id: string
     :param args: arguments
     :type args: dict
     """
-    def __init__(self, env, args: ConfigurationDict) -> None:
-        super().__init__(env, args)
+    def __init__(self, env, save_id, args: ConfigurationDict) -> None:
+        super().__init__(env, save_id, args)
+        self.save_id = save_id
         self.losses = self._clear_dict_as_list(self.keys)
         self.epi_losses = self._clear_dict_as_list(self.keys)
 
@@ -113,13 +118,12 @@ class Logger(TestLogger):
         :param args: arguments
         :type args: dict
         """
-        now = datetime.now()
-        dt_string = now.strftime("%Y%m%d%H%M%S")
-        post_fix = f"{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{dt_string}/"
+        post_fix = f"{args.env_type}_{args.env_name.replace('_', '', 1)}_{args.marl_method}_{args.algorithm.lower()}/"
 
-        self.log_dir = f'../{args.save_path}/data/log/' + post_fix
-        self.runs_dir = f'../{args.save_path}/data/tensorboard/' + post_fix
-        self.model_dir = f'../{args.save_path}/model/' + post_fix
+        self.log_dir = f'../{args.save_path}/data/log/{self.save_id}/' + post_fix
+        self.runs_dir = f'../{args.save_path}/data/tensorboard/{self.save_id}/' + post_fix
+        self.model_dir = f'../{args.save_path}/data/model/{self.save_id}/' + post_fix
+        print(f'Save models to : {self.model_dir}, logs to {self.log_dir}.')
         os.makedirs(self.log_dir, exist_ok=True)
         os.makedirs(self.runs_dir, exist_ok=True)
         os.makedirs(self.model_dir, exist_ok=True)
@@ -188,11 +192,13 @@ class DummyLogger(Logger):
 
     :param env: environment object
     :type env: object
+    :param save_id: saving identification number
+    :type save_id: string
     :param args: arguments
     :type args: dict
     """
-    def __init__(self, env, args: ConfigurationDict) -> None:
-        super().__init__(env, args)
+    def __init__(self, env, save_id, args: ConfigurationDict) -> None:
+        super().__init__(env, save_id, args)
         self.avg_window = args.log_avg_window
         self.reward = 0
         self.current_episode = 0
@@ -234,20 +240,23 @@ class DummyLogger(Logger):
 
 def init_logger(
         env,
+        save_id,
         args: ConfigurationDict) -> Union[DummyLogger, TestLogger, Logger]:
     """A function to initiate a proper logger.
 
     :param env: environment object
     :type env: object
+    :param save_id: saving identification number
+    :type save_id: string
     :param args: arguments
     :type args: dict
     :return: logger
     :rtype: object
     """
     if args.algorithm == 'GA':
-        logger = DummyLogger(env, args)
+        logger = DummyLogger(env, save_id, args)
     elif args.test:
-        logger = TestLogger(env, args)
+        logger = TestLogger(env, save_id, args)
     else:
-        logger = Logger(env, args)
+        logger = Logger(env, save_id, args)
     return logger

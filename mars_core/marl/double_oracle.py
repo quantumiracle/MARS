@@ -31,15 +31,15 @@ class NXDOMetaLearner():
 
         logger.add_extr_log('matrix_equilibrium')
 
-    def step(self, model, logger, env, args, min_update_interval = 20):
+    def step(self, model, logger, env, args):
         """
         A meta learner step (usually at the end of each episode), update models if available.
 
-        params: 
-            :min_update_interval: mininal opponent update interval in unit of episodes
         """
         # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
-        score_avg_window = 10 # use the same average window as logging for score delta
+        # score_avg_window = 10 # the length of window for averaging the score values
+        score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
+        min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
 
         score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
              - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
@@ -181,7 +181,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         if self.current_learnable_model_idx in model.not_learnable_list:
             model.not_learnable_list.remove(self.current_learnable_model_idx)
 
-    def step(self, model, logger, env, args, min_update_interval = 20):
+    def step(self, model, logger, env, args):
         """
         A meta learner step (usually at the end of each episode), update models if available.
 
@@ -189,7 +189,9 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
         # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
-        score_avg_window = 10 # use the same average window as logging for score delta
+        # score_avg_window = 10 # use the same average window as logging for score delta
+        score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
+        min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
 
         score_delta = np.mean(logger.epi_rewards[logger.keys[self.current_learnable_model_idx]][-score_avg_window:])\
              - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
