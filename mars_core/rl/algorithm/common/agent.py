@@ -131,7 +131,7 @@ class MultiAgent(Agent):
                 # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
                 self.mergeAllSamplesInOne = True                
 
-        if self.args.marl_method == 'nash' and self.args.exploit:
+        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter'] and self.args.exploit:
             assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
 
     def _choose_greedy(self, )->List[bool]:
@@ -166,7 +166,7 @@ class MultiAgent(Agent):
         actions = []
         greedy_list = self._choose_greedy()
 
-        if self.args.marl_method == 'nash':
+        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter']: # gradually 'nash' should be removed
             if self.args.exploit:  # in exploitation mode, nash policy only control one agent
                 for i, (state, agent, greedy) in enumerate(zip(states, self.agents, greedy_list)):
                     if i == 0:  # the first agent must be the model to be exploited
@@ -220,7 +220,7 @@ class MultiAgent(Agent):
         :type samples: list
         """
         all_s = []
-        if self.args.marl_method == 'nash' and not self.args.exploit:
+        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter'] and not self.args.exploit:
             # 'states' (agents, envs, state_dim) -> (envs, agents, state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples

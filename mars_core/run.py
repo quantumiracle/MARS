@@ -20,14 +20,17 @@ parser_args = parser.parse_args()
 # yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_dqn'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_ppo'
 #yaml_file = 'confs/slimevolley_slimevolleyv0_fictitiousselfplay_dqn'
-yaml_file = 'confs/pettingzoo_boxingv1_fictitiousselfplay_dqn'
+# yaml_file = 'confs/pettingzoo_boxingv1_fictitiousselfplay_dqn'
+# yaml_file = 'confs/pettingzoo/combat_plane_v1/pettingzoo_combat_plane_v1_selfplay'
+yaml_file = 'confs/pettingzoo/space_war_v1/pettingzoo_space_war_v1_selfplay'
+
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
 if parser_args.test:
     args.test = True
     args.render = True
     args.load_model_full_path = '../model/pettingzoo_boxing_v1_fictitious_selfplay_DQN_20210921162239/9971'
-   
+# args.render = True
 ### Create env
 env = make_env(args)
 print(env)
