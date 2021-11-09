@@ -4,7 +4,7 @@
 import os
 import yaml, copy
 
-two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', 'space_war_v1', 'pong_v1']
+two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', 'space_war_v1', 'pong_v1', 'boxing_v1']
 methods = ['selfplay', 'fictitious_selfplay',  'nfsp', 'nash_dqn', 'nash_dqn_exploiter', 'nxdo', 'nxdo2']
 game_type = 'pettingzoo'
 
@@ -20,7 +20,7 @@ def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:
         self_play_method_marl_specs_ = copy.deepcopy(self_play_method_marl_specs)
         self_play_method_marl_specs_['selfplay_score_delta'] = selfplay_score_deltas[env]
-        marl_spec = self_play_method_marl_specs
+        marl_spec = self_play_method_marl_specs_
 
     elif method == 'nfsp':
         marl_spec =  {
@@ -38,9 +38,10 @@ selfplay_score_deltas = { # specific for each environment
     'boxing_v1': 60,
     'combat_plane_v1': 10,
     'combat_tank_v1': 10,
-    'space_war_v1': 60,
-    'pong_v1': 60,
+    'space_war_v1': 10,
+    'pong_v1': 20,
 }
+
 
 # creat folders for holding confs
 for game in two_player_zero_sum_games:
@@ -58,10 +59,14 @@ for game in two_player_zero_sum_games:
         conf['env_args']['env_name'] = game
         conf['train_args']['marl_method'] = method
         conf['train_args']['marl_spec'] = get_method_env_marl_spec(method, game)
-        if method == 'nash_dqn':
-            conf['agent_args']['algorithm'] = 'NashDQN'
-        elif method == 'nash_dqn_exploiter':
-            conf['agent_args']['algorithm'] = 'NashDQNExploiter'
+
+        if method in ['nash_dqn', 'nash_dqn_exploiter']:
+            conf['train_args']['update_itr'] = 0.1
+            if method == 'nash_dqn':
+                conf['agent_args']['algorithm'] = 'NashDQN'
+            elif method == 'nash_dqn_exploiter':
+                conf['agent_args']['algorithm'] = 'NashDQNExploiter'
+
         output_path = f"confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
             yaml.dump(conf, outfile, default_flow_style=False, sort_keys=False)

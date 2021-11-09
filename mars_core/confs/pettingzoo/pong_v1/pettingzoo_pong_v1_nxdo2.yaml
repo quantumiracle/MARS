@@ -16,7 +16,7 @@ agent_args:
     eps_final: 0.01
     eps_decay: 30000
 train_args:
-  batch_size: 32
+  batch_size: 128
   max_episodes: 30000
   max_steps_per_episode: 10000
   train_start_frame: 0
@@ -26,8 +26,16 @@ train_args:
   update_itr: 1
   log_avg_window: 20
   log_interval: 20
+  net_architecture:
+    hidden_dim_list:
+    - 64
+    - 64
+    - 64
+    - 64
+    hidden_activation: ReLU
+    output_activation: false
   marl_method: nxdo2
   marl_spec:
-    selfplay_score_delta: 60
+    selfplay_score_delta: 20
     trainable_agent_idx: 0
     opponent_idx: 1
