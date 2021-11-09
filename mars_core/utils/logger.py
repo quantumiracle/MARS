@@ -118,7 +118,7 @@ class Logger(TestLogger):
         :param args: arguments
         :type args: dict
         """
-        post_fix = f"{args.env_type}_{args.env_name.replace('_', '', 1)}_{args.marl_method}_{args.algorithm.lower()}/"
+        post_fix = f"{args.env_type}_{args.env_name}_{args.marl_method}/"
 
         self.log_dir = f'../{args.save_path}/data/log/{self.save_id}/' + post_fix
         self.runs_dir = f'../{args.save_path}/data/tensorboard/{self.save_id}/' + post_fix
