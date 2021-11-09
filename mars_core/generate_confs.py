@@ -66,6 +66,7 @@ for game in two_player_zero_sum_games:
                 conf['agent_args']['algorithm'] = 'NashDQN'
             elif method == 'nash_dqn_exploiter':
                 conf['agent_args']['algorithm'] = 'NashDQNExploiter'
+                conf['agent_args']['algorithm_spec']['exploiter_update_itr'] = 1
 
         output_path = f"confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
