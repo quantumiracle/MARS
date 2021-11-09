@@ -53,7 +53,7 @@ class SelfPlayMetaLearner():
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
         
         if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
 class FictitiousSelfPlayMetaLearner():
     """
@@ -104,7 +104,7 @@ class FictitiousSelfPlayMetaLearner():
 
             self.last_update_epi = logger.current_episode
 
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
         if len(self.saved_checkpoints) > 0:
