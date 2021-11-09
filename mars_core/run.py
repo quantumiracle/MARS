@@ -14,7 +14,7 @@ parser_args = parser.parse_args()
 
 ### Load configurations
 # yaml_file = 'confs/pettingzoo_pongv1_selfplay_dqn'
-yaml_file = 'confs/pettingzoo_boxingv1_selfplay_dqn' 
+# yaml_file = 'confs/pettingzoo_boxingv1_selfplay_dqn' 
 # yaml_file = 'confs/pettingzoo_surroundv1_selfplay_dqn' 
 # yaml_file = 'confs/pettingzoo_boxingv1_selfplay_ppo'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_dqn'
