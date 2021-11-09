@@ -35,7 +35,7 @@ def launch_rollout(env, method, save_id):
         model = MultiAgent(env, [model1, model2], args)
 
     ### Rollout
-    rollout(env, model, save_id, args)
+    rollout(env, model, args, save_id)
 
 if __name__ == '__main__':
     parser.add_argument('--env', type=str, default=None, help='environment')
