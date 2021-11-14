@@ -55,7 +55,7 @@ class NXDOMetaLearner():
             logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
             self.last_update_epi = logger.current_episode
 
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
             ### update the opponent with epsilon meta Nash policy
             # evaluate the N*N utility matrix, N is the number of currently saved models
