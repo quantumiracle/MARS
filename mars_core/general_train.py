@@ -22,7 +22,6 @@ def launch_rollout(env, method, save_id):
     ### Specify models for each agent     
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
-    # model1.fix()  # fix a model if you don't want it to learn
 
     if method in ['nxdo', 'nxdo2']:
         eval_env = make_env(args)
