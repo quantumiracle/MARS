@@ -63,7 +63,7 @@ class MDPWrapper():
 
     def NEsolver(self,):
         try: 
-            self.Nash_v, self.Nash_strategies = self.env.NEsolver()
+            self.Nash_v, self.Nash_q, self.Nash_strategies = self.env.NEsolver()
             # print(self.Nash_strategies)
         except:
             pass
