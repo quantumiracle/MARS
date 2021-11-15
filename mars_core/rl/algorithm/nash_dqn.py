@@ -38,6 +38,7 @@ class Debugger():
         self.max_transition = env.max_transition
         self.kl_dist_list=[[] for _ in range(self.max_transition)]
         self.mse_v_list=[[] for _ in range(self.max_transition)]
+        self.mse_exp_list=[[] for _ in range(self.max_transition)]
         self.cnt = 0
         self.save_interval = 10
         self.logging = {'num_states_per_step': self.num_states_per_step,
@@ -45,15 +46,28 @@ class Debugger():
                         'cnt': [],
                         'state_visit': {},
                         'kl_nash_dist': [],
-                        'mse_nash_v': []
+                        'mse_nash_v': [],
+                        'mse_exploitability': []
                         }
         self.log_path = log_path 
         self.state_list = []
 
         self.oracle_nash_strategies = np.vstack(self.env.Nash_strategies) # flatten to shape dim 1
         self.oracle_nash_values = np.concatenate(self.env.Nash_v) # flatten to shape dim 1
+        self.oracle_nash_q_values = np.concatenate(self.env.Nash_q) # flatten to shape dim 1
 
     def compare_with_oracle(self, state, dists, ne_vs, verbose=False):
+        """[summary]
+
+        :param state: current state
+        :type state: [type]
+        :param dists: predicted Nash strategies (distributions)
+        :type dists: [type]
+        :param ne_vs: predicted Nash equilibrium values based on predicted Nash strategies
+        :type ne_vs: [type]
+        :param verbose: [description], defaults to False
+        :type verbose: bool, optional
+        """
         self.cnt+=1
         if self.env.OneHotObs:
             state_ = state[0].cpu().numpy()
@@ -65,12 +79,16 @@ class Debugger():
             if id_state >= j*self.num_states_per_step and id_state < (j+1)*self.num_states_per_step:  # determine which timestep is current state
                 ne_strategy = self.oracle_nash_strategies[id_state]
                 ne_v = self.oracle_nash_values[id_state]
+                ne_q = self.oracle_nash_q_values[id_state]
                 oracle_first_player_ne_strategy = ne_strategy[0]
                 nash_dqn_first_player_ne_strategy = dists[0][0]
+                br_v = np.min(nash_dqn_first_player_ne_strategy@ne_q)  # best response value (value against best response), reflects exploitability of learned Nash 
                 kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                 self.kl_dist_list[j].append(kl_dist)
                 mse_v = float((ne_v - ne_vs)**2) # squared error of Nash values (predicted and oracle)
                 self.mse_v_list[j].append(mse_v)
+                mse_exp = float((ne_v - br_v)**2)  # the target value of best response value (exploitability) should be the Nash value
+                self.mse_exp_list[j].append(mse_exp)
 
         self.state_visit(id_state)
 
@@ -94,6 +112,7 @@ class Debugger():
         self.logging['state_visit'] = state_stat
         self.logging['kl_nash_dist'] = self.kl_dist_list
         self.logging['mse_nash_v'] = self.mse_v_list
+        self.logging['mse_exploitability'] = self.mse_exp_list
 
     def dump_log(self,):
         with open(self.log_path, "wb") as f:
