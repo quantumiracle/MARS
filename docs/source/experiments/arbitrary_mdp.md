@@ -11,11 +11,13 @@ The test is on an arbitrary 2-agent MDP environment with 3 transitions, 3 states
 Nash DQN:
 
 <p float="left">
-<img src="img/arbitrary_mdp/nash_dqn_test.png" alt="drawing" width=700/>
+<img src="img/arbitrary_mdp/nash_dqn_test2.png" alt="drawing" width=700/>
 </p>
+
 
 Nash DQN Exploiter:
 
 <p float="left">
-<img src="img/arbitrary_mdp/nash_dqn_exploiter_test.png" alt="drawing" width=700/>
+<img src="img/arbitrary_mdp/nash_dqn_exploiter_test2.png" alt="drawing" width=700/>
 </p>
+

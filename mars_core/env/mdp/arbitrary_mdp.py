@@ -164,27 +164,44 @@ class ArbitraryMDP():
         return one_hot_vec
 
     def NEsolver(self,):
+        """
+        Formulas for calculating Nash equilibrium strategies and values:
+        1. Nash strategies: (\pi_a^*, \pi_b^*) = \min \max Q(s,a,b), 
+            where Q(s,a,b) = r(s,a,b) + \gamma \min \max Q(s',a',b') (this is the definition of Nash Q-value);
+        2. Nash value: Nash V(s) = \min \max Q(s,a,b) = \pi_a^* Q(s,a,b) \pi_b^{*T}
+        """
         self.Nash_v = []
+        self.Nash_q = []
         self.Nash_strategies = []
         for tm, rm in zip(self.trans_prob_matrices[::-1], self.reward_matrices[::-1]): # inverse enumerate 
             if len(self.Nash_v) > 0:
                 rm = np.array(rm)+np.array(self.Nash_v[-1])  # broadcast sum on rm's last dim, last one in Nash_v is for the next state
-            trm = np.einsum("ijk,ijk->ij", tm, rm)  # transition prob * reward for the last dimension in (state, action, next_state)
-            trm = trm.reshape(-1, self.num_actions, self.num_actions) # action list to matrix
+            nash_q_values = np.einsum("ijk,ijk->ij", tm, rm)  # transition prob * reward for the last dimension in (state, action, next_state)
+            nash_q_values = nash_q_values.reshape(-1, self.num_actions, self.num_actions) # action list to matrix
+            self.Nash_q.append(nash_q_values)
             ne_values = []
             ne_strategies = []
-            for s_payoff in trm:
-                ne = NashEquilibriumECOSSolver(s_payoff)
+            for nash_q_value in nash_q_values:
+                ne = NashEquilibriumECOSSolver(nash_q_value)
                 ne_strategies.append(ne)
-                ne_value = ne[0]@s_payoff@ne[1].T
+                ne_value = ne[0]@nash_q_value@ne[1].T
                 ne_values.append(ne_value)  # each value is a Nash equilibrium value on one state
             self.Nash_v.append(ne_values)  # (trans, state)
             self.Nash_strategies.append(ne_strategies)
         self.Nash_v = self.Nash_v[::-1]
+        self.Nash_q = self.Nash_q[::-1]
         self.Nash_strategies = self.Nash_strategies[::-1]
         print('Nash values of all states (from start to end): ', self.Nash_v)
+        print('Nash Q-values of all states (from start to end): ', self.Nash_q)
         print('Nash strategies of all states (from start to end): ', self.Nash_strategies)
-        return self.Nash_v, self.Nash_strategies
+
+        ## To evaluate the correctness of the above values
+        # for v, q, s in zip(self.Nash_v, self.Nash_q, self.Nash_strategies):
+        #     for vv,qq,ss in zip(v,q,s):
+        #         cal_v = ss[0]@qq@ss[1].T
+        #         print(vv, cal_v)
+
+        return self.Nash_v, self.Nash_q, self.Nash_strategies
 
     def action_map(self, action):
         """Action map from one player to two player.
