@@ -63,12 +63,12 @@ class NXDOMetaLearner():
             if len(self.saved_checkpoints) == 1:
                 model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+self.saved_checkpoints[-1])
             elif len(self.saved_checkpoints) > 1:
-                agents = model.Kwargs['eval_models']
+                eval_agents = model.Kwargs['eval_models']  # these agents are evaluation models (for evaluation purpose only)
                 env = model.Kwargs['eval_env']
-                agents[0].load_model(self.model_path+self.saved_checkpoints[-1]) # current model
+                eval_agents[0].load_model(self.model_path+self.saved_checkpoints[-1]) # current model
                 for previous_model_id in self.saved_checkpoints[:-1]:
-                    agents[1].load_model(self.model_path+previous_model_id)
-                    added_row.append(self.evaluate(env, agents, args)[0])
+                    eval_agents[1].load_model(self.model_path+previous_model_id)
+                    added_row.append(self.evaluate(env, eval_agents, args)[0])
                 # print('row: ', added_row)
                 self.update_matrix(np.array(added_row)) # add new evaluation results to matrix
                 # print('matrix: ', self.evaluation_matrix)
@@ -140,6 +140,11 @@ class NXDOMetaLearner():
 
 class NXDO2SideMetaLearner(NXDOMetaLearner):
     """
+    This is a two-side version, which means the
+    agents on both sides of the game will maintain 
+    a policy sets for each of them. The update of 
+    two sides follows an iterative manner.
+
     Meta learn is the  for MARL meta strategy, 
     which assigns the policy update schedule on a level higher
     than policy update itself in standard RL.
@@ -199,22 +204,23 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
              and logger.current_episode - self.last_update_epi > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                model.agents[self.current_learnable_model_idx].save_model(self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+str(logger.current_episode)) # save all checkpoints
+                save_path = self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+str(logger.current_episode)
+                model.agents[self.current_learnable_model_idx].save_model(save_path) # save all checkpoints
                 self.saved_checkpoints[self.current_learnable_model_idx].append(str(logger.current_episode))
 
-            logger.additional_logs.append(f'Score delta: {score_delta}, udpate {logger.keys[self.current_learnable_model_idx]}.')
+            logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
             self.last_update_epi = logger.current_episode
 
             ### update the opponent with epsilon meta Nash policy
             # evaluate the N*N utility matrix, N is the number of currently saved models
             added_row = []
             if len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 1:
-                agents = model.Kwargs['eval_models']
+                eval_agents = model.Kwargs['eval_models']  # these agents are evaluation models (for evaluation purpose only)
                 env = model.Kwargs['eval_env']
-                agents[0].load_model(self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+self.saved_checkpoints[self.current_learnable_model_idx][-1]) # current model
+                eval_agents[0].load_model(self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+self.saved_checkpoints[self.current_learnable_model_idx][-1]) # load current model
                 for opponent_model_id in self.saved_checkpoints[self.current_fixed_opponent_idx]:
-                    agents[1].load_model(self.model_path+str(logger.keys[self.current_fixed_opponent_idx])+'_'+opponent_model_id)
-                    added_row.append(self.evaluate(env, agents, args)[0])  # reward for current learnable model
+                    eval_agents[1].load_model(self.model_path+str(logger.keys[self.current_fixed_opponent_idx])+'_'+opponent_model_id)
+                    added_row.append(self.evaluate(env, eval_agents, args)[0])  # reward for current learnable model
                 # print('row: ', added_row, self.current_learnable_model_idx)
                 self.update_matrix(self.current_learnable_model_idx, np.array(added_row)) # add new evaluation results to matrix
                 # print('matrix: ', self.evaluation_matrix)
