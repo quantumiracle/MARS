@@ -204,10 +204,11 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
              and logger.current_episode - self.last_update_epi > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                model.agents[self.current_learnable_model_idx].save_model(self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+str(logger.current_episode)) # save all checkpoints
+                save_path = self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+str(logger.current_episode)
+                model.agents[self.current_learnable_model_idx].save_model(save_path) # save all checkpoints
                 self.saved_checkpoints[self.current_learnable_model_idx].append(str(logger.current_episode))
 
-            logger.additional_logs.append(f'Score delta: {score_delta}, udpate {logger.keys[self.current_learnable_model_idx]}.')
+            logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
             self.last_update_epi = logger.current_episode
 
             ### update the opponent with epsilon meta Nash policy
