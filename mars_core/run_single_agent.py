@@ -5,8 +5,9 @@ from rl.algorithm import *
 
 ### Load configurations
 # yaml_file = 'confs/gym_pongramv0_dqn'
+yaml_file = 'confs/gym_boxingramv0_dqn'
 # yaml_file = 'confs/gym_cartpolev1_dqn'
-yaml_file = 'confs/gym_cartpolev1_ppo'
+# yaml_file = 'confs/gym_cartpolev1_ppo'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_dqn'
 # yaml_file = 'confs/slimevolley_slimevolleyv0_ppo'
 

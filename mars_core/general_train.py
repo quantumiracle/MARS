@@ -2,6 +2,7 @@ from utils.func import LoadYAML2Dict
 from env.import_env import make_env
 from rollout import rollout
 from rl.algorithm import *
+from utils.common import EvaluationModelMethods
 import argparse
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
@@ -22,9 +23,8 @@ def launch_rollout(env, method, save_id):
     ### Specify models for each agent     
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
-    # model1.fix()  # fix a model if you don't want it to learn
 
-    if method in ['nxdo', 'nxdo2']:
+    if method in EvaluationModelMethods:
         eval_env = make_env(args)
         eval_model1 = eval(args.algorithm)(env, args)
         eval_model2 = eval(args.algorithm)(env, args)
