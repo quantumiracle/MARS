@@ -101,10 +101,10 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
              and logger.current_episode - self.last_update_epi > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                save_path = self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+'1'
+                save_path = self.model_path+'1'+'_'+str(self.current_learnable_model_idx)
                 model.agents[self.current_learnable_model_idx].save_model(save_path)  # save only the latest checkpoint
-                # model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+'1')
-            logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
+                model.agents[self.current_fixed_opponent_idx].load_model(save_path)
+            logger.additional_logs.append(f'Score delta: {score_delta}, update the opponent.')
 
             self.last_update_epi = logger.current_episode
             
@@ -235,7 +235,7 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
              and logger.current_episode - self.last_update_epi > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                save_path = self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+str(logger.current_episode)
+                save_path = self.model_path+str(logger.current_episode)+'_'+str(self.current_learnable_model_idx)
                 model.agents[self.current_learnable_model_idx].save_model(save_path) # save all checkpoints
                 self.saved_checkpoints[self.current_learnable_model_idx].append(str(logger.current_episode))
                 logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
@@ -249,7 +249,7 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
         avg_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
         if len(avg_policy_checkpoints) > 0:  # the policy set has one or more policies to sample from
             random_checkpoint = np.random.choice(avg_policy_checkpoints)
-            model.agents[self.current_fixed_opponent_idx].load_model(self.model_path+random_checkpoint)
+            model.agents[self.current_fixed_opponent_idx].load_model(self.model_path+random_checkpoint+'_'+str(self.current_fixed_opponent_idx))
             # logger.additional_logs.append(f'Load the random opponent model from {self.model_path+random_checkpoint}.')
 
         if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:

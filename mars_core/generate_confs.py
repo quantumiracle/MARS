@@ -42,6 +42,17 @@ selfplay_score_deltas = { # specific for each environment
     'pong_v1': 20,
 }
 
+train_start_frame = {  # for NFSP method only
+    'slimevolley': 1000,
+    'boxing_v1': 10000,
+    'surround_v1': 10000,
+    'combat_plane_v1': 10000,
+    'combat_tank_v1': 10000,
+    'space_war_v1': 10000,
+    'pong_v1': 10000,
+}
+
+
 
 # creat folders for holding confs
 for game in two_player_zero_sum_games:
@@ -60,6 +71,7 @@ for game in two_player_zero_sum_games:
         conf['train_args']['marl_method'] = method
         conf['train_args']['marl_spec'] = get_method_env_marl_spec(method, game)
 
+        # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter']:
             conf['train_args']['update_itr'] = 0.1
             if method == 'nash_dqn':
@@ -67,6 +79,9 @@ for game in two_player_zero_sum_games:
             elif method == 'nash_dqn_exploiter':
                 conf['agent_args']['algorithm'] = 'NashDQNExploiter'
                 conf['agent_args']['algorithm_spec']['exploiter_update_itr'] = 1
+
+        elif method == 'nfsp':
+            conf['train_args']['train_start_frame'] = train_start_frame[game]
 
         output_path = f"confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
