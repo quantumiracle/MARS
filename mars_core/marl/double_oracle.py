@@ -204,7 +204,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
              and logger.current_episode - self.last_update_epi > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                save_path = self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+str(logger.current_episode)
+                save_path = self.model_path+str(logger.current_episode)+'_'+str(self.current_learnable_model_idx)
                 model.agents[self.current_learnable_model_idx].save_model(save_path) # save all checkpoints
                 self.saved_checkpoints[self.current_learnable_model_idx].append(str(logger.current_episode))
 
@@ -217,9 +217,9 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
             if len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 1:
                 eval_agents = model.Kwargs['eval_models']  # these agents are evaluation models (for evaluation purpose only)
                 env = model.Kwargs['eval_env']
-                eval_agents[0].load_model(self.model_path+str(logger.keys[self.current_learnable_model_idx])+'_'+self.saved_checkpoints[self.current_learnable_model_idx][-1]) # load current model
+                eval_agents[0].load_model(self.model_path+self.saved_checkpoints[self.current_learnable_model_idx][-1]+'_'+str(self.current_learnable_model_idx)) # load current model
                 for opponent_model_id in self.saved_checkpoints[self.current_fixed_opponent_idx]:
-                    eval_agents[1].load_model(self.model_path+str(logger.keys[self.current_fixed_opponent_idx])+'_'+opponent_model_id)
+                    eval_agents[1].load_model(self.model_path+opponent_model_id+'_'+str(self.current_fixed_opponent_idx))
                     added_row.append(self.evaluate(env, eval_agents, args)[0])  # reward for current learnable model
                 # print('row: ', added_row, self.current_learnable_model_idx)
                 self.update_matrix(self.current_learnable_model_idx, np.array(added_row)) # add new evaluation results to matrix
@@ -238,10 +238,10 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
 
         # sample from Nash meta policy in a episode-wise manner
         if len(self.saved_checkpoints[self.current_fixed_opponent_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4 and self.nash_meta_strategy is not None:
-            sample_hist = np.random.multinomial(1, self.nash_meta_strategy)
+            sample_hist = np.random.multinomial(1, self.nash_meta_strategy)  # meta nash policy is a distribution over the policy set, sample one policy from it according to meta nash for each episode
             policy_idx = np.squeeze(np.where(sample_hist>0))
             # print('points: ', self.saved_checkpoints, policy_idx)
-            model.agents[self.current_fixed_opponent_idx].load_model(self.model_path+str(logger.keys[self.current_fixed_opponent_idx])+'_'+self.saved_checkpoints[self.current_fixed_opponent_idx][policy_idx])
+            model.agents[self.current_fixed_opponent_idx].load_model(self.model_path+self.saved_checkpoints[self.current_fixed_opponent_idx][policy_idx]+'_'+str(self.current_fixed_opponent_idx))
 
     def update_matrix(self, idx, row):
         """

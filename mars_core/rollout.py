@@ -129,7 +129,9 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
 
         if epi % args.log_interval == 0:
             logger.print_and_save()
-        if epi % args.save_interval == 0 and not args.marl_method in ['selfplay', 'fictitious_selfplay', 'nxdo'] and logger.model_dir is not None:
+        if epi % args.save_interval == 0 \
+        and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
+        and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{epi}')
 
 ### Genetic algorithm uses a different way of rollout. ###
