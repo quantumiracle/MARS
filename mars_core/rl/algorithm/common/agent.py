@@ -170,7 +170,10 @@ class MultiAgent(Agent):
             if self.args.exploit:  # in exploitation mode, nash policy only control one agent
                 for i, (state, agent, greedy) in enumerate(zip(states, self.agents, greedy_list)):
                     if i == 0:  # the first agent must be the model to be exploited
-                        nash_actions = self.agents[i].choose_action(states, Greedy=greedy)  # nash_actions contain all agents
+                        if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
+                            nash_actions = self.agents[i].choose_action(states, Greedy=greedy)  # nash_actions contain all agents
+                        else:  # only use the observation from the first agent
+                            nash_actions = self.agents[i].choose_action(state, Greedy=greedy) 
                         actions.append(nash_actions[i])
                     else:
                         action = agent.choose_action(state, Greedy=greedy)
@@ -178,7 +181,10 @@ class MultiAgent(Agent):
             else:
                 # in training/testing mode, one model for all agents, the model is the first one
                 # of self.agents, it directly takes states to generate actions
-                actions = self.agents[0].choose_action(states, Greedy=greedy_list[0])
+                if self.args.marl_spec['global_state']:
+                    actions = self.agents[0].choose_action(states, Greedy=greedy_list[0])
+                else:
+                    actions = self.agents[0].choose_action(states[0], Greedy=greedy_list[0])
         else:
             # each agent will take its corresponding state to generate
             # the corresponding action
@@ -227,9 +233,16 @@ class MultiAgent(Agent):
             try:  # Used when num_envs > 1. 
                 ## TODO Here the samples with done as True are filtered out for Nash algorithms!!
                 # samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
-                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
+                if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
+                    samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
+                else:  # only use the observation from the first agent (assume the symmetry in the game and the single state contains the full information: speed up learning!)
+                    samples = [[states[0, j], actions[:, j].reshape(-1), rewards[0, j], next_states[0, j], np.any(d)] for j, d in enumerate(np.array(dones).T)]
             except:  # when num_envs = 1 
-                samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]
+                if self.args.marl_spec['global_state']: 
+                    samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]
+                else:
+                    samples = [[np.array(states[0]), actions, rewards[0], np.array(next_states[0]), np.all(dones)]]
+
             # one model for all agents, the model is the first one
             # of self.agents, it directly stores the sample constaining all
             for agent in self.agents: # actually only one agent in list

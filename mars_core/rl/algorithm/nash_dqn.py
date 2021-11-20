@@ -125,7 +125,7 @@ class NashDQN(DQN):
     def __init__(self, env, args):
         super().__init__(env, args)
         self.num_envs = args.num_envs
-        self.model = NashDQNBase(env, args.net_architecture, args.num_envs).to(self.device)
+        self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
         try:
@@ -306,14 +306,20 @@ class NashDQNBase(DQNBase):
     ---------
     env         environment(openai gym)
     """
-    def __init__(self, env, net_args, number_envs=2):
+    def __init__(self, env, net_args, number_envs=2, two_side_obs=True):
         super().__init__(env, net_args)
         self.number_envs = number_envs
         try:
-            self._observation_shape = tuple(map(operator.add, env.observation_space.shape, env.observation_space.shape)) # double the shape
+            if two_side_obs:
+                self._observation_shape = tuple(map(operator.add, env.observation_space.shape, env.observation_space.shape)) # double the shape
+            else:
+                self._observation_shape = env.observation_space.shape
             self._action_shape = (env.action_space.n)**2
         except:
-            self._observation_shape = tuple(map(operator.add, env.observation_space[0].shape, env.observation_space[0].shape)) # double the shape
+            if two_side_obs:
+                self._observation_shape = tuple(map(operator.add, env.observation_space[0].shape, env.observation_space[0].shape)) # double the shape
+            else:
+                self._observation_shape = env.observation_space[0].shape
             self._action_shape = (env.action_space[0].n)**2
         self._construct_net(env, net_args)
 

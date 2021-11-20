@@ -74,6 +74,7 @@ for game in two_player_zero_sum_games:
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter']:
             conf['train_args']['update_itr'] = 0.1
+            conf['train_args']['marl_spec']['global_state'] = False
             if method == 'nash_dqn':
                 conf['agent_args']['algorithm'] = 'NashDQN'
             elif method == 'nash_dqn_exploiter':
