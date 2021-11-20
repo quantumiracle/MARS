@@ -1,0 +1,27 @@
+pygame 1.9.6
+Hello from the pygame community. https://www.pygame.org/contribute.html
+space_war_v1 pettingzoo
+Load space_war_v1 environment in type pettingzoo.
+Env observation space: Box([0. 0. 0. ... 0. 0. 0.], [1. 1. 1. ... 1. 1. 1.], (128,), float32) action space: Discrete(18)
+random seed: 3
+<env.wrappers.mars_wrappers.Dict2TupleWrapper object at 0x7fe69f0abbe0>
+Traceback (most recent call last):
+  File "run.py", line 39, in <module>
+    model1 = eval(args.algorithm)(env, args)
+  File "/home/quantumiracle/research/MARS/mars_core/rl/algorithm/dqn.py", line 19, in __init__
+    self.model = self._select_type(env, args).to(self.device)
+  File "/home/quantumiracle/anaconda3/envs/res/lib/python3.6/site-packages/torch/nn/modules/module.py", line 865, in to
+    return self._apply(convert)
+  File "/home/quantumiracle/anaconda3/envs/res/lib/python3.6/site-packages/torch/nn/modules/module.py", line 536, in _apply
+    module._apply(fn)
+  File "/home/quantumiracle/anaconda3/envs/res/lib/python3.6/site-packages/torch/nn/modules/module.py", line 536, in _apply
+    module._apply(fn)
+  File "/home/quantumiracle/anaconda3/envs/res/lib/python3.6/site-packages/torch/nn/modules/module.py", line 536, in _apply
+    module._apply(fn)
+  File "/home/quantumiracle/anaconda3/envs/res/lib/python3.6/site-packages/torch/nn/modules/module.py", line 559, in _apply
+    param_applied = fn(param)
+  File "/home/quantumiracle/anaconda3/envs/res/lib/python3.6/site-packages/torch/nn/modules/module.py", line 863, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+  File "/home/quantumiracle/anaconda3/envs/res/lib/python3.6/site-packages/torch/cuda/__init__.py", line 204, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available
