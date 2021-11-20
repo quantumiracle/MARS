@@ -5,7 +5,7 @@ import os
 import yaml, copy
 
 two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', 'space_war_v1', 'pong_v1', 'boxing_v1']
-methods = ['selfplay', 'fictitious_selfplay',  'nfsp', 'nash_dqn', 'nash_dqn_exploiter', 'nxdo', 'nxdo2']
+methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', 'nxdo', 'nxdo2']
 game_type = 'pettingzoo'
 
 self_play_method_marl_specs = {
@@ -14,7 +14,7 @@ self_play_method_marl_specs = {
         'opponent_idx': 1   
         }
 
-selfplay_based_methods = {'selfplay', 'fictitious_selfplay', 'nxdo', 'nxdo2'}
+selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'}
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:
