@@ -174,8 +174,12 @@ class PPODiscrete(Agent):
         for data in self.data: # iterate over data from different environments
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
             
+            # need to prcess the samples, separate for agents
+
+
             for _ in range(self.K_epoch):
-                # Update each agent 
+                # loss for each agent in standard PPO
+                ratio_list = []  # record the policy ratio for each agent
                 for i in range(2):
                     vs = self.v(s, i)
 
@@ -201,16 +205,18 @@ class PPODiscrete(Agent):
                     # pi_a = pi.gather(1,a)
                     # ratio = torch.exp(torch.log(pi_a) - torch.log(prob_a))  # a/b == exp(log(a)-log(b))
                     ratio = torch.exp(logprob - oldlogprob)
+                    ratio_list.append(ratio)
                     surr1 = ratio * advantage
                     surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
                     loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
                 
-                    # Update common layers
+                    # loss for common layers (value function)
                     vs_prime = self.common_layers(s_prime).squeeze(dim=-1)
                     vs_target = r + self.gamma * vs_prime * done_mask
                     vs = self.common_layers(s)
                     loss = F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach())
 
+                # nash loss for two agents policies, using the nash value
                 vs = self.common_layers(s)
                 vs_prime = self.common_layers(s_prime).squeeze(dim=-1)
                 assert vs_prime.shape == done_mask.shape
@@ -225,10 +231,12 @@ class PPODiscrete(Agent):
                 advantage_lst.reverse()
                 advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
                 advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
-                surr1 = ratio1 * ratio2 * advantage
-                surr2 = torch.clamp(ratio1*ratio2, 1-self.eps_clip, 1+self.eps_clip)
+                surr1 = ratio_list[0] * ratio_list[1] * advantage
+                surr2 = torch.clamp(ratio_list[0] * ratio_list[1], 1-self.eps_clip, 1+self.eps_clip)
                 policy_loss1 = -torch.min(surr1, surr2)
                 policy_loss2 = torch.min(surr1, surr2)
+
+                # sum all the loss and backpropagate
 
                 self.optimizer.zero_grad()
                 mean_loss = loss.mean()
