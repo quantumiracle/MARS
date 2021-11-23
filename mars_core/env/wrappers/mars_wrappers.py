@@ -346,6 +346,10 @@ class Dict2TupleWrapper():
             self.agents = env.agents
         except:
             self.agents = env.unwrapped.agents
+    
+    @property
+    def unwrapped(self,):
+        return self.env
 
     @property
     def spec(self):
