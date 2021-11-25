@@ -5,7 +5,7 @@
 *If life exists on Mars, shall we human cooperate or compete with it?* 
 
 ## Status
-Not released yet.
+WIP. Not released yet.
 
 ## Usage Instruction
 For usage instruction document, see [here](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html). 
