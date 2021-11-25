@@ -227,7 +227,7 @@ class PPODiscrete(Agent):
                 mean_loss.backward()
                 self.optimizer.step()
 
-            total_loss += mean_loss.item()
+                total_loss += mean_loss.item()
 
         self.data = [[] for _ in range(self._num_channel)]
 
