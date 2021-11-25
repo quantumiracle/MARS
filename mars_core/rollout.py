@@ -47,25 +47,26 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             if overall_steps % 100 == 0: # do not need to do this for every step
                 model.scheduler_step(overall_steps)
 
-            if isinstance(
-                    action_[0], tuple
-            ):  # action item contains additional information like log probability
+            if isinstance(action_, tuple) or isinstance(action_[0], tuple):  # action item contains additional information like log probability
                 action_to_store, other_info = [], []
-                for (a, info) in action_:
-                    action_to_store.append(a)
-                    other_info.append(info)
+                if isinstance(action_[0], tuple): # PPO
+                    for (a, info) in action_:  
+                        action_to_store.append(a)
+                        other_info.append(info)
+                else:  # Nash PPO
+                    (a, info) = action_
+                    action_to_store = a
+                    other_info = info
             else:
                 action_to_store = action_
                 other_info = None
 
             if args.num_envs > 1:
-                action = np.array(action_to_store).swapaxes(
-                    0, 1
-                )  # transform from (agents, envs, dim) to (envs, agents, dim)
+                action = np.array(action_to_store).swapaxes(0, 1)  # transform from (agents, envs, dim) to (envs, agents, dim)
             else:
                 action = action_to_store
-            obs_, reward, done, info = env.step(
-                action)  # requires action: (envs, agents, dim)
+
+            obs_, reward, done, info = env.step(action)  # requires action: (envs, agents, dim)
             # time.sleep(0.05)
             if args.render:
                 env.render()

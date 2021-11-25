@@ -131,7 +131,7 @@ class MultiAgent(Agent):
                 # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
                 self.mergeAllSamplesInOne = True                
 
-        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter'] and self.args.exploit:
+        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo'] and self.args.exploit:
             assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
 
     def _choose_greedy(self, )->List[bool]:
@@ -166,7 +166,7 @@ class MultiAgent(Agent):
         actions = []
         greedy_list = self._choose_greedy()
 
-        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter']: # gradually 'nash' should be removed
+        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo']: # gradually 'nash' should be removed
             if self.args.exploit:  # in exploitation mode, nash policy only control one agent
                 for i, (state, agent, greedy) in enumerate(zip(states, self.agents, greedy_list)):
                     if i == 0:  # the first agent must be the model to be exploited
@@ -242,6 +242,21 @@ class MultiAgent(Agent):
                     samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]
                 else:
                     samples = [[np.array(states[0]), actions, rewards[0], np.array(next_states[0]), np.all(dones)]]
+            
+        elif self.args.marl_method == 'nash_ppo' and not self.args.exploit:
+            [states, actions, rewards, next_states, logprobs, dones] = samples
+            try:  # Used when num_envs > 1. 
+                ## TODO Here the samples with done as True are filtered out for Nash algorithms!!
+                # samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
+                if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
+                    samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
+                else:  # only use the observation from the first agent (assume the symmetry in the game and the single state contains the full information: speed up learning!)
+                    samples = [[states[0, j], actions[:, j].reshape(-1), rewards[0, j], next_states[0, j], logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
+            except:  # when num_envs = 1 
+                if self.args.marl_spec['global_state']: 
+                    samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.array(logprobs).reshape(-1), np.all(dones)]]
+                else:
+                    samples = [[np.array(states[0]), actions, rewards[0], np.array(next_states[0]), logprobs, np.all(dones)]]
 
             # one model for all agents, the model is the first one
             # of self.agents, it directly stores the sample constaining all
