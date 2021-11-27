@@ -297,7 +297,7 @@ class NashPPO(Agent):
                 torch.save(v.state_dict(), path+f'_{i}_value')
             torch.save(self.common_layers.state_dict(), path+f'_common')
 
-    def load_model(self, path=None):
+    def load_model(self, path=None, eval=True):
         for i, (pi, v) in enumerate(zip(self.policies, self.values)):
             pi.load_state_dict(torch.load(path+f'_{i}_policy'))
             v.load_state_dict(torch.load(path+f'_{i}_value'))

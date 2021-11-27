@@ -147,7 +147,7 @@ class Atari2AgentWrapper():
         self.env.render()
 
     def step(self, actions):
-        assert len(actions) == 1
+        assert len(actions) >= 1
         action = actions[0]
         obs, reward, done, info = self.env.step(action)
         return [obs], [reward], [done], [info]
