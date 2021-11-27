@@ -27,7 +27,7 @@ def map_pettingzoo_to_gym(EnvNamePettingzoo):
 ### Load configurations
 game_type = 'pettingzoo'
 game = ['boxing_v1', 'surround_v1', 'combat_plane_v1'][0]
-method = ['selfplay', 'nash_dqn', 'nash_dqn_exploiter'][1]
+method = ['selfplay2', 'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nfsp', 'nxdo2'][1]
 
 args = get_general_args(game_type+'_'+game, method)
 print(args)
@@ -36,8 +36,8 @@ print(args)
 args.against_baseline = False
 args.test = True
 args.exploit = False
-# args.render = True
-folder = f'../data/model/20211109_1530/{game_type}_{game}_{method}/'
+args.render = True
+folder = f'../data/model/20211120_1257/{game_type}_{game}_{method}/'
 if method in SelfplayBasedMethods:
     file_path = get_latest_file_in_folder(folder)
 else:

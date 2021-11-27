@@ -69,6 +69,12 @@ class TestLogger():
     def log_loss(self, *args):
         pass
 
+    def add_extr_log(self, extr_log_name: str):
+        """ Create extra directionary for logging.
+        
+        """
+        self.extr_log_name = extr_log_name
+
     def print_and_save(self, *args):
         """ Print out information only since it usually does not require
         to save the logging in test mode. """
@@ -84,6 +90,10 @@ class TestLogger():
             for log in self.additional_logs:
                 print(log)
             self.additional_logs = []
+
+        # save extra data in another file
+        if len(self.extr_logs) > 0:
+            json.dump(self.extr_logs, open(self.log_dir + f"{self.extr_log_name}.json", 'w'))
 
 
 class Logger(TestLogger):
@@ -129,12 +139,6 @@ class Logger(TestLogger):
         os.makedirs(self.model_dir, exist_ok=True)
 
         return post_fix
-
-    def add_extr_log(self, extr_log_name: str):
-        """ Create extra directionary for logging.
-        
-        """
-        self.extr_log_name = extr_log_name
 
     def log_episode_reward(self, step: int) -> None:
         for k, v in self.rewards.items():
