@@ -4,8 +4,8 @@
 import os
 import yaml, copy
 
-two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', 'space_war_v1', 'pong_v1', 'boxing_v1']
-methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', 'nxdo', 'nxdo2']
+two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', 'space_war_v1', 'pong_v2', 'boxing_v1', 'tennis_v2']
+methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo', 'nxdo', 'nxdo2']
 game_type = 'pettingzoo'
 
 self_play_method_marl_specs = {
@@ -39,7 +39,8 @@ selfplay_score_deltas = { # specific for each environment
     'combat_plane_v1': 10,
     'combat_tank_v1': 10,
     'space_war_v1': 10,
-    'pong_v1': 20,
+    'pong_v2': 20,
+    'tennis_v2': 10,
 }
 
 train_start_frame = {  # for NFSP method only
@@ -49,9 +50,33 @@ train_start_frame = {  # for NFSP method only
     'combat_plane_v1': 10000,
     'combat_tank_v1': 10000,
     'space_war_v1': 10000,
-    'pong_v1': 10000,
+    'pong_v2': 10000,
+    'tennis_v2': 10000,
 }
 
+
+ppo_algorithm_spec = { # specs for PPO alg.
+    'episodic_update': True,  # as PPO is on-policy, it uses episodic update instead of update per timestep
+    'gamma': 0.99,
+    'lambda': 0.95,
+    'eps_clip': 0.2,
+    'K_epoch': 4,
+    'GAE': True,
+}
+
+ppo_net_architecture = {
+    'policy':{
+      'hidden_dim_list': [64, 64, 64, 64],
+      'hidden_activation': 'ReLU',
+      'output_activation': 'Softmax',
+    },
+    'value': {
+      'hidden_dim_list': [64, 64, 64, 64],
+      'hidden_activation': 'ReLU',
+      'output_activation': False,
+    }
+
+}
 
 
 # creat folders for holding confs
@@ -81,8 +106,17 @@ for game in two_player_zero_sum_games:
                 conf['agent_args']['algorithm'] = 'NashDQNExploiter'
                 conf['agent_args']['algorithm_spec']['exploiter_update_itr'] = 1
 
+        elif method == 'nash_ppo':
+            conf['train_args']['update_itr'] = 1
+            conf['train_args']['marl_spec']['global_state'] = True
+            conf['agent_args']['algorithm'] = 'NashPPO'
+            conf['agent_args']['algorithm_spec'] = ppo_algorithm_spec
+            conf['train_args']['net_architecture'] = ppo_net_architecture
+
         elif method == 'nfsp':
             conf['train_args']['train_start_frame'] = train_start_frame[game]
+
+        
 
         output_path = f"confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
