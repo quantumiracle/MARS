@@ -5,8 +5,7 @@ DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
 
 declare -a envs=('pettingzoo_boxing_v1' )  # ensure the env has Gym counterpart
-# declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
-declare -a methods=('selfplay2')
+declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
 
 mkdir -p log/$DATE
 LoadFrom='20211120_1257'
