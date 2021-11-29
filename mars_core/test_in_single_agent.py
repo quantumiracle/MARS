@@ -27,12 +27,13 @@ def map_pettingzoo_to_gym(EnvNamePettingzoo):
 ### Load configurations
 game_type = 'pettingzoo'
 game = ['boxing_v1', 'surround_v1', 'combat_plane_v1'][0]
-method = ['selfplay2', 'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nfsp', 'nxdo2'][1]
+method = ['selfplay2', 'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nfsp', 'nxdo2'][2]
 
 args = get_general_args(game_type+'_'+game, method)
 print(args)
 
 ## Change/specify some arguments if necessary
+args.max_episodes = 1000
 args.against_baseline = False
 args.test = True
 args.exploit = False
