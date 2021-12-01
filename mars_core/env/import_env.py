@@ -125,7 +125,7 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
             # normalize the observation of Atari for both image or RAM 
             env = supersuit.dtype_v0(env, 'float32') # need to transform uint8 to float first for normalizing observation: https://github.com/PettingZoo-Team/SuperSuit
             env = supersuit.normalize_obs_v0(env, env_min=0, env_max=1) # normalize the observation to (0,1)
-            
+
             # assign observation and action spaces
             env.observation_space = list(env.observation_spaces.values())[0]
             env.action_space = list(env.action_spaces.values())[0]
