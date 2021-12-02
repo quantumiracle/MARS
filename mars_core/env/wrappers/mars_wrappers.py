@@ -379,7 +379,18 @@ class Dict2TupleWrapper():
         else:
             info = list(infos.values())
         del obs,rewards, dones, infos
+        
+        r = self._zerosum_filter(r)
+
         return o, r, d, info
+
+    def _zerosum_filter(self, r):
+        ## zero-sum filter: 
+        # added for making non-zero sum game to be zero-sum, e.g. tennis_v2
+        if np.sum(r) != 0:
+            nonzero_idx = np.nonzero(r)[0][0]
+            r[1-nonzero_idx] = -r[nonzero_idx]
+        return r
 
     def seed(self, seed):
         self.env.seed(seed)
