@@ -4,7 +4,7 @@
 import os
 import yaml, copy
 
-two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', 'space_war_v1', 'pong_v2', 'boxing_v1', 'tennis_v2']
+two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', 'space_war_v1', 'pong_v2', 'boxing_v1', 'tennis_v2', 'ice_hockey_v1']
 methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo', 'nxdo', 'nxdo2']
 game_type = 'pettingzoo'
 
@@ -41,6 +41,7 @@ selfplay_score_deltas = { # specific for each environment
     'space_war_v1': 10,
     'pong_v2': 20,
     'tennis_v2': 10,
+    'ice_hockey_v1': 10,
 }
 
 train_start_frame = {  # for NFSP method only
@@ -52,6 +53,7 @@ train_start_frame = {  # for NFSP method only
     'space_war_v1': 10000,
     'pong_v2': 10000,
     'tennis_v2': 10000,
+    'ice_hockey_v1': 10000,
 }
 
 
