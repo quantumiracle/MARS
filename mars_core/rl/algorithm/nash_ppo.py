@@ -187,6 +187,8 @@ class NashPPO(Agent):
                     # use generalized advantage estimation
                     vs_prime = self.v(s_prime_[:, i, :], i).squeeze(dim=-1)
                     assert vs_prime.shape == done_mask.shape
+                    if i == 1:
+                        r = -r  # switch the reward for the second player
                     vs_target = r + self.gamma * vs_prime * done_mask  # TODO r-> r[i]
                     delta = vs_target - vs.squeeze(dim=-1)
                     delta = delta.detach()
