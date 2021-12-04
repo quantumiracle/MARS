@@ -10,6 +10,8 @@ from .common.networks import MLP, CNN, get_model
 from .common.agent import Agent
 from .common.rl_utils import choose_optimizer
 from utils.typing import List, Tuple, StateType, ActionType, SampleType, SingleEnvMultiAgentSampleType
+import operator
+import gym
 
 class NashPPO(Agent):
     """ Nash-PPO agorithm for environments with discrete action space.
@@ -29,19 +31,27 @@ class NashPPO(Agent):
             observation_space = env.observation_space
 
         self.policies, self.values = [], []
+        try:
+            merged_action_space_dim = env.action_space.n+env.action_space.n
+        except:
+            merged_action_space_dim = env.action_space[0].n+env.action_space[0].n
+        merged_action_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (merged_action_space_dim, ))
+
         if len(observation_space.shape) <= 1:
             for _ in range(2):
                 self.policies.append(MLP(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
                 self.values.append(MLP(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
 
-                self.common_layers = MLP(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+            # self.common_layers = MLP(env.observation_space, merged_action_space, args.net_architecture['value'], model_for='discrete_q').to(self.device)
+            self.common_layers = MLP(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         else:
             for _ in range(2):
                 self.policies.append(CNN(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
                 self.values.append(CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
 
-                self.common_layers = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)           
+            # self.common_layers = CNN(env.observation_space, merged_action_space, args.net_architecture['value'], model_for='discrete_q').to(self.device)
+            self.common_layers = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         policy_params, value_params = [], []
         for p, v in zip(self.policies, self.values):
@@ -179,6 +189,9 @@ class NashPPO(Agent):
             s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)
             losses = 0.
             common_layer_losses = 0.
+            s_ab = torch.cat((s_[:, 0, :], a), -1)  # concatenate (s,a,b)
+            s_prime_ab = torch.cat((s_prime_[:, 0, :], a), -1)  # concatenate (s',a,b)
+
             for _ in range(self.K_epoch):
                 # standard PPO
                 for i in range(2):  # for each agent
@@ -187,7 +200,7 @@ class NashPPO(Agent):
                     # use generalized advantage estimation (GAE)
                     vs_prime = self.v(s_prime_[:, i, :], i).squeeze(dim=-1)
                     assert vs_prime.shape == done_mask.shape
-                    vs_target = r + self.gamma * vs_prime * done_mask  # TODO r-> r[i]
+                    vs_target = r[:, i] + self.gamma * vs_prime * done_mask  
                     delta = vs_target - vs.squeeze(dim=-1)
                     delta = delta.detach()
                     advantage_lst = []
@@ -220,17 +233,24 @@ class NashPPO(Agent):
                     ppo_loss.backward()
                     self.optimizer.step()
 
-                    self.common_layer_optimizer.zero_grad()
-                    common_layer_loss.backward()
-                    self.common_layer_optimizer.step()
+                    total_loss += ppo_loss.item()
 
-                    total_loss += ppo_loss.item() + common_layer_loss.item()
+                # loss for common layers (value function)
+                vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1)  # TODO
+                vs_target = r[:, 0] + self.gamma * vs_prime * done_mask # r is the first player's here
+                vs = self.common_layers(s_[:, 0, :])  # TODO
+                common_layer_loss = F.mse_loss(vs.squeeze(dim=-1) , vs_target.detach()).mean()
+
+                self.common_layer_optimizer.zero_grad()
+                common_layer_loss.backward()
+                self.common_layer_optimizer.step()
+                total_loss += common_layer_loss.item()
 
                 # nash loss for two agents policies, using the nash value
                 vs = self.common_layers(s_[:, 0, :])  # TODO common layer may take a concatenation of states from two sides
                 vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1) # TODO
                 assert vs_prime.shape == done_mask.shape
-                vs_target = r + self.gamma * vs_prime * done_mask  # TODO r is player 1's here
+                vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
                 delta = vs_target - vs.squeeze(dim=-1)
                 delta = delta.detach()
                 advantage_lst = []
