@@ -80,6 +80,26 @@ ppo_net_architecture = {
 
 }
 
+times4_ppo_net_architecture = {
+    'policy':{
+      'hidden_dim_list': [256, 256, 256, 256],
+      'hidden_activation': 'ReLU',
+      'output_activation': 'Softmax',
+    },
+    'value': {
+      'hidden_dim_list': [256, 256, 256, 256],
+      'hidden_activation': 'ReLU',
+      'output_activation': False,
+    }
+
+}
+
+times4_net_architecture = {
+    'hidden_dim_list': [256, 256, 256, 256],
+    'hidden_activation': 'ReLU',
+    'output_activation': False,
+}
+
 
 # creat folders for holding confs
 for game in two_player_zero_sum_games:
@@ -118,7 +138,12 @@ for game in two_player_zero_sum_games:
         elif method == 'nfsp':
             conf['train_args']['train_start_frame'] = train_start_frame[game]
 
-        
+        # some game specific confs
+        if game == 'surround_v1':  # it requires a larger net
+            if method == 'nash_ppo':
+                conf['train_args']['net_architecture'] = times4_ppo_net_architecture
+            else:
+                conf['train_args']['net_architecture'] = times4_net_architecture
 
         output_path = f"confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
