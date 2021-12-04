@@ -223,12 +223,6 @@ class NashPPO(Agent):
                     ppo_loss = -torch.min(surr1, surr2) + F.mse_loss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy  # TODO vec + scalar + vec, is this valid?
                     ppo_loss = ppo_loss.mean()
 
-                    # loss for common layers (value function)
-                    vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
-                    vs_target = r + self.gamma * vs_prime * done_mask
-                    vs = self.common_layers(s_[:, 0, :])  # TODO
-                    common_layer_loss = F.mse_loss(vs.squeeze(dim=-1) , vs_target.detach()).mean()
-
                     self.optimizer.zero_grad()
                     ppo_loss.backward()
                     self.optimizer.step()
@@ -236,7 +230,7 @@ class NashPPO(Agent):
                     total_loss += ppo_loss.item()
 
                 # loss for common layers (value function)
-                vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1)  # TODO
+                vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
                 vs_target = r[:, 0] + self.gamma * vs_prime * done_mask # r is the first player's here
                 vs = self.common_layers(s_[:, 0, :])  # TODO
                 common_layer_loss = F.mse_loss(vs.squeeze(dim=-1) , vs_target.detach()).mean()
@@ -247,7 +241,7 @@ class NashPPO(Agent):
                 total_loss += common_layer_loss.item()
 
                 # nash loss for two agents policies, using the nash value
-                vs = self.common_layers(s_[:, 0, :])  # TODO common layer may take a concatenation of states from two sides
+                vs = self.common_layers(s_[:, 0, :])  # TODO just use the first state (assume it has full info)
                 vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1) # TODO
                 assert vs_prime.shape == done_mask.shape
                 vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
