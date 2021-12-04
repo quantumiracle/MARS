@@ -79,6 +79,7 @@ class DQN(Agent):
         if not isinstance(state, torch.Tensor):
             state = torch.Tensor(state).to(self.device)
         action = self.model.choose_action(state, epsilon)
+
         return action
 
     def store(self, sample: SampleType) -> None:

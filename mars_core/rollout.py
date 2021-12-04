@@ -38,12 +38,10 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
-            obs_to_store = obs.swapaxes(
-                0, 1
-            ) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
+            obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
             action_ = model.choose_action(
                 obs_to_store)  # action: (agent, env, action_dim)
-            
+
             if overall_steps % 100 == 0: # do not need to do this for every step
                 model.scheduler_step(overall_steps)
 
@@ -67,7 +65,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 action = action_to_store
 
             obs_, reward, done, info = env.step(action)  # requires action: (envs, agents, dim)
-            # print(reward)
+
             # time.sleep(0.05)
             if args.render:
                 env.render()
