@@ -187,8 +187,6 @@ class NashPPO(Agent):
             # need to prcess the samples, separate for agents
             s_ = s.view(s.shape[0], 2, -1)
             s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)
-            losses = 0.
-            common_layer_losses = 0.
             s_ab = torch.cat((s_[:, 0, :], a), -1)  # concatenate (s,a,b)
             s_prime_ab = torch.cat((s_prime_[:, 0, :], a), -1)  # concatenate (s',a,b)
 
@@ -230,21 +228,13 @@ class NashPPO(Agent):
                     total_loss += ppo_loss.item()
 
                 # loss for common layers (value function)
+                vs = self.common_layers(s_[:, 0, :])  # TODO just use the first state (assume it has full info)
                 vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
+                assert vs_prime.shape == done_mask.shape
                 vs_target = r[:, 0] + self.gamma * vs_prime * done_mask # r is the first player's here
-                vs = self.common_layers(s_[:, 0, :])  # TODO
                 common_layer_loss = F.mse_loss(vs.squeeze(dim=-1) , vs_target.detach()).mean()
 
-                self.common_layer_optimizer.zero_grad()
-                common_layer_loss.backward()
-                self.common_layer_optimizer.step()
-                total_loss += common_layer_loss.item()
-
-                # nash loss for two agents policies, using the nash value
-                vs = self.common_layers(s_[:, 0, :])  # TODO just use the first state (assume it has full info)
-                vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1) # TODO
-                assert vs_prime.shape == done_mask.shape
-                vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
+                # calculate advantage with common layer value
                 delta = vs_target - vs.squeeze(dim=-1)
                 delta = delta.detach()
                 advantage_lst = []
@@ -291,7 +281,11 @@ class NashPPO(Agent):
                 policy_loss2.backward()
                 self.optimizer.step()
 
-                loss = policy_loss1 + policy_loss2
+                self.common_layer_optimizer.zero_grad()
+                common_layer_loss.backward()
+                self.common_layer_optimizer.step()
+
+                loss = policy_loss1 + policy_loss2 + common_layer_loss
 
                 total_loss += loss.item()
 
