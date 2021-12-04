@@ -5,8 +5,8 @@ DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
 
 # declare -a envs=('pettingzoo_boxing_v1' 'pettingzoo_combat_plane_v1' 'pettingzoo_surround_v1')
-declare -a envs=('pettingzoo_boxing_v1' 'pettingzoo_surround_v1')
-declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
+declare -a envs=('pettingzoo_tennis_v2' 'pettingzoo_surround_v1')
+declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter' 'nash_ppo')
 mkdir -p log/$DATE
 
 for env in ${envs[@]}; do

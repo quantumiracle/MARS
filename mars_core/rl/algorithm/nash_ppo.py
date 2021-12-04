@@ -180,11 +180,11 @@ class NashPPO(Agent):
             losses = 0.
             common_layer_losses = 0.
             for _ in range(self.K_epoch):
-                # loss for each agent in standard PPO
-                for i in range(2):
+                # standard PPO
+                for i in range(2):  # for each agent
                     vs = self.v(s_[:, i, :], i)  # take the state for the specific agent
 
-                    # use generalized advantage estimation
+                    # use generalized advantage estimation (GAE)
                     vs_prime = self.v(s_prime_[:, i, :], i).squeeze(dim=-1)
                     assert vs_prime.shape == done_mask.shape
                     vs_target = r + self.gamma * vs_prime * done_mask  # TODO r-> r[i]
@@ -199,6 +199,7 @@ class NashPPO(Agent):
                     advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
                     advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
 
+                    # value and policy loss for one agent
                     pi = self.pi(s_[:, i, :], i)
                     dist = Categorical(pi)
                     dist_entropy = dist.entropy()
@@ -210,7 +211,7 @@ class NashPPO(Agent):
                     ppo_loss = ppo_loss.mean()
 
                     # loss for common layers (value function)
-                    vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1)  # TODO
+                    vs_prime = self.common_layers(s_prime_[:, 0, :]).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
                     vs_target = r + self.gamma * vs_prime * done_mask
                     vs = self.common_layers(s_[:, 0, :])  # TODO
                     common_layer_loss = F.mse_loss(vs.squeeze(dim=-1) , vs_target.detach()).mean()
