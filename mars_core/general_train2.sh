@@ -4,7 +4,7 @@ export CUDA_VISIBLE_DEVICES=0
 DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
 
-declare -a envs=('pettingzoo_combat_plane_v1' 'ice_hockey_v1')
+declare -a envs=('pettingzoo_combat_plane_v1' 'pettingzoo_ice_hockey_v1')
 # declare -a envs=('pettingzoo_tennis_v2' 'pettingzoo_surround_v1')
 declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter' 'nash_ppo')
 mkdir -p log/$DATE
