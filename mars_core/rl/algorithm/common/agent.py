@@ -158,7 +158,7 @@ class MultiAgent(Agent):
         """Choose actions from given states/observations.
         Shape of states:  (agents, envs, state_dim)
 
-        :param states: observations for all agents
+        :param states: observations for all agents, shape: (agents, envs, action_dim)
         :type states: np.ndarray or list
         :return: actions for all agents, shape: (agents, envs, action_dim)
         :rtype: list
@@ -184,7 +184,7 @@ class MultiAgent(Agent):
                 if self.args.marl_spec['global_state']:
                     actions = self.agents[0].choose_action(states, Greedy=greedy_list[0])
                 else:
-                    actions = self.agents[0].choose_action(states[0], Greedy=greedy_list[0])
+                    actions = self.agents[0].choose_action(np.expand_dims(states[0], 0), Greedy=greedy_list[0])  # keep the dim unchanged
         else:
             # each agent will take its corresponding state to generate
             # the corresponding action
