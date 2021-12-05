@@ -1,0 +1,25 @@
+pygame 2.0.0 (SDL 2.0.12, python 3.7.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+surround_v1 pettingzoo
+Load surround_v1 environment in type pettingzoo.
+Env observation space: Box(0.0, 1.0, (128,), float32) action space: Discrete(5)
+random seed: 74
+<env.wrappers.mars_wrappers.Dict2TupleWrapper object at 0x7f21da98d210>
+No agent are not learnable.
+Arguments:  {'env_name': 'surround_v1', 'env_type': 'pettingzoo', 'num_envs': 1, 'ram': True, 'seed': 'random', 'algorithm': 'NashPPO', 'algorithm_spec': {'episodic_update': True, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000, 'lambda': 0.95, 'eps_clip': 0.2, 'K_epoch': 4, 'GAE': True}, 'batch_size': 128, 'max_episodes': 30000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'save_path': '', 'save_interval': 2000, 'net_architecture': {'hidden_dim_list': [64, 64, 64], 'hidden_activation': 'ReLU', 'output_activation': False, 'policy': {'hidden_dim_list': [256, 256, 256, 256], 'hidden_activation': 'ReLU', 'output_activation': 'Softmax'}, 'value': {'hidden_dim_list': [256, 256, 256, 256], 'hidden_activation': 'ReLU', 'output_activation': False}}, 'marl_method': 'nash_ppo', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': True}}
+Save models to : /home/zihan/research/MARS/data/model/20211204_1112/pettingzoo_surround_v1_nash_ppo. 
+ Save logs to: /home/zihan/research/MARS/data/log/20211204_1112/pettingzoo_surround_v1_nash_ppo.
+Traceback (most recent call last):
+  File "general_train.py", line 45, in <module>
+    launch_rollout(parser_args.env, parser_args.method, parser_args.save_id)
+  File "general_train.py", line 38, in launch_rollout
+    rollout(env, model, args, save_id)
+  File "/home/zihan/research/MARS/mars_core/rollout.py", line 19, in rollout
+    rollout_normal(env, model, save_id, args)
+  File "/home/zihan/research/MARS/mars_core/rollout.py", line 122, in rollout_normal
+    loss = model.update()
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/common/agent.py", line 292, in update
+    loss = agent.update()
+  File "/home/zihan/research/MARS/mars_core/rl/algorithm/nash_ppo.py", line 228, in update
+    vs_target = r + self.gamma * vs_prime * done_mask
+RuntimeError: The size of tensor a (2) must match the size of tensor b (1286) at non-singleton dimension 1
