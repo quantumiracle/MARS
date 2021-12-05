@@ -9,8 +9,8 @@ parser = argparse.ArgumentParser(description='Arguments of the general launching
 
 ### Load configurations
 game_type = 'pettingzoo'
-game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', 'combat_tank_v1', 'pong_v2', 'tennis_v2', 'ice_hockey_v1'][3]
-method = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo'][-1]
+game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', 'combat_tank_v1', 'pong_v2', 'tennis_v2', 'ice_hockey_v1'][0]
+method = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo'][-3]
 
 args = get_general_args(game_type+'_'+game, method)
 print(args)

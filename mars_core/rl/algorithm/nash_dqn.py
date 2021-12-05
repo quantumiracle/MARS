@@ -165,7 +165,7 @@ class NashDQN(DQN):
                 self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
 
         else:
-            actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
+            actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))  # (envs, agents)
         
         if self.num_envs == 1:
             actions = actions[0]  # list of actions to its item
