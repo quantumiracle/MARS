@@ -242,7 +242,12 @@ class MultiAgent(Agent):
                     samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]
                 else:
                     samples = [[np.array(states[0]), actions, rewards[0], np.array(next_states[0]), np.all(dones)]]
-            
+           
+            # one model for all agents, the model is the first one
+            # of self.agents, it directly stores the sample constaining all
+            for agent in self.agents: # actually only one agent in list
+                agent.store(samples) 
+
         elif self.args.marl_method == 'nash_ppo' and not self.args.exploit:
             [states, actions, rewards, next_states, logprobs, dones] = samples
             try:  # Used when num_envs > 1. 
@@ -281,8 +286,7 @@ class MultiAgent(Agent):
                     agent.store(s)
             # store all samples into the trainable agent in self-play
             if self.mergeAllSamplesInOne:
-                self.agents[self.args.marl_spec['trainable_agent_idx']].store(
-                    all_s)
+                self.agents[self.args.marl_spec['trainable_agent_idx']].store(all_s)
 
 
     def update(self) -> List[float]:
