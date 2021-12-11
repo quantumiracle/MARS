@@ -13,6 +13,13 @@ For usage instruction document, see [here](http://htmlpreview.github.io/?https:/
 MARS is still under-development and not prepared to release yet. You may find it hard to clone b.c. the author is testing algorithms with some models hosted on Git.
 
 
+## Installation
+Use Python 3.6
+```
+pip install -r requirements.txt
+```
+
+
 ## Development
 Basic RL Algorithms to do:
 - [x] DQN
