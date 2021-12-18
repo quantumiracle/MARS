@@ -264,7 +264,6 @@ class NashDQN(DQN):
 
         action_dim = int(np.sqrt(q_values.shape[-1])) # for two-symmetric-agent case only
         action_ = torch.LongTensor([a[0]*action_dim+a[1] for a in action]).to(self.device)
-
         q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
 
         # compute CCE or NE
