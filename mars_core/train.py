@@ -17,7 +17,7 @@ method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
             'nash_ppo'][-1]
 
-method = 'nash_dqn_speed'
+method = 'nash_dqn'
 
 args = get_general_args(game_type+'_'+game, method)
 print(args)

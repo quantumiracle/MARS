@@ -183,19 +183,22 @@ class NashDQN(DQN):
         all_ne_values = []
         for qs in q_tables:  # iterate over envs
             # Solve Nash equilibrium with solver
-            try:
-                # ne = NashEquilibriaSolver(qs)
-                # ne = ne[0]  # take the first Nash equilibria found
-                # print(np.linalg.det(qs))
-                # ne = NashEquilibriumSolver(qs)
-                # ne = NashEquilibriumLPSolver(qs)
-                # ne = NashEquilibriumCVXPYSolver(qs)
-                # ne = NashEquilibriumGUROBISolver(qs)
-                ne, ne_v = NashEquilibriumECOSSolver(qs)
-            except:  # some cases NE cannot be solved
-                print('No Nash solution for: ', np.linalg.det(qs), qs)
-                ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
-                ne_v = 0
+            # try:
+            #     # ne = NashEquilibriaSolver(qs)
+            #     # ne = ne[0]  # take the first Nash equilibria found
+            #     # print(np.linalg.det(qs))
+            #     # ne = NashEquilibriumSolver(qs)
+            #     # ne = NashEquilibriumLPSolver(qs)
+            #     # ne = NashEquilibriumCVXPYSolver(qs)
+            #     # ne = NashEquilibriumGUROBISolver(qs)
+            #     ne, ne_v = NashEquilibriumECOSSolver(qs)
+            # except:  # some cases NE cannot be solved
+            #     print('No Nash solution for: ', np.linalg.det(qs), qs)
+            #     ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
+            #     ne_v = 0
+
+            ne, ne_v = NashEquilibriumECOSSolver(qs)
+
             all_dists.append(ne)
             all_ne_values.append(ne_v)
 
