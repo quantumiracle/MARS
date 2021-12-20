@@ -4,8 +4,14 @@
 import os
 import yaml, copy
 
-two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', 'space_war_v1', 'pong_v2', 'boxing_v1', 'tennis_v2', 'ice_hockey_v1']
-methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo', 'nxdo', 'nxdo2']
+two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', \
+                            'space_war_v1', 'pong_v2', 'boxing_v1', \
+                            'tennis_v2', 'ice_hockey_v1', 'double_dunk_v2']
+
+methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
+            'fictitious_selfplay2', 'nfsp', 'nash_dqn', \
+            'nash_dqn_exploiter', 'nash_ppo', 'nxdo', 'nxdo2']
+
 game_type = 'pettingzoo'
 
 self_play_method_marl_specs = {
@@ -14,7 +20,9 @@ self_play_method_marl_specs = {
         'opponent_idx': 1   
         }
 
-selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'}
+selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
+                            'fictitious_selfplay2', 'nxdo', 'nxdo2'}
+
 large_nets_envs = {'surround_v1', 'ice_hockey_v1', 'combat_tank_v1'}
 
 def get_method_env_marl_spec(method, env):
@@ -37,12 +45,13 @@ def get_method_env_marl_spec(method, env):
 selfplay_score_deltas = { # specific for each environment
     'surround_v1': 16,
     'boxing_v1': 60,
-    'combat_plane_v1': 10,
-    'combat_tank_v1': 10,
+    'combat_plane_v1': 10, # this need to be tuned
+    'combat_tank_v1': 10,  # this need to be tuned
     'space_war_v1': 10,
     'pong_v2': 20,
     'tennis_v2': 10,
     'ice_hockey_v1': 10,
+    'double_dunk_v2': 80,
 }
 
 train_start_frame = {  # for NFSP method only
@@ -55,6 +64,7 @@ train_start_frame = {  # for NFSP method only
     'pong_v2': 10000,
     'tennis_v2': 10000,
     'ice_hockey_v1': 10000,
+    'double_dunk_v2': 10000,
 }
 
 
