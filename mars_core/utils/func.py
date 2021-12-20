@@ -6,7 +6,7 @@ from utils.typing import Dict, Any
 
 def LoadYAML2Dict(yaml_file: str,
                   toAttr: bool = False,
-                  mergeDefault: bool = True,
+                  mergeWith: str = 'confs/default.yaml',
                   confs: Dict[str, Any] = {}) -> AttrDict:
     """ A function loading the hyper-parameters in yaml file into a dictionary.
 
@@ -15,15 +15,16 @@ def LoadYAML2Dict(yaml_file: str,
     :param toAttr: if True, transform the configuration dictionary into a class,
         such that each hyperparameter can be called with class.attribute instead of dict['attribute']; defaults to False
     :type toAttr: bool, optional
-    :param mergeDefault: if True, merge the default yaml file for missing entries, defaults to True
-    :type mergeDefault: bool, optional
+    :param mergeWith: if not None, merge the loaded yaml (with overwritting priority) with the yaml given by this path;
+    for example, merging with default yaml file will fill those missing entries with those in defaulf configurations.
+    :type mergeDefault: string or None, optional
     :param confs: input a dictionary of configurations from outside the function, defaults to {}
     :type confs: dict, optional
     :return: a dictionary of configurations, including all hyper-parameters for environment, algorithm and training/testing.
     :rtype: dict
     """
-    if mergeDefault:
-        with open('confs/default.yaml') as f:
+    if mergeWith is not None:
+        with open(mergeWith) as f:
             default = yaml.safe_load(f)
         UpdateDictAwithB(confs, default, withOverwrite=False)
 
@@ -78,9 +79,6 @@ def InDepthUpdateDictAwithB(
     :param B: a nested dictionary, e.g., dict, dict of dict, dict of dict of dict ...
     :type B: dict
     :return: none
-    """
-    """ 
-    
     """
     for k, v in B.items():
         if isinstance(v, collections.abc.Mapping):
