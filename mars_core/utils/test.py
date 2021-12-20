@@ -1,13 +1,12 @@
 import yaml
-from utils.data_struct import AttrDict
-from utils.typing import Dict, Any
 import collections.abc
 import copy
+from data_struct import AttrDict
 
 def LoadYAML2Dict(yaml_file: str,
                   toAttr: bool = False,
                   mergeWith: str = 'confs/default.yaml',
-                  confs: Dict[str, Any] = {}) -> AttrDict:
+                  confs = {}):
     """ A function loading the hyper-parameters in yaml file into a dictionary.
 
     :param yaml_file: the yaml file name
@@ -41,10 +40,11 @@ def LoadYAML2Dict(yaml_file: str,
         return AttrDict(concat_dict)
     else:
         return confs
-        
+
+
 def UpdateDictAwithB(
-    A: Dict[str, Any],
-    B: Dict[str, Any],
+    A,
+    B,
     withOverwrite: bool = True,
 ) -> None:
     """ Update the entries in dictionary A with dictionary B.
@@ -57,7 +57,6 @@ def UpdateDictAwithB(
     :type withOverwrite: bool, optional
     :return: none
     """
-    # ensure original A, B is not changed
     A_ = copy.deepcopy(A)
     B_ = copy.deepcopy(B)
     if withOverwrite:
@@ -71,8 +70,8 @@ def UpdateDictAwithB(
 
 
 def InDepthUpdateDictAwithB(
-    A: Dict[str, Any],
-    B: Dict[str, Any],
+    A,
+    B,
 ) -> None:
     """A function for update nested dictionaries A with B.
 
@@ -89,3 +88,12 @@ def InDepthUpdateDictAwithB(
             A[k] = v
     return A
 
+
+if __name__ == '__main__':
+    a={'m': 1, 'n': 0}
+    b={'n': 2}
+    c=UpdateDictAwithB(a,b, withOverwrite=True)
+    print(a, c)
+
+    d=toAttrDict(c)
+    print(d)
