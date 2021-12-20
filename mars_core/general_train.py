@@ -10,7 +10,7 @@ def get_general_args(env, method):
     [env_type, env_name] = env.split('_', 1) # only split at the first '_'
     path = f'confs/{env_type}/{env_name}/'
     yaml_file = f'{env_type}_{env_name}_{method}'
-    args = LoadYAML2Dict(path+yaml_file, toAttr=True, mergeDefault=True)
+    args = LoadYAML2Dict(path+yaml_file, toAttr=True, mergeWith='confs/default.yaml')
     return args
     
 def launch_rollout(env, method, save_id):
