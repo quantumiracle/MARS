@@ -1,5 +1,6 @@
 import numpy as np
 from datetime import datetime
+import time
 import os
 import json
 from torch.utils.tensorboard import SummaryWriter
@@ -39,6 +40,8 @@ class TestLogger():
         self.model_dir = None
         self.additional_logs = [] # additional logs are displayed but not saved
         self.extr_logs = [] # extra logs are saved but not displayed
+        self.init_time = time.time()  # initialize the time logger
+        self.last_time = self.init_time
 
     def _create_dirs(self, *args):
         pass
@@ -78,9 +81,17 @@ class TestLogger():
     def print_and_save(self, *args):
         """ Print out information only since it usually does not require
         to save the logging in test mode. """
+        # print time consumption and progress
+        current_time = time.time()
+        time_taken = current_time - self.last_time
+        self.last_time = current_time
+
         print(
-            f'Episode: {self.current_episode}, avg. length {np.mean(self.epi_length[-self.avg_window:])}'
+            f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
+                avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
+                last time consumption/overall training time: {time_taken}s / {current_time-self.init_time} s'
         )
+
         for k in self.keys:
             print(f"{k}: \
                 episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}"
@@ -94,6 +105,7 @@ class TestLogger():
         # save extra data in another file
         if len(self.extr_logs) > 0:
             json.dump(self.extr_logs, open(self.log_dir + f"{self.extr_log_name}.json", 'w'))
+
 
 
 class Logger(TestLogger):
@@ -162,9 +174,16 @@ class Logger(TestLogger):
 
     def print_and_save(self):
         """ Print out information and save the logging data. """
+        # print time consumption and progress
+        current_time = time.time()
+        time_taken = current_time - self.last_time
+        self.last_time = current_time
         print(
-            f'Episode: {self.current_episode}, avg. length {np.mean(self.epi_length[-self.avg_window:])}'
+            f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
+                avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
+                last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
         )
+
         for k in self.keys:
             print(f"{k}: \
                 episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}, \
@@ -225,9 +244,16 @@ class DummyLogger(Logger):
 
     def print_and_save(self):
         # print out info
+        current_time = time.time()
+        time_taken = current_time - self.last_time
+        self.last_time = current_time
         print(
-            f'Episode: {self.current_episode}, avg. reward: {np.mean(self.epi_rewards[-self.avg_window:]):.4f}, avg. length {np.mean(self.epi_length[-self.avg_window:])}'
+            f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
+                avg. reward: {np.mean(self.epi_rewards[-self.avg_window:]):.4f}, \
+                avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
+                last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
         )
+
 
         if len(self.additional_logs) > 0:
             for log in self.additional_logs:

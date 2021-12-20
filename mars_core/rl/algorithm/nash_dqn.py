@@ -177,11 +177,11 @@ class NashDQN(DQN):
         """
         Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
         """
-        q_table = q_values.reshape(-1, self.action_dims,  self.action_dims)
+        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
         all_actions = []
         all_dists = []
         all_ne_values = []
-        for qs in q_table:  # iterate over envs
+        for qs in q_tables:  # iterate over envs
             # Solve Nash equilibrium with solver
             try:
                 # ne = NashEquilibriaSolver(qs)
@@ -222,10 +222,10 @@ class NashDQN(DQN):
         """
         Return actions as coarse correlated equilibrium of given payoff matrix, shape: [env, agent]
         """
-        q_table = q_values.reshape(-1, self.action_dims,  self.action_dims)
+        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
         all_actions = []
         all_dists = []
-        for qs in q_table:  # iterate over envs
+        for qs in q_tables:  # iterate over envs
             try:
                 _, _, jnt_probs = CoarseCorrelatedEquilibriumLPSolver(qs)
 
