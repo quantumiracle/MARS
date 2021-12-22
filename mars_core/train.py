@@ -11,13 +11,13 @@ parser = argparse.ArgumentParser(description='Arguments of the general launching
 game_type = 'pettingzoo'
 game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
         'combat_tank_v1', 'pong_v2', 'tennis_v2', \
-        'ice_hockey_v1', 'double_dunk_v2'][0]
+        'ice_hockey_v1', 'double_dunk_v2'][-1]
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
             'nash_ppo'][-1]
 
-method = 'nash_dqn'
+# method = 'nash_dqn'
 
 args = get_general_args(game_type+'_'+game, method)
 print(args)
