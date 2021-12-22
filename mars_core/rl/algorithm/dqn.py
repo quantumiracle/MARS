@@ -128,7 +128,7 @@ class DQN(Agent):
 
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.model, self.target)
-            self.update_cnt = 0
+            # self.update_cnt = 0
         self.update_cnt += 1
 
         return loss.detach().item()
