@@ -51,7 +51,7 @@ selfplay_score_deltas = { # specific for each environment
     'pong_v2': 20,
     'tennis_v2': 10,
     'ice_hockey_v1': 10,
-    'double_dunk_v2': 80,
+    'double_dunk_v2': 20,
 }
 
 train_start_frame = {  # for NFSP method only

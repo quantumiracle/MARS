@@ -140,7 +140,7 @@ class NashDQNSpeed(DQN):
         if DEBUG:
             self.debugger = Debugger(env, "./data/nash_dqn_simple_mdp_log.pkl")
 
-        self.warm_up = 500*2000  # warm-up steps use non-Nash update manner
+        self.warm_up = 500*2000  # ~ 5000 episodes, b.c. 0.1 update freq, ~2000 episode length ;warm-up steps use non-Nash update manner
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -306,7 +306,7 @@ class NashDQNSpeed(DQN):
 
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.model, self.target)
-            self.update_cnt = 0
+            # self.update_cnt = 0
         self.update_cnt += 1
 
         return loss.item()
