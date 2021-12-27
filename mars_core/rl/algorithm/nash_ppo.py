@@ -183,7 +183,7 @@ class NashPPO(Agent):
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data: # iterate over data from different environments
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
-            
+
             # need to prcess the samples, separate for agents
             s_ = s.view(s.shape[0], 2, -1)
             s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)

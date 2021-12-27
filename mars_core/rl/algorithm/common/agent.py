@@ -250,14 +250,13 @@ class MultiAgent(Agent):
 
         elif self.args.marl_method == 'nash_ppo' and not self.args.exploit:
             [states, actions, rewards, next_states, logprobs, dones] = samples
-            try:  # Used when num_envs > 1. 
+            if self.args.num_envs > 1:  # Used when num_envs > 1. 
                 ## TODO Here the samples with done as True are filtered out for Nash algorithms!!
                 # samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
-                if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
-                    samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[:, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
-                else:  # only use the observation from the first agent (assume the symmetry in the game and the single state contains the full information: speed up learning!)
-                    samples = [[states[0, j], actions[:, j].reshape(-1), rewards[:, j], next_states[0, j], logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
-            except:  # when num_envs = 1 
+                assert self.args.marl_spec['global_state']  # this has to be true for Nash PPO
+                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[:, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
+                
+            else:  # when num_envs = 1 
                 if self.args.marl_spec['global_state']: 
                     samples = [[np.array(states).reshape(-1), actions, rewards, np.array(next_states).reshape(-1), np.array(logprobs).reshape(-1), np.all(dones)]]
                 else:

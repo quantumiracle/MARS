@@ -32,6 +32,8 @@ class NetBase(nn.Module):
         self._observation_shape = input_space.shape
         if len(self._observation_shape) == 1:
             self._observation_dim = self._observation_shape[0]
+        elif len(self._observation_shape) == 2:
+            self._observation_dim = self._observation_shape[-1]
         else:  # high-dim state
             pass
 

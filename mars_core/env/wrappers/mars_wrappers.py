@@ -342,6 +342,8 @@ class Dict2TupleWrapper():
             self.observation_space = env.observation_space
             self.obs_type = 'ram'
         self.action_space = env.action_space
+        self.observation_spaces = env.observation_spaces
+        self.action_spaces = env.action_spaces
         try:   # both pettingzoo and slimevolley can work with this
             self.agents = env.agents
         except:
