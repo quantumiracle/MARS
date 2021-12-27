@@ -131,6 +131,7 @@ for game in two_player_zero_sum_games:
 
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter']:
+            conf['env_args']['num_envs'] = 3
             conf['train_args']['update_itr'] = 0.1
             conf['train_args']['marl_spec']['global_state'] = False
             if method == 'nash_dqn':
@@ -140,6 +141,7 @@ for game in two_player_zero_sum_games:
                 conf['agent_args']['algorithm_spec']['exploiter_update_itr'] = 1
 
         elif method == 'nash_ppo':
+            conf['env_args']['num_envs'] = 3
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = True
             conf['agent_args']['algorithm'] = 'NashPPO'
