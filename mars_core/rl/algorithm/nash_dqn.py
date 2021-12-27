@@ -326,7 +326,7 @@ class NashDQNBase(DQNBase):
     def _construct_net(self, env, net_args):
             input_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = self._observation_shape)
             output_space = gym.spaces.Discrete(self._action_shape)
-            if len(self._observation_shape) <= 1: # not image
+            if len(self._observation_shape) <= 1: # not 3d image
                 self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')
             else:
                 self.net = get_model('cnn')(input_space, output_space, net_args, model_for='discrete_q')
