@@ -38,7 +38,6 @@ from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 from .wrappers.lasertag_wrappers import LaserTagWrapper 
 
-
 # PettingZoo envs
 pettingzoo_envs = {
     'atari': [
@@ -192,4 +191,5 @@ def make_env(args):
             random_seed = int(np.random.randint(1,100))
         print(f"random seed: {random_seed}")
         env.seed(random_seed)
+
     return env

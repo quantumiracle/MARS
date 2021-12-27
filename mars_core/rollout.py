@@ -47,13 +47,13 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 
             # action item contains additional information like log probability
             if isinstance(action_, tuple): # Nash PPO
-                (a, info) = action_
+                (a, info) = action_  # shape: (agents, envs, dim)
                 action_to_store = a
                 other_info = info
             
             elif any(isinstance(a_, tuple) for a_ in action_):  # exploitation with PPO
                 action_to_store, other_info = [], []
-                for a_ in action_:
+                for a_ in action_:  # loop over agent
                     if isinstance(a_, tuple): # action item contains additional information
                         (a, info) = a_
                         action_to_store.append(a)
@@ -72,7 +72,6 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 action = action_to_store
 
             obs_, reward, done, info = env.step(action)  # required action shape: (envs, agents, dim)
-
             # time.sleep(0.05)
             if args.render:
                 env.render()
@@ -87,13 +86,12 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 done_to_store = done
 
             if other_info is None:
-                sample = [
+                sample = [  # each item has shape: (agents, envs, dim)
                     obs_to_store, action_to_store, reward_to_store,
                     obs__to_store, done_to_store
                 ]
             else:
-                other_info_to_store = np.array(other_info).swapaxes(
-                    0, 1) if args.num_envs > 1 else other_info
+                other_info_to_store = other_info # no need to swap axis, shape already: (agents, envs, dim)
                 sample = [
                     obs_to_store, action_to_store, reward_to_store,
                     obs__to_store, other_info_to_store, done_to_store
