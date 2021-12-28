@@ -18,6 +18,7 @@ class DQN(Agent):
         super().__init__(env, args)
         self.model = self._select_type(env, args).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
+        
         self.model.share_memory()
         self.target.share_memory()
         self.update_target(self.model, self.target)
