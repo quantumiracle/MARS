@@ -18,9 +18,13 @@ class DQN(Agent):
         super().__init__(env, args)
         self.model = self._select_type(env, args).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
+        self.model.share_memory()
+        self.target.share_memory()
         self.update_target(self.model, self.target)
 
-        self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
+        # self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
+        self.buffer = args.replay_buffer
+
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
         self.epsilon_scheduler = EpsilonScheduler(args.algorithm_spec['eps_start'], args.algorithm_spec['eps_final'], args.algorithm_spec['eps_decay'])
         self.schedulers.append(self.epsilon_scheduler)
