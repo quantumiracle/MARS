@@ -33,7 +33,6 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
     :type args: ConfigurationDict
     """
     print("Arguments: ", args)
-    overall_steps = 0
     max_update_itr = 1000000
     mata_update_interval = 1000
     logger = args.logger
