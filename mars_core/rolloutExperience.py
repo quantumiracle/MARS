@@ -2,6 +2,7 @@ import numpy as np
 from numpy.lib.arraysetops import isin
 import torch
 import time
+import cloudpickle
 from utils.logger import init_logger
 from utils.typing import Tuple, List, ConfigurationDict
 from marl.meta_learner import init_meta_learner
@@ -14,6 +15,9 @@ def rolloutExperience(env, model, args: ConfigurationDict, save_id='0') -> None:
     Due to the strong heterogeneity of Genetic algorithm and Reinforcement Learning
     algorithm, the function is separeted into two types. 
     """
+    env = cloudpickle.loads(env)
+    model = cloudpickle.loads(model)
+    args = cloudpickle.loads(args)
     if args.algorithm == 'GA':
         rollout_ga(env, model, save_id, args)
     else:
@@ -33,10 +37,10 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     """
     print("Arguments: ", args)
     overall_steps = 0
-    logger = init_logger(env, save_id, args)
+    # logger = init_logger(env, save_id, args)
+    logger = args.logger
     # meta_learner = init_meta_learner(logger, args)
     for epi in range(args.max_episodes):
-        print(epi)
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
@@ -100,7 +104,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             model.store(sample)
             obs = obs_
             
-            # logger.log_reward(np.array(reward).reshape(-1))
+            logger.log_reward(np.array(reward).reshape(-1))
             # loss = None
             # if not args.algorithm_spec['episodic_update'] and \
             #      model.ready_to_update and overall_steps > args.train_start_frame:
@@ -131,14 +135,15 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         #         meta_learner.step(
         #             model, logger, env, args
         #         )  # metalearner for selfplay need just one step per episode
-        # logger.log_episode_reward(step)
+        logger.log_episode_reward(step)
 
-        # if epi % args.log_interval == 0:
-        #     logger.print_and_save()
-        # if epi % args.save_interval == 0 \
-        # and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
-        # and logger.model_dir is not None:
-        #     model.save_model(logger.model_dir+f'{epi}')
+        if epi % args.log_interval == 0:
+            logger.print_and_save()
+
+        if epi % args.save_interval == 0 \
+        and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
+        and logger.model_dir is not None:
+            model.save_model(logger.model_dir+f'{epi}')
 
 ### Genetic algorithm uses a different way of rollout. ###
 
