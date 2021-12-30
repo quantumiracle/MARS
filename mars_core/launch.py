@@ -59,7 +59,7 @@ if __name__ == '__main__':
         model = MultiAgent(env, [model1, model2], args)
 
     ### Rollout
-    logger = init_logger(env, '0', ori_args)
+    logger = init_logger(env, '0', ori_args)  # this cannot use the args with replay buffer
     args.logger = logger
 
     model = cloudpickle.dumps(model)
