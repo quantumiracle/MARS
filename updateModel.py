@@ -3,9 +3,9 @@ from numpy.lib.arraysetops import isin
 import torch
 import time
 import cloudpickle
-from utils.logger import init_logger
-from utils.typing import Tuple, List, ConfigurationDict
-from marl.meta_learner import init_meta_learner
+from mars.utils.logger import init_logger
+from mars.utils.typing import Tuple, List, ConfigurationDict
+from mars.marl.meta_learner import init_meta_learner
 
 
 def updateModel(env, model, args: ConfigurationDict, save_id='0') -> None:

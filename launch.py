@@ -1,10 +1,3 @@
-from utils.func import LoadYAML2Dict
-from utils.common import EvaluationModelMethods
-from env.import_env import make_env
-from rolloutExperience import rolloutExperience
-from updateModel import updateModel
-from rl.algorithm import *
-from general_train import get_general_args
 import argparse
 import copy
 import cloudpickle 
@@ -12,8 +5,17 @@ import torch
 torch.multiprocessing.set_start_method('forkserver', force=True)
 from multiprocessing import Process
 from multiprocessing.managers import BaseManager
-from rl.algorithm.common.storage import ReplayBuffer
-from utils.logger import init_logger
+
+from mars.utils.common import EvaluationModelMethods
+from mars.env.import_env import make_env
+from mars.rl.agents import *
+from mars.utils.func import get_general_args
+from mars.rl.common.storage import ReplayBuffer
+from mars.utils.logger import init_logger
+
+from rolloutExperience import rolloutExperience
+from updateModel import updateModel
+
 
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
