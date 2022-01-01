@@ -13,6 +13,7 @@ from .common.rl_utils import choose_optimizer, EpsilonScheduler
 from .common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .equilibrium_solver import NashEquilibriumECOSSolver
+import time
 
 DEBUG = False
 
@@ -196,7 +197,7 @@ class NashDQN(DQN):
                 print('No Nash solution for: ', np.linalg.det(qs), qs)
                 ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
                 ne_v = 0
-
+                
             all_dists.append(ne)
             all_ne_values.append(ne_v)
 
@@ -295,7 +296,7 @@ class NashDQN(DQN):
             self.update_target(self.model, self.target)
             # self.update_cnt = 0
         self.update_cnt += 1
-
+        # print(self.update_cnt)
         return loss.item()
 
 class NashDQNBase(DQNBase):
