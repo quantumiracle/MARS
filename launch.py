@@ -35,6 +35,8 @@ if __name__ == '__main__':
 
     ori_args = get_general_args(game_type+'_'+game, method)
     print(ori_args)
+    ori_args.device = 'cpu'
+    ori_args.num_envs = 1
 
     ### Create env
     env = make_env(ori_args)
@@ -61,8 +63,8 @@ if __name__ == '__main__':
         model = MultiAgent(env, [model1, model2], args)
 
     ### Rollout
-    logger = init_logger(env, '0', ori_args)  # this cannot use the args with replay buffer
-    args.logger = logger
+    # logger = init_logger(env, '0', ori_args)  # this cannot use the args with replay buffer
+    # args.logger = logger
 
     model = cloudpickle.dumps(model)
     env = cloudpickle.dumps(env)

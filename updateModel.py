@@ -35,7 +35,8 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
     print("Arguments: ", args)
     max_update_itr = 1000000
     mata_update_interval = 1000
-    logger = args.logger
+    logger = init_logger(env, save_id, args)
+    # logger = args.logger
     meta_learner = init_meta_learner(logger, args)
     for itr in range(max_update_itr):
         if model.ready_to_update():

@@ -36,8 +36,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     """
     print("Arguments: ", args)
     overall_steps = 0
-    # logger = init_logger(env, save_id, args)
-    logger = args.logger
+    logger = init_logger(env, save_id, args)
+    # logger = args.logger
     # meta_learner = init_meta_learner(logger, args)
     for epi in range(args.max_episodes):
         obs = env.reset()
@@ -134,6 +134,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         #         meta_learner.step(
         #             model, logger, env, args
         #         )  # metalearner for selfplay need just one step per episode
+
+
         logger.log_episode_reward(step)
 
         if epi % args.log_interval == 0:
