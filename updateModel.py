@@ -39,7 +39,7 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
     # logger = args.logger
     meta_learner = init_meta_learner(logger, args)
     for itr in range(max_update_itr):
-        if model.ready_to_update():
+        if model.ready_to_update:
             loss = model.update()
             logger.log_loss(loss)
 
