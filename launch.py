@@ -4,7 +4,7 @@ import cloudpickle
 import torch
 torch.multiprocessing.set_start_method('forkserver', force=True)
 from multiprocessing import Process
-from multiprocessing.managers import BaseManager
+from multiprocessing.managers import BaseManager, NamespaceProxy
 
 from mars.utils.common import EvaluationModelMethods
 from mars.env.import_env import make_env

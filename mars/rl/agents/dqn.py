@@ -98,7 +98,9 @@ class DQN(Agent):
 
     @property
     def ready_to_update(self):
-        return True if len(self.buffer) > self.batch_size else False
+        # return True if len(self.buffer) > self.batch_size else False
+        print(self.buffer.get_len())
+        return True if self.buffer.get_len() > self.batch_size else False
 
     def update(self):
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)

@@ -20,7 +20,7 @@ class ReplayBuffer(object):
     def clear(self,):
         self.buffer.clear()
 
-    def __len__(self):
+    def get_len(self):
         return len(self.buffer)
 class ReservoirBuffer(object):
     def __init__(self, capacity):
@@ -58,9 +58,8 @@ class ReservoirBuffer(object):
 
     def clear(self,):
         self.buffer.clear()
-
     
-    def __len__(self):
+    def get_len(self):
         return len(self.buffer)
 
 if __name__ == "__main__":
@@ -70,4 +69,4 @@ if __name__ == "__main__":
         buffer.push([0, 0, 0, 0, 0])
     print(len(buffer))
     buffer.clear()
-    print(len(buffer))
+    print(buffer.get_len())
