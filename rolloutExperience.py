@@ -2,21 +2,24 @@ import numpy as np
 from numpy.lib.arraysetops import isin
 import torch
 import cloudpickle
-from mars.utils.logger import init_logger
+from mars.utils.logger2 import init_logger
 from mars.utils.typing import Tuple, List, ConfigurationDict
-from mars.marl.meta_learner import init_meta_learner
+from mars.env.import_env import make_env
 
 
-def rolloutExperience(env, model, args: ConfigurationDict, save_id='0') -> None:
+def rolloutExperience(model, args: ConfigurationDict, save_id='0') -> None:
     """
     Function to rollout the interaction of agents and environments.
 
     Due to the strong heterogeneity of Genetic algorithm and Reinforcement Learning
     algorithm, the function is separeted into two types. 
     """
-    env = cloudpickle.loads(env)
+    # tranform bytes to dictionary
     model = cloudpickle.loads(model)
+    print(model)
     args = cloudpickle.loads(args)
+    args.num_envs = 1
+    env = make_env(args)
     if args.algorithm == 'GA':
         rollout_ga(env, model, save_id, args)
     else:
@@ -46,6 +49,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
             action_ = model.choose_action(
                 obs_to_store)  # action: (agent, env, action_dim)
+
             if overall_steps % 100 == 0: # do not need to do this for every step
                 model.scheduler_step(overall_steps)
                 
@@ -104,20 +108,6 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             obs = obs_
             
             logger.log_reward(np.array(reward).reshape(-1))
-            # loss = None
-            # if not args.algorithm_spec['episodic_update'] and \
-            #      model.ready_to_update and overall_steps > args.train_start_frame:
-            #     if args.update_itr >= 1:
-            #         avg_loss = []
-            #         for _ in range(args.update_itr):
-            #             loss = model.update(
-            #             )
-            #             avg_loss.append(loss)
-            #         loss = np.mean(avg_loss, axis=0)
-            #     elif overall_steps * args.update_itr % 1 == 0:
-            #         loss = model.update()
-            #     if loss is not None:
-            #         logger.log_loss(loss)
 
             # done break needs to go after everything else， including the update
             if np.any(
@@ -125,20 +115,9 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             ):  # if any player in a game is done, the game episode done; may not be correct for some envs
                 break
 
-        # if model.ready_to_update:
-        #     if args.algorithm_spec['episodic_update']:
-        #         loss = model.update()
-        #         logger.log_loss(loss)
-            
-        #     if not args.test and not args.exploit:
-        #         meta_learner.step(
-        #             model, logger, env, args
-        #         )  # metalearner for selfplay need just one step per episode
-
-
         logger.log_episode_reward(step)
 
-        if epi % args.log_interval == 0:
+        if (epi+1) % args.log_interval == 0:
             logger.print_and_save()
 
         if epi % args.save_interval == 0 \

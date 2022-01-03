@@ -67,6 +67,6 @@ if __name__ == "__main__":
     buffer = ReplayBuffer(size)
     for _ in range(size):
         buffer.push([0, 0, 0, 0, 0])
-    print(len(buffer))
+    print(buffer.get_len())
     buffer.clear()
     print(buffer.get_len())

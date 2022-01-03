@@ -53,6 +53,11 @@ class PPODiscrete(Agent):
             # self.policy_old.load_state_dict(self.policy.state_dict())
             self.value = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
+        if args.multiprocess:
+            self.policy.share_memory()
+            self.policy_old.share_memory()
+            self.value.share_memory()
+
         # cannot use lambda in multiprocessing
         # self.pi = lambda x: self.policy.forward(x, softmax_dim=-1)
         # self.v = lambda x: self.value.forward(x)            

@@ -26,15 +26,22 @@ class NFSP(Agent):
             self.policy = get_model('mlp')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
         else:
             self.policy = get_model('impala_cnn')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
-            print(self.policy)
-        self.replay_buffer = self.rl_agent.buffer
-        self.reservoir_buffer = ReservoirBuffer(int(float(args.algorithm_spec['replay_buffer_size'])) )
+
+        if args.multiprocess:
+            self.policy.share_memory()
+            self.replay_buffer = self.args.replay_buffer
+            self.reservoir_buffer = self.args.reservoir_buffer
+        else:
+            self.replay_buffer = self.rl_agent.buffer
+            self.reservoir_buffer = ReservoirBuffer(int(float(args.algorithm_spec['replay_buffer_size'])) )
+        
         self.rl_optimizer = self.rl_agent.optimizer
         self.sl_optimizer = choose_optimizer(args.optimizer)(self.policy.parameters(), lr=float(args.learning_rate))
         self.schedulers = self.rl_agent.schedulers
 
         self.eta = 0. if args.test else float(args.marl_spec['eta'])  # in test mode, only use average policy
         self.args = args
+
     def choose_action(self, state, Greedy=False, epsilon=None):
         self.is_best_response = False
         if random.random() > self.eta:

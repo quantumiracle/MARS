@@ -52,6 +52,11 @@ class NashPPO(Agent):
 
             # self.common_layers = CNN(env.observation_space, merged_action_space, args.net_architecture['value'], model_for='discrete_q').to(self.device)
             self.common_layers = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+        
+        if args.multiprocess:
+            self.policies = [policy.share_memory() for policy in self.policies]
+            self.values = [value.share_memory() for value in self.values]
+            self.common_layers.share_memory()
 
         policy_params, value_params = [], []
         for p, v in zip(self.policies, self.values):
