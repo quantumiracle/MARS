@@ -19,12 +19,14 @@ class DQN(Agent):
         self.model = self._select_type(env, args).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
         
-        self.model.share_memory()
-        self.target.share_memory()
-        self.update_target(self.model, self.target)
+        if args.multiprocess:
+            self.model.share_memory()
+            self.target.share_memory()
+            self.buffer = args.replay_buffer
+        else:
+            self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
 
-        # self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
-        self.buffer = args.replay_buffer
+        self.update_target(self.model, self.target)
 
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
         self.epsilon_scheduler = EpsilonScheduler(args.algorithm_spec['eps_start'], args.algorithm_spec['eps_final'], args.algorithm_spec['eps_decay'])
@@ -99,7 +101,6 @@ class DQN(Agent):
     @property
     def ready_to_update(self):
         # return True if len(self.buffer) > self.batch_size else False
-        print(self.buffer.get_len())
         return True if self.buffer.get_len() > self.batch_size else False
 
     def update(self):

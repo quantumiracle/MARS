@@ -15,11 +15,12 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nfsp', 'nash_ppo'][-2]
+            'nfsp', 'nash_ppo'][-1] 
 
 # method = 'nash_dqn_speed'
 
 args = get_general_args(game_type+'_'+game, method)
+args.multiprocess = False
 print(args)
 
 ### Create env
@@ -31,14 +32,10 @@ model1 = eval(args.algorithm)(env, args)
 model2 = eval(args.algorithm)(env, args)
 
 if method in EvaluationModelMethods:
-    eval_env = make_env(args)
-    eval_model1 = eval(args.algorithm)(env, args)
-    eval_model2 = eval(args.algorithm)(env, args)
-
-    model = MultiAgent(env, [model1, model2], args, eval_models = [eval_model1, eval_model2], eval_env = eval_env)   
-
+    args.eval_models = True
 else:
-    model = MultiAgent(env, [model1, model2], args)
+    args.eval_models = False
+model = MultiAgent(env, [model1, model2], args)
 
 ### Rollout
 rollout(env, model, args)

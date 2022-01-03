@@ -6,13 +6,11 @@ torch.multiprocessing.set_start_method('forkserver', force=True)
 from multiprocessing import Process
 from multiprocessing.managers import BaseManager, NamespaceProxy
 
-from mars.utils.common import EvaluationModelMethods
 from mars.env.import_env import make_env
 from mars.rl.agents import *
 from mars.utils.func import get_general_args
-from mars.rl.common.storage import ReplayBuffer
-from mars.utils.logger import init_logger
-
+from mars.rl.common.storage import ReplayBuffer, ReservoirBuffer
+from mars.utils.common import EvaluationModelMethods
 from rolloutExperience import rolloutExperience
 from updateModel import updateModel
 
@@ -26,55 +24,61 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
         'ice_hockey_v1', 'double_dunk_v2'][0]
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
-            'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nash_ppo'][-3]
+            'fictitious_selfplay2', 'nxdo2', 'nash_dqn', 'nash_dqn_exploiter', \
+            ][-1]   # nash_ppo is trained in train.py
 
 # method = 'nash_dqn_speed'
 
-if __name__ == '__main__':
+def multiprocess_buffer_register(ori_args, method):
+    BaseManager.register('replay_buffer', ReplayBuffer)
+    if method == 'nfsp':
+        BaseManager.register('reservoir_buffer', ReservoirBuffer)
+    manager = BaseManager()
+    manager.start()
+    args.replay_buffer = manager.replay_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
+    if method == 'nfsp':
+        args.reservoir_buffer = manager.reservoir_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
 
+    return args
+        
+if __name__ == '__main__':
     ori_args = get_general_args(game_type+'_'+game, method)
-    print(ori_args)
-    ori_args.device = 'cpu'
-    ori_args.num_envs = 1
+    ori_args.multiprocess = True
 
     ### Create env
-    env = make_env(ori_args)
+    args = copy.copy(ori_args)
+    args.num_envs = 1
+    env = make_env(args)
     print(env)
 
     ### Specify models for each agent
-    BaseManager.register('replay_buffer', ReplayBuffer)
-    manager = BaseManager()
-    manager.start()
-    args = copy.copy(ori_args)
-    args.replay_buffer = manager.replay_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
-    print(ori_args)
+    args = multiprocess_buffer_register(ori_args, method)
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
 
     if method in EvaluationModelMethods:
-        eval_env = make_env(args)
-        eval_model1 = eval(args.algorithm)(env, args)
-        eval_model2 = eval(args.algorithm)(env, args)
-
-        model = MultiAgent(env, [model1, model2], args, eval_models = [eval_model1, eval_model2], eval_env = eval_env)   
-
+        args.eval_models = True
     else:
-        model = MultiAgent(env, [model1, model2], args)
+        args.eval_models = False
+    model = MultiAgent(env, [model1, model2], args)
+    env.close()
 
-    ### Rollout
-    # logger = init_logger(env, '0', ori_args)  # this cannot use the args with replay buffer
-    # args.logger = logger
-
+    # tranform dictionary to bytes (serialization)
+    print(model)
     model = cloudpickle.dumps(model)
-    env = cloudpickle.dumps(env)
     args = cloudpickle.dumps(args)
+    # env = cloudpickle.dumps(env)  # this only works for single env, not for multiprocess vecenv
     processes = []
-    play_process = Process(target=rolloutExperience, args = (env, model, args))
-    play_process.daemon = True  # sub processes killed when main process finish
-    processes.append(play_process)
+    print(ori_args)
 
-    update_process = Process(target=updateModel, args= (env, model, args))
+    # launch multiple sample rollout processes
+    for pro_id in range(ori_args.num_envs):  
+        play_process = Process(target=rolloutExperience, args = (model, args, pro_id))
+        play_process.daemon = True  # sub processes killed when main process finish
+        processes.append(play_process)
+
+    # launch update process (single or multiple)
+    update_process = Process(target=updateModel, args= (model, args, '0'))
     update_process.daemon = True
     processes.append(update_process)
 

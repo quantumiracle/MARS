@@ -7,8 +7,6 @@ import gym
 import operator
 import random, copy
 import pickle
-from ..common.nn_components import cReLU, Flatten
-from ..common.storage import ReplayBuffer
 from ..common.rl_utils import choose_optimizer, EpsilonScheduler
 from ..common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
@@ -128,6 +126,10 @@ class NashDQN(DQN):
         self.num_envs = args.num_envs
         self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
+
+        if args.multiprocess:
+            self.model.share_memory()
+            self.target.share_memory()
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
         try:
             self.action_dims = env.action_space[0].n
