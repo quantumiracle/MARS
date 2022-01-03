@@ -36,8 +36,9 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
     :type args: ConfigurationDict
     """
     print("Arguments: ", args)
-    meta_update_interval = 10  # timestep interval for one meta-step
+    meta_update_interval = 100  # timestep interval for one meta-step
     max_update_itr = args.max_episodes * meta_update_interval
+    args.max_update_itr = max_update_itr
     logger = init_logger(env, save_id, args)
     meta_learner = init_meta_learner(logger, args)
     for itr in range(max_update_itr):
