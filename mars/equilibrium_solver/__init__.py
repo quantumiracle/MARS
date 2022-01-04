@@ -3,4 +3,4 @@ from .eq_LPsolver import NashEquilibriumLPSolver, CoarseCorrelatedEquilibriumLPS
 from .eq_CVXPYsolver import NashEquilibriumCVXPYSolver
 from .eq_GUROBIsolver import NashEquilibriumGUROBISolver
 from .eq_ECOSsolver import NashEquilibriumECOSSolver
-from .eq_MWUsolver import NashEquilibriumMWUSolver
+from .eq_MWUsolver import NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver

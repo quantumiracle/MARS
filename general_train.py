@@ -17,16 +17,12 @@ def launch_rollout(env, method, save_id):
     ### Specify models for each agent     
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
-
-    if method in EvaluationModelMethods:
-        eval_env = make_env(args)
-        eval_model1 = eval(args.algorithm)(env, args)
-        eval_model2 = eval(args.algorithm)(env, args)
-
-        model = MultiAgent(env, [model1, model2], args, eval_models = [eval_model1, eval_model2], eval_env = eval_env)   
     
+    if method in EvaluationModelMethods:
+        args.eval_models = True
     else:
-        model = MultiAgent(env, [model1, model2], args)
+        args.eval_models = False
+    model = MultiAgent(env, [model1, model2], args)
 
     ### Rollout
     rollout(env, model, args, save_id)
