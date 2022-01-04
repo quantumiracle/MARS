@@ -36,7 +36,7 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
     :type args: ConfigurationDict
     """
     print("Arguments: ", args)
-    meta_update_interval = 100  # timestep interval for one meta-step
+    meta_update_interval = 1000  # timestep interval for one meta-step
     max_update_itr = args.max_episodes * meta_update_interval
     args.max_update_itr = max_update_itr
     logger = init_logger(env, save_id, args)
@@ -51,9 +51,9 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 model, logger, env, args
             )  # metalearner for selfplay need just one step per episode
 
-        if itr % (meta_update_interval*args.log_interval) == 0:
+        if (itr+1) % (meta_update_interval*args.log_interval) == 0:
             logger.print_and_save()
-        if itr % meta_update_interval*args.save_interval == 0 \
+        if (itr+1) % meta_update_interval*args.save_interval == 0 \
         and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
         and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{itr}')

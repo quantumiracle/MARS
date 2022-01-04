@@ -14,22 +14,9 @@ from mars.utils.common import EvaluationModelMethods
 from rolloutExperience import rolloutExperience
 from updateModel import updateModel
 
-
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
-### Load configurations
-game_type = 'pettingzoo'
-game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
-        'combat_tank_v1', 'pong_v2', 'tennis_v2', \
-        'ice_hockey_v1', 'double_dunk_v2'][0]
-
-method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
-            'fictitious_selfplay2', 'nxdo2', 'nash_dqn', 'nash_dqn_exploiter', \
-            ][-2]   # nash_ppo is trained in train.py
-
-# method = 'nash_dqn_speed'
-
-def multiprocess_buffer_register(ori_args, method):
+def multiprocess_buffer_register(ori_args, args, method):
     BaseManager.register('replay_buffer', ReplayBuffer)
     if method == 'nfsp':
         BaseManager.register('reservoir_buffer', ReservoirBuffer)
@@ -40,9 +27,9 @@ def multiprocess_buffer_register(ori_args, method):
         args.reservoir_buffer = manager.reservoir_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
 
     return args
-        
-if __name__ == '__main__':
-    ori_args = get_general_args(game_type+'_'+game, method)
+
+def launch_rollout(env, method, save_id):
+    ori_args = get_general_args(env, method)
     ori_args.multiprocess = True
 
     ### Create env
@@ -52,7 +39,7 @@ if __name__ == '__main__':
     print(env)
 
     ### Specify models for each agent
-    args = multiprocess_buffer_register(ori_args, method)
+    args = multiprocess_buffer_register(ori_args, args, method)
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
 
@@ -77,10 +64,18 @@ if __name__ == '__main__':
         processes.append(play_process)
 
     # launch update process (single or multiple)
-    update_process = Process(target=updateModel, args= (model, args, '0'))
+    update_process = Process(target=updateModel, args= (model, args, save_id))
     update_process.daemon = True
     processes.append(update_process)
 
     [p.start() for p in processes]
-    while play_process.is_alive() and update_process.is_alive():
+    while all([p.is_alive()for p in processes]):
         pass
+
+        
+if __name__ == '__main__':
+    parser.add_argument('--env', type=str, default=None, help='environment')
+    parser.add_argument('--method', type=str, default=None, help='method name')
+    parser.add_argument('--save_id', type=str, default=None, help='identification number for each run')
+    parser_args = parser.parse_args()
+    launch_rollout(parser_args.env, parser_args.method, parser_args.save_id)
