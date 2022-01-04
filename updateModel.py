@@ -50,13 +50,14 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
             meta_learner.step(
                 model, logger, env, args
             )  # metalearner for selfplay need just one step per episode
-
+        if (itr+1) % meta_update_interval == 0:
+            print(itr)
         if (itr+1) % (meta_update_interval*args.log_interval) == 0:
             logger.print_and_save()
-        if (itr+1) % meta_update_interval*args.save_interval == 0 \
+        if (itr+1) % (meta_update_interval*args.save_interval) == 0 \
         and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
         and logger.model_dir is not None:
-            model.save_model(logger.model_dir+f'{itr}')
+            model.save_model(logger.model_dir+f'{itr+1}')
 
 def update_ga(env, model, save_id, args: ConfigurationDict) -> None:
     pass
