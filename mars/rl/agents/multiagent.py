@@ -85,13 +85,6 @@ class MultiAgent(Agent):
         if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo'] and self.args.exploit:
             assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
 
-        if args.eval_models:
-            eval_env = make_env(args)
-            eval_model1 = eval(args.algorithm)(env, args)
-            eval_model2 = eval(args.algorithm)(env, args)
-            Kwargs['eval_env'] = eval_env
-            Kwargs['eval_models'] = [eval_model1, eval_model2]
-
     def _choose_greedy(self, )->List[bool]:
         """
         Determine whether each agent should choose greedy actions under different cases.

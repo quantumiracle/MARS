@@ -1,9 +1,9 @@
-import os
 import numpy as np
-from datetime import datetime
-from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver
+from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumCVXPYSolver
 from mars.marl.meta_learner import MetaLearner
-
+from mars.env.import_env import make_env
+from mars.rl.agents.dqn import DQN
+from mars.rl.agents.ppo import PPO
 class NXDOMetaLearner(MetaLearner):
     """
     Meta learn is the  for MARL meta strategy, 
@@ -29,6 +29,13 @@ class NXDOMetaLearner(MetaLearner):
         self.meta_strategies = [[] for _ in range(2)] # for both player
 
         logger.add_extr_log('matrix_equilibrium')
+
+        self.eval_env = make_env(args)
+        args.multiprocess = False
+        eval_model1 = eval(args.algorithm)(self.eval_env, args)
+        eval_model2 = eval(args.algorithm)(self.eval_env, args)
+        args.multiprocess = True
+        self.eval_models = [eval_model1, eval_model2]
 
     def step(self, model, logger, env, args):
         """
@@ -63,8 +70,8 @@ class NXDOMetaLearner(MetaLearner):
             if len(self.saved_checkpoints) == 1:
                 model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+self.saved_checkpoints[-1])
             elif len(self.saved_checkpoints) > 1:
-                eval_agents = model.Kwargs['eval_models']  # these agents are evaluation models (for evaluation purpose only)
-                env = model.Kwargs['eval_env']
+                eval_agents = self.eval_models  # these agents are evaluation models (for evaluation purpose only)
+                env = self.eval_env
                 eval_agents[0].load_model(self.model_path+self.saved_checkpoints[-1]) # current model
                 for previous_model_id in self.saved_checkpoints[:-1]:
                     eval_agents[1].load_model(self.model_path+previous_model_id)
@@ -166,6 +173,13 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         self.evaluation_matrix = np.array([])  # the evaluated utility matrix (N*N) of policy league with N policies
         logger.add_extr_log('matrix_equilibrium')
 
+        self.eval_env = make_env(args)
+        args.multiprocess = False
+        eval_model1 = eval(args.algorithm)(self.eval_env, args)
+        eval_model2 = eval(args.algorithm)(self.eval_env, args)
+        args.multiprocess = True
+        self.eval_models = [eval_model1, eval_model2]
+
     def _switch_charac(self, model):
         """ Iteratively calculate the meta-Nash equilibrium and learn the best response, so switch the characters after each update."""
         # change learnable and not learnable to achieve iterative learning
@@ -198,8 +212,9 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
              - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
 
         # this is an indicator that best response policy is found
-        if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and self.meta_step - self.last_meta_step > min_update_interval:
+        # if score_delta  > self.args.marl_spec['selfplay_score_delta']\
+        #      and self.meta_step - self.last_meta_step > min_update_interval:
+        if True:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
                 save_path = self.model_path+str(self.meta_step)+'_'+str(self.current_learnable_model_idx)
@@ -213,29 +228,29 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
             # evaluate the N*N utility matrix, N is the number of currently saved models
             added_row = []
             if len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 1:
-                eval_agents = model.Kwargs['eval_models']  # these agents are evaluation models (for evaluation purpose only)
-                env = model.Kwargs['eval_env']
+                eval_agents = self.eval_models # these agents are evaluation models (for evaluation purpose only)
+                env = self.eval_env
                 eval_agents[0].load_model(self.model_path+self.saved_checkpoints[self.current_learnable_model_idx][-1]+'_'+str(self.current_learnable_model_idx)) # load current model
                 for opponent_model_id in self.saved_checkpoints[self.current_fixed_opponent_idx]:
                     eval_agents[1].load_model(self.model_path+opponent_model_id+'_'+str(self.current_fixed_opponent_idx))
                     added_row.append(self.evaluate(env, eval_agents, args)[0])  # reward for current learnable model
                 # print('row: ', added_row, self.current_learnable_model_idx)
                 self.update_matrix(self.current_learnable_model_idx, np.array(added_row)) # add new evaluation results to matrix
-                # print('matrix: ', self.evaluation_matrix)
-                if len(self.saved_checkpoints[self.current_fixed_opponent_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4: # no need for NE when (1,1), (1,2)
+
+                if len(self.saved_checkpoints[self.current_learnable_model_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4: # no need for NE when (1,1), (1,2)
                     # rollout with NFSP to learn meta strategy or directly calculate the Nash from the matrix
                     # self.meta_strategies, _ = NashEquilibriumECOSSolver(self.evaluation_matrix) # present implementation cannot solve non-square matrix
-                    self.meta_strategies, _ = NashEquilibriumMWUSolver(self.evaluation_matrix) # cvxpy can solve non-square matrix, just a bit slower, but nxdo doesn't solve Nash often
+                    self.meta_strategies, _ = NashEquilibriumCVXPYSolver(self.evaluation_matrix) # cvxpy can solve non-square matrix, just a bit slower, but nxdo doesn't solve Nash often
                     # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
                     # self.meta_strategies = self.meta_strategies[self.current_learnable_model_idx]
-                    logger.extr_logs.append(f'Current episode: {self.meta_step}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
-
+                    logger.extr_logs.append(f'Current episode: {self.meta_step}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategies}')
             self._switch_charac(model)
             model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # sample from Nash meta policy in a episode-wise manner
         current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx] 
-        if len(current_policy_checkpoints) >= 2 and self.meta_strategies is not None:
+        if len(self.saved_checkpoints[self.current_learnable_model_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4 \
+            and self.meta_strategies is not None:
             self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, current_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
 
     def update_matrix(self, idx, row):

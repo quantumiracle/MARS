@@ -35,7 +35,7 @@ class MetaLearner(Agent):
             with open(self.model_path+'policy_checkpoints.npy', 'wb') as f:
                 np.save(f, self.saved_checkpoints)
 
-    def load_model(self, model, path: str = None):
+    def load_model(self, model, path: str = None, verbose: bool = False):
         self.model = model
         if path is not None:
             self.model_path = path
@@ -44,3 +44,7 @@ class MetaLearner(Agent):
         with open(self.model_path+'policy_checkpoints.npy', 'rb') as f:
             self.saved_checkpoints = np.load(f)
         self.step(model)  # load meta strategy into model  
+
+        if verbose:
+            print(self.meta_strategies)
+            print(self.saved_checkpoints)
