@@ -57,10 +57,6 @@ if __name__ == '__main__':
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
 
-    # if method in EvaluationModelMethods:
-    #     args.eval_models = True
-    # else:
-    #     args.eval_models = False
     model = MultiAgent(env, [model1, model2], args)
     env.close()
 
