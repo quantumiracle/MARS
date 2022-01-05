@@ -1,7 +1,7 @@
-import os
 import numpy as np
-from datetime import datetime
-class SelfPlayMetaLearner():
+from .meta_learner import MetaLearner
+
+class SelfPlayMetaLearner(MetaLearner):
     """
     Meta learn is the  for MARL meta strategy, 
     which assigns the policy update schedule on a level higher
@@ -116,7 +116,7 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
             
 
 
-class FictitiousSelfPlayMetaLearner():
+class FictitiousSelfPlayMetaLearner(MetaLearner):
     """
     Meta learn is the  for MARL meta strategy, 
     which assigns the policy update schedule on a level higher
@@ -140,7 +140,6 @@ class FictitiousSelfPlayMetaLearner():
         self.save_checkpoint = save_checkpoint
         self.args = args
         self.last_update_epi= 0
-        self.saved_checkpoints = []
 
     def step(self, model, logger, *Args):
         """
@@ -170,9 +169,8 @@ class FictitiousSelfPlayMetaLearner():
 
         # load a model for each episode to achieve an empiral average policy
         if len(self.saved_checkpoints) > 0: # the policy set has one or more policies to sample from
-            random_checkpoint = np.random.choice(self.saved_checkpoints)
-            model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+random_checkpoint)
-            # logger.additional_logs.append(f'Load the random opponent model from {self.model_path+random_checkpoint}.')
+            self.meta_strategy = np.ones(len(self.saved_checkpoints))/len(self.saved_checkpoints)  # uniformly distributed
+            self._replace_agent_with_meta(model, self.args.marl_spec['opponent_idx'], self.saved_checkpoints)
 
         if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
@@ -248,9 +246,9 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
         # load a model for each episode to achieve an empiral average policy
         avg_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
         if len(avg_policy_checkpoints) > 0:  # the policy set has one or more policies to sample from
-            random_checkpoint = np.random.choice(avg_policy_checkpoints)
-            model.agents[self.current_fixed_opponent_idx].load_model(self.model_path+random_checkpoint+'_'+str(self.current_fixed_opponent_idx))
-            # logger.additional_logs.append(f'Load the random opponent model from {self.model_path+random_checkpoint}.')
+            self.meta_strategy = np.ones(len(avg_policy_checkpoints))/len(avg_policy_checkpoints)  # uniformly distributed         
+            self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, avg_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
+
 
         if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
             model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model

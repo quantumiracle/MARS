@@ -6,6 +6,8 @@ from mars.env.import_env import make_env
 from .agent import Agent
 from .dqn import DQN
 from .ppo import PPO
+from mars.marl import MetaLearner
+from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
 
 class MultiAgent(Agent):
     """A class containing all agents in a game.
@@ -62,11 +64,18 @@ class MultiAgent(Agent):
         print(prefix + " are not learnable.")
 
         if args.test or args.exploit:
-            if args.load_model_full_path:  # if the full path is specified, it has higher priority than the model index
-                model_path = args.load_model_full_path
+            if args.marl_method in MetaStrategyMethods:  
+                meta_learner = MetaLearner()
+                assert 0 in self.not_learnable_list # 0 is the model to test/exploit
+                meta_learner.load_model(self.agents[0], path=args.load_model_full_path)  
+                self.agents[0] = meta_learner
+
             else:
-                model_path = f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{args.load_model_idx}"
-            self.load_model(model_path)
+                if args.load_model_full_path:  # if the full path is specified, it has higher priority than the model index
+                    model_path = args.load_model_full_path
+                else:
+                    model_path = f"../model/{args.env_type}_{args.env_name}_{args.marl_method}_{args.algorithm}_{args.load_model_idx}"
+                self.load_model(model_path)
 
         else:  # training mode
             if args.marl_method in SelfplayMethods:  
@@ -80,8 +89,8 @@ class MultiAgent(Agent):
             eval_env = make_env(args)
             eval_model1 = eval(args.algorithm)(env, args)
             eval_model2 = eval(args.algorithm)(env, args)
-            self.Kwargs['eval_env'] = eval_env
-            self.Kwargs['eval_models'] = [eval_model1, eval_model2]
+            Kwargs['eval_env'] = eval_env
+            Kwargs['eval_models'] = [eval_model1, eval_model2]
 
     def _choose_greedy(self, )->List[bool]:
         """

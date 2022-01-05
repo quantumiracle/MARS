@@ -8,6 +8,7 @@ from multiprocessing.managers import BaseManager, NamespaceProxy
 
 from mars.env.import_env import make_env
 from mars.rl.agents import *
+from mars.rl.agents.multiagent import MultiAgent
 from mars.utils.func import get_general_args
 from mars.rl.common.storage import ReplayBuffer, ReservoirBuffer
 from mars.utils.common import EvaluationModelMethods
@@ -51,8 +52,7 @@ def launch_rollout(env, method, save_id):
     env.close()
 
     # tranform dictionary to bytes (serialization)
-    model = cloudpickle.dumps(model)
-    args = cloudpickle.dumps(args)
+    # args = cloudpickle.dumps(args)
     # env = cloudpickle.dumps(env)  # this only works for single env, not for multiprocess vecenv
     processes = []
     print(ori_args)

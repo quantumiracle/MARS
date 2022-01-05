@@ -1,12 +1,9 @@
-import numpy as np
-from numpy.lib.arraysetops import isin
-import torch
-import time
 import cloudpickle
 from mars.utils.logger2 import init_logger
 from mars.utils.typing import Tuple, List, ConfigurationDict
-from mars.marl.meta_learner import init_meta_learner
+from mars.marl import init_meta_learner
 from mars.env.import_env import make_env
+from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
 
 
 def updateModel(model, args: ConfigurationDict, save_id='0') -> None:
@@ -17,8 +14,8 @@ def updateModel(model, args: ConfigurationDict, save_id='0') -> None:
     algorithm, the function is separeted into two types. 
     """
     # tranform bytes to dictionary
-    model = cloudpickle.loads(model)
-    args = cloudpickle.loads(args)
+    # model = cloudpickle.loads(model) # if use this the model in different process will no longer be shared!
+    # args = cloudpickle.loads(args)
     args.num_envs = 1
     env = make_env(args)
     update_normal(env, model, save_id, args)
@@ -56,6 +53,10 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
         and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
         and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{itr+1}')
+
+        if (itr+1) % (meta_update_interval*args.save_interval) == 0 \
+            and args.marl_method in MetaStrategyMethods:
+            meta_learner.save_model()
 
 def update_ga(env, model, save_id, args: ConfigurationDict) -> None:
     pass

@@ -8,6 +8,7 @@ from multiprocessing.managers import BaseManager, NamespaceProxy
 
 from mars.env.import_env import make_env
 from mars.rl.agents import *
+from mars.rl.agents.multiagent import MultiAgent
 from mars.utils.func import get_general_args
 from mars.rl.common.storage import ReplayBuffer, ReservoirBuffer
 from mars.utils.common import EvaluationModelMethods
@@ -25,7 +26,7 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nxdo2', 'nash_dqn', 'nash_dqn_exploiter', \
-            ][-2]   # nash_ppo is trained in train.py
+            ][0]   # nash_ppo is trained in train.py
 
 # method = 'nash_dqn_speed'
 
@@ -63,9 +64,8 @@ if __name__ == '__main__':
     model = MultiAgent(env, [model1, model2], args)
     env.close()
 
-    # tranform dictionary to bytes (serialization)
-    model = cloudpickle.dumps(model)
-    args = cloudpickle.dumps(args)
+    # no need for this! tranform dictionary to bytes (serialization)
+    # args = cloudpickle.dumps(args)
     # env = cloudpickle.dumps(env)  # this only works for single env, not for multiprocess vecenv
     processes = []
     print(ori_args)
@@ -82,5 +82,5 @@ if __name__ == '__main__':
     processes.append(update_process)
 
     [p.start() for p in processes]
-    while play_process.is_alive() and update_process.is_alive():
+    while all([p.is_alive()for p in processes]):
         pass
