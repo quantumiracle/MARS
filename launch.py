@@ -11,7 +11,6 @@ from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
 from mars.utils.func import get_general_args
 from mars.rl.common.storage import ReplayBuffer, ReservoirBuffer
-from mars.utils.common import EvaluationModelMethods
 from rolloutExperience import rolloutExperience
 from updateModel import updateModel
 from mars.utils.logger2 import init_logger
@@ -26,8 +25,8 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
         'ice_hockey_v1', 'double_dunk_v2'][0]
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
-            'fictitious_selfplay2', 'nxdo2', 'nash_dqn', 'nash_dqn_exploiter', \
-            ][3]   # nash_ppo is trained in train.py
+            'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
+            'nxdo2'][-1]   # nash_ppo are trained in train.py, cannot user here!
 
 # method = 'nash_dqn_speed'
 
@@ -58,10 +57,10 @@ if __name__ == '__main__':
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
 
-    if method in EvaluationModelMethods:
-        args.eval_models = True
-    else:
-        args.eval_models = False
+    # if method in EvaluationModelMethods:
+    #     args.eval_models = True
+    # else:
+    #     args.eval_models = False
     model = MultiAgent(env, [model1, model2], args)
     env.close()
 
@@ -78,7 +77,7 @@ if __name__ == '__main__':
         play_process.daemon = True  # sub processes killed when main process finish
         processes.append(play_process)
 
-    # launch update process (single or multiple)
+    # # launch update process (single or multiple)
     update_process = Process(target=updateModel, args= (model, info_queue, args, '0'))
     update_process.daemon = True
     processes.append(update_process)

@@ -11,7 +11,6 @@ from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
 from mars.utils.func import get_general_args
 from mars.rl.common.storage import ReplayBuffer, ReservoirBuffer
-from mars.utils.common import EvaluationModelMethods
 from rolloutExperience import rolloutExperience
 from updateModel import updateModel
 
@@ -44,10 +43,6 @@ def launch_rollout(env, method, save_id):
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
 
-    if method in EvaluationModelMethods:
-        args.eval_models = True
-    else:
-        args.eval_models = False
     model = MultiAgent(env, [model1, model2], args)
     env.close()
 

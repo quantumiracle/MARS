@@ -142,9 +142,9 @@ class Logger(TestLogger):
         """
         post_fix = f"{args.env_type}_{args.env_name}_{args.marl_method}/"
 
-        self.log_dir = f'../{args.save_path}/data/log/{self.save_id}/' + post_fix
-        self.runs_dir = f'../{args.save_path}/data/tensorboard/{self.save_id}/' + post_fix
-        self.model_dir = f'../{args.save_path}/data/model/{self.save_id}/' + post_fix
+        self.log_dir = f'./{args.save_path}/data/log/{self.save_id}/' + post_fix
+        self.runs_dir = f'./{args.save_path}/data/tensorboard/{self.save_id}/' + post_fix
+        self.model_dir = f'./{args.save_path}/data/model/{self.save_id}/' + post_fix
         print(f'Save models to : {os.path.abspath(self.model_dir)}. \n Save logs to: {os.path.abspath(self.log_dir)}.')
         os.makedirs(self.log_dir, exist_ok=True)
         os.makedirs(self.runs_dir, exist_ok=True)

@@ -1,5 +1,3 @@
-from mars.utils.func import LoadYAML2Dict
-from mars.utils.common import EvaluationModelMethods
 from mars.env.import_env import make_env
 from mars.rollout import rollout
 from mars.rl.agents import *
@@ -16,7 +14,7 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nfsp', 'nash_ppo'][0] 
+            'nfsp', 'nxdo2', 'nash_ppo'][-2] 
 
 # method = 'nash_dqn_speed'
 
@@ -32,10 +30,6 @@ print(env)
 model1 = eval(args.algorithm)(env, args)
 model2 = eval(args.algorithm)(env, args)
 
-if method in EvaluationModelMethods:
-    args.eval_models = True
-else:
-    args.eval_models = False
 model = MultiAgent(env, [model1, model2], args)
 
 ### Rollout
