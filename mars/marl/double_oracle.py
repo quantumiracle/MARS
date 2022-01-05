@@ -26,6 +26,7 @@ class NXDOMetaLearner(MetaLearner):
         self.args = args
         self.meta_step = self.last_meta_step = 0
         self.evaluation_matrix = np.array([[0]])  # the evaluated utility matrix (N*N) of policy league with N policies
+        self.meta_strategies = [[] for _ in range(2)] # for both player
 
         logger.add_extr_log('matrix_equilibrium')
 
@@ -72,9 +73,9 @@ class NXDOMetaLearner(MetaLearner):
                 self.update_matrix(np.array(added_row)) # add new evaluation results to matrix
                 # print('matrix: ', self.evaluation_matrix)
                 # rollout with NFSP to learn meta strategy or directly calculate the Nash from the matrix
-                self.meta_strategy, _ = NashEquilibriumECOSSolver(self.evaluation_matrix)
+                self.meta_strategies, _ = NashEquilibriumECOSSolver(self.evaluation_matrix)
                 # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
-                self.meta_strategy = self.meta_strategy[0]
+                # self.meta_strategies = self.meta_strategies[0]
                 # print('nash: ', self.meta_strategy)
                 logger.extr_logs.append(f'Current meta step: {self.meta_step}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
 
@@ -161,8 +162,8 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         self.args = args
         self.meta_step = self.last_meta_step = 0
         self.saved_checkpoints = [[] for _ in range(2)] # for both player
+        self.meta_strategies = [[] for _ in range(2)] # for both player
         self.evaluation_matrix = np.array([])  # the evaluated utility matrix (N*N) of policy league with N policies
-        self.meta_strategy = None
         logger.add_extr_log('matrix_equilibrium')
 
     def _switch_charac(self, model):
@@ -223,20 +224,19 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
                 # print('matrix: ', self.evaluation_matrix)
                 if len(self.saved_checkpoints[self.current_fixed_opponent_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4: # no need for NE when (1,1), (1,2)
                     # rollout with NFSP to learn meta strategy or directly calculate the Nash from the matrix
-                    # self.meta_strategy = NashEquilibriumECOSSolver(self.evaluation_matrix) # present implementation cannot solve non-square matrix
-                    self.meta_strategy = NashEquilibriumMWUSolver(self.evaluation_matrix) # cvxpy can solve non-square matrix, just a bit slower, but nxdo doesn't solve Nash often
+                    # self.meta_strategies, _ = NashEquilibriumECOSSolver(self.evaluation_matrix) # present implementation cannot solve non-square matrix
+                    self.meta_strategies, _ = NashEquilibriumMWUSolver(self.evaluation_matrix) # cvxpy can solve non-square matrix, just a bit slower, but nxdo doesn't solve Nash often
                     # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
-                    self.meta_strategy = self.meta_strategy[self.current_learnable_model_idx]
-                    # print('nash: ', self.meta_strategy)
+                    # self.meta_strategies = self.meta_strategies[self.current_learnable_model_idx]
                     logger.extr_logs.append(f'Current episode: {self.meta_step}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
 
             self._switch_charac(model)
             model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # sample from Nash meta policy in a episode-wise manner
-        avg_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx] 
-        if len(avg_policy_checkpoints) >= 2 and self.meta_strategy is not None:
-            self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, avg_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
+        current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx] 
+        if len(current_policy_checkpoints) >= 2 and self.meta_strategies is not None:
+            self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, current_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
 
     def update_matrix(self, idx, row):
         """
