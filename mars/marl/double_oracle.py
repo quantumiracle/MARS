@@ -24,7 +24,7 @@ class NXDOMetaLearner(MetaLearner):
 
         self.save_checkpoint = save_checkpoint
         self.args = args
-        self.last_update_epi= 0
+        self.meta_step = self.last_meta_step = 0
         self.evaluation_matrix = np.array([[0]])  # the evaluated utility matrix (N*N) of policy league with N policies
 
         logger.add_extr_log('matrix_equilibrium')
@@ -34,6 +34,7 @@ class NXDOMetaLearner(MetaLearner):
         A meta learner step (usually at the end of each episode), update models if available.
 
         """
+        self.meta_step += 1
         # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
         # score_avg_window = 10 # the length of window for averaging the score values
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
@@ -44,14 +45,14 @@ class NXDOMetaLearner(MetaLearner):
 
         # this is an indicator that best response policy is found
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and logger.current_episode - self.last_update_epi > min_update_interval:
+             and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+str(logger.current_episode)) # save all checkpoints
-                self.saved_checkpoints.append(str(logger.current_episode))
+                model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+str(self.meta_step)) # save all checkpoints
+                self.saved_checkpoints.append(str(self.meta_step))
 
             logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
-            self.last_update_epi = logger.current_episode
+            self.last_meta_step = self.meta_step
 
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
@@ -75,7 +76,7 @@ class NXDOMetaLearner(MetaLearner):
                 # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
                 self.meta_strategy = self.meta_strategy[0]
                 # print('nash: ', self.meta_strategy)
-                logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
+                logger.extr_logs.append(f'Current meta step: {self.meta_step}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
 
         # sample from Nash meta policy in a episode-wise manner
         if len(self.saved_checkpoints) > 1:
@@ -158,7 +159,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
 
         self.save_checkpoint = save_checkpoint
         self.args = args
-        self.last_update_epi= 0
+        self.meta_step = self.last_meta_step = 0
         self.saved_checkpoints = [[] for _ in range(2)] # for both player
         self.evaluation_matrix = np.array([])  # the evaluated utility matrix (N*N) of policy league with N policies
         self.meta_strategy = None
@@ -186,6 +187,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
+        self.meta_step += 1
         # score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
         # score_avg_window = 10 # use the same average window as logging for score delta
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
@@ -196,15 +198,15 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
 
         # this is an indicator that best response policy is found
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and logger.current_episode - self.last_update_epi > min_update_interval:
+             and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                save_path = self.model_path+str(logger.current_episode)+'_'+str(self.current_learnable_model_idx)
+                save_path = self.model_path+str(self.meta_step)+'_'+str(self.current_learnable_model_idx)
                 model.agents[self.current_learnable_model_idx].save_model(save_path) # save all checkpoints
-                self.saved_checkpoints[self.current_learnable_model_idx].append(str(logger.current_episode))
+                self.saved_checkpoints[self.current_learnable_model_idx].append(str(self.meta_step))
 
             logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
-            self.last_update_epi = logger.current_episode
+            self.last_meta_step = self.meta_step 
 
             ### update the opponent with epsilon meta Nash policy
             # evaluate the N*N utility matrix, N is the number of currently saved models
@@ -226,7 +228,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
                     # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
                     self.meta_strategy = self.meta_strategy[self.current_learnable_model_idx]
                     # print('nash: ', self.meta_strategy)
-                    logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
+                    logger.extr_logs.append(f'Current episode: {self.meta_step}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
 
             self._switch_charac(model)
             model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model

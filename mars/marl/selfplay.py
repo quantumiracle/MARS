@@ -22,7 +22,7 @@ class SelfPlayMetaLearner(MetaLearner):
 
         self.save_checkpoint = save_checkpoint
         self.args = args
-        self.last_update_epi= 0
+        self.meta_step = self.last_meta_step = 0
 
     def step(self, model, logger, *Args):
         """
@@ -31,6 +31,7 @@ class SelfPlayMetaLearner(MetaLearner):
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
+        self.meta_step += 1
         agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
@@ -38,7 +39,7 @@ class SelfPlayMetaLearner(MetaLearner):
         score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
              - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and logger.current_episode - self.last_update_epi > min_update_interval:
+             and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
                 # model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+str(logger.current_episode)) # save all checkpoints
@@ -48,11 +49,11 @@ class SelfPlayMetaLearner(MetaLearner):
                 model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+'1')
             logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
 
-            self.last_update_epi = logger.current_episode
+            self.last_meta_step = self.meta_step
 
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
-        
-        if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
+
+        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
 class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
@@ -66,7 +67,7 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
 
         self.save_checkpoint = save_checkpoint
         self.args = args
-        self.last_update_epi= 0
+        self.meta_step = self.last_meta_step = 0
 
     def _switch_charac(self, model):
         """ Iteratively update."""
@@ -90,6 +91,7 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
+        self.meta_step += 1
         agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
@@ -98,7 +100,7 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
              - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
 
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and logger.current_episode - self.last_update_epi > min_update_interval:
+             and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
                 save_path = self.model_path+'1'+'_'+str(self.current_learnable_model_idx)
@@ -106,12 +108,12 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
                 model.agents[self.current_fixed_opponent_idx].load_model(save_path)
             logger.additional_logs.append(f'Score delta: {score_delta}, update the opponent.')
 
-            self.last_update_epi = logger.current_episode
+            self.last_meta_step = self.meta_step
             
             self._switch_charac(model)
             model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
-        
-        if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
+
+        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
             
 
@@ -139,7 +141,7 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
 
         self.save_checkpoint = save_checkpoint
         self.args = args
-        self.last_update_epi= 0
+        self.meta_step = self.last_meta_step = 0
 
     def step(self, model, logger, *Args):
         """
@@ -148,22 +150,23 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
+        self.meta_step += 1
         agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
-
+        
         score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
              - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and logger.current_episode - self.last_update_epi > min_update_interval:
+             and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                save_path = self.model_path+str(logger.current_episode)
+                save_path = self.model_path+str(self.meta_step)
                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(save_path) # save all checkpoints
-                self.saved_checkpoints.append(str(logger.current_episode))
+                self.saved_checkpoints.append(str(self.meta_step))
                 logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
 
-            self.last_update_epi = logger.current_episode
+            self.last_meta_step = self.meta_step
 
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
@@ -172,7 +175,7 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
             self.meta_strategy = np.ones(len(self.saved_checkpoints))/len(self.saved_checkpoints)  # uniformly distributed
             self._replace_agent_with_meta(model, self.args.marl_spec['opponent_idx'], self.saved_checkpoints)
 
-        if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
+        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
 
@@ -198,7 +201,7 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
 
         self.save_checkpoint = save_checkpoint
         self.args = args
-        self.last_update_epi= 0
+        self.meta_step = self.last_meta_step = 0
         self.saved_checkpoints = [[] for _ in range(2)] # for both player
 
     def _switch_charac(self, model):
@@ -223,22 +226,23 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
+        self.meta_step += 1
         agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
         score_delta = np.mean(logger.epi_rewards[logger.keys[self.current_learnable_model_idx]][-score_avg_window:])\
              - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
-             
+
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and logger.current_episode - self.last_update_epi > min_update_interval:
+             and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                save_path = self.model_path+str(logger.current_episode)+'_'+str(self.current_learnable_model_idx)
+                save_path = self.model_path+str(self.meta_step)+'_'+str(self.current_learnable_model_idx)
                 model.agents[self.current_learnable_model_idx].save_model(save_path) # save all checkpoints
-                self.saved_checkpoints[self.current_learnable_model_idx].append(str(logger.current_episode))
+                self.saved_checkpoints[self.current_learnable_model_idx].append(str(self.meta_step))
                 logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
 
-            self.last_update_epi = logger.current_episode
+            self.last_meta_step = self.meta_step
 
             self._switch_charac(model)
             model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
@@ -250,5 +254,5 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
             self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, avg_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
 
 
-        if (logger.current_episode - self.last_update_epi) > agent_reinit_interval:
+        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
