@@ -1,76 +1,35 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>DQN &mdash; MARS 0.0.1 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="PPO" href="ppo.html" />
     <link rel="prev" title="Agent" href="agent.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> MARS
-          
-
-          
-            
             <img src="../../_static/mars_label.jpg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -78,18 +37,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/intro.html">Introduction</a></li>
@@ -117,6 +65,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../utils/data_struct.html">Data Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utils/func.html">Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../env/env.html">Environment</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
 <ul>
@@ -124,83 +73,42 @@
 <li class="toctree-l1"><a class="reference internal" href="../../experiments/exploit.html">Exploitability Test</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">MARS</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>DQN</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../../_sources/mars/algorithm/dqn.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="dqn">
+             
+  <section id="dqn">
 <h1>DQN<a class="headerlink" href="#dqn" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
+<section id="id1">
 <h2>DQN<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-mars_core.rl.algorithm.dqn"></span><dl class="py class">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQN">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mars_core.rl.algorithm.dqn.</span></span><span class="sig-name descname"><span class="pre">DQN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="agent.html#mars_core.rl.algorithm.common.agent.Agent" title="mars_core.rl.algorithm.common.agent.Agent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars_core.rl.algorithm.common.agent.Agent</span></code></a></p>
+<span class="target" id="module-mars.rl.agents.dqn"></span><dl class="py class">
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mars.rl.agents.dqn.</span></span><span class="sig-name descname"><span class="pre">DQN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="agent.html#mars.rl.agents.agent.Agent" title="mars.rl.agents.agent.Agent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars.rl.agents.agent.Agent</span></code></a></p>
 <p>DQN algorithm</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQN.choose_action">
-<span class="sig-name descname"><span class="pre">choose_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Greedy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQN.choose_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQN.choose_action" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQN.choose_action">
+<span class="sig-name descname"><span class="pre">choose_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Greedy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQN.choose_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQN.choose_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Choose action give state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -220,24 +128,29 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQN.load_model">
-<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQN.load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQN.load_model" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQN.load_model">
+<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQN.load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQN.load_model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQN.ready_to_update">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ready_to_update</span></span><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQN.ready_to_update" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQN.ready_to_update">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ready_to_update</span></span><a class="headerlink" href="#mars.rl.agents.dqn.DQN.ready_to_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>A function return whether the agent is ready to be updated.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQN.save_model">
-<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQN.save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQN.save_model" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQN.reinit">
+<span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nets_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schedulers_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQN.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQN.reinit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQN.store">
-<span class="sig-name descname"><span class="pre">store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQN.store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQN.store" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQN.save_model">
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQN.save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQN.save_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQN.store">
+<span class="sig-name descname"><span class="pre">store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQN.store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQN.store" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store samples in buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -247,17 +160,17 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQN.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQN.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQN.update" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQN.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQN.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQN.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the agent.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQNBase">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mars_core.rl.algorithm.dqn.</span></span><span class="sig-name descname"><span class="pre">DQNBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQNBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQNBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mars_core.rl.algorithm.common.networks.NetBase</span></code></p>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQNBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mars.rl.agents.dqn.</span></span><span class="sig-name descname"><span class="pre">DQNBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQNBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQNBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mars.rl.common.networks.NetBase</span></code></p>
 <p>Basic Q network</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -268,8 +181,8 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQNBase.choose_action">
-<span class="sig-name descname"><span class="pre">choose_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQNBase.choose_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQNBase.choose_action" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQNBase.choose_action">
+<span class="sig-name descname"><span class="pre">choose_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQNBase.choose_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQNBase.choose_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Choose action acoording to state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -288,40 +201,52 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQNBase.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DQNBase.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQNBase.forward" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQNBase.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQNBase.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQNBase.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>need to be overwritten by the subclass</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQNBase.reinit">
+<span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DQNBase.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DQNBase.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reinitialize the parameters of a network.</p>
+</dd></dl>
+
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DQNBase.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DQNBase.training" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DQNBase.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mars.rl.agents.dqn.DQNBase.training" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DuelingDQN">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mars_core.rl.algorithm.dqn.</span></span><span class="sig-name descname"><span class="pre">DuelingDQN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DuelingDQN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DuelingDQN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#mars_core.rl.algorithm.dqn.DQNBase" title="mars_core.rl.algorithm.dqn.DQNBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars_core.rl.algorithm.dqn.DQNBase</span></code></a></p>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DuelingDQN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mars.rl.agents.dqn.</span></span><span class="sig-name descname"><span class="pre">DuelingDQN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DuelingDQN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DuelingDQN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mars.rl.agents.dqn.DQNBase" title="mars.rl.agents.dqn.DQNBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars.rl.agents.dqn.DQNBase</span></code></a></p>
 <p>Dueling Network Architectures for Deep Reinforcement Learning
 <a class="reference external" href="https://arxiv.org/abs/1511.06581">https://arxiv.org/abs/1511.06581</a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DuelingDQN.net">
-<span class="sig-name descname"><span class="pre">net</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#DuelingDQN.net"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DuelingDQN.net" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DuelingDQN.net">
+<span class="sig-name descname"><span class="pre">net</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DuelingDQN.net"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DuelingDQN.net" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DuelingDQN.reinit">
+<span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#DuelingDQN.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.DuelingDQN.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reinitialize the parameters of a network.</p>
+</dd></dl>
+
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.DuelingDQN.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#mars_core.rl.algorithm.dqn.DuelingDQN.training" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.DuelingDQN.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mars.rl.agents.dqn.DuelingDQN.training" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.ParallelDQN">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mars_core.rl.algorithm.dqn.</span></span><span class="sig-name descname"><span class="pre">ParallelDQN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_envs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#ParallelDQN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.ParallelDQN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#mars_core.rl.algorithm.dqn.DQNBase" title="mars_core.rl.algorithm.dqn.DQNBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars_core.rl.algorithm.dqn.DQNBase</span></code></a></p>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.ParallelDQN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mars.rl.agents.dqn.</span></span><span class="sig-name descname"><span class="pre">ParallelDQN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_envs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#ParallelDQN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.ParallelDQN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mars.rl.agents.dqn.DQNBase" title="mars.rl.agents.dqn.DQNBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars.rl.agents.dqn.DQNBase</span></code></a></p>
 <p>DQN for parallel env sampling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -334,8 +259,8 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.ParallelDQN.choose_action">
-<span class="sig-name descname"><span class="pre">choose_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#ParallelDQN.choose_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.ParallelDQN.choose_action" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.ParallelDQN.choose_action">
+<span class="sig-name descname"><span class="pre">choose_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#ParallelDQN.choose_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.ParallelDQN.choose_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Choose action acoording to state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -354,16 +279,16 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.ParallelDQN.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#mars_core.rl.algorithm.dqn.ParallelDQN.training" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.ParallelDQN.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mars.rl.agents.dqn.ParallelDQN.training" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.ParallelDuelingDQN">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mars_core.rl.algorithm.dqn.</span></span><span class="sig-name descname"><span class="pre">ParallelDuelingDQN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_envs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars_core/rl/algorithm/dqn.html#ParallelDuelingDQN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars_core.rl.algorithm.dqn.ParallelDuelingDQN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#mars_core.rl.algorithm.dqn.DuelingDQN" title="mars_core.rl.algorithm.dqn.DuelingDQN"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars_core.rl.algorithm.dqn.DuelingDQN</span></code></a>, <a class="reference internal" href="#mars_core.rl.algorithm.dqn.ParallelDQN" title="mars_core.rl.algorithm.dqn.ParallelDQN"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars_core.rl.algorithm.dqn.ParallelDQN</span></code></a></p>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.ParallelDuelingDQN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mars.rl.agents.dqn.</span></span><span class="sig-name descname"><span class="pre">ParallelDuelingDQN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_envs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/rl/agents/dqn.html#ParallelDuelingDQN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.rl.agents.dqn.ParallelDuelingDQN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mars.rl.agents.dqn.DuelingDQN" title="mars.rl.agents.dqn.DuelingDQN"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars.rl.agents.dqn.DuelingDQN</span></code></a>, <a class="reference internal" href="#mars.rl.agents.dqn.ParallelDQN" title="mars.rl.agents.dqn.ParallelDQN"><code class="xref py py-class docutils literal notranslate"><span class="pre">mars.rl.agents.dqn.ParallelDQN</span></code></a></p>
 <p>DuelingDQN for parallel env sampling</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -407,61 +332,44 @@
 </pre></div>
 </div>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mars_core.rl.algorithm.dqn.ParallelDuelingDQN.training">
-<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#mars_core.rl.algorithm.dqn.ParallelDuelingDQN.training" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mars.rl.agents.dqn.ParallelDuelingDQN.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#mars.rl.agents.dqn.ParallelDuelingDQN.training" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="ppo.html" class="btn btn-neutral float-right" title="PPO" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="agent.html" class="btn btn-neutral float-left" title="Agent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ppo.html" class="btn btn-neutral float-right" title="PPO" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021, Zihan Ding.
-
-    </p>
+    <p>&#169; Copyright 2021, Zihan Ding.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

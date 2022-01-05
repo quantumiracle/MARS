@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mars.env.import_env &mdash; MARS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> MARS
+            <img src="../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/intro.html">Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/algorithm/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/algorithm/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/algorithm/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MARS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>mars.env.import_env</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mars.env.import_env</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Supported Environments in MARS:</span>
+
+<span class="sd">Single-agent:</span>
+<span class="sd">    * Openai Gym: https://gym.openai.com/</span>
+<span class="sd">        type: &#39;gym&#39;</span>
+<span class="sd">        envs: see https://gym.openai.com/envs/</span>
+<span class="sd">Multi-agent:</span>
+<span class="sd">    * PettingZoo: https://github.com/PettingZoo-Team/PettingZoo</span>
+<span class="sd">        type: &#39;pettingzoo&#39;</span>
+<span class="sd">        envs: [         </span>
+<span class="sd">        &#39;basketball_pong_v2&#39;, &#39;boxing_v1&#39;, &#39;combat_plane_v1&#39;, &#39;combat_tank_v1&#39;,</span>
+<span class="sd">        &#39;double_dunk_v2&#39;, &#39;entombed_competitive_v2&#39;, &#39;entombed_cooperative_v2&#39;,</span>
+<span class="sd">        &#39;flag_capture_v1&#39;, &#39;foozpong_v2&#39;, &#39;ice_hockey_v1&#39;, &#39;joust_v2&#39;,</span>
+<span class="sd">        &#39;mario_bros_v2&#39;, &#39;maze_craze_v2&#39;, &#39;othello_v2&#39;, &#39;pong_v2&#39;,</span>
+<span class="sd">        &#39;quadrapong_v3&#39;, &#39;space_invaders_v1&#39;, &#39;space_war_v1&#39;, &#39;surround_v1&#39;,</span>
+<span class="sd">        &#39;tennis_v2&#39;, &#39;video_checkers_v3&#39;, &#39;volleyball_pong_v2&#39;, &#39;warlords_v2&#39;,</span>
+<span class="sd">        &#39;wizard_of_wor_v2&#39;, </span>
+<span class="sd">        &#39;dou_dizhu_v3&#39;, &#39;go_v3&#39;, &#39;leduc_holdem_v3&#39;,</span>
+<span class="sd">        &#39;rps_v1&#39;, &#39;texas_holdem_no_limit_v3&#39;, &#39;texas_holdem_v3&#39;,</span>
+<span class="sd">        &#39;tictactoe_v3&#39;, &#39;uno_v3&#39;]</span>
+<span class="sd">    * LaserTag: https://github.com/younggyoseo/lasertag-v0</span>
+<span class="sd">        type: &#39;lasertag&#39;</span>
+<span class="sd">        envs: [&#39;LaserTag-small2-v0&#39;, &#39;LaserTag-small3-v0&#39;, &#39;LaserTag-small4-v0&#39; ]</span>
+<span class="sd">    * SlimeVolley: https://github.com/hardmaru/slimevolleygym </span>
+<span class="sd">        type: &#39;slimevolley&#39;</span>
+<span class="sd">        envs: [&#39;SlimeVolley-v0&#39;, &#39;SlimeVolleySurvivalNoFrameskip-v0&#39;,</span>
+<span class="sd">            &#39;SlimeVolleyNoFrameskip-v0&#39;, &#39;SlimeVolleyPixel-v0&#39;]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">supersuit</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.wrappers.gym_wrappers</span> <span class="kn">import</span> <span class="n">NoopResetEnv</span><span class="p">,</span> <span class="n">MaxAndSkipEnv</span><span class="p">,</span> <span class="n">WarpFrame</span><span class="p">,</span> <span class="n">FrameStack</span><span class="p">,</span> <span class="n">FireResetEnv</span><span class="p">,</span> <span class="n">wrap_pytorch</span>
+<span class="kn">from</span> <span class="nn">.wrappers.mars_wrappers</span> <span class="kn">import</span> <span class="n">PettingzooClassicWrapper</span><span class="p">,</span> <span class="n">PettingzooClassic_Iterate2Parallel</span><span class="p">,</span>\
+     <span class="n">Atari2AgentWrapper</span><span class="p">,</span> <span class="n">SlimeVolleyWrapper</span><span class="p">,</span> <span class="n">Dict2TupleWrapper</span>
+<span class="kn">from</span> <span class="nn">.wrappers.vecenv_wrappers</span> <span class="kn">import</span> <span class="n">DummyVectorEnv</span><span class="p">,</span> <span class="n">SubprocVectorEnv</span>
+<span class="kn">from</span> <span class="nn">.wrappers.lasertag_wrappers</span> <span class="kn">import</span> <span class="n">LaserTagWrapper</span> 
+
+<span class="c1"># PettingZoo envs</span>
+<span class="n">pettingzoo_envs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;atari&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">&#39;basketball_pong_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;boxing_v1&#39;</span><span class="p">,</span> <span class="s1">&#39;combat_plane_v1&#39;</span><span class="p">,</span> <span class="s1">&#39;combat_tank_v1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;double_dunk_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;entombed_competitive_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;entombed_cooperative_v2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;flag_capture_v1&#39;</span><span class="p">,</span> <span class="s1">&#39;foozpong_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;ice_hockey_v1&#39;</span><span class="p">,</span> <span class="s1">&#39;joust_v2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mario_bros_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;maze_craze_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;othello_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;pong_v2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;quadrapong_v3&#39;</span><span class="p">,</span> <span class="s1">&#39;space_invaders_v1&#39;</span><span class="p">,</span> <span class="s1">&#39;space_war_v1&#39;</span><span class="p">,</span> <span class="s1">&#39;surround_v1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;tennis_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;video_checkers_v3&#39;</span><span class="p">,</span> <span class="s1">&#39;volleyball_pong_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;warlords_v2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;wizard_of_wor_v2&#39;</span>
+    <span class="p">],</span>
+
+    <span class="s1">&#39;classic&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">&#39;dou_dizhu_v4&#39;</span><span class="p">,</span> <span class="s1">&#39;go_v5&#39;</span><span class="p">,</span> <span class="s1">&#39;leduc_holdem_v4&#39;</span><span class="p">,</span> <span class="s1">&#39;rps_v2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;texas_holdem_no_limit_v4&#39;</span><span class="p">,</span> <span class="s1">&#39;texas_holdem_v4&#39;</span><span class="p">,</span> <span class="s1">&#39;tictactoe_v3&#39;</span><span class="p">,</span> <span class="s1">&#39;uno_v4&#39;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">env_type</span><span class="p">,</span> <span class="n">envs</span> <span class="ow">in</span> <span class="n">pettingzoo_envs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">env_name</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">exec</span><span class="p">(</span><span class="s2">&quot;from pettingzoo.</span><span class="si">{}</span><span class="s2"> import </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env_type</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">env_name</span><span class="p">))</span>
+            <span class="c1"># print(f&quot;Successfully import {env_type} env in PettingZoo: &quot;, env_name)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot import pettingzoo env: &quot;</span><span class="p">,</span> <span class="n">env_name</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_create_single_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A function create a single environment object given the name and type of </span>
+<span class="sd">    environment, as well as necessary arguments.</span>
+
+<span class="sd">    :param env_name: the name of environment</span>
+<span class="sd">    :type env_name: str</span>
+<span class="sd">    :param env_type: the type of environment</span>
+<span class="sd">    :type env_type: str</span>
+<span class="sd">    :param args: necessary arguments for specifying the environment</span>
+<span class="sd">    :type args: dict</span>
+<span class="sd">    :return: the instantiation of an environment</span>
+<span class="sd">    :rtype: object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">keep_info</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># keep_info True to maintain dict type for parallel envs (otherwise cannot pass VectorEnv wrapper)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">keep_info</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">env_type</span> <span class="o">==</span> <span class="s1">&#39;slimevolley&#39;</span><span class="p">:</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">env_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SlimeVolleySurvivalNoFrameskip-v0&#39;</span><span class="p">,</span> <span class="s1">&#39;SlimeVolleyNoFrameskip-v0&#39;</span><span class="p">,</span> <span class="s1">&#39;SlimeVolleyPixel-v0&#39;</span><span class="p">]:</span>
+            <span class="c1"># For image-based envs, apply following wrappers (from gym atari) to achieve pettingzoo style env, </span>
+            <span class="c1"># or use supersuit (requires input env to be either pettingzoo or gym env).</span>
+            <span class="c1"># same as: https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ppo_pixel.py</span>
+            <span class="c1"># TODO Note: this cannot handle the two obervations in above SlimeVolley envs, </span>
+            <span class="c1"># since the wrappers are for single agent.</span>
+            <span class="k">if</span> <span class="n">env_name</span> <span class="o">!=</span> <span class="s1">&#39;SlimeVolleyPixel-v0&#39;</span><span class="p">:</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">NoopResetEnv</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">noop_max</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">MaxAndSkipEnv</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">WarpFrame</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> 
+            <span class="c1"># #env = ClipRewardEnv(env)</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">FrameStack</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">env</span> <span class="o">=</span> <span class="n">SlimeVolleyWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">against_baseline</span><span class="p">)</span>  <span class="c1"># slimevolley to pettingzoo style</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">Dict2TupleWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">keep_info</span><span class="o">=</span><span class="n">keep_info</span><span class="p">)</span>  <span class="c1"># pettingzoo to nfsp style, keep_info True to maintain dict type for parallel envs</span>
+
+    <span class="k">elif</span> <span class="n">env_type</span> <span class="o">==</span> <span class="s1">&#39;pettingzoo&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">env_name</span> <span class="ow">in</span> <span class="n">pettingzoo_envs</span><span class="p">[</span><span class="s1">&#39;atari&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">ram</span><span class="p">:</span>
+                <span class="n">obs_type</span> <span class="o">=</span> <span class="s1">&#39;ram&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obs_type</span> <span class="o">=</span> <span class="s1">&#39;rgb_image&#39;</span>
+
+            <span class="c1"># initialize the env</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span><span class="o">.</span><span class="n">parallel_env</span><span class="p">(</span><span class="n">obs_type</span><span class="o">=</span><span class="n">obs_type</span><span class="p">,</span> <span class="n">full_action_space</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># env = supersuit.agent_indicator_v0(env) # TODO for selfplay, agent from two sides can use the same model (but it needs to see samples from two sides); see https://github.com/PettingZoo-Team/PettingZoo/issues/423</span>
+            <span class="n">env_agents</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">agents</span>  <span class="c1"># this cannot go through supersuit wrapper, so get it first and reassign it</span>
+
+            <span class="c1"># assign necessary wrappers</span>
+            <span class="k">if</span> <span class="n">obs_type</span> <span class="o">==</span> <span class="s1">&#39;rgb_image&#39;</span><span class="p">:</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">supersuit</span><span class="o">.</span><span class="n">max_observation_v0</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># as per openai baseline&#39;s MaxAndSKip wrapper, maxes over the last 2 frames to deal with frame flickering</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">supersuit</span><span class="o">.</span><span class="n">sticky_actions_v0</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">repeat_action_probability</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span> <span class="c1"># repeat_action_probability is set to 0.25 to introduce non-determinism to the system</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">supersuit</span><span class="o">.</span><span class="n">frame_skip_v0</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="c1"># skip frames for faster processing and less control to be compatable with gym, use frame_skip(env, (2,5))</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">supersuit</span><span class="o">.</span><span class="n">resize_v0</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">)</span> <span class="c1"># downscale observation for faster processing</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">supersuit</span><span class="o">.</span><span class="n">frame_stack_v1</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="c1"># allow agent to see everything on the screen despite Atari&#39;s flickering screen problem</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">supersuit</span><span class="o">.</span><span class="n">frame_skip_v0</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># RAM version also need frame skip, essential for boxing-v1, etc</span>
+                    
+            <span class="c1"># normalize the observation of Atari for both image or RAM </span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">supersuit</span><span class="o">.</span><span class="n">dtype_v0</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s1">&#39;float32&#39;</span><span class="p">)</span> <span class="c1"># need to transform uint8 to float first for normalizing observation: https://github.com/PettingZoo-Team/SuperSuit</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">supersuit</span><span class="o">.</span><span class="n">normalize_obs_v0</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">env_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">env_max</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># normalize the observation to (0,1)</span>
+
+            <span class="c1"># assign observation and action spaces</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_spaces</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_spaces</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="n">env_agents</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">Dict2TupleWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">keep_info</span><span class="o">=</span><span class="n">keep_info</span><span class="p">)</span> 
+
+        <span class="k">elif</span> <span class="n">env_name</span> <span class="ow">in</span> <span class="n">pettingzoo_envs</span><span class="p">[</span><span class="s1">&#39;classic&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">env_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;rps_v2&#39;</span><span class="p">,</span> <span class="s1">&#39;rpsls_v1&#39;</span><span class="p">]:</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span><span class="o">.</span><span class="n">parallel_env</span><span class="p">()</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">PettingzooClassicWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">observation_mask</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># only rps_v1 can use parallel_env at present</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span><span class="o">.</span><span class="n">env</span><span class="p">()</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">PettingzooClassic_Iterate2Parallel</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">observation_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># since Classic games do not support Parallel API yet</span>
+                
+            <span class="n">env</span> <span class="o">=</span> <span class="n">Dict2TupleWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">keep_info</span><span class="o">=</span><span class="n">keep_info</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">env_type</span> <span class="o">==</span> <span class="s1">&#39;lasertag&#39;</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">lasertag</span>  <span class="c1"># this is essential</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">wrap_pytorch</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> 
+        <span class="n">env</span> <span class="o">=</span> <span class="n">LaserTagWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">env_type</span> <span class="o">==</span> <span class="s1">&#39;gym&#39;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: No such env in Openai Gym: </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span> 
+        <span class="c1"># may need more wrappers here, e.g. Pong-ram-v0 need scaled observation!</span>
+        <span class="c1"># Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">Atari2AgentWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2"> environment in type </span><span class="si">{</span><span class="n">env_type</span><span class="si">}</span><span class="s2"> not found!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> 
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Load </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s1"> environment in type </span><span class="si">{</span><span class="n">env_type</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>  
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Env observation space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s1"> action space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>  
+    <span class="k">return</span> <span class="n">env</span>
+
+<div class="viewcode-block" id="make_env"><a class="viewcode-back" href="../../../mars/env/env.html#mars.env.import_env.make_env">[docs]</a><span class="k">def</span> <span class="nf">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A function for creating all environments, could be multiple if using parallel settings.</span>
+
+<span class="sd">    :param args: necessary arguments for specifying the environment</span>
+<span class="sd">    :type args: dict</span>
+<span class="sd">    :return: env or envs</span>
+<span class="sd">    :rtype: object or VectorEnv</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">env_name</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">env_name</span>
+    <span class="n">env_type</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">env_type</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">env_type</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">_create_single_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">env_type</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>  
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">VectorEnv</span> <span class="o">=</span> <span class="p">[</span><span class="n">DummyVectorEnv</span><span class="p">,</span> <span class="n">SubprocVectorEnv</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>  
+        <span class="n">env</span> <span class="o">=</span> <span class="n">VectorEnv</span><span class="p">([</span><span class="k">lambda</span><span class="p">:</span> <span class="n">_create_single_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">env_type</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># seed can be either int or list of int</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">seed</span> <span class="o">==</span> <span class="s1">&#39;random&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">random_seed</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">random_seed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;random seed: </span><span class="si">{</span><span class="n">random_seed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">env</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Zihan Ding.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

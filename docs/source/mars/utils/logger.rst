@@ -1,7 +1,7 @@
 Logger
 ===========================
 
-.. automodule:: mars_core.utils.logger
+.. automodule:: mars.utils.logger
    :members:
    :undoc-members:
    :private-members:

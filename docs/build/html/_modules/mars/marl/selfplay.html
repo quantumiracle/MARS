@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mars.marl.selfplay &mdash; MARS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> MARS
+            <img src="../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/intro.html">Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MARS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>mars.marl.selfplay</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mars.marl.selfplay</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.meta_learner</span> <span class="kn">import</span> <span class="n">MetaLearner</span>
+
+<div class="viewcode-block" id="SelfPlayMetaLearner"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.SelfPlayMetaLearner">[docs]</a><span class="k">class</span> <span class="nc">SelfPlayMetaLearner</span><span class="p">(</span><span class="n">MetaLearner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Meta learn is the  for MARL meta strategy, </span>
+<span class="sd">    which assigns the policy update schedule on a level higher</span>
+<span class="sd">    than policy update itself in standard RL.</span>
+
+<span class="sd">    Selfplay is the learning scheme following iterative best response,</span>
+<span class="sd">    where the agent always learn against the latest version of its historical policies.</span>
+<span class="sd">    The policy is stored and updated to its opponent when its average recent performance</span>
+<span class="sd">    achieves a certain threshold score over its opponent or for a long enough training period.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">save_checkpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SelfPlayMetaLearner</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">model_dir</span>
+
+        <span class="c1"># get names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opponent_name</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span> <span class="o">=</span> <span class="n">save_checkpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="SelfPlayMetaLearner.step"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.SelfPlayMetaLearner.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="o">*</span><span class="n">Args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A meta learner step (usually at the end of each episode), update models if available.</span>
+
+<span class="sd">        params: </span>
+<span class="sd">            :min_update_interval: mininal opponent update interval in unit of episodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">agent_reinit_interval</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># after a long time of unimproved performance against the opponent, reinit the agent</span>
+        <span class="n">score_avg_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;score_avg_window&#39;</span><span class="p">]</span>  <span class="c1"># mininal opponent update interval in unit of episodes</span>
+        <span class="n">min_update_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;min_update_interval&#39;</span><span class="p">]</span> <span class="c1"># the length of window for averaging the score values</span>
+
+        <span class="n">score_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">][</span><span class="o">-</span><span class="n">score_avg_window</span><span class="p">:])</span>\
+             <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">opponent_name</span><span class="p">][</span><span class="o">-</span><span class="n">score_avg_window</span><span class="p">:])</span>
+        <span class="k">if</span> <span class="n">score_delta</span>  <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;selfplay_score_delta&#39;</span><span class="p">]</span>\
+             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">&gt;</span> <span class="n">min_update_interval</span><span class="p">:</span>
+            <span class="c1"># update the opponent with current model, assume they are of the same type</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">:</span>
+                <span class="c1"># model.agents[self.args.marl_spec[&#39;trainable_agent_idx&#39;]].save_model(self.model_path+str(logger.current_episode)) # save all checkpoints</span>
+                <span class="c1"># model.agents[self.args.marl_spec[&#39;opponent_idx&#39;]].load_model(self.model_path+str(logger.current_episode))</span>
+
+                <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="o">+</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>  <span class="c1"># save only the latest checkpoint</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="o">+</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">additional_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Score delta: </span><span class="si">{</span><span class="n">score_delta</span><span class="si">}</span><span class="s1">, udpate the opponent.&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span>
+
+            <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">agent_reinit_interval</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span></div></div>
+
+<div class="viewcode-block" id="SelfPlay2SideMetaLearner"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.SelfPlay2SideMetaLearner">[docs]</a><span class="k">class</span> <span class="nc">SelfPlay2SideMetaLearner</span><span class="p">(</span><span class="n">SelfPlayMetaLearner</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">save_checkpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">model_dir</span>
+
+        <span class="c1"># get names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span> <span class="o">=</span> <span class="n">save_checkpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">_switch_charac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Iteratively update.&quot;&quot;&quot;</span>
+        <span class="c1"># change learnable and not learnable to achieve iterative learning</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_change_learnable_list</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_change_learnable_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Change the learnable list according to current learnable/fixed index. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SelfPlay2SideMetaLearner.step"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.SelfPlay2SideMetaLearner.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="o">*</span><span class="n">Args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A meta learner step (usually at the end of each episode), update models if available.</span>
+
+<span class="sd">        params: </span>
+<span class="sd">            :min_update_interval: mininal opponent update interval in unit of episodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">agent_reinit_interval</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># after a long time of unimproved performance against the opponent, reinit the agent</span>
+        <span class="n">score_avg_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;score_avg_window&#39;</span><span class="p">]</span>  <span class="c1"># mininal opponent update interval in unit of episodes</span>
+        <span class="n">min_update_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;min_update_interval&#39;</span><span class="p">]</span> <span class="c1"># the length of window for averaging the score values</span>
+
+        <span class="n">score_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]][</span><span class="o">-</span><span class="n">score_avg_window</span><span class="p">:])</span>\
+             <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">]][</span><span class="o">-</span><span class="n">score_avg_window</span><span class="p">:])</span>
+
+        <span class="k">if</span> <span class="n">score_delta</span>  <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;selfplay_score_delta&#39;</span><span class="p">]</span>\
+             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">&gt;</span> <span class="n">min_update_interval</span><span class="p">:</span>
+            <span class="c1"># update the opponent with current model, assume they are of the same type</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">:</span>
+                <span class="n">save_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="o">+</span><span class="s1">&#39;1&#39;</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">)</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>  <span class="c1"># save only the latest checkpoint</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">]</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">additional_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Score delta: </span><span class="si">{</span><span class="n">score_delta</span><span class="si">}</span><span class="s1">, update the opponent.&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">_switch_charac</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">agent_reinit_interval</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span></div></div>
+            
+
+
+<div class="viewcode-block" id="FictitiousSelfPlayMetaLearner"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlayMetaLearner">[docs]</a><span class="k">class</span> <span class="nc">FictitiousSelfPlayMetaLearner</span><span class="p">(</span><span class="n">MetaLearner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Meta learn is the  for MARL meta strategy, </span>
+<span class="sd">    which assigns the policy update schedule on a level higher</span>
+<span class="sd">    than policy update itself in standard RL.</span>
+
+<span class="sd">    Fictitious selfplay is the learning scheme that the agent always learn</span>
+<span class="sd">    against the average of the historical best response policy. If the policies can </span>
+<span class="sd">    not be explicitly averaged, then a league of historical policies needs to be maintained.</span>
+<span class="sd">    The policy is stored and saved into the league when its average recent performance </span>
+<span class="sd">    since the last checkpoint achieves a certain threshold score over its opponent </span>
+<span class="sd">    or for a long enough training period.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">save_checkpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FictitiousSelfPlayMetaLearner</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">model_dir</span>
+
+        <span class="c1"># get names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opponent_name</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span> <span class="o">=</span> <span class="n">save_checkpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="FictitiousSelfPlayMetaLearner.step"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlayMetaLearner.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="o">*</span><span class="n">Args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A meta learner step (usually at the end of each episode), update models if available.</span>
+<span class="sd">        </span>
+<span class="sd">        params: </span>
+<span class="sd">            :min_update_interval: mininal opponent update interval in unit of episodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">agent_reinit_interval</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># after a long time of unimproved performance against the opponent, reinit the agent</span>
+        <span class="n">score_avg_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;score_avg_window&#39;</span><span class="p">]</span>  <span class="c1"># mininal opponent update interval in unit of episodes</span>
+        <span class="n">min_update_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;min_update_interval&#39;</span><span class="p">]</span> <span class="c1"># the length of window for averaging the score values</span>
+        
+        <span class="n">score_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">][</span><span class="o">-</span><span class="n">score_avg_window</span><span class="p">:])</span>\
+             <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">opponent_name</span><span class="p">][</span><span class="o">-</span><span class="n">score_avg_window</span><span class="p">:])</span>
+        <span class="k">if</span> <span class="n">score_delta</span>  <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;selfplay_score_delta&#39;</span><span class="p">]</span>\
+             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">&gt;</span> <span class="n">min_update_interval</span><span class="p">:</span>
+            <span class="c1"># update the opponent with current model, assume they are of the same type</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">:</span>
+                <span class="n">save_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span><span class="p">)</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span> <span class="c1"># save all checkpoints</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">additional_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Score delta: </span><span class="si">{</span><span class="n">score_delta</span><span class="si">}</span><span class="s1">, save the model to </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span>
+
+            <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span>
+
+        <span class="c1"># load a model for each episode to achieve an empiral average policy</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># the policy set has one or more policies to sample from</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta_strategy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">))</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">)</span>  <span class="c1"># uniformly distributed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_replace_agent_with_meta</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">agent_reinit_interval</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span></div></div>
+
+
+<div class="viewcode-block" id="FictitiousSelfPlay2SideMetaLearner"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlay2SideMetaLearner">[docs]</a><span class="k">class</span> <span class="nc">FictitiousSelfPlay2SideMetaLearner</span><span class="p">(</span><span class="n">FictitiousSelfPlayMetaLearner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Meta learn is the  for MARL meta strategy, </span>
+<span class="sd">    which assigns the policy update schedule on a level higher</span>
+<span class="sd">    than policy update itself in standard RL.</span>
+
+<span class="sd">    Fictitious selfplay is the learning scheme that the agent always learn</span>
+<span class="sd">    against the average of the historical best response policy. If the policies can </span>
+<span class="sd">    not be explicitly averaged, then a league of historical policies needs to be maintained.</span>
+<span class="sd">    The policy is stored and saved into the league when its average recent performance </span>
+<span class="sd">    since the last checkpoint achieves a certain threshold score over its opponent </span>
+<span class="sd">    or for a long enough training period.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">save_checkpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">model_dir</span>
+
+        <span class="c1"># get names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span> <span class="o">=</span> <span class="n">save_checkpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span> <span class="c1"># for both player</span>
+
+    <span class="k">def</span> <span class="nf">_switch_charac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Iteratively update.&quot;&quot;&quot;</span>
+        <span class="c1"># change learnable and not learnable to achieve iterative learning</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_change_learnable_list</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_change_learnable_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Change the learnable list according to current learnable/fixed index. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FictitiousSelfPlay2SideMetaLearner.step"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlay2SideMetaLearner.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="o">*</span><span class="n">Args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A meta learner step (usually at the end of each episode), update models if available.</span>
+<span class="sd">        </span>
+<span class="sd">        params: </span>
+<span class="sd">            :min_update_interval: mininal opponent update interval in unit of episodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">agent_reinit_interval</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># after a long time of unimproved performance against the opponent, reinit the agent</span>
+        <span class="n">score_avg_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;score_avg_window&#39;</span><span class="p">]</span>  <span class="c1"># mininal opponent update interval in unit of episodes</span>
+        <span class="n">min_update_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;min_update_interval&#39;</span><span class="p">]</span> <span class="c1"># the length of window for averaging the score values</span>
+        <span class="n">score_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]][</span><span class="o">-</span><span class="n">score_avg_window</span><span class="p">:])</span>\
+             <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">]][</span><span class="o">-</span><span class="n">score_avg_window</span><span class="p">:])</span>
+
+        <span class="k">if</span> <span class="n">score_delta</span>  <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;selfplay_score_delta&#39;</span><span class="p">]</span>\
+             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">&gt;</span> <span class="n">min_update_interval</span><span class="p">:</span>
+            <span class="c1"># update the opponent with current model, assume they are of the same type</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">:</span>
+                <span class="n">save_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">)</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span> <span class="c1"># save all checkpoints</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">additional_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Score delta: </span><span class="si">{</span><span class="n">score_delta</span><span class="si">}</span><span class="s1">, save the model to </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_switch_charac</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span>
+
+        <span class="c1"># load a model for each episode to achieve an empiral average policy</span>
+        <span class="n">avg_policy_checkpoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">]</span>  <span class="c1"># use the learnable to get best response of the policy set of the fixed agent</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">avg_policy_checkpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># the policy set has one or more policies to sample from</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta_strategy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">avg_policy_checkpoints</span><span class="p">))</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">avg_policy_checkpoints</span><span class="p">)</span>  <span class="c1"># uniformly distributed         </span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_replace_agent_with_meta</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">,</span> <span class="n">avg_policy_checkpoints</span><span class="p">,</span> <span class="n">postfix</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">))</span>
+
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">agent_reinit_interval</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Zihan Ding.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
