@@ -7,3 +7,5 @@ SelfplayBasedMethods = ['selfplay', 'fictitious_selfplay', 'nxdo']
 # There methods have a meta strategy
 MetaStrategyMethods = ['fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] 
 
+# There methods needs a meta step
+MetaStepMethods = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] 
