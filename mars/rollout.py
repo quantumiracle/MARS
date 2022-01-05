@@ -139,7 +139,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{epi}')
 
-        if epi % args.save_interval == 0 \
+        if not args.test and not args.exploit and epi % args.save_interval == 0 \
             and args.marl_method in MetaStrategyMethods:
             meta_learner.save_model()
 
