@@ -3,7 +3,7 @@ import copy
 import cloudpickle 
 import torch
 torch.multiprocessing.set_start_method('forkserver', force=True)
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 from multiprocessing.managers import BaseManager, NamespaceProxy
 
 from mars.env.import_env import make_env
@@ -14,6 +14,7 @@ from mars.rl.common.storage import ReplayBuffer, ReservoirBuffer
 from mars.utils.common import EvaluationModelMethods
 from rolloutExperience import rolloutExperience
 from updateModel import updateModel
+from mars.utils.logger2 import init_logger
 
 
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
@@ -26,7 +27,7 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nxdo2', 'nash_dqn', 'nash_dqn_exploiter', \
-            ][0]   # nash_ppo is trained in train.py
+            ][3]   # nash_ppo is trained in train.py
 
 # method = 'nash_dqn_speed'
 
@@ -71,13 +72,14 @@ if __name__ == '__main__':
     print(ori_args)
 
     # launch multiple sample rollout processes
+    info_queue = Queue()
     for pro_id in range(ori_args.num_envs):  
-        play_process = Process(target=rolloutExperience, args = (model, args, pro_id))
+        play_process = Process(target=rolloutExperience, args = (model, info_queue, args, pro_id))
         play_process.daemon = True  # sub processes killed when main process finish
         processes.append(play_process)
 
     # launch update process (single or multiple)
-    update_process = Process(target=updateModel, args= (model, args, '0'))
+    update_process = Process(target=updateModel, args= (model, info_queue, args, '0'))
     update_process.daemon = True
     processes.append(update_process)
 

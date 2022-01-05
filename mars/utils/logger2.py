@@ -178,7 +178,15 @@ class Logger(TestLogger):
         time_taken = current_time - self.last_time
         self.last_time = current_time
 
-        if len(self.epi_rewards[self.keys[0]])>0:  # non-empty
+        if  len(self.losses[self.keys[0]])>0:  # non-empty
+            print(
+                f'Update itr: {self.current_itr}/{self.args.max_update_itr} ({100*self.current_itr/self.args.max_update_itr:.4f}%), \
+                    last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
+            )
+            for k in self.keys:
+                print(f"{k}: loss: {np.mean(self.losses[k][-self.avg_window:]):.4f}")
+
+        elif len(self.epi_rewards[self.keys[0]])>0:  # non-empty
             print(
                 f'Process ID: {self.save_id}, episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
                     avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
@@ -189,13 +197,7 @@ class Logger(TestLogger):
                 print(f"{k}: \
                     episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}")
 
-        elif  len(self.losses[self.keys[0]])>0:  # non-empty
-            print(
-                f'Update itr: {self.current_itr}/{self.args.max_update_itr} ({100*self.current_itr/self.args.max_update_itr:.4f}%), \
-                    last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
-            )
-            for k in self.keys:
-                print(f"{k}: loss: {np.mean(self.losses[k][-self.avg_window:]):.4f}")
+
 
         if len(self.additional_logs) > 0:
             for log in self.additional_logs:

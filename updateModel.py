@@ -6,7 +6,7 @@ from mars.env.import_env import make_env
 from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
 
 
-def updateModel(model, args: ConfigurationDict, save_id='0') -> None:
+def updateModel(model, info_queue, args: ConfigurationDict, save_id='0') -> None:
     """
     Function to rollout the interaction of agents and environments.
 
@@ -18,10 +18,10 @@ def updateModel(model, args: ConfigurationDict, save_id='0') -> None:
     # args = cloudpickle.loads(args)
     args.num_envs = 1
     env = make_env(args)
-    update_normal(env, model, save_id, args)
+    update_normal(env, model, info_queue, save_id, args)
 
 
-def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
+def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> None:
     """Function to rollout experience as interaction of agents and environments, in
     a typical manner of reinforcement learning. 
 
@@ -44,11 +44,16 @@ def update_normal(env, model, save_id, args: ConfigurationDict) -> None:
             logger.log_loss(loss)
 
         if (itr+1) % meta_update_interval == 0:
+            lastest_epi_rewards = info_queue.get() # receive rollout info
+            
+            for k, r in zip(logger.epi_rewards.keys(), lastest_epi_rewards):
+                logger.epi_rewards[k].append(r)
             meta_learner.step(
                 model, logger, env, args
             )  # metalearner for selfplay need just one step per episode
         if (itr+1) % (meta_update_interval*args.log_interval) == 0:
             logger.print_and_save()
+
         if (itr+1) % (meta_update_interval*args.save_interval) == 0 \
         and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
         and logger.model_dir is not None:
