@@ -26,7 +26,7 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nxdo2'][-1]   # nash_ppo are trained in train.py, cannot user here!
+            'nxdo2'][-3]   # nash_ppo are trained in train.py, cannot user here!
 
 # method = 'nash_dqn_speed'
 
