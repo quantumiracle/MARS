@@ -784,4 +784,402 @@ second_0:                     episode reward: -1.0500
 Process ID: 2, episode: 1660/30000 (5.5333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.2447s / 45848.5321 s
 first_0:                     episode reward: -0.7000
 second_0:                     episode reward: 0.7000
-Process ID: 2, episode: 1680/30000 (5.6000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.9436s / 46402.4757 s
+Process ID: 2, episode: 1680/30000 (5.6000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.9436s / 46402.4757 spygame 2.0.0 (SDL 2.0.12, python 3.7.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+boxing_v1 pettingzoo
+Load boxing_v1 environment in type pettingzoo.
+Env observation space: Box(0.0, 1.0, (128,), float32) action space: Discrete(18)
+random seed: 56
+Arguments:  {'env_name': 'boxing_v1', 'env_type': 'pettingzoo', 'num_envs': 3, 'ram': True, 'seed': 'random', 'algorithm': 'NashDQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000}, 'batch_size': 128, 'max_episodes': 30000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 0.1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'save_path': '', 'save_interval': 2000, 'net_architecture': {'hidden_dim_list': [64, 64, 64, 64], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'nash_dqn', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False}, 'multiprocess': True}
+Save models to : /home/zihan/research/MARS/data/model/20220103_2057/pettingzoo_boxing_v1_nash_dqn. 
+ Save logs to: /home/zihan/research/MARS/data/log/20220103_2057/pettingzoo_boxing_v1_nash_dqn.
+Update itr: 20000/30000000 (0.0667%),                     last time consumption/overall running time: 4687.5377s / 4687.5377 s
+first_0: loss: 0.0181
+second_0: loss: 0.0183
+Update itr: 40000/30000000 (0.1333%),                     last time consumption/overall running time: 4589.4452s / 9276.9829 s
+first_0: loss: 0.0155
+second_0: loss: 0.0095
+Update itr: 60000/30000000 (0.2000%),                     last time consumption/overall running time: 4584.8562s / 13861.8391 s
+first_0: loss: 0.0136
+second_0: loss: 0.0111
+Update itr: 80000/30000000 (0.2667%),                     last time consumption/overall running time: 4601.9027s / 18463.7418 s
+first_0: loss: 0.0151
+second_0: loss: 0.0120
+Update itr: 100000/30000000 (0.3333%),                     last time consumption/overall running time: 4547.6058s / 23011.3476 s
+first_0: loss: 0.0110
+second_0: loss: 0.0178
+Update itr: 120000/30000000 (0.4000%),                     last time consumption/overall running time: 4583.2893s / 27594.6369 s
+first_0: loss: 0.0189
+second_0: loss: 0.0121
+Update itr: 140000/30000000 (0.4667%),                     last time consumption/overall running time: 4593.7137s / 32188.3506 s
+first_0: loss: 0.0185
+second_0: loss: 0.0180
+Update itr: 160000/30000000 (0.5333%),                     last time consumption/overall running time: 4595.5717s / 36783.9223 s
+first_0: loss: 0.0143
+second_0: loss: 0.0116
+Update itr: 180000/30000000 (0.6000%),                     last time consumption/overall running time: 4595.8804s / 41379.8027 s
+first_0: loss: 0.0168
+second_0: loss: 0.0140
+Update itr: 200000/30000000 (0.6667%),                     last time consumption/overall running time: 4595.2698s / 45975.0725 s
+first_0: loss: 0.0183
+second_0: loss: 0.0127
+Update itr: 220000/30000000 (0.7333%),                     last time consumption/overall running time: 4593.2400s / 50568.3125 s
+first_0: loss: 0.0171
+second_0: loss: 0.0134
+Update itr: 240000/30000000 (0.8000%),                     last time consumption/overall running time: 4614.2299s / 55182.5424 s
+first_0: loss: 0.0152
+second_0: loss: 0.0129
+Update itr: 260000/30000000 (0.8667%),                     last time consumption/overall running time: 4605.7078s / 59788.2502 s
+first_0: loss: 0.0216
+second_0: loss: 0.0151
+Process Process-5:
+Traceback (most recent call last):
+  File "/home/zihan/research/MARS/mars/rl/agents/dqn.py", line 146, in save_model
+    torch.save(self.model.state_dict(), path+'_model', _use_new_zipfile_serialization=False)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 369, in save
+    with _open_file_like(f, 'wb') as opened_file:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 230, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 211, in __init__
+    super(_open_file, self).__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: './/data/model/20220103_2057/pettingzoo_boxing_v1_nash_dqn/265999_0_model'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 297, in _bootstrap
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 99, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/research/MARS/updateModel.py", line 24, in updateModel
+    update_normal(env, model, save_id, args)
+  File "/home/zihan/research/MARS/updateModel.py", line 59, in update_normal
+    model.save_model(logger.model_dir+f'{itr}')
+  File "/home/zihan/research/MARS/mars/rl/agents/multiagent.py", line 252, in save_model
+    agent.save_model(path+f'_{str(idx)}')
+  File "/home/zihan/research/MARS/mars/rl/agents/dqn.py", line 149, in save_model
+    torch.save(self.model.state_dict(), path+'_model')
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 369, in save
+    with _open_file_like(f, 'wb') as opened_file:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 230, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/torch/serialization.py", line 211, in __init__
+    super(_open_file, self).__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: './/data/model/20220103_2057/pettingzoo_boxing_v1_nash_dqn/265999_0_model'
+pygame 2.0.0 (SDL 2.0.12, python 3.7.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+
+first_0:                     episode reward: -2.3500
+second_0:                     episode reward: 2.3500
+Process ID: 2, episode: 1700/30000 (5.6667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 552.1647s / 46954.6405 s
+first_0:                     episode reward: 0.4000
+second_0:                     episode reward: -0.4000
+Process ID: 2, episode: 1720/30000 (5.7333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.6102s / 47508.2507 s
+first_0:                     episode reward: -1.6000
+second_0:                     episode reward: 1.6000
+Process ID: 2, episode: 1740/30000 (5.8000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.3087s / 48063.5593 s
+first_0:                     episode reward: 1.1000
+second_0:                     episode reward: -1.1000
+Process ID: 2, episode: 1760/30000 (5.8667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 552.7400s / 48616.2994 s
+first_0:                     episode reward: -3.5000
+second_0:                     episode reward: 3.5000
+Process ID: 2, episode: 1780/30000 (5.9333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.5532s / 49171.8526 s
+first_0:                     episode reward: 2.1000
+second_0:                     episode reward: -2.1000
+Process ID: 2, episode: 1800/30000 (6.0000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 551.8219s / 49723.6745 s
+first_0:                     episode reward: -3.9500
+second_0:                     episode reward: 3.9500
+Process ID: 2, episode: 1820/30000 (6.0667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.4936s / 50279.1680 s
+first_0:                     episode reward: 0.8000
+second_0:                     episode reward: -0.8000
+Process ID: 2, episode: 1840/30000 (6.1333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 559.1117s / 50838.2797 s
+first_0:                     episode reward: -0.2000
+second_0:                     episode reward: 0.2000
+Process ID: 2, episode: 1860/30000 (6.2000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.6922s / 51393.9719 s
+first_0:                     episode reward: 1.4500
+second_0:                     episode reward: -1.4500
+Process ID: 2, episode: 1880/30000 (6.2667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 552.8964s / 51946.8683 s
+first_0:                     episode reward: -3.4500
+second_0:                     episode reward: 3.4500
+Process ID: 2, episode: 1900/30000 (6.3333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.3726s / 52504.2410 s
+first_0:                     episode reward: 1.4500
+second_0:                     episode reward: -1.4500
+Process ID: 2, episode: 1920/30000 (6.4000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.5201s / 53059.7611 s
+first_0:                     episode reward: 1.7500
+second_0:                     episode reward: -1.7500
+Process ID: 2, episode: 1940/30000 (6.4667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 558.8382s / 53618.5993 s
+first_0:                     episode reward: 0.1500
+second_0:                     episode reward: -0.1500
+Process ID: 2, episode: 1960/30000 (6.5333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.2278s / 54175.8271 s
+first_0:                     episode reward: -1.9500
+second_0:                     episode reward: 1.9500
+Process ID: 2, episode: 1980/30000 (6.6000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 573.8827s / 54749.7099 s
+first_0:                     episode reward: -0.2000
+second_0:                     episode reward: 0.2000
+Process ID: 2, episode: 2000/30000 (6.6667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 574.3239s / 55324.0338 s
+first_0:                     episode reward: 0.0000
+second_0:                     episode reward: 0.0000
+Process ID: 2, episode: 2020/30000 (6.7333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 563.4077s / 55887.4416 s
+first_0:                     episode reward: -3.1000
+second_0:                     episode reward: 3.1000
+Process ID: 2, episode: 2040/30000 (6.8000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 556.2528s / 56443.6944 s
+first_0:                     episode reward: -1.6500
+second_0:                     episode reward: 1.6500
+Process ID: 2, episode: 2060/30000 (6.8667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 558.8306s / 57002.5250 s
+first_0:                     episode reward: -1.9000
+second_0:                     episode reward: 1.9000
+Process ID: 2, episode: 2080/30000 (6.9333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 559.0648s / 57561.5898 s
+first_0:                     episode reward: -5.4500
+second_0:                     episode reward: 5.4500
+Process ID: 2, episode: 2100/30000 (7.0000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 556.8832s / 58118.4729 s
+first_0:                     episode reward: -2.0500
+second_0:                     episode reward: 2.0500
+Process ID: 2, episode: 2120/30000 (7.0667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.1236s / 58672.5966 s
+first_0:                     episode reward: -0.4000
+second_0:                     episode reward: 0.4000
+Process ID: 2, episode: 2140/30000 (7.1333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.7008s / 59230.2974 s
+first_0:                     episode reward: -0.5000
+second_0:                     episode reward: 0.5000
+Process ID: 2, episode: 2160/30000 (7.2000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.9369s / 59785.2343 s
+first_0:                     episode reward: 0.5000
+second_0:                     episode reward: -0.5000
+Process ID: 2, episode: 2180/30000 (7.2667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.9884s / 60343.2226 s
+first_0:                     episode reward: -1.6000
+second_0:                     episode reward: 1.6000
+Process ID: 2, episode: 2200/30000 (7.3333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 558.6679s / 60901.8905 s
+first_0:                     episode reward: -2.4500
+second_0:                     episode reward: 2.4500
+Process Process-4:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 297, in _bootstrap
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 99, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/research/MARS/rolloutExperience.py", line 26, in rolloutExperience
+    rollout_normal(env, model, save_id, args)
+  File "/home/zihan/research/MARS/rolloutExperience.py", line 107, in rollout_normal
+    model.store(sample)
+  File "/home/zihan/research/MARS/mars/rl/agents/multiagent.py", line 198, in store
+    agent.store(samples)
+  File "/home/zihan/research/MARS/mars/rl/agents/dqn.py", line 99, in store
+    self.buffer.push(sample)
+  File "<string>", line 2, in push
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/managers.py", line 819, in _callmethod
+    kind, result = conn.recv()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 250, in recv
+    buf = self._recv_bytes()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 407, in _recv_bytes
+    buf = self._recv(4)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 379, in _recv
+    chunk = read(handle, remaining)
+ConnectionResetError: [Errno 104] Connection reset by peer
+
+first_0:                     episode reward: 0.8500
+second_0:                     episode reward: -0.8500
+Process ID: 0, episode: 1700/30000 (5.6667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.4761s / 46952.3398 s
+first_0:                     episode reward: -1.5000
+second_0:                     episode reward: 1.5000
+Process ID: 0, episode: 1720/30000 (5.7333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.8702s / 47506.2100 s
+first_0:                     episode reward: -0.9500
+second_0:                     episode reward: 0.9500
+Process ID: 0, episode: 1740/30000 (5.8000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.7327s / 48059.9428 s
+first_0:                     episode reward: -0.9500
+second_0:                     episode reward: 0.9500
+Process ID: 0, episode: 1760/30000 (5.8667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.5450s / 48613.4877 s
+first_0:                     episode reward: -1.2000
+second_0:                     episode reward: 1.2000
+Process ID: 0, episode: 1780/30000 (5.9333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.1518s / 49168.6395 s
+first_0:                     episode reward: -1.5000
+second_0:                     episode reward: 1.5000
+Process ID: 0, episode: 1800/30000 (6.0000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.0858s / 49722.7253 s
+first_0:                     episode reward: -2.4000
+second_0:                     episode reward: 2.4000
+Process ID: 0, episode: 1820/30000 (6.0667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.8997s / 50280.6250 s
+first_0:                     episode reward: 0.5500
+second_0:                     episode reward: -0.5500
+Process ID: 0, episode: 1840/30000 (6.1333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 560.4811s / 50841.1061 s
+first_0:                     episode reward: -0.1000
+second_0:                     episode reward: 0.1000
+Process ID: 0, episode: 1860/30000 (6.2000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.4901s / 51396.5962 s
+first_0:                     episode reward: -0.2000
+second_0:                     episode reward: 0.2000
+Process ID: 0, episode: 1880/30000 (6.2667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 551.9555s / 51948.5516 s
+first_0:                     episode reward: -0.6500
+second_0:                     episode reward: 0.6500
+Process ID: 0, episode: 1900/30000 (6.3333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.0557s / 52505.6074 s
+first_0:                     episode reward: -0.8500
+second_0:                     episode reward: 0.8500
+Process ID: 0, episode: 1920/30000 (6.4000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.9153s / 53059.5226 s
+first_0:                     episode reward: -1.8500
+second_0:                     episode reward: 1.8500
+Process ID: 0, episode: 1940/30000 (6.4667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.7477s / 53614.2703 s
+first_0:                     episode reward: -2.4000
+second_0:                     episode reward: 2.4000
+Process ID: 0, episode: 1960/30000 (6.5333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.5501s / 54169.8204 s
+first_0:                     episode reward: -1.1500
+second_0:                     episode reward: 1.1500
+Process ID: 0, episode: 1980/30000 (6.6000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 573.8551s / 54743.6756 s
+first_0:                     episode reward: 0.2500
+second_0:                     episode reward: -0.2500
+Process ID: 0, episode: 2000/30000 (6.6667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 575.9449s / 55319.6205 s
+first_0:                     episode reward: -3.1000
+second_0:                     episode reward: 3.1000
+Process ID: 0, episode: 2020/30000 (6.7333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 567.0703s / 55886.6908 s
+first_0:                     episode reward: 0.1500
+second_0:                     episode reward: -0.1500
+Process ID: 0, episode: 2040/30000 (6.8000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 556.6022s / 56443.2930 s
+first_0:                     episode reward: -0.0500
+second_0:                     episode reward: 0.0500
+Process ID: 0, episode: 2060/30000 (6.8667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 559.2970s / 57002.5900 s
+first_0:                     episode reward: -1.4500
+second_0:                     episode reward: 1.4500
+Process ID: 0, episode: 2080/30000 (6.9333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 559.3697s / 57561.9597 s
+first_0:                     episode reward: 0.1500
+second_0:                     episode reward: -0.1500
+Process ID: 0, episode: 2100/30000 (7.0000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 559.3052s / 58121.2649 s
+first_0:                     episode reward: -2.3000
+second_0:                     episode reward: 2.3000
+Process ID: 0, episode: 2120/30000 (7.0667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.7460s / 58677.0109 s
+first_0:                     episode reward: -2.4000
+second_0:                     episode reward: 2.4000
+Process ID: 0, episode: 2140/30000 (7.1333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 556.6534s / 59233.6644 s
+first_0:                     episode reward: 0.4000
+second_0:                     episode reward: -0.4000
+Process ID: 0, episode: 2160/30000 (7.2000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.0897s / 59790.7541 s
+first_0:                     episode reward: -2.1500
+second_0:                     episode reward: 2.1500
+Process ID: 0, episode: 2180/30000 (7.2667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.5542s / 60346.3082 s
+first_0:                     episode reward: -0.5500
+second_0:                     episode reward: 0.5500
+Process ID: 0, episode: 2200/30000 (7.3333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.5582s / 60903.8664 s
+first_0:                     episode reward: -1.7000
+second_0:                     episode reward: 1.7000
+Process Process-2:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 297, in _bootstrap
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 99, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/research/MARS/rolloutExperience.py", line 26, in rolloutExperience
+    rollout_normal(env, model, save_id, args)
+  File "/home/zihan/research/MARS/rolloutExperience.py", line 107, in rollout_normal
+    model.store(sample)
+  File "/home/zihan/research/MARS/mars/rl/agents/multiagent.py", line 198, in store
+    agent.store(samples)
+  File "/home/zihan/research/MARS/mars/rl/agents/dqn.py", line 99, in store
+    self.buffer.push(sample)
+  File "<string>", line 2, in push
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/managers.py", line 819, in _callmethod
+    kind, result = conn.recv()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 250, in recv
+    buf = self._recv_bytes()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 407, in _recv_bytes
+    buf = self._recv(4)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 379, in _recv
+    chunk = read(handle, remaining)
+ConnectionResetError: [Errno 104] Connection reset by peer
+
+first_0:                     episode reward: 1.1000
+second_0:                     episode reward: -1.1000
+Process ID: 1, episode: 1700/30000 (5.6667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 551.8638s / 46921.8709 s
+first_0:                     episode reward: -1.4000
+second_0:                     episode reward: 1.4000
+Process ID: 1, episode: 1720/30000 (5.7333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.1392s / 47475.0101 s
+first_0:                     episode reward: 0.1000
+second_0:                     episode reward: -0.1000
+Process ID: 1, episode: 1740/30000 (5.8000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 552.4741s / 48027.4842 s
+first_0:                     episode reward: -2.1000
+second_0:                     episode reward: 2.1000
+Process ID: 1, episode: 1760/30000 (5.8667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.5152s / 48581.9993 s
+first_0:                     episode reward: -1.2000
+second_0:                     episode reward: 1.2000
+Process ID: 1, episode: 1780/30000 (5.9333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.8983s / 49136.8976 s
+first_0:                     episode reward: -2.1500
+second_0:                     episode reward: 2.1500
+Process ID: 1, episode: 1800/30000 (6.0000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 552.8191s / 49689.7168 s
+first_0:                     episode reward: 0.0000
+second_0:                     episode reward: 0.0000
+Process ID: 1, episode: 1820/30000 (6.0667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 556.8153s / 50246.5321 s
+first_0:                     episode reward: 0.8500
+second_0:                     episode reward: -0.8500
+Process ID: 1, episode: 1840/30000 (6.1333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 556.9860s / 50803.5181 s
+first_0:                     episode reward: -1.1500
+second_0:                     episode reward: 1.1500
+Process ID: 1, episode: 1860/30000 (6.2000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.2212s / 51357.7393 s
+first_0:                     episode reward: 1.2500
+second_0:                     episode reward: -1.2500
+Process ID: 1, episode: 1880/30000 (6.2667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 550.4519s / 51908.1913 s
+first_0:                     episode reward: 0.1500
+second_0:                     episode reward: -0.1500
+Process ID: 1, episode: 1900/30000 (6.3333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.8934s / 52464.0846 s
+first_0:                     episode reward: 1.8000
+second_0:                     episode reward: -1.8000
+Process ID: 1, episode: 1920/30000 (6.4000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.2255s / 53019.3102 s
+first_0:                     episode reward: -1.4000
+second_0:                     episode reward: 1.4000
+Process ID: 1, episode: 1940/30000 (6.4667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.8130s / 53574.1231 s
+first_0:                     episode reward: -0.4500
+second_0:                     episode reward: 0.4500
+Process ID: 1, episode: 1960/30000 (6.5333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 554.2932s / 54128.4164 s
+first_0:                     episode reward: -1.5000
+second_0:                     episode reward: 1.5000
+Process ID: 1, episode: 1980/30000 (6.6000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 572.8467s / 54701.2631 s
+first_0:                     episode reward: -3.4000
+second_0:                     episode reward: 3.4000
+Process ID: 1, episode: 2000/30000 (6.6667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 575.8678s / 55277.1309 s
+first_0:                     episode reward: -1.2500
+second_0:                     episode reward: 1.2500
+Process ID: 1, episode: 2020/30000 (6.7333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 564.1473s / 55841.2781 s
+first_0:                     episode reward: -2.4500
+second_0:                     episode reward: 2.4500
+Process ID: 1, episode: 2040/30000 (6.8000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 552.1730s / 56393.4511 s
+first_0:                     episode reward: -1.2500
+second_0:                     episode reward: 1.2500
+Process ID: 1, episode: 2060/30000 (6.8667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.8795s / 56951.3305 s
+first_0:                     episode reward: -0.9000
+second_0:                     episode reward: 0.9000
+Process ID: 1, episode: 2080/30000 (6.9333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 557.7419s / 57509.0724 s
+first_0:                     episode reward: -1.8500
+second_0:                     episode reward: 1.8500
+Process ID: 1, episode: 2100/30000 (7.0000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 559.7084s / 58068.7808 s
+first_0:                     episode reward: 0.0000
+second_0:                     episode reward: 0.0000
+Process ID: 1, episode: 2120/30000 (7.0667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 552.7077s / 58621.4885 s
+first_0:                     episode reward: -1.2500
+second_0:                     episode reward: 1.2500
+Process ID: 1, episode: 2140/30000 (7.1333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 553.5848s / 59175.0733 s
+first_0:                     episode reward: 0.0500
+second_0:                     episode reward: -0.0500
+Process ID: 1, episode: 2160/30000 (7.2000%),                     avg. length: 1784.0,                    last time consumption/overall running time: 550.6512s / 59725.7245 s
+first_0:                     episode reward: -2.3500
+second_0:                     episode reward: 2.3500
+Process ID: 1, episode: 2180/30000 (7.2667%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.3167s / 60281.0412 s
+first_0:                     episode reward: -4.5500
+second_0:                     episode reward: 4.5500
+Process ID: 1, episode: 2200/30000 (7.3333%),                     avg. length: 1784.0,                    last time consumption/overall running time: 555.3928s / 60836.4340 s
+first_0:                     episode reward: -0.6000
+second_0:                     episode reward: 0.6000
+Process Process-3:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 297, in _bootstrap
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 99, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/research/MARS/rolloutExperience.py", line 26, in rolloutExperience
+    rollout_normal(env, model, save_id, args)
+  File "/home/zihan/research/MARS/rolloutExperience.py", line 107, in rollout_normal
+    model.store(sample)
+  File "/home/zihan/research/MARS/mars/rl/agents/multiagent.py", line 198, in store
+    agent.store(samples)
+  File "/home/zihan/research/MARS/mars/rl/agents/dqn.py", line 99, in store
+    self.buffer.push(sample)
+  File "<string>", line 2, in push
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/managers.py", line 819, in _callmethod
+    kind, result = conn.recv()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 250, in recv
+    buf = self._recv_bytes()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 407, in _recv_bytes
+    buf = self._recv(4)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 379, in _recv
+    chunk = read(handle, remaining)
+ConnectionResetError: [Errno 104] Connection reset by peer
