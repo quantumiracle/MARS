@@ -7,7 +7,7 @@ from mars.utils.typing import Tuple, List, ConfigurationDict
 from mars.env.import_env import make_env
 
 
-def rolloutExperience(model, args: ConfigurationDict, save_id='0') -> None:
+def rolloutExperience(model, info_queue, args: ConfigurationDict, save_id='0') -> None:
     """
     Function to rollout the interaction of agents and environments.
 
@@ -20,12 +20,12 @@ def rolloutExperience(model, args: ConfigurationDict, save_id='0') -> None:
     args.num_envs = 1
     env = make_env(args)
     if args.algorithm == 'GA':
-        rollout_ga(env, model, save_id, args)
+        rollout_ga(env, model, info_queue, save_id, args)
     else:
-        rollout_normal(env, model, save_id, args)
+        rollout_normal(env, model, info_queue, save_id, args)
 
 
-def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
+def rollout_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> None:
     """Function to rollout experience as interaction of agents and environments, in
     a typical manner of reinforcement learning. 
 
@@ -43,7 +43,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     # meta_learner = init_meta_learner(logger, args)
     for epi in range(args.max_episodes):
         obs = env.reset()
-
+        epi_r = 0
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
             obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
@@ -116,6 +116,10 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 break
 
         logger.log_episode_reward(step)
+        
+        latest_epi_reward = [elem[-1] for elem in logger.epi_rewards.values()]
+
+        info_queue.put(latest_epi_reward)  # send the current episode reward
 
         if (epi+1) % args.log_interval == 0:
             logger.print_and_save()
