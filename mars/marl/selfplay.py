@@ -52,7 +52,6 @@ class SelfPlayMetaLearner(MetaLearner):
             self.last_meta_step = self.meta_step
 
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
-        print(self.meta_step, self.last_meta_step)
 
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
@@ -151,6 +150,7 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
+        self.meta_step += 1
         agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
@@ -226,6 +226,7 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
         params: 
             :min_update_interval: mininal opponent update interval in unit of episodes
         """
+        self.meta_step += 1
         agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
