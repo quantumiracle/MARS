@@ -2,8 +2,9 @@ import os
 import numpy as np
 from datetime import datetime
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumCVXPYSolver
+from mars.marl.meta_learner import MetaLearner
 
-class NXDOMetaLearner():
+class NXDOMetaLearner(MetaLearner):
     """
     Meta learn is the  for MARL meta strategy, 
     which assigns the policy update schedule on a level higher
@@ -24,7 +25,6 @@ class NXDOMetaLearner():
         self.save_checkpoint = save_checkpoint
         self.args = args
         self.last_update_epi= 0
-        self.saved_checkpoints = []
         self.evaluation_matrix = np.array([[0]])  # the evaluated utility matrix (N*N) of policy league with N policies
 
         logger.add_extr_log('matrix_equilibrium')
@@ -71,18 +71,15 @@ class NXDOMetaLearner():
                 self.update_matrix(np.array(added_row)) # add new evaluation results to matrix
                 # print('matrix: ', self.evaluation_matrix)
                 # rollout with NFSP to learn meta strategy or directly calculate the Nash from the matrix
-                self.nash_meta_strategy, _ = NashEquilibriumECOSSolver(self.evaluation_matrix)
+                self.meta_strategy, _ = NashEquilibriumECOSSolver(self.evaluation_matrix)
                 # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
-                self.nash_meta_strategy = self.nash_meta_strategy[0]
-                # print('nash: ', self.nash_meta_strategy)
-                logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.nash_meta_strategy}')
+                self.meta_strategy = self.meta_strategy[0]
+                # print('nash: ', self.meta_strategy)
+                logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
 
         # sample from Nash meta policy in a episode-wise manner
         if len(self.saved_checkpoints) > 1:
-            sample_hist = np.random.multinomial(1, self.nash_meta_strategy)
-            policy_idx = np.squeeze(np.where(sample_hist>0))
-            # print('points: ', self.saved_checkpoints, policy_idx)
-            model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+self.saved_checkpoints[policy_idx])
+            self._replace_agent_with_meta(model, self.args.marl_spec['opponent_idx'], self.saved_checkpoints)
 
     def update_matrix(self, row):
         """
@@ -164,7 +161,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         self.last_update_epi= 0
         self.saved_checkpoints = [[] for _ in range(2)] # for both player
         self.evaluation_matrix = np.array([])  # the evaluated utility matrix (N*N) of policy league with N policies
-        self.nash_meta_strategy = None
+        self.meta_strategy = None
         logger.add_extr_log('matrix_equilibrium')
 
     def _switch_charac(self, model):
@@ -224,22 +221,20 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
                 # print('matrix: ', self.evaluation_matrix)
                 if len(self.saved_checkpoints[self.current_fixed_opponent_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4: # no need for NE when (1,1), (1,2)
                     # rollout with NFSP to learn meta strategy or directly calculate the Nash from the matrix
-                    # self.nash_meta_strategy = NashEquilibriumECOSSolver(self.evaluation_matrix) # present implementation cannot solve non-square matrix
-                    self.nash_meta_strategy = NashEquilibriumCVXPYSolver(self.evaluation_matrix) # cvxpy can solve non-square matrix, just a bit slower, but nxdo doesn't solve Nash often
+                    # self.meta_strategy = NashEquilibriumECOSSolver(self.evaluation_matrix) # present implementation cannot solve non-square matrix
+                    self.meta_strategy = NashEquilibriumCVXPYSolver(self.evaluation_matrix) # cvxpy can solve non-square matrix, just a bit slower, but nxdo doesn't solve Nash often
                     # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
-                    self.nash_meta_strategy = self.nash_meta_strategy[self.current_learnable_model_idx]
-                    # print('nash: ', self.nash_meta_strategy)
-                    logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.nash_meta_strategy}')
+                    self.meta_strategy = self.meta_strategy[self.current_learnable_model_idx]
+                    # print('nash: ', self.meta_strategy)
+                    logger.extr_logs.append(f'Current episode: {logger.current_episode}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategy}')
 
             self._switch_charac(model)
             model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # sample from Nash meta policy in a episode-wise manner
-        if len(self.saved_checkpoints[self.current_fixed_opponent_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4 and self.nash_meta_strategy is not None:
-            sample_hist = np.random.multinomial(1, self.nash_meta_strategy)  # meta nash policy is a distribution over the policy set, sample one policy from it according to meta nash for each episode
-            policy_idx = np.squeeze(np.where(sample_hist>0))
-            # print('points: ', self.saved_checkpoints, policy_idx)
-            model.agents[self.current_fixed_opponent_idx].load_model(self.model_path+self.saved_checkpoints[self.current_fixed_opponent_idx][policy_idx]+'_'+str(self.current_fixed_opponent_idx))
+        avg_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx] 
+        if len(avg_policy_checkpoints) >= 2 and self.meta_strategy is not None:
+            self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, avg_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
 
     def update_matrix(self, idx, row):
         """

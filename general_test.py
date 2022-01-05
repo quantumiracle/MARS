@@ -7,6 +7,7 @@ not for testing single-agent models.
 from mars.env.import_env import make_env
 from mars.rollout import rollout
 from mars.rl.agents import *
+from mars.rl.agents.multiagent import MultiAgent
 from general_train import get_general_args
 from general_exploit import get_latest_file_in_folder
 from mars.utils.common import SelfplayBasedMethods

@@ -13,7 +13,7 @@ class ReplayBuffer(object):
         self.buffer.extend(samples)
 
     def sample(self, batch_size):
-        samples = random.sample(self.buffer, batch_size)
+        # samples = random.sample(self.buffer, batch_size)
         state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
         return state, action, reward, next_state, done
 

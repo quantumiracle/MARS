@@ -15,9 +15,8 @@ def rolloutExperience(model, args: ConfigurationDict, save_id='0') -> None:
     algorithm, the function is separeted into two types. 
     """
     # tranform bytes to dictionary
-    model = cloudpickle.loads(model)
-    print(model)
-    args = cloudpickle.loads(args)
+    # model = cloudpickle.loads(model)
+    # args = cloudpickle.loads(args)
     args.num_envs = 1
     env = make_env(args)
     if args.algorithm == 'GA':
@@ -44,6 +43,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     # meta_learner = init_meta_learner(logger, args)
     for epi in range(args.max_episodes):
         obs = env.reset()
+
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
             obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
@@ -120,10 +120,10 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         if (epi+1) % args.log_interval == 0:
             logger.print_and_save()
 
-        if epi % args.save_interval == 0 \
+        if (epi+1) % args.save_interval == 0 \
         and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
         and logger.model_dir is not None:
-            model.save_model(logger.model_dir+f'{epi}')
+            model.save_model(logger.model_dir+f'{epi+1}')
 
 ### Genetic algorithm uses a different way of rollout. ###
 

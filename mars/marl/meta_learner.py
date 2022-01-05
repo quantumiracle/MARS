@@ -1,31 +1,44 @@
-from .selfplay import SelfPlayMetaLearner, SelfPlay2SideMetaLearner, FictitiousSelfPlayMetaLearner, FictitiousSelfPlay2SideMetaLearner
-from .double_oracle import NXDOMetaLearner, NXDO2SideMetaLearner
+import numpy as np
+from mars.rl.agents.agent import Agent
 
-class MetaLearner():
+class MetaLearner(Agent):
     def __init__(self,):
-        pass
+        self.models_family = []
+        self.saved_checkpoints = []
+        self.meta_strategy = None
         
-    def step(self, *kargs):
-        pass
+    def step(self, model, *kargs):
+        if len(self.saved_checkpoints) > 0:
+            self._replace_with_meta(self.saved_checkpoints) 
+    
+    def choose_action(self, state):
+        action = self.model.choose_action(state)
+        return action
 
-def init_meta_learner(logger, args, *kargs):
-    if args.marl_method == 'selfplay':
-        return SelfPlayMetaLearner(logger, args, *kargs)
+    def _replace_with_meta(self,checkpoints_to_replace_from, postfix=''):
+        """ sample from the policy family according to meta strategy distribution, and replace certain agent"""
+        sample_hist = np.random.multinomial(1, self.meta_strategy)  # meta nash policy is a distribution over the policy set, sample one policy from it according to meta nash for each episode
+        policy_idx = np.squeeze(np.where(sample_hist>0))
+        self.model.load_model(self.model_path+checkpoints_to_replace_from[policy_idx]+postfix)
 
-    elif args.marl_method == 'selfplay2':
-        return SelfPlay2SideMetaLearner(logger, args, *kargs)
+    def _replace_agent_with_meta(self, model, agent_to_replace, checkpoints_to_replace_from, postfix=''):
+        """ sample from the policy family according to meta strategy distribution, and replace certain agent"""
+        sample_hist = np.random.multinomial(1, self.meta_strategy)  # meta nash policy is a distribution over the policy set, sample one policy from it according to meta nash for each episode
+        policy_idx = np.squeeze(np.where(sample_hist>0))
+        model.agents[agent_to_replace].load_model(self.model_path+checkpoints_to_replace_from[policy_idx]+postfix)
 
-    elif args.marl_method == 'fictitious_selfplay':
-        return FictitiousSelfPlayMetaLearner(logger, args, *kargs)
+    def save_model(self, path: str = None):
+        if len(self.saved_checkpoints) > 0:  # methods with family of models
+            with open(self.model_path+'meta_strategy.npy', 'wb') as f:
+                np.save(f, self.meta_strategy)
+            with open(self.model_path+'policy_checkpoints.npy', 'wb') as f:
+                np.save(f, self.saved_checkpoints)
 
-    elif args.marl_method == 'fictitious_selfplay2':
-        return FictitiousSelfPlay2SideMetaLearner(logger, args, *kargs)
-
-    elif args.marl_method == 'nxdo':
-        return NXDOMetaLearner(logger, args, *kargs)
-
-    elif args.marl_method == 'nxdo2':
-        return NXDO2SideMetaLearner(logger, args, *kargs)
-
-    else:
-        return MetaLearner()
+    def load_model(self, model, path: str = None):
+        self.model = model
+        if path is not None:
+            self.model_path = path
+        with open(self.model_path+'meta_strategy.npy', 'rb') as f:
+            self.meta_strategy = np.load(f)
+        with open(self.model_path+'policy_checkpoints.npy', 'rb') as f:
+            self.saved_checkpoints = np.load(f)

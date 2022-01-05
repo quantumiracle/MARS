@@ -2,6 +2,7 @@ from mars.utils.func import LoadYAML2Dict
 from mars.env.import_env import make_env
 from mars.rollout import rollout
 from mars.rl.agents import *
+from mars.rl.agents.multiagent import MultiAgent
 from mars.utils.common import EvaluationModelMethods
 from mars.utils.func import get_general_args
 import argparse
@@ -17,7 +18,7 @@ def launch_rollout(env, method, save_id):
     ### Specify models for each agent     
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
-    
+
     if method in EvaluationModelMethods:
         args.eval_models = True
     else:
