@@ -1,0 +1,58 @@
+env_args:
+    env_name: None
+    env_type: None
+    num_envs: 1
+    ram: True
+    seed: 1122
+
+agent_args:
+    algorithm: DQN
+    algorithm_spec:
+        episodic_update: False
+        dueling: False
+        replay_buffer_size: 1e5
+        gamma: 0.99
+        multi_step: 1
+        target_update_interval: 1000 # updates skipped to update the target
+        eps_start: 1.
+        eps_final: 0.01
+        eps_decay: 30000  # tune according to env
+
+
+train_args:
+    batch_size: 32
+    max_episodes: 10000
+    max_steps_per_episode: 10000
+    train_start_frame: 0
+    optimizer: adam
+    learning_rate: 1e-4
+    device: gpu
+    update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
+    log_avg_window: 20 # average window length in logging
+    log_interval: 20  # log print interval 
+    render: False
+    test: False
+    exploit: False
+    load_model_idx: False
+    load_model_full_path: False
+    multiprocess: False  # separate processes for sampling and update
+    eval_models: False   # evalutation models during training (only for specific methods)
+    save_path: ''       # path to save models and logs
+    save_interval: 2000 # episode interval to save models
+    net_architecture: 
+        hidden_dim_list: [64, 64, 64] 
+        hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
+        output_activation: False # False means nan
+
+    # net_architecture: 
+    #     channel_list: [8, 8, 16]   # the first channel number is from the input
+    #     kernel_size_list: [4, 4, 4]
+    #     stride_list: [2, 1, 1]
+    #     hidden_activation: ReLU
+    #     hidden_dim_list: [64, ]   # MLP after CNN 
+    #     output_activation: None
+
+    marl_method: False
+    marl_spec: # MARL method specific configurations
+        min_update_interval: 20 # mininal opponent update interval in unit of episodes
+        score_avg_window: 10 # the length of window for averaging the score values

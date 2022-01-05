@@ -1,7 +1,7 @@
 Functionality
 ===========================
 
-.. automodule:: mars_core.utils.func
+.. automodule:: mars.utils.func
    :members:
    :undoc-members:
    :private-members:

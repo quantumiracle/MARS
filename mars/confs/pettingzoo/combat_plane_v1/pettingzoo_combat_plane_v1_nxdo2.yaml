@@ -1,0 +1,42 @@
+env_args:
+  env_name: combat_plane_v1
+  env_type: pettingzoo
+  num_envs: 1
+  ram: true
+  seed: random
+agent_args:
+  algorithm: DQN
+  algorithm_spec:
+    dueling: false
+    replay_buffer_size: 1e5
+    gamma: 0.99
+    multi_step: 1
+    target_update_interval: 1000
+    eps_start: 1.0
+    eps_final: 0.01
+    eps_decay: 30000
+train_args:
+  batch_size: 128
+  max_episodes: 30000
+  max_steps_per_episode: 10000
+  train_start_frame: 0
+  optimizer: adam
+  learning_rate: 1e-4
+  device: gpu
+  update_itr: 1
+  log_avg_window: 20
+  log_interval: 20
+  multiprocess: false
+  net_architecture:
+    hidden_dim_list:
+    - 64
+    - 64
+    - 64
+    - 64
+    hidden_activation: ReLU
+    output_activation: false
+  marl_method: nxdo2
+  marl_spec:
+    selfplay_score_delta: 10
+    trainable_agent_idx: 0
+    opponent_idx: 1

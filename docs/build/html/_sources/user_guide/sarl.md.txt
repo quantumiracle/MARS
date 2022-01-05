@@ -11,10 +11,11 @@ The list of supported algorithms includes: (list here)
 * The followings are required in the main script, for either training/testing/exploitation:
 
   ```python
-  from utils.func import LoadYAML2Dict
-  from env.import_env import make_env
-  from rollout import rollout
-  from rl.algorithm import *
+  from mars.utils.func import LoadYAML2Dict
+  from mars.env.import_env import make_env
+  from mars.rollout import rollout
+  from mars.rl.agents import *
+  from mars.rl.agents.multiagent import MultiAgent
   ```
 
   
@@ -23,8 +24,8 @@ The list of supported algorithms includes: (list here)
 
   ```python
   ### Load configurations
-  yaml_file = 'PATH TO YAML'
-  args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+  yaml_file = 'mars/confs/gym_cartpolev1_dqn' #PATH TO YAML
+  args = LoadYAML2Dict(yaml_file, toAttr=True)
   
   ### Create env
   env = make_env(args)
@@ -47,7 +48,7 @@ The list of supported algorithms includes: (list here)
 
   ```python
   ### Load configurations
-  yaml_file = 'PATH TO YAML'
+  yaml_file = 'mars/confs/gym_cartpolev1_dqn' #PATH TO YAML
   args = LoadYAML2Dict(yaml_file, toAttr=True)
   print(args)
   
