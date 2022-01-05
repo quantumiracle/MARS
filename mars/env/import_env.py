@@ -1,5 +1,6 @@
 """
 Supported Environments in MARS:
+
 Single-agent:
     * Openai Gym: https://gym.openai.com/
         type: 'gym'
@@ -27,8 +28,6 @@ Multi-agent:
             'SlimeVolleyNoFrameskip-v0', 'SlimeVolleyPixel-v0']
 """
 from typing import Dict
-import pettingzoo
-import slimevolleygym  # https://github.com/hardmaru/slimevolleygym
 import gym
 import supersuit
 import numpy as np

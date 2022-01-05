@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mars.rl.agents.multiagent &mdash; MARS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> MARS
+            <img src="../../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/intro.html">Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/algorithm/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/algorithm/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/algorithm/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">MARS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>mars.rl.agents.multiagent</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mars.rl.agents.multiagent</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mars.utils.typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">ActionType</span><span class="p">,</span> <span class="n">SampleType</span><span class="p">,</span> <span class="n">SamplesType</span><span class="p">,</span> <span class="n">ConfigurationDict</span>
+<span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">Agent</span>
+<span class="kn">from</span> <span class="nn">.dqn</span> <span class="kn">import</span> <span class="n">DQN</span>
+<span class="kn">from</span> <span class="nn">.ppo</span> <span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span> <span class="nn">mars.marl</span> <span class="kn">import</span> <span class="n">MetaLearner</span>
+<span class="kn">from</span> <span class="nn">mars.utils.common</span> <span class="kn">import</span> <span class="n">SelfplayBasedMethods</span><span class="p">,</span> <span class="n">MetaStrategyMethods</span>
+
+<div class="viewcode-block" id="MultiAgent"><a class="viewcode-back" href="../../../../mars/algorithm/agent.html#mars.rl.agents.multiagent.MultiAgent">[docs]</a><span class="k">class</span> <span class="nc">MultiAgent</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class containing all agents in a game.</span>
+
+<span class="sd">    The &#39;not_learnable&#39; list is a list containing all not self-learnable agents.</span>
+<span class="sd">    </span>
+<span class="sd">        Definition of &#39;not_learnable&#39;: The agent is not self-updating using the RL loss, it&#39;s either\</span>
+<span class="sd">        never updated (i.e., &#39;fixed&#39;) or updated as a delayed copy of other learnable \</span>
+<span class="sd">        agents with the MARL learning scheme.</span>
+
+<span class="sd">        What happen if an agent is &#39;not_learnable&#39;: Agents in the not_learnable_list will not take the store() and update() functions.</span>
+
+<span class="sd">    Other things to notice:</span>
+<span class="sd">        </span>
+<span class="sd">        * In testing or exploiting modes, if `load_model_full_path` is given, it is preferred over `load_model_idx` to load the existing model.</span>
+
+<span class="sd">        * `mergeAllSamplesInOne` is True only for Self-Play method, it means samples from all agents can be used for updating each agent due to symmetry.</span>
+
+<span class="sd">        * In Nash method and exploitation mode, the first agent in `agents` list needs to be the one to be exploited (pre-trained).</span>
+
+<span class="sd">    :param env: env object</span>
+<span class="sd">    :type env: object</span>
+<span class="sd">    :param agents: list of agent models</span>
+<span class="sd">    :type agents: list</span>
+<span class="sd">    :param args: all arguments</span>
+<span class="sd">    :type args: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">agents</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">ConfigurationDict</span><span class="p">,</span> <span class="o">*</span><span class="n">Args</span><span class="p">,</span> <span class="o">**</span><span class="n">Kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="nb">super</span><span class="p">(</span><span class="n">MultiAgent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Args</span> <span class="o">=</span> <span class="n">Args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Kwargs</span> <span class="o">=</span> <span class="n">Kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="n">agents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_agents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">SelfplayMethods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;selfplay&#39;</span><span class="p">,</span> <span class="s1">&#39;fictitious_selfplay&#39;</span><span class="p">,</span><span class="s1">&#39;nxdo&#39;</span><span class="p">]</span>  <span class="c1"># self-play based approach: train agent from one side only and update its opponent occasionally</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mergeAllSamplesInOne</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">agent</span><span class="o">.</span><span class="n">not_learnable</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># training mode</span>
+                <span class="k">if</span> <span class="n">agent</span><span class="o">.</span><span class="n">not_learnable</span> <span class="ow">or</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="ow">in</span> <span class="p">(</span><span class="n">SelfplayMethods</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;selfplay2&#39;</span><span class="p">,</span> <span class="s1">&#39;fictitious_selfplay2&#39;</span><span class="p">,</span> <span class="s1">&#39;nxdo2&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]):</span>  <span class="c1"># nxdo2 is special, fixed one side at beginning</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;No agent&#39;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Agents No. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="si">}</span><span class="s1"> (index starting from 0)&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot; are not learnable.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">test</span> <span class="ow">or</span> <span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="ow">in</span> <span class="n">MetaStrategyMethods</span><span class="p">:</span>  
+                <span class="n">meta_learner</span> <span class="o">=</span> <span class="n">MetaLearner</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="mi">0</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span> <span class="c1"># 0 is the model to test/exploit</span>
+                <span class="n">meta_learner</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">path</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">load_model_full_path</span><span class="p">)</span>  
+                <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta_learner</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">load_model_full_path</span><span class="p">:</span>  <span class="c1"># if the full path is specified, it has higher priority than the model index</span>
+                    <span class="n">model_path</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">load_model_full_path</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">model_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;../model/</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">env_type</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">env_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">load_model_idx</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># training mode</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="ow">in</span> <span class="n">SelfplayMethods</span><span class="p">:</span>  
+                <span class="c1"># since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mergeAllSamplesInOne</span> <span class="o">=</span> <span class="kc">True</span>                
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nash&#39;</span><span class="p">,</span> <span class="s1">&#39;nash_dqn&#39;</span><span class="p">,</span> <span class="s1">&#39;nash_dqn_exploiter&#39;</span><span class="p">,</span> <span class="s1">&#39;nash_ppo&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span>  <span class="c1"># the first agent must be the model to be exploited in Nash method, since the first agent stores samples </span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">eval_models</span><span class="p">:</span>
+            <span class="n">eval_env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">eval_model1</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+            <span class="n">eval_model2</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+            <span class="n">Kwargs</span><span class="p">[</span><span class="s1">&#39;eval_env&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_env</span>
+            <span class="n">Kwargs</span><span class="p">[</span><span class="s1">&#39;eval_models&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">eval_model1</span><span class="p">,</span> <span class="n">eval_model2</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_choose_greedy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">)</span><span class="o">-&gt;</span><span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine whether each agent should choose greedy actions under different cases.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: list of bools indicating greedy action or not for all agents.</span>
+<span class="sd">        &quot;rtype: list[bool]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">greedy_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_agents</span><span class="o">*</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>
+            <span class="n">greedy_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_agents</span><span class="o">*</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># for train and expoit. Check!!</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+                <span class="n">greedy_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">greedy_list</span>
+
+    
+<div class="viewcode-block" id="MultiAgent.choose_action"><a class="viewcode-back" href="../../../../mars/algorithm/agent.html#mars.rl.agents.multiagent.MultiAgent.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">states</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StateType</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StateType</span><span class="p">]]],</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">]]]:</span>
+        <span class="sd">&quot;&quot;&quot;Choose actions from given states/observations.</span>
+<span class="sd">        Shape of states:  (agents, envs, state_dim)</span>
+
+<span class="sd">        :param states: observations for all agents, shape: (agents, envs, action_dim)</span>
+<span class="sd">        :type states: np.ndarray or list</span>
+<span class="sd">        :return: actions for all agents, shape: (agents, envs, action_dim)</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">greedy_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choose_greedy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nash&#39;</span><span class="p">,</span> <span class="s1">&#39;nash_dqn&#39;</span><span class="p">,</span> <span class="s1">&#39;nash_dqn_exploiter&#39;</span><span class="p">,</span> <span class="s1">&#39;nash_ppo&#39;</span><span class="p">]:</span> <span class="c1"># gradually &#39;nash&#39; should be removed</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>  <span class="c1"># in exploitation mode, nash policy only control one agent</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">greedy</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">,</span> <span class="n">greedy_list</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># the first agent must be the model to be exploited</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;global_state&#39;</span><span class="p">]:</span>  <span class="c1"># use concatenated observation from both agents</span>
+                            <span class="n">nash_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">choose_action</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">Greedy</span><span class="o">=</span><span class="n">greedy</span><span class="p">)</span>  <span class="c1"># nash_actions contain all agents</span>
+                        <span class="k">else</span><span class="p">:</span>  <span class="c1"># only use the observation from the first agent</span>
+                            <span class="n">nash_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">choose_action</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">Greedy</span><span class="o">=</span><span class="n">greedy</span><span class="p">)</span> 
+                        <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nash_actions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">choose_action</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">Greedy</span><span class="o">=</span><span class="n">greedy</span><span class="p">)</span>
+                        <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># in training/testing mode, one model for all agents, the model is the first one</span>
+                <span class="c1"># of self.agents, it directly takes states to generate actions</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;global_state&#39;</span><span class="p">]:</span>
+                    <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">choose_action</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">Greedy</span><span class="o">=</span><span class="n">greedy_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">choose_action</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span> <span class="n">Greedy</span><span class="o">=</span><span class="n">greedy_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># keep the dim unchanged</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># each agent will take its corresponding state to generate</span>
+            <span class="c1"># the corresponding action</span>
+            <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">greedy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">,</span> <span class="n">greedy_list</span><span class="p">):</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">choose_action</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">Greedy</span><span class="o">=</span><span class="n">greedy</span><span class="p">)</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">actions</span></div>
+
+<div class="viewcode-block" id="MultiAgent.scheduler_step"><a class="viewcode-back" href="../../../../mars/algorithm/agent.html#mars.rl.agents.multiagent.MultiAgent.scheduler_step">[docs]</a>    <span class="k">def</span> <span class="nf">scheduler_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+                <span class="n">agent</span><span class="o">.</span><span class="n">scheduler_step</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiAgent.store"><a class="viewcode-back" href="../../../../mars/algorithm/agent.html#mars.rl.agents.multiagent.MultiAgent.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">samples</span><span class="p">:</span> <span class="n">SamplesType</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Store the samples into each agent.</span>
+<span class="sd">        The input samples is for all agents and all environments, we separate and reshape it before calling store() for each agent object. </span>
+<span class="sd">        For each item in samples (like `states`, `actions`), it has the shape: (`agents`, `envs`, `sample_dim`).</span>
+
+<span class="sd">        Generally, we want each agent to take its samples by indexing the first dimension, therefore (`envs`, `a complete sample`), `a complete sample`</span>
+<span class="sd">        looks like [state, action, reward, next_state, (other_info, ) done].</span>
+<span class="sd">        Specifically, for different methods (Self-Play, NFSP, Nash, etc) and different modes (train, test, exploit), the process will be different.</span>
+<span class="sd">        </span>
+<span class="sd">            1. If using Nash agent, take the `states` item in samples as an example, it has shape (`agents`, `envs`, `sample_dim`) for parallel environments</span>
+<span class="sd">            and (`agents`, `sample_dim`) for single environment, we transfer it to be (`envs`, `agents*sample_dim`) for the Nash agent in training and testing modes.</span>
+<span class="sd">            For exploitation mode, since the Nash agent is fixed and only provide actions for one agent, it is `not_learnable` and does not store any samples, only its</span>
+<span class="sd">            opponent exploiter store samples in a standard way.</span>
+
+<span class="sd">            2. If using Self-Play for training/testing, samples from all agents can be stored in one model for learning (due to the symmetry),</span>
+<span class="sd">            `mergeAllSamplesInOne` is set to be True. Each agent will take in samples in shape (`envs`, `agents`, `a complete sample`).</span>
+
+<span class="sd">            3. If using other methods like single-agent RL or Neural Fictitious Self-Play (NFSP) for training/testing, each agent will only takes their own samples,</span>
+<span class="sd">            thus `mergeAllSamplesInOne` is False, and the shape of samples for each agent is (`envs`, `a complete sample`).</span>
+
+<span class="sd">        :param samples: list of samples from different environment (if using parallel envs) and</span>
+<span class="sd">         for different agents, it consists of [states, actions, rewards, next_states, (other_infos,) dones].</span>
+<span class="sd">        :type samples: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_s</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nash&#39;</span><span class="p">,</span> <span class="s1">&#39;nash_dqn&#39;</span><span class="p">,</span> <span class="s1">&#39;nash_dqn_exploiter&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
+            <span class="c1"># &#39;states&#39; (agents, envs, state_dim) -&gt; (envs, agents, state_dim), similar for &#39;actions&#39;, &#39;rewards&#39; take the first one in all agents,</span>
+            <span class="c1"># if np.all(d) is True, the &#39;states&#39; and &#39;rewards&#39; will be absent for some environments, so remove such sample.</span>
+            <span class="p">[</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">next_states</span><span class="p">,</span> <span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span>
+            <span class="k">try</span><span class="p">:</span>  <span class="c1"># Used when num_envs &gt; 1. </span>
+                <span class="c1">## TODO Here the samples with done as True are filtered out for Nash algorithms!!</span>
+                <span class="c1"># samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;global_state&#39;</span><span class="p">]:</span>  <span class="c1"># use concatenated observation from both agents</span>
+                    <span class="n">samples</span> <span class="o">=</span> <span class="p">[[</span><span class="n">states</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">actions</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">rewards</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">next_states</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dones</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># only use the observation from the first agent (assume the symmetry in the game and the single state contains the full information: speed up learning!)</span>
+                    <span class="n">samples</span> <span class="o">=</span> <span class="p">[[</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">actions</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">rewards</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">next_states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dones</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span>
+            <span class="k">except</span><span class="p">:</span>  <span class="c1"># when num_envs = 1 </span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;global_state&#39;</span><span class="p">]:</span> 
+                    <span class="n">samples</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">states</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">next_states</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dones</span><span class="p">)]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">samples</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">next_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dones</span><span class="p">)]]</span>
+           
+            <span class="c1"># one model for all agents, the model is the first one</span>
+            <span class="c1"># of self.agents, it directly stores the sample constaining all</span>
+            <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">:</span> <span class="c1"># actually only one agent in list</span>
+                <span class="n">agent</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> 
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_method</span> <span class="o">==</span> <span class="s1">&#39;nash_ppo&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
+            <span class="p">[</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">next_states</span><span class="p">,</span> <span class="n">logprobs</span><span class="p">,</span> <span class="n">dones</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Used when num_envs &gt; 1. </span>
+                <span class="c1">## TODO Here the samples with done as True are filtered out for Nash algorithms!!</span>
+                <span class="c1"># samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;global_state&#39;</span><span class="p">]</span>  <span class="c1"># this has to be true for Nash PPO</span>
+                <span class="n">samples</span> <span class="o">=</span> <span class="p">[[</span><span class="n">states</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">actions</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">rewards</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">next_states</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">logprobs</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dones</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span>
+                
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># when num_envs = 1 </span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;global_state&#39;</span><span class="p">]:</span> 
+                    <span class="n">samples</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">states</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">next_states</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">logprobs</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dones</span><span class="p">)]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">samples</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">next_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">logprobs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dones</span><span class="p">)]]</span>
+
+            <span class="c1"># one model for all agents, the model is the first one</span>
+            <span class="c1"># of self.agents, it directly stores the sample constaining all</span>
+            <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">:</span> <span class="c1"># actually only one agent in list</span>
+                <span class="n">agent</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> 
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="o">*</span><span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_agents</span><span class="p">),</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">,</span> <span class="o">*</span><span class="n">samples</span><span class="p">):</span>
+                <span class="c1"># when using parallel env, s for each agent can be in shape:</span>
+                <span class="c1"># [(state1, state2), (action1, action2), (reward1, reward2), (next_state1, next_state2), (done1, done2)]</span>
+                <span class="c1"># where indices 1,2 represent different envs, thus we need to separate the sample before storing it in each</span>
+                <span class="c1"># agent, to have the shape like [[state1, action1, reward1, next_state1, done1], [state2, action2, reward2, next_state2, done2]]</span>
+                <span class="k">try</span><span class="p">:</span> <span class="c1"># when num_envs &gt; 1 </span>
+                    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">))</span>
+                <span class="k">except</span><span class="p">:</span> <span class="c1"># when num_envs = 1 </span>
+                    <span class="n">s</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">s</span><span class="p">])</span>
+                <span class="c1"># if using self-play, use samples from all players to train the model (due to symmetry)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mergeAllSamplesInOne</span><span class="p">:</span>
+                    <span class="n">all_s</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>  <span class="c1"># no need to store samples for not learnable models</span>
+                    <span class="n">agent</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="c1"># store all samples into the trainable agent in self-play</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mergeAllSamplesInOne</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">all_s</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MultiAgent.update"><a class="viewcode-back" href="../../../../mars/algorithm/agent.html#mars.rl.agents.multiagent.MultiAgent.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+                <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">losses</span></div>
+
+<div class="viewcode-block" id="MultiAgent.save_model"><a class="viewcode-back" href="../../../../mars/algorithm/agent.html#mars.rl.agents.multiagent.MultiAgent.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">):</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiAgent.load_model"><a class="viewcode-back" href="../../../../mars/algorithm/agent.html#mars.rl.agents.multiagent.MultiAgent.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="c1"># if pass in a list of paths, each agent takes one path in order</span>
+                <span class="n">spec_path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">spec_path</span> <span class="o">=</span> <span class="n">path</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">exploit</span><span class="p">:</span>
+                <span class="c1"># in EXPLOIT mode, the exploiter is learnable, thus not loaded from anywhere</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+                    <span class="n">agent</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">spec_path</span><span class="p">,</span> <span class="nb">eval</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Agent No. [</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">] loads model from: &#39;</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">agent</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">spec_path</span><span class="p">,</span> <span class="nb">eval</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Agent No. [</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">] loads model from: &#39;</span><span class="p">,</span> <span class="n">spec_path</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ready_to_update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        A function returns whether all learnable agents are ready to be updated, </span>
+<span class="sd">        called from the main rollout function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>  <span class="c1"># no model is updated in test mode</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ready_state</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_learnable_list</span><span class="p">:</span>
+                    <span class="n">ready_state</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">ready_to_update</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ready_state</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Zihan Ding.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
