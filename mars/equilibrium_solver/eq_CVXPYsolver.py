@@ -38,7 +38,7 @@ def NashEquilibriumCVXPYSolver(A, verbose=False):
         print("A dual solution is")
         print(p2_value)
 
-    return (p1_value, p2_value)
+    return (p1_value, p2_value), None # second should be nash value
 
 if __name__ == "__main__":
     ###   TEST LP NASH SOLVER ###

@@ -138,10 +138,14 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
         # get names
         self.model_name = logger.keys[args.marl_spec['trainable_agent_idx']]
         self.opponent_name = logger.keys[args.marl_spec['opponent_idx']]
+        self.current_learnable_model_idx = int(args.marl_spec['trainable_agent_idx'])
+        self.current_fixed_opponent_idx = int(args.marl_spec['opponent_idx'])
 
         self.save_checkpoint = save_checkpoint
         self.args = args
         self.meta_step = self.last_meta_step = 0
+        self.saved_checkpoints = [[]] # for single player
+        self.meta_strategies = [[]] # for single player
 
     def step(self, model, logger, *Args):
         """
@@ -163,7 +167,7 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
             if self.save_checkpoint:
                 save_path = self.model_path+str(self.meta_step)
                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(save_path) # save all checkpoints
-                self.saved_checkpoints.append(str(self.meta_step))
+                self.saved_checkpoints[self.current_learnable_model_idx].append(str(self.meta_step))
                 logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
 
             self.last_meta_step = self.meta_step
@@ -171,9 +175,10 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
-        if len(self.saved_checkpoints) > 0: # the policy set has one or more policies to sample from
-            self.meta_strategy = np.ones(len(self.saved_checkpoints))/len(self.saved_checkpoints)  # uniformly distributed
-            self._replace_agent_with_meta(model, self.args.marl_spec['opponent_idx'], self.saved_checkpoints)
+        current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
+        if len(current_policy_checkpoints) > 0: # the policy set has one or more policies to sample from
+            self.meta_strategies[self.model_name] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed
+            self._replace_agent_with_meta(model, self.args.marl_spec['opponent_idx'], current_policy_checkpoints)
 
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
@@ -203,6 +208,7 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
         self.args = args
         self.meta_step = self.last_meta_step = 0
         self.saved_checkpoints = [[] for _ in range(2)] # for both player
+        self.meta_strategies = [[] for _ in range(2)] # for both player
 
     def _switch_charac(self, model):
         """ Iteratively update."""
@@ -248,10 +254,10 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
             model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
-        avg_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
-        if len(avg_policy_checkpoints) > 0:  # the policy set has one or more policies to sample from
-            self.meta_strategy = np.ones(len(avg_policy_checkpoints))/len(avg_policy_checkpoints)  # uniformly distributed         
-            self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, avg_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
+        current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
+        if len(current_policy_checkpoints) > 0:  # the policy set has one or more policies to sample from
+            self.meta_strategies[self.current_fixed_opponent_idx] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed         
+            self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, current_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
 
 
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
