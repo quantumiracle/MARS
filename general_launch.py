@@ -3,7 +3,7 @@ import copy
 import cloudpickle 
 import torch
 torch.multiprocessing.set_start_method('forkserver', force=True)
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 from multiprocessing.managers import BaseManager, NamespaceProxy
 
 from mars.env.import_env import make_env
@@ -53,13 +53,14 @@ def launch_rollout(env, method, save_id):
     print(ori_args)
 
     # launch multiple sample rollout processes
+    info_queue = Queue()
     for pro_id in range(ori_args.num_envs):  
-        play_process = Process(target=rolloutExperience, args = (model, args, pro_id))
+        play_process = Process(target=rolloutExperience, args = (model, info_queue, args, pro_id))
         play_process.daemon = True  # sub processes killed when main process finish
         processes.append(play_process)
 
     # launch update process (single or multiple)
-    update_process = Process(target=updateModel, args= (model, args, save_id))
+    update_process = Process(target=updateModel, args= (model, info_queue, args, save_id))
     update_process.daemon = True
     processes.append(update_process)
 

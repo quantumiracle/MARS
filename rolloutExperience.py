@@ -43,7 +43,6 @@ def rollout_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> 
     # meta_learner = init_meta_learner(logger, args)
     for epi in range(args.max_episodes):
         obs = env.reset()
-        epi_r = 0
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
             obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
