@@ -3,7 +3,7 @@ from mars.utils.logger2 import init_logger
 from mars.utils.typing import Tuple, List, ConfigurationDict
 from mars.marl import init_meta_learner
 from mars.env.import_env import make_env
-from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
+from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods, MetaStepMethods
 
 
 def updateModel(model, info_queue, args: ConfigurationDict, save_id='0') -> None:
@@ -43,19 +43,19 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
             loss = model.update()
             logger.log_loss(loss)
 
-        if (itr+1) % meta_update_interval == 0:
+        if args.marl_method in MetaStepMethods and (itr+1) % meta_update_interval == 0:
             lastest_epi_rewards = info_queue.get() # receive rollout info
-            
             for k, r in zip(logger.epi_rewards.keys(), lastest_epi_rewards):
                 logger.epi_rewards[k].append(r)
             meta_learner.step(
                 model, logger, env, args
             )  # metalearner for selfplay need just one step per episode
+
         if (itr+1) % (meta_update_interval*args.log_interval) == 0:
             logger.print_and_save()
 
         if (itr+1) % (meta_update_interval*args.save_interval) == 0 \
-        and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
+        and not args.marl_method in MetaStepMethods \
         and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{itr+1}')
 
