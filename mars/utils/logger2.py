@@ -177,7 +177,6 @@ class Logger(TestLogger):
         current_time = time.time()
         time_taken = current_time - self.last_time
         self.last_time = current_time
-
         if  len(self.losses[self.keys[0]])>0:  # non-empty
             print(
                 f'Update itr: {self.current_itr}/{self.args.max_update_itr} ({100*self.current_itr/self.args.max_update_itr:.4f}%), \
