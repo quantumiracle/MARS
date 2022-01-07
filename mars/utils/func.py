@@ -3,6 +3,9 @@ from .data_struct import AttrDict
 from .typing import Dict, Any
 import collections.abc
 import copy, os
+from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
+from mars.rl.agents  import *
+
 
 def LoadYAML2Dict(yaml_file: str,
                   toAttr: bool = False,
@@ -110,3 +113,31 @@ def get_latest_file_in_folder(folder, id=None):
     if id is not None:
         file_path += '_'+str(id) 
     return file_path
+
+
+def get_model_path(method, folder):
+    if method in MetaStrategyMethods:
+        file_path = folder
+    elif method in SelfplayBasedMethods:
+        file_path = get_latest_file_in_folder(folder)  # only one-side model is trained/saved
+    else:
+        file_path = get_latest_file_in_folder(folder, id=0)  # load from the first agent model of the two
+    return file_path
+
+def get_exploiter(exploiter_type: str, args):
+    if exploiter_type = 'DQN':
+        ## This two lines are critical!
+        args.algorithm_spec['episodic_update'] = False  # nash ppo has this as true, should be false since using DQN
+        args.algorithm_spec['update_itr'] = 1  # nash-dqn has this 0.1, has to make it 1 for fair comparison with other methods
+
+        exploiter = DQN(env, args)
+        exploiter.reinit()
+        exploitation_args = args
+
+    elif exploiter_type = 'PPO':
+        ppo_args = LoadYAML2Dict(f'mars/confs/{game_type}/ppo_exploit', toAttr=True, mergeWith=None)
+        exploitation_args =  AttrDict(UpdateDictAwithB(args, ppo_args, withOverwrite=True))
+        exploiter = PPO(env, exploitation_args)
+        exploiter.reinit()
+
+    return exploiter, exploitation_args
