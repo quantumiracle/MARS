@@ -49,8 +49,11 @@ class MultiAgent(Agent):
         self.mergeAllSamplesInOne = False
         for i, agent in enumerate(agents):
             if args.test:
+                agent.fix()
                 self.not_learnable_list.append(i)
             elif args.exploit:
+                if i == 0:  # fix the model to be exploited
+                    agent.fix()
                 if agent.not_learnable:
                     self.not_learnable_list.append(i)
             else: # training mode
