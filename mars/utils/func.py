@@ -125,7 +125,7 @@ def get_model_path(method, folder):
     return file_path
 
 def get_exploiter(exploiter_type: str, args):
-    if exploiter_type = 'DQN':
+    if exploiter_type == 'DQN':
         ## This two lines are critical!
         args.algorithm_spec['episodic_update'] = False  # nash ppo has this as true, should be false since using DQN
         args.algorithm_spec['update_itr'] = 1  # nash-dqn has this 0.1, has to make it 1 for fair comparison with other methods
@@ -134,7 +134,7 @@ def get_exploiter(exploiter_type: str, args):
         exploiter.reinit()
         exploitation_args = args
 
-    elif exploiter_type = 'PPO':
+    elif exploiter_type == 'PPO':
         ppo_args = LoadYAML2Dict(f'mars/confs/{game_type}/ppo_exploit', toAttr=True, mergeWith=None)
         exploitation_args =  AttrDict(UpdateDictAwithB(args, ppo_args, withOverwrite=True))
         exploiter = PPO(env, exploitation_args)
