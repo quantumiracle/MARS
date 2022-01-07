@@ -189,8 +189,85 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="functionality">
-<h1>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-mars.utils.func">
+<span id="functionality"></span><h1>Functionality<a class="headerlink" href="#module-mars.utils.func" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.utils.func.InDepthUpdateDictAwithB">
+<span class="sig-prename descclassname"><span class="pre">mars.utils.func.</span></span><span class="sig-name descname"><span class="pre">InDepthUpdateDictAwithB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/mars/utils/func.html#InDepthUpdateDictAwithB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.utils.func.InDepthUpdateDictAwithB" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function for update nested dictionaries A with B.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>dict</em>) – a nested dictionary, e.g., dict, dict of dict, dict of dict of dict …</p></li>
+<li><p><strong>B</strong> (<em>dict</em>) – a nested dictionary, e.g., dict, dict of dict, dict of dict of dict …</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>none</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.utils.func.LoadYAML2Dict">
+<span class="sig-prename descclassname"><span class="pre">mars.utils.func.</span></span><span class="sig-name descname"><span class="pre">LoadYAML2Dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toAttr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mergeWith</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'mars/confs/default.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="data_struct.html#mars.utils.data_struct.AttrDict" title="mars.utils.data_struct.AttrDict"><span class="pre">mars.utils.data_struct.AttrDict</span></a></span></span><a class="reference internal" href="../../_modules/mars/utils/func.html#LoadYAML2Dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.utils.func.LoadYAML2Dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function loading the hyper-parameters in yaml file into a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaml_file</strong> (<em>str</em>) – the yaml file name</p></li>
+<li><p><strong>toAttr</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, transform the configuration dictionary into a class,
+such that each hyperparameter can be called with class.attribute instead of dict[‘attribute’]; defaults to False</p></li>
+<li><p><strong>mergeWith</strong> – if not None, merge the loaded yaml (with overwritting priority) with the yaml given by this path;</p></li>
+</ul>
+</dd>
+</dl>
+<p>for example, merging with default yaml file will fill those missing entries with those in defaulf configurations.
+:type mergeDefault: string or None, optional
+:param confs: input a dictionary of configurations from outside the function, defaults to {}
+:type confs: dict, optional
+:return: a dictionary of configurations, including all hyper-parameters for environment, algorithm and training/testing.
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.utils.func.UpdateDictAwithB">
+<span class="sig-prename descclassname"><span class="pre">mars.utils.func.</span></span><span class="sig-name descname"><span class="pre">UpdateDictAwithB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withOverwrite</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/mars/utils/func.html#UpdateDictAwithB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.utils.func.UpdateDictAwithB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the entries in dictionary A with dictionary B.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>dict</em>) – a dictionary</p></li>
+<li><p><strong>B</strong> (<em>dict</em>) – a dictionary</p></li>
+<li><p><strong>withOverwrite</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether replace the same entries in A with B, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>none</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.utils.func.get_exploiter">
+<span class="sig-prename descclassname"><span class="pre">mars.utils.func.</span></span><span class="sig-name descname"><span class="pre">get_exploiter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exploiter_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/utils/func.html#get_exploiter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.utils.func.get_exploiter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.utils.func.get_general_args">
+<span class="sig-prename descclassname"><span class="pre">mars.utils.func.</span></span><span class="sig-name descname"><span class="pre">get_general_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/utils/func.html#get_general_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.utils.func.get_general_args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.utils.func.get_latest_file_in_folder">
+<span class="sig-prename descclassname"><span class="pre">mars.utils.func.</span></span><span class="sig-name descname"><span class="pre">get_latest_file_in_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/utils/func.html#get_latest_file_in_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.utils.func.get_latest_file_in_folder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.utils.func.get_model_path">
+<span class="sig-prename descclassname"><span class="pre">mars.utils.func.</span></span><span class="sig-name descname"><span class="pre">get_model_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/utils/func.html#get_model_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.utils.func.get_model_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 

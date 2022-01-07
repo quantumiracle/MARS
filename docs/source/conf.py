@@ -16,7 +16,7 @@ import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath("../"))  # Important
 sys.path.insert(0, os.path.abspath("../.."))  # Important
-sys.path.insert(0, os.path.abspath(os.path.join("../..", "mars_core")))  # Important
+sys.path.insert(0, os.path.abspath(os.path.join("../..", "mars")))  # Important
 # print(sys.path)
 
 # -- Project information -----------------------------------------------------
@@ -68,7 +68,7 @@ autodoc_mock_imports = [
     'lxml',
     'matplotlib',
     'nltk',
-    # 'numpy',
+    'cvxpy',
     'PIL',
     'progressbar',
     'pymongo',
