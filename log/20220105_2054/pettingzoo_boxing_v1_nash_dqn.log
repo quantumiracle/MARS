@@ -3089,3 +3089,92 @@ Process ID: 1, episode: 9800/10000 (98.0000%),                     avg. length: 
 first_0:                     episode reward: -60.1000
 second_0:                     episode reward: 60.1000
 Process ID: 1, episode: 9820/10000 (98.2000%),                     avg. length: 1577.05,                    last time consumption/overall running time: 357.0625s / 219206.9908 s
+first_0: loss: 0.3232
+second_0: loss: 0.3300
+Update itr: 800000/10000000 (8.0000%),                     last time consumption/overall running time: 3986.6432s / 165691.3945 s
+first_0: loss: 0.2850
+second_0: loss: 0.4049
+Update itr: 820000/10000000 (8.2000%),                     last time consumption/overall running time: 3982.5038s / 169673.8983 s
+first_0: loss: 0.4453
+second_0: loss: 0.3501
+Update itr: 840000/10000000 (8.4000%),                     last time consumption/overall running time: 3989.7383s / 173663.6365 s
+first_0: loss: 0.2389
+second_0: loss: 0.2989
+Update itr: 860000/10000000 (8.6000%),                     last time consumption/overall running time: 3992.5484s / 177656.1850 s
+first_0: loss: 0.3529
+second_0: loss: 0.3608
+Update itr: 880000/10000000 (8.8000%),                     last time consumption/overall running time: 3820.4747s / 181476.6597 s
+first_0: loss: 0.4408
+second_0: loss: 0.3056
+Update itr: 900000/10000000 (9.0000%),                     last time consumption/overall running time: 3759.7193s / 185236.3789 s
+first_0: loss: 0.4424
+second_0: loss: 0.4174
+Update itr: 920000/10000000 (9.2000%),                     last time consumption/overall running time: 3772.2173s / 189008.5962 s
+first_0: loss: 0.3947
+second_0: loss: 0.3070
+Update itr: 940000/10000000 (9.4000%),                     last time consumption/overall running time: 3749.9692s / 192758.5654 s
+first_0: loss: 0.3426
+second_0: loss: 0.3385
+Update itr: 960000/10000000 (9.6000%),                     last time consumption/overall running time: 3728.2843s / 196486.8496 s
+first_0: loss: 0.3841
+second_0: loss: 0.4898
+Update itr: 980000/10000000 (9.8000%),                     last time consumption/overall running time: 3752.4886s / 200239.3382 s
+first_0: loss: 0.3714
+second_0: loss: 0.5378
+Update itr: 1000000/10000000 (10.0000%),                     last time consumption/overall running time: 3750.3293s / 203989.6676 s
+first_0: loss: 0.4645
+second_0: loss: 0.4065
+Update itr: 1020000/10000000 (10.2000%),                     last time consumption/overall running time: 3746.8985s / 207736.5661 s
+first_0: loss: 0.3834
+second_0: loss: 0.4003
+Update itr: 1040000/10000000 (10.4000%),                     last time consumption/overall running time: 3732.2953s / 211468.8614 s
+first_0: loss: 0.3666
+second_0: loss: 0.3492
+Update itr: 1060000/10000000 (10.6000%),                     last time consumption/overall running time: 3738.5052s / 215207.3665 s
+first_0: loss: 0.3739
+second_0: loss: 0.4602
+Update itr: 1080000/10000000 (10.8000%),                     last time consumption/overall running time: 3599.2386s / 218806.6052 s
+first_0: loss: 0.5080
+second_0: loss: 0.4522
+Update itr: 1100000/10000000 (11.0000%),                     last time consumption/overall running time: 3474.3182s / 222280.9233 s
+first_0: loss: 0.4061
+second_0: loss: 0.3872
+Update itr: 1120000/10000000 (11.2000%),                     last time consumption/overall running time: 3163.0368s / 225443.9602 s
+first_0: loss: 0.4226
+second_0: loss: 0.2815
+Update itr: 1140000/10000000 (11.4000%),                     last time consumption/overall running time: 3179.5988s / 228623.5590 s
+first_0: loss: 0.2972
+second_0: loss: 0.2632
+Update itr: 1160000/10000000 (11.6000%),                     last time consumption/overall running time: 3160.3071s / 231783.8661 s
+first_0: loss: 0.2336
+second_0: loss: 0.2352
+Update itr: 1180000/10000000 (11.8000%),                     last time consumption/overall running time: 3152.7366s / 234936.6026 s
+first_0: loss: 0.2658
+second_0: loss: 0.1976
+Update itr: 1200000/10000000 (12.0000%),                     last time consumption/overall running time: 3165.1847s / 238101.7873 s
+first_0: loss: 0.1979
+second_0: loss: 0.1928
+Process Process-4:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 297, in _bootstrap
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/process.py", line 99, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/research/MARS/updateModel.py", line 21, in updateModel
+    update_normal(env, model, info_queue, save_id, args)
+  File "/home/zihan/research/MARS/updateModel.py", line 42, in update_normal
+    if model.ready_to_update:
+  File "/home/zihan/research/MARS/mars/rl/agents/multiagent.py", line 285, in ready_to_update
+    A function returns whether all learnable agents are ready to be updated,
+  File "/home/zihan/research/MARS/mars/rl/agents/dqn.py", line 104, in ready_to_update
+    return True if self.buffer.get_len() > self.batch_size else False
+  File "<string>", line 2, in get_len
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/managers.py", line 819, in _callmethod
+    kind, result = conn.recv()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 250, in recv
+    buf = self._recv_bytes()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 407, in _recv_bytes
+    buf = self._recv(4)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/multiprocessing/connection.py", line 379, in _recv
+    chunk = read(handle, remaining)
+ConnectionResetError: [Errno 104] Connection reset by peer
