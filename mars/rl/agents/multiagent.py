@@ -247,6 +247,17 @@ class MultiAgent(Agent):
             if self.mergeAllSamplesInOne:
                 self.agents[self.args.marl_spec['trainable_agent_idx']].store(all_s)
 
+    def nan_filter(self, samples):
+        valid = True
+        for i in range(len(samples)):
+            if np.isnan(samples[i]).any():  # any entry in item is nan
+                samples[i] = np.ones_like(samples)
+                print(f"Invalid nan value exists in {i}-th item of samples.")
+                valid = False
+                break
+            else:
+                valid = True
+        return valid
 
     def update(self) -> List[float]:
         losses = []
