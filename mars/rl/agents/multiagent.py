@@ -126,14 +126,14 @@ class MultiAgent(Agent):
         actions = []
         greedy_list = self._choose_greedy()
 
-        if self.args.marl_method in NashBasedMethods: # gradually 'nash' should be removed
+        if self.args.marl_method in NashBasedMethods: 
             if self.args.exploit:  # in exploitation mode, nash policy only control one agent
                 for i, (state, agent, greedy) in enumerate(zip(states, self.agents, greedy_list)):
                     if i == 0:  # the first agent must be the model to be exploited
                         if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
                             nash_actions = self.agents[i].choose_action(states, Greedy=greedy)  # nash_actions contain all agents
                         else:  # only use the observation from the first agent
-                            nash_actions = self.agents[i].choose_action(state, Greedy=greedy) 
+                            nash_actions = self.agents[i].choose_action(np.expand_dims(state, 0), Greedy=greedy)  # (envs, state_dim) to (1, envs, state_dim), 1 for one-side observation
                         actions.append(nash_actions[i])
                     else:
                         action = agent.choose_action(state, Greedy=greedy)
