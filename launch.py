@@ -4,13 +4,10 @@ import cloudpickle
 import torch
 torch.multiprocessing.set_start_method('forkserver', force=True)
 from multiprocessing import Process, Queue
-from multiprocessing.managers import BaseManager, NamespaceProxy
-
 from mars.env.import_env import make_env
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
-from mars.utils.func import get_general_args
-from mars.rl.common.storage import ReplayBuffer, ReservoirBuffer
+from mars.utils.func import get_general_args, multiprocess_buffer_register
 from rolloutExperience import rolloutExperience
 from updateModel import updateModel
 
@@ -29,21 +26,7 @@ method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
 
 # method = 'nash_dqn_speed'
 
-def multiprocess_buffer_register(ori_args, method):
-    """
-    Register shared buffer for multiprocessing.
-    """
-    BaseManager.register('replay_buffer', ReplayBuffer)
-    if method == 'nfsp':
-        BaseManager.register('reservoir_buffer', ReservoirBuffer)
-    manager = BaseManager()
-    manager.start()
-    args.replay_buffer = manager.replay_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
-    if method == 'nfsp':
-        args.reservoir_buffer = manager.reservoir_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
 
-    return args
-        
 if __name__ == '__main__':
     ori_args = get_general_args(game_type+'_'+game, method)
     ori_args.multiprocess = True

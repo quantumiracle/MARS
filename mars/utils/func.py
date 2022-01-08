@@ -5,6 +5,8 @@ import collections.abc
 import copy, os
 from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
 from mars.rl.agents  import *
+from multiprocessing.managers import BaseManager, NamespaceProxy
+from mars.rl.common.storage import ReplayBuffer, ReservoirBuffer
 
 
 def LoadYAML2Dict(yaml_file: str,
@@ -124,7 +126,7 @@ def get_model_path(method, folder):
         file_path = get_latest_file_in_folder(folder, id=0)  # load from the first agent model of the two
     return file_path
 
-def get_exploiter(exploiter_type: str, args):
+def get_exploiter(exploiter_type: str, env, args):
     if exploiter_type == 'DQN':
         ## This two lines are critical!
         args.algorithm_spec['episodic_update'] = False  # nash ppo has this as true, should be false since using DQN
@@ -141,3 +143,20 @@ def get_exploiter(exploiter_type: str, args):
         exploiter.reinit()
 
     return exploiter, exploitation_args
+
+
+def multiprocess_buffer_register(ori_args, method):
+    """
+    Register shared buffer for multiprocessing.
+    """
+    BaseManager.register('replay_buffer', ReplayBuffer)
+    if method == 'nfsp':
+        BaseManager.register('reservoir_buffer', ReservoirBuffer)
+    manager = BaseManager()
+    manager.start()
+    args.replay_buffer = manager.replay_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
+    if method == 'nfsp':
+        args.reservoir_buffer = manager.reservoir_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
+
+    return args
+        
