@@ -5,6 +5,7 @@ import cloudpickle
 from mars.utils.logger2 import init_logger
 from mars.utils.typing import Tuple, List, ConfigurationDict
 from mars.env.import_env import make_env
+from mars.utils.common import MetaStepMethods
 
 
 def rolloutExperience(model, info_queue, args: ConfigurationDict, save_id='0') -> None:
@@ -124,7 +125,7 @@ def rollout_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> 
             logger.print_and_save()
 
         if (epi+1) % args.save_interval == 0 \
-        and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
+        and not args.marl_method in MetaStepMethods \
         and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{epi+1}')
 
