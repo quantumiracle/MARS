@@ -2,7 +2,7 @@ MARL
 ===========================
 
 
-MetaLearner Class
+Meta-Learner Class
 ---------------------------------
 
 .. autoclass:: mars.marl.meta_learner.MetaLearner
@@ -10,7 +10,7 @@ MetaLearner Class
    :undoc-members:
    :show-inheritance:
 
-SelfPlay Class
+Self-Play Class
 ---------------------------------
 
 .. automodule:: mars.marl.selfplay
