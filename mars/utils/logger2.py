@@ -196,24 +196,24 @@ class Logger(TestLogger):
                 print(f"{k}: \
                     episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}")
 
-
-
         if len(self.additional_logs) > 0:
             for log in self.additional_logs:
                 print(log)
             self.additional_logs = []
 
         # save process data
-        sample_data = {
-            'episode_reward': self.epi_rewards,
-            'episode_length': self.epi_length,
-        }
-        json.dump(sample_data, open(self.log_dir + f"sample_{self.save_id}.json", 'w'))
+        if  len(self.losses[self.keys[0]])>0:  # non-empty
+            update_data = {
+                'loss': self.losses,
+            }
+            json.dump(update_data, open(self.log_dir + f"update_{self.save_id}.json", 'w'))
 
-        update_data = {
-            'loss': self.losses,
-        }
-        json.dump(update_data, open(self.log_dir + f"update_{self.save_id}.json", 'w'))
+        if len(self.epi_rewards[self.keys[0]])>0:  # non-empty
+            sample_data = {
+                'episode_reward': self.epi_rewards,
+                'episode_length': self.epi_length,
+            }
+            json.dump(sample_data, open(self.log_dir + f"sample_{self.save_id}.json", 'w'))
 
         # save extra data in another file
         if len(self.extr_logs) > 0:

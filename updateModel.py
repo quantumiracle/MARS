@@ -41,6 +41,8 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
     for itr in range(max_update_itr):
         if model.ready_to_update:
             loss = model.update()
+            
+        if (itr+1) % meta_update_interval == 0:
             logger.log_loss(loss)
 
         if args.marl_method in MetaStepMethods and (itr+1) % meta_update_interval == 0:
