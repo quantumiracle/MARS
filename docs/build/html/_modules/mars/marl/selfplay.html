@@ -1,32 +1,74 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>mars.marl.selfplay &mdash; MARS 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/js/theme.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav"> 
+<body class="wy-body-for-nav">
+
+   
   <div class="wy-grid-for-nav">
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+          
+
+          
             <a href="../../../index.html" class="icon icon-home"> MARS
+          
+
+          
+            
             <img src="../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          
           </a>
+
+          
+            
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -34,7 +76,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
               <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction/intro.html">Introduction</a></li>
@@ -53,6 +106,11 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">MARS</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/data_struct.html">Data Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/func.html">Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/logger.html">Logger</a></li>
@@ -64,30 +122,69 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../experiments/exploit.html">Exploitability Test</a></li>
 </ul>
 
+            
+          
         </div>
+        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">MARS</a>
+        
       </nav>
 
+
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
+    
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
       <li>mars.marl.selfplay</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
+        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-             
+            
   <h1>Source code for mars.marl.selfplay</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.meta_learner</span> <span class="kn">import</span> <span class="n">MetaLearner</span>
@@ -229,10 +326,14 @@
         <span class="c1"># get names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opponent_name</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span> <span class="o">=</span> <span class="n">save_checkpoint</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="c1"># for single player</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_strategies</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="c1"># for single player</span>
 
 <div class="viewcode-block" id="FictitiousSelfPlayMetaLearner.step"><a class="viewcode-back" href="../../../mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlayMetaLearner.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="o">*</span><span class="n">Args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -254,7 +355,7 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">:</span>
                 <span class="n">save_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span><span class="p">)</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span> <span class="c1"># save all checkpoints</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span><span class="p">))</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">additional_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Score delta: </span><span class="si">{</span><span class="n">score_delta</span><span class="si">}</span><span class="s1">, save the model to </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span>
@@ -262,9 +363,10 @@
             <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span>
 
         <span class="c1"># load a model for each episode to achieve an empiral average policy</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># the policy set has one or more policies to sample from</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">meta_strategy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">))</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">)</span>  <span class="c1"># uniformly distributed</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_replace_agent_with_meta</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">)</span>
+        <span class="n">current_policy_checkpoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">]</span>  <span class="c1"># use the learnable to get best response of the policy set of the fixed agent</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_policy_checkpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># the policy set has one or more policies to sample from</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta_strategies</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">current_policy_checkpoints</span><span class="p">))</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">current_policy_checkpoints</span><span class="p">)</span>  <span class="c1"># uniformly distributed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_replace_agent_with_meta</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;opponent_idx&#39;</span><span class="p">],</span> <span class="n">current_policy_checkpoints</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">agent_reinit_interval</span><span class="p">:</span>
             <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;trainable_agent_idx&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span></div></div>
@@ -294,6 +396,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span> <span class="c1"># for both player</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_strategies</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span> <span class="c1"># for both player</span>
 
     <span class="k">def</span> <span class="nf">_switch_charac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Iteratively update.&quot;&quot;&quot;</span>
@@ -339,10 +442,10 @@
             <span class="n">model</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_learnable_model_idx</span><span class="p">]</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">nets_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">buffer_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">schedulers_init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reinitialize the model</span>
 
         <span class="c1"># load a model for each episode to achieve an empiral average policy</span>
-        <span class="n">avg_policy_checkpoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">]</span>  <span class="c1"># use the learnable to get best response of the policy set of the fixed agent</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">avg_policy_checkpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># the policy set has one or more policies to sample from</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">meta_strategy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">avg_policy_checkpoints</span><span class="p">))</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">avg_policy_checkpoints</span><span class="p">)</span>  <span class="c1"># uniformly distributed         </span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_replace_agent_with_meta</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">,</span> <span class="n">avg_policy_checkpoints</span><span class="p">,</span> <span class="n">postfix</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">))</span>
+        <span class="n">current_policy_checkpoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_checkpoints</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">]</span>  <span class="c1"># use the learnable to get best response of the policy set of the fixed agent</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_policy_checkpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># the policy set has one or more policies to sample from</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta_strategies</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">current_policy_checkpoints</span><span class="p">))</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">current_policy_checkpoints</span><span class="p">)</span>  <span class="c1"># uniformly distributed         </span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_replace_agent_with_meta</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">,</span> <span class="n">current_policy_checkpoints</span><span class="p">,</span> <span class="n">postfix</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fixed_opponent_idx</span><span class="p">))</span>
 
 
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_step</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_meta_step</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">agent_reinit_interval</span><span class="p">:</span>
@@ -350,30 +453,46 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Zihan Ding.</p>
-  </div>
+    <p>
+        &#169; Copyright 2021, Zihan Ding.
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
       </div>
+
     </section>
+
   </div>
-  <script>
+  
+
+  <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

@@ -8,9 +8,7 @@ from mars.env.import_env import make_env
 from mars.rollout import rollout
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
-from general_train import get_general_args
-from general_exploit import get_latest_file_in_folder
-from mars.utils.common import SelfplayBasedMethods
+from mars.utils.func import get_general_args, get_model_path, get_exploiter
 import argparse
 import os
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
@@ -32,23 +30,20 @@ def launch_rollout(env, method, load_id, save_id):
 
     ## Change/specify some arguments if necessary
     args.max_episodes = 1000
+    args.multiprocess = False
     args.against_baseline = False
     args.test = True
     args.exploit = False
     # args.render = True
     folder = f'../data/model/{load_id}/{env}_{method}/'
-    if method in SelfplayBasedMethods:
-        file_path = get_latest_file_in_folder(folder)
-    else:
-        file_path = get_latest_file_in_folder(folder, id=0)  # load from the first agent model of the two
-    args.load_model_full_path = file_path
+
+    args.load_model_full_path = get_model_path(method, folder)
 
     # Change to test args in single-agent env
     game = env.split('_', 1)[-1]  # gametype_game_v#
     print(game)
     args.env_name = map_pettingzoo_to_gym(game)
     args.env_type = 'gym'
-
 
     ### Create env
     env = make_env(args)
