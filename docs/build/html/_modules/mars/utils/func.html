@@ -193,6 +193,8 @@
 <span class="kn">import</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">mars.utils.common</span> <span class="kn">import</span> <span class="n">SelfplayBasedMethods</span><span class="p">,</span> <span class="n">MetaStrategyMethods</span>
 <span class="kn">from</span> <span class="nn">mars.rl.agents</span>  <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.managers</span> <span class="kn">import</span> <span class="n">BaseManager</span><span class="p">,</span> <span class="n">NamespaceProxy</span>
+<span class="kn">from</span> <span class="nn">mars.rl.common.storage</span> <span class="kn">import</span> <span class="n">ReplayBuffer</span><span class="p">,</span> <span class="n">ReservoirBuffer</span>
 
 
 <div class="viewcode-block" id="LoadYAML2Dict"><a class="viewcode-back" href="../../../mars/utils/func.html#mars.utils.func.LoadYAML2Dict">[docs]</a><span class="k">def</span> <span class="nf">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -329,6 +331,23 @@
         <span class="n">exploiter</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">exploiter</span><span class="p">,</span> <span class="n">exploitation_args</span></div>
+
+
+<div class="viewcode-block" id="multiprocess_buffer_register"><a class="viewcode-back" href="../../../mars/utils/func.html#mars.utils.func.multiprocess_buffer_register">[docs]</a><span class="k">def</span> <span class="nf">multiprocess_buffer_register</span><span class="p">(</span><span class="n">ori_args</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register shared buffer for multiprocessing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BaseManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;replay_buffer&#39;</span><span class="p">,</span> <span class="n">ReplayBuffer</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;nfsp&#39;</span><span class="p">:</span>
+        <span class="n">BaseManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;reservoir_buffer&#39;</span><span class="p">,</span> <span class="n">ReservoirBuffer</span><span class="p">)</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">BaseManager</span><span class="p">()</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">replay_buffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ori_args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;replay_buffer_size&#39;</span><span class="p">])))</span>  
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;nfsp&#39;</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">reservoir_buffer</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">reservoir_buffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ori_args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;replay_buffer_size&#39;</span><span class="p">])))</span>  
+
+    <span class="k">return</span> <span class="n">args</span></div>
+        
 </pre></div>
 
            </div>

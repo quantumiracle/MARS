@@ -30,6 +30,7 @@ def launch_rollout(env, method, load_id, save_id):
 
     ## Change/specify some arguments if necessary
     args.max_episodes = 1000
+    args.multiprocess = False
     args.against_baseline = False
     args.test = True
     args.exploit = False
