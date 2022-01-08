@@ -201,7 +201,8 @@
   args.test = False
   args.exploit = True
   args.render = False
-  folder = f'data/model/**idx**/{game_type}_{game}_{method}/'
+  load_id = **idx to fill here**
+  folder = f'data/model/{load_id}/{game_type}_{game}_{method}/'
   
   args.load_model_full_path = get_model_path(method, folder)
   
@@ -215,7 +216,7 @@
   
   ### Load exploiter with specified args (just change the previous args)
   args.net_architecture['hidden_dim_list'] = [64, 64, 64, 64]
-  exploiter, exploitation_args = get_exploiter(args)
+  exploiter, exploitation_args = get_exploiter('DQN', env, args) # use DQN agent as exploiter
   
   ### Construct multi-agent model
   model = MultiAgent(env, [trained_model, exploiter], exploitation_args)
