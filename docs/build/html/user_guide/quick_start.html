@@ -389,7 +389,8 @@
 <span class="n">args</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">args</span><span class="o">.</span><span class="n">exploit</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">args</span><span class="o">.</span><span class="n">render</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">folder</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;data/model/**idx**/</span><span class="si">{</span><span class="n">game_type</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">game</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s1">/&#39;</span>
+<span class="n">load_id</span> <span class="o">=</span> <span class="o">**</span><span class="n">idx</span> <span class="n">to</span> <span class="n">fill</span> <span class="n">here</span><span class="o">**</span>
+<span class="n">folder</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;data/model/</span><span class="si">{</span><span class="n">load_id</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">game_type</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">game</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s1">/&#39;</span>
 
 <span class="n">args</span><span class="o">.</span><span class="n">load_model_full_path</span> <span class="o">=</span> <span class="n">get_model_path</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
 
@@ -403,7 +404,7 @@
 
 <span class="c1">### Load exploiter with specified args (just change the previous args)</span>
 <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">[</span><span class="s1">&#39;hidden_dim_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">]</span>
-<span class="n">exploiter</span><span class="p">,</span> <span class="n">exploitation_args</span> <span class="o">=</span> <span class="n">get_exploiter</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="n">exploiter</span><span class="p">,</span> <span class="n">exploitation_args</span> <span class="o">=</span> <span class="n">get_exploiter</span><span class="p">(</span><span class="s1">&#39;DQN&#39;</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="c1"># use DQN agent as exploiter</span>
 
 <span class="c1">### Construct multi-agent model</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MultiAgent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">trained_model</span><span class="p">,</span> <span class="n">exploiter</span><span class="p">],</span> <span class="n">exploitation_args</span><span class="p">)</span>
