@@ -35,7 +35,7 @@ def launch_rollout(env, method, load_id, save_id):
     args.test = True
     args.exploit = False
     # args.render = True
-    folder = f'../data/model/{load_id}/{env}_{method}/'
+    folder = f'./data/model/{load_id}/{env}_{method}/'
 
     args.load_model_full_path = get_model_path(method, folder)
 
