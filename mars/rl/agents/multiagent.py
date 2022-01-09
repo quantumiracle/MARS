@@ -7,7 +7,7 @@ from .agent import Agent
 from .dqn import DQN
 from .ppo import PPO
 from mars.marl import MetaLearner
-from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
+from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods, MetaStepMethods, NashBasedMethods
 
 class MultiAgent(Agent):
     """A class containing all agents in a game.
@@ -45,16 +45,20 @@ class MultiAgent(Agent):
         self.args = args
         self.number_of_agents = len(self.agents)
         self.not_learnable_list = []
-        SelfplayMethods = ['selfplay', 'fictitious_selfplay','nxdo']  # self-play based approach: train agent from one side only and update its opponent occasionally
         self.mergeAllSamplesInOne = False
+
+        ## Below is a complicated filter process for configuring multiagent class ##
         for i, agent in enumerate(agents):
             if args.test:
+                agent.fix()
                 self.not_learnable_list.append(i)
             elif args.exploit:
+                if i == 0:  # fix the model to be exploited
+                    agent.fix()
                 if agent.not_learnable:
                     self.not_learnable_list.append(i)
             else: # training mode
-                if agent.not_learnable or (args.marl_method in (SelfplayMethods + ['selfplay2', 'fictitious_selfplay2', 'nxdo2']) and i != args.marl_spec['trainable_agent_idx']):  # nxdo2 is special, fixed one side at beginning
+                if agent.not_learnable or (args.marl_method in MetaStepMethods and i != args.marl_spec['trainable_agent_idx']):  # nxdo2 is special, fixed one side at beginning
                     self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
@@ -78,11 +82,11 @@ class MultiAgent(Agent):
                 self.load_model(model_path)
 
         else:  # training mode
-            if args.marl_method in SelfplayMethods:  
+            if args.marl_method in SelfplayBasedMethods:  
                 # since we use self-play (environment is symmetric for each agent), we can use samples from all agents to train one agent
                 self.mergeAllSamplesInOne = True                
 
-        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo'] and self.args.exploit:
+        if self.args.marl_method in NashBasedMethods and self.args.exploit:
             assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
 
     def _choose_greedy(self, )->List[bool]:
@@ -95,12 +99,17 @@ class MultiAgent(Agent):
         greedy_list = self.number_of_agents*[False]
         if self.args.test:
             greedy_list = self.number_of_agents*[True]
-        else:  # for train and expoit. Check!!
+        else:  
+            # For train and expoit.
+            # 1. train:
+            # not learnable agent means fixed opponent;
+            # 2. exploit:
+            # not learnable agent means model to be exploited;
+            # both of the above cases should have greedy action.
             for i in self.not_learnable_list:
                 greedy_list[i] = True
 
         return greedy_list
-
     
     def choose_action(
         self, 
@@ -117,14 +126,14 @@ class MultiAgent(Agent):
         actions = []
         greedy_list = self._choose_greedy()
 
-        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter', 'nash_ppo']: # gradually 'nash' should be removed
+        if self.args.marl_method in NashBasedMethods: 
             if self.args.exploit:  # in exploitation mode, nash policy only control one agent
                 for i, (state, agent, greedy) in enumerate(zip(states, self.agents, greedy_list)):
                     if i == 0:  # the first agent must be the model to be exploited
                         if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
                             nash_actions = self.agents[i].choose_action(states, Greedy=greedy)  # nash_actions contain all agents
                         else:  # only use the observation from the first agent
-                            nash_actions = self.agents[i].choose_action(state, Greedy=greedy) 
+                            nash_actions = self.agents[i].choose_action(np.expand_dims(state, 0), Greedy=greedy)  # (envs, state_dim) to (1, envs, state_dim), 1 for one-side observation
                         actions.append(nash_actions[i])
                     else:
                         action = agent.choose_action(state, Greedy=greedy)
@@ -177,7 +186,7 @@ class MultiAgent(Agent):
         :type samples: list
         """
         all_s = []
-        if self.args.marl_method in ['nash', 'nash_dqn', 'nash_dqn_exploiter'] and not self.args.exploit:
+        if self.args.marl_method != 'nash_ppo' and self.args.marl_method in NashBasedMethods and not self.args.exploit:
             # 'states' (agents, envs, state_dim) -> (envs, agents, state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples
@@ -238,6 +247,17 @@ class MultiAgent(Agent):
             if self.mergeAllSamplesInOne:
                 self.agents[self.args.marl_spec['trainable_agent_idx']].store(all_s)
 
+    def nan_filter(self, samples):
+        valid = True
+        for i in range(len(samples)):
+            if np.isnan(samples[i]).any():  # any entry in item is nan
+                samples[i] = np.ones_like(samples)
+                print(f"Invalid nan value exists in {i}-th item of samples.")
+                valid = False
+                break
+            else:
+                valid = True
+        return valid
 
     def update(self) -> List[float]:
         losses = []

@@ -16,7 +16,6 @@ class NFSP(Agent):
     def __init__(self, env, args):
         super().__init__(env, args)
         self.rl_agent = DQN(env, args)  # TODO can also use other RL agents
-        # self.policy = MLP(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
         if isinstance(env.observation_space, list):  # when using parallel envs
             observation_space = env.observation_space[0]
         else:
@@ -28,9 +27,10 @@ class NFSP(Agent):
             self.policy = get_model('impala_cnn')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
 
         if args.multiprocess:
+            self.rl_agent.share_memory()
             self.policy.share_memory()
-            self.replay_buffer = self.args.replay_buffer
-            self.reservoir_buffer = self.args.reservoir_buffer
+            self.replay_buffer = args.add_components['replay_buffer']
+            self.reservoir_buffer = args.add_components['reservoir_buffer']
         else:
             self.replay_buffer = self.rl_agent.buffer
             self.reservoir_buffer = ReservoirBuffer(int(float(args.algorithm_spec['replay_buffer_size'])) )
