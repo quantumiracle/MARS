@@ -18,7 +18,6 @@ def rolloutExperience(model, info_queue, args: ConfigurationDict, save_id='0') -
     # tranform bytes to dictionary
     # model = cloudpickle.loads(model)
     # args = cloudpickle.loads(args)
-    args.num_envs = 1
     env = make_env(args)
     if args.algorithm == 'GA':
         rollout_ga(env, model, info_queue, save_id, args)
@@ -46,7 +45,7 @@ def rollout_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> 
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
-            obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
+            obs_to_store = obs.swapaxes(0, 1) if (not args.multiprocess) and args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
             action_ = model.choose_action(
                 obs_to_store)  # action: (agent, env, action_dim)
 
@@ -74,7 +73,7 @@ def rollout_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> 
                 action_to_store = action_
                 other_info = None
 
-            if args.num_envs > 1:
+            if (not args.multiprocess) and args.num_envs > 1:
                 action = np.array(action_to_store).swapaxes(0, 1)  # transform from (agents, envs, dim) to (envs, agents, dim)
             else:
                 action = action_to_store
@@ -84,7 +83,7 @@ def rollout_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> 
             if args.render:
                 env.render()
 
-            if args.num_envs > 1:  # transform from (envs, agents, dim) to (agents, envs, dim)
+            if (not args.multiprocess) and args.num_envs > 1:  # transform from (envs, agents, dim) to (agents, envs, dim)
                 obs__to_store = obs_.swapaxes(0, 1)
                 reward_to_store = reward.swapaxes(0, 1)
                 done_to_store = done.swapaxes(0, 1)

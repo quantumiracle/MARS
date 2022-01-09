@@ -29,8 +29,8 @@ class NFSP(Agent):
         if args.multiprocess:
             self.rl_agent.share_memory()
             self.policy.share_memory()
-            self.replay_buffer = self.args.replay_buffer
-            self.reservoir_buffer = self.args.reservoir_buffer
+            self.replay_buffer = args.add_components['replay_buffer']
+            self.reservoir_buffer = args.add_components['reservoir_buffer']
         else:
             self.replay_buffer = self.rl_agent.buffer
             self.reservoir_buffer = ReservoirBuffer(int(float(args.algorithm_spec['replay_buffer_size'])) )

@@ -1,5 +1,4 @@
 import argparse
-import copy
 import cloudpickle 
 import torch
 torch.multiprocessing.set_start_method('forkserver', force=True)
@@ -7,7 +6,7 @@ from multiprocessing import Process, Queue
 from mars.env.import_env import make_env
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
-from mars.utils.func import get_general_args, multiprocess_buffer_register
+from mars.utils.func import get_general_args, multiprocess_conf
 from rolloutExperience import rolloutExperience
 from updateModel import updateModel
 
@@ -28,17 +27,15 @@ method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
 
 
 if __name__ == '__main__':
-    ori_args = get_general_args(game_type+'_'+game, method)
-    ori_args.multiprocess = True
+    args = get_general_args(game_type+'_'+game, method)
+    num_envs = args.num_envs  # this will be changed to 1 later
+    multiprocess_conf(args, method)
 
     ### Create env
-    args = copy.copy(ori_args)
-    args.num_envs = 1
     env = make_env(args)
     print(env)
 
     ### Specify models for each agent
-    args = multiprocess_buffer_register(ori_args, method)
     model1 = eval(args.algorithm)(env, args)
     model2 = eval(args.algorithm)(env, args)
 
@@ -49,17 +46,18 @@ if __name__ == '__main__':
     # args = cloudpickle.dumps(args)
     # env = cloudpickle.dumps(env)  # this only works for single env, not for multiprocess vecenv
     processes = []
-    print(ori_args)
+    print(args)
 
     # launch multiple sample rollout processes
     info_queue = Queue()
-    for pro_id in range(ori_args.num_envs):  
+    for pro_id in range(num_envs):  
         play_process = Process(target=rolloutExperience, args = (model, info_queue, args, pro_id))
         play_process.daemon = True  # sub processes killed when main process finish
         processes.append(play_process)
 
     # # launch update process (single or multiple)
-    update_process = Process(target=updateModel, args= (model, info_queue, args, '0'))
+    default_id = '0'
+    update_process = Process(target=updateModel, args= (model, info_queue, args, default_id))
     update_process.daemon = True
     processes.append(update_process)
 

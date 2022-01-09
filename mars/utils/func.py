@@ -137,7 +137,7 @@ def get_exploiter(exploiter_type: str, env, args):
         exploitation_args = args
 
     elif exploiter_type == 'PPO':
-        ppo_args = LoadYAML2Dict(f'mars/confs/{game_type}/ppo_exploit', toAttr=True, mergeWith=None)
+        ppo_args = LoadYAML2Dict(f'mars/confs/{args.env_type}/ppo_exploit', toAttr=True, mergeWith=None)
         exploitation_args =  AttrDict(UpdateDictAwithB(args, ppo_args, withOverwrite=True))
         exploiter = PPO(env, exploitation_args)
         exploiter.reinit()
@@ -145,7 +145,7 @@ def get_exploiter(exploiter_type: str, env, args):
     return exploiter, exploitation_args
 
 
-def multiprocess_buffer_register(ori_args, method):
+def multiprocess_buffer_register(args, method):
     """
     Register shared buffer for multiprocessing.
     """
@@ -154,9 +154,21 @@ def multiprocess_buffer_register(ori_args, method):
         BaseManager.register('reservoir_buffer', ReservoirBuffer)
     manager = BaseManager()
     manager.start()
-    args.replay_buffer = manager.replay_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
+    add_components = {
+        'replay_buffer': manager.replay_buffer(int(float(args.algorithm_spec['replay_buffer_size'])))  
+    }
+    
+    # args.replay_buffer = manager.replay_buffer(int(float(args.algorithm_spec['replay_buffer_size'])))  
     if method == 'nfsp':
-        args.reservoir_buffer = manager.reservoir_buffer(int(float(ori_args.algorithm_spec['replay_buffer_size'])))  
+        add_components['reservoir_buffer'] = manager.reservoir_buffer(int(float(args.algorithm_spec['replay_buffer_size'])))  
+        # args.reservoir_buffer = manager.reservoir_buffer(int(float(args.algorithm_spec['replay_buffer_size'])))  
+    args.add_components = add_components
 
     return args
-        
+
+def multiprocess_conf(args, method):
+    args = multiprocess_buffer_register(args, method)
+    args.num_envs = 1  # this means one env per process
+    args.multiprocess = True  # this is critical for launching multiprocess
+
+    return args
