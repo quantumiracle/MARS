@@ -5,7 +5,7 @@ import time
 from .utils.logger import init_logger
 from .utils.typing import Tuple, List, ConfigurationDict
 from .marl import init_meta_learner
-from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
+from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods, MetaStepMethods
 
 
 def rollout(env, model, args: ConfigurationDict, save_id='0') -> None:
@@ -97,7 +97,9 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     obs_to_store, action_to_store, reward_to_store,
                     obs__to_store, other_info_to_store, done_to_store
                 ]
-            model.store(sample)
+            if model.nan_filter(sample):  # store sample only if it is valid
+                model.store(sample)
+
             obs = obs_
             logger.log_reward(np.array(reward).reshape(-1))
             loss = None
@@ -135,7 +137,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         if epi % args.log_interval == 0:
             logger.print_and_save()
         if epi % args.save_interval == 0 \
-            and not args.marl_method in ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] \
+            and not args.marl_method in MetaStepMethods \
             and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{epi}')
 

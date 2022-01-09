@@ -176,7 +176,7 @@ def make_env(args):
     env_type = args.env_type
     print(env_name, env_type)
 
-    if args.num_envs == 1:
+    if args.multiprocess or args.num_envs == 1: # if multiprocess, each process can only work with one env separately
         env = _create_single_env(env_name, env_type, args)  
     else:
         VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
@@ -184,10 +184,10 @@ def make_env(args):
     if isinstance(args.seed, (int, list)):
         env.seed(args.seed)  # seed can be either int or list of int
     elif args.seed == 'random':
-        if args.num_envs > 1:
-            random_seed = [int(seed) for seed in np.random.randint(1,100, args.num_envs)]
-        else:
+        if args.multiprocess or args.num_envs == 1:
             random_seed = int(np.random.randint(1,100))
+        else:  # more than one env
+            random_seed = [int(seed) for seed in np.random.randint(1,100, args.num_envs)]
         print(f"random seed: {random_seed}")
         env.seed(random_seed)
 

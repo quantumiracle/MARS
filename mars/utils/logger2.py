@@ -31,7 +31,6 @@ class TestLogger():
             ]
         else:
             self.keys = env.agents
-
         self.avg_window = args.log_avg_window  # average over the past
         self.epi_rewards = self._clear_dict_as_list(self.keys)
         self.rewards = self._clear_dict(self.keys)
@@ -127,6 +126,7 @@ class Logger(TestLogger):
         self.post_fix = self._create_dirs(args)
         self.writer = SummaryWriter(self.runs_dir)
         # save params data
+        args['add_components'] = None  # clear added components: autoproxy buffer cannot be logged
         json.dump(args, open(self.log_dir + "params.json", 'w'))
 
         self.args = args
@@ -196,24 +196,24 @@ class Logger(TestLogger):
                 print(f"{k}: \
                     episode reward: {np.mean(self.epi_rewards[k][-self.avg_window:]):.4f}")
 
-
-
         if len(self.additional_logs) > 0:
             for log in self.additional_logs:
                 print(log)
             self.additional_logs = []
 
         # save process data
-        sample_data = {
-            'episode_reward': self.epi_rewards,
-            'episode_length': self.epi_length,
-        }
-        json.dump(sample_data, open(self.log_dir + f"sample_{self.save_id}.json", 'w'))
+        if  len(self.losses[self.keys[0]])>0:  # non-empty
+            update_data = {
+                'loss': self.losses,
+            }
+            json.dump(update_data, open(self.log_dir + f"update_{self.save_id}.json", 'w'))
 
-        update_data = {
-            'loss': self.losses,
-        }
-        json.dump(update_data, open(self.log_dir + f"update_{self.save_id}.json", 'w'))
+        if len(self.epi_rewards[self.keys[0]])>0:  # non-empty
+            sample_data = {
+                'episode_reward': self.epi_rewards,
+                'episode_length': self.epi_length,
+            }
+            json.dump(sample_data, open(self.log_dir + f"sample_{self.save_id}.json", 'w'))
 
         # save extra data in another file
         if len(self.extr_logs) > 0:

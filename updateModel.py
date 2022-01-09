@@ -16,7 +16,6 @@ def updateModel(model, info_queue, args: ConfigurationDict, save_id='0') -> None
     # tranform bytes to dictionary
     # model = cloudpickle.loads(model) # if use this the model in different process will no longer be shared!
     # args = cloudpickle.loads(args)
-    args.num_envs = 1
     env = make_env(args)
     update_normal(env, model, info_queue, save_id, args)
 
@@ -38,9 +37,12 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
     args.max_update_itr = max_update_itr
     logger = init_logger(env, save_id, args)
     meta_learner = init_meta_learner(logger, args)
+    loss = None
     for itr in range(max_update_itr):
         if model.ready_to_update:
             loss = model.update()
+            
+        if loss is not None and (itr+1) % meta_update_interval == 0:
             logger.log_loss(loss)
 
         if args.marl_method in MetaStepMethods and (itr+1) % meta_update_interval == 0:

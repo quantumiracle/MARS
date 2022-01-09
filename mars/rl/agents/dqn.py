@@ -22,7 +22,7 @@ class DQN(Agent):
         if args.multiprocess:
             self.model.share_memory()
             self.target.share_memory()
-            self.buffer = args.replay_buffer
+            self.buffer = args.add_components['replay_buffer']
         else:
             self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
 
