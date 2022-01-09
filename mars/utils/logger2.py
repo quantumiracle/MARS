@@ -31,7 +31,6 @@ class TestLogger():
             ]
         else:
             self.keys = env.agents
-
         self.avg_window = args.log_avg_window  # average over the past
         self.epi_rewards = self._clear_dict_as_list(self.keys)
         self.rewards = self._clear_dict(self.keys)
@@ -127,6 +126,7 @@ class Logger(TestLogger):
         self.post_fix = self._create_dirs(args)
         self.writer = SummaryWriter(self.runs_dir)
         # save params data
+        args['add_components'] = None  # clear added components: autoproxy buffer cannot be logged
         json.dump(args, open(self.log_dir + "params.json", 'w'))
 
         self.args = args
