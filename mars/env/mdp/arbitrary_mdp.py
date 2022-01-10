@@ -234,5 +234,5 @@ if __name__ == '__main__':
     print(obs)
     done = False
     while not np.any(done):
-        obs, r, done, _ = env.step([1,0])
+        obs, r, done, _ = env.step([[1,0]])
         print(obs, r, done)
