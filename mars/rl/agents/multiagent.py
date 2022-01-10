@@ -249,6 +249,13 @@ class MultiAgent(Agent):
                 self.agents[self.args.marl_spec['trainable_agent_idx']].store(all_s)
 
     def nan_filter(self, samples):
+        """This cannot work if None exists in samples, so only use to check np.nan when None not exists.
+
+        :param samples: [description]
+        :type samples: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         valid = True
         for i in range(len(samples)):
             if np.isnan(samples[i]).any():  # any entry in item is nan
