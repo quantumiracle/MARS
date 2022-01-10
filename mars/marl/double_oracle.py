@@ -213,7 +213,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
 
         # this is an indicator that best response policy is found
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and self.meta_step - self.last_meta_step > min_update_interval:
+            and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
                 save_path = self.model_path+str(self.meta_step)+'_'+str(self.current_learnable_model_idx)

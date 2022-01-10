@@ -7,7 +7,7 @@ class MetaLearner(Agent):
         self.saved_checkpoints = []
         self.meta_strategies = None
         
-    def step(self, model, *args):
+    def step(self, *args):
         agent_id = 0  # both players meta strategies are saved, choose one to evaluate
         if len(self.saved_checkpoints[agent_id]) > 0:
             self._replace_with_meta(agent_id, postfix='_'+str(agent_id)) 
@@ -20,6 +20,7 @@ class MetaLearner(Agent):
         """ sample from the policy family according to meta strategy distribution, and replace certain agent"""
         sample_hist = np.random.multinomial(1, self.meta_strategies[agent_id])  # meta nash policy is a distribution over the policy set, sample one policy from it according to meta nash for each episode
         policy_idx = np.squeeze(np.where(sample_hist>0))
+        print('replace with: ', self.saved_checkpoints[agent_id][policy_idx])
         self.model.load_model(self.model_path+self.saved_checkpoints[agent_id][policy_idx]+postfix)
 
     def _replace_agent_with_meta(self, model, agent_to_replace, checkpoints_to_replace_from, postfix=''):
@@ -35,7 +36,7 @@ class MetaLearner(Agent):
             with open(self.model_path+'policy_checkpoints.npy', 'wb') as f:
                 np.save(f, self.saved_checkpoints)
 
-    def load_model(self, model, path: str = None, verbose: bool = False):
+    def load_model(self, model, path: str = None, verbose: bool = True):
         self.model = model
         if path is not None:
             self.model_path = path
