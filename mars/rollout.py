@@ -128,7 +128,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 loss = model.update()
                 logger.log_loss(loss)
             
-            if not args.test and not args.exploit:
+            if not args.test and not args.exploit and args.marl_method in MetaStepMethods:
                 meta_learner.step(
                     model, logger, env, args
                 )  # metalearner for selfplay need just one step per episode
