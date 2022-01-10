@@ -36,7 +36,7 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
     max_update_itr = args.max_episodes * meta_update_interval
     args.max_update_itr = max_update_itr
     logger = init_logger(env, save_id, args)
-    meta_learner = init_meta_learner(logger, args)
+    meta_learner = init_meta_learner(logger, args) if not args.test and not args.exploit else None
     loss = None
     for itr in range(max_update_itr):
         if model.ready_to_update:
@@ -45,7 +45,11 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
         if loss is not None and (itr+1) % meta_update_interval == 0:
             logger.log_loss(loss)
 
-        if args.marl_method in MetaStepMethods and (itr+1) % meta_update_interval == 0:
+        if meta_learner is not None \
+            and args.marl_method in MetaStepMethods \
+            and (itr+1) % meta_update_interval == 0:
+            # meta_learner step requires episodic reward information, 
+            # so receive from the experience rollout process and fill into logger
             lastest_epi_rewards = info_queue.get() # receive rollout info
             for k, r in zip(logger.epi_rewards.keys(), lastest_epi_rewards):
                 logger.epi_rewards[k].append(r)
@@ -53,17 +57,23 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
                 model, logger, env, args
             )  # metalearner for selfplay need just one step per episode
 
+        if args.marl_method in MetaStrategyMethods and (args.test or args.exploit):
+            # only methods in MetaStrategyMethods (subset of MetaStepMethods) during exploitation
+            # requires step()
+            model.meta_learner.step()  # meta_learner as the agent to be tested/exploited
+
         if (itr+1) % (meta_update_interval*args.log_interval) == 0:
             logger.print_and_save()
 
         if (itr+1) % (meta_update_interval*args.save_interval) == 0 \
-        and not args.marl_method in MetaStepMethods \
-        and logger.model_dir is not None:
+            and not args.marl_method in MetaStepMethods \
+            and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{itr+1}')
 
-        if (itr+1) % (meta_update_interval*args.save_interval) == 0 \
+        if meta_learner is not None \
+            and (itr+1) % (meta_update_interval*args.save_interval) == 0 \
             and args.marl_method in MetaStrategyMethods:
-            meta_learner.save_model()
+            meta_learner.save_model()  # save the meta-strategy
 
 def update_ga(env, model, save_id, args: ConfigurationDict) -> None:
     pass

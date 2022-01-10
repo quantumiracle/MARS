@@ -89,8 +89,8 @@ class Debugger():
                 mse_exp = float((ne_v - br_v)**2)  # the target value of best response value (exploitability) should be the Nash value
                 self.mse_exp_list[j].append(mse_exp)
 
-        self.state_visit(id_state)
 
+        self.state_visit(id_state)
         self.log([id_state, kl_dist, ne_vs], verbose)
         if self.cnt % self.save_interval == 0:
             self.dump_log()
@@ -165,6 +165,7 @@ class NashDQN(DQN):
             actions, dists, ne_vs = self.compute_nash(q_values) 
 
             if DEBUG: ## test on arbitrary MDP
+                # actions, dists, ne_vs = self.compute_nash_deprecated(q_values) 
                 self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
 
         else:
@@ -194,8 +195,8 @@ class NashDQN(DQN):
                 # ne = NashEquilibriumLPSolver(qs)
                 # ne = NashEquilibriumCVXPYSolver(qs)
                 # ne = NashEquilibriumGUROBISolver(qs)
-                # ne, ne_v = NashEquilibriumECOSSolver(qs)
-                ne, ne_v = NashEquilibriumMWUSolver(qs)
+                ne, ne_v = NashEquilibriumECOSSolver(qs)
+                # ne, ne_v = NashEquilibriumMWUSolver(qs)
             except:  # some cases NE cannot be solved
                 print('No Nash solution for: ', np.linalg.det(qs), qs)
                 ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found

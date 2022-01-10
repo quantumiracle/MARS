@@ -17,11 +17,11 @@ parser = argparse.ArgumentParser(description='Arguments of the general launching
 game_type = 'pettingzoo'
 game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
         'combat_tank_v1', 'pong_v2', 'tennis_v2', \
-        'ice_hockey_v1', 'double_dunk_v2'][-3]
+        'ice_hockey_v1', 'double_dunk_v2'][0]
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
-            'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nxdo2'][-3]   # nash_ppo are trained in train.py, cannot user here!
+            'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', \
+            'nxdo2'][-1]   # nash_ppo are trained in train.py, cannot user here!
 
 # method = 'nash_dqn_speed'
 

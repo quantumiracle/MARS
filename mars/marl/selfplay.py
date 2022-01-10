@@ -240,7 +240,7 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
              - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
 
         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and self.meta_step - self.last_meta_step > min_update_interval:
+            and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
                 save_path = self.model_path+str(self.meta_step)+'_'+str(self.current_learnable_model_idx)
@@ -258,7 +258,6 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
         if len(current_policy_checkpoints) > 0:  # the policy set has one or more policies to sample from
             self.meta_strategies[self.current_fixed_opponent_idx] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed         
             self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, current_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
-
 
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
