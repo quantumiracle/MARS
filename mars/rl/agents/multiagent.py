@@ -73,6 +73,7 @@ class MultiAgent(Agent):
                 assert 0 in self.not_learnable_list # 0 is the model to test/exploit
                 meta_learner.load_model(self.agents[0], path=args.load_model_full_path)  
                 self.agents[0] = meta_learner
+                self.meta_learner = self.agents[0]
 
             else:
                 if args.load_model_full_path:  # if the full path is specified, it has higher priority than the model index
