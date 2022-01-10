@@ -14,7 +14,8 @@ parser_args = parser.parse_args()
 ### Load configurations
 yaml_file = 'confs/simple_mdp_nash_dqn_exploiter'
 
-args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+args = LoadYAML2Dict(yaml_file, toAttr=True)
+args.marl_spec['global_state'] = True
 if parser_args.test:
     args.test = True
     args.render = True
