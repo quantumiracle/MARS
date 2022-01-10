@@ -20,7 +20,6 @@ class MetaLearner(Agent):
         """ sample from the policy family according to meta strategy distribution, and replace certain agent"""
         sample_hist = np.random.multinomial(1, self.meta_strategies[agent_id])  # meta nash policy is a distribution over the policy set, sample one policy from it according to meta nash for each episode
         policy_idx = np.squeeze(np.where(sample_hist>0))
-        print('replace with: ', self.saved_checkpoints[agent_id][policy_idx])
         self.model.load_model(self.model_path+self.saved_checkpoints[agent_id][policy_idx]+postfix)
 
     def _replace_agent_with_meta(self, model, agent_to_replace, checkpoints_to_replace_from, postfix=''):
@@ -47,5 +46,5 @@ class MetaLearner(Agent):
         self.step(model)  # load meta strategy into model  
 
         if verbose:
-            print(self.meta_strategies)
-            print(self.saved_checkpoints)
+            print('Load meta strategy: ', self.meta_strategies)
+            print('Load checkpoints (policy family): ', self.saved_checkpoints)

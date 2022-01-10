@@ -97,7 +97,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     obs_to_store, action_to_store, reward_to_store,
                     obs__to_store, other_info_to_store, done_to_store
                 ]
-            if model.nan_filter(sample):  # store sample only if it is valid
+
+            if other_info is not None or model.nan_filter(sample):  # store sample only if it is valid; cannot filter out None in other info
                 model.store(sample)
 
             obs = obs_
@@ -137,7 +138,6 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             # only methods in MetaStrategyMethods (subset of MetaStepMethods) during exploitation
             # requires step()
             model.meta_learner.step()  # meta_learner as the agent to be tested/exploited
-            print('step: ', epi)
         logger.log_episode_reward(step)
 
         if epi % args.log_interval == 0:
