@@ -7,7 +7,7 @@ class MetaLearner(Agent):
         self.saved_checkpoints = []
         self.meta_strategies = None
         
-    def step(self, model, *args):
+    def step(self, *args):
         agent_id = 0  # both players meta strategies are saved, choose one to evaluate
         if len(self.saved_checkpoints[agent_id]) > 0:
             self._replace_with_meta(agent_id, postfix='_'+str(agent_id)) 
@@ -35,7 +35,7 @@ class MetaLearner(Agent):
             with open(self.model_path+'policy_checkpoints.npy', 'wb') as f:
                 np.save(f, self.saved_checkpoints)
 
-    def load_model(self, model, path: str = None, verbose: bool = False):
+    def load_model(self, model, path: str = None, verbose: bool = True):
         self.model = model
         if path is not None:
             self.model_path = path
@@ -46,5 +46,5 @@ class MetaLearner(Agent):
         self.step(model)  # load meta strategy into model  
 
         if verbose:
-            print(self.meta_strategies)
-            print(self.saved_checkpoints)
+            print('Load meta strategy: ', self.meta_strategies)
+            print('Load checkpoints (policy family): ', self.saved_checkpoints)

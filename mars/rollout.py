@@ -35,7 +35,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     print("Arguments: ", args)
     overall_steps = 0
     logger = init_logger(env, save_id, args)
-    meta_learner = init_meta_learner(logger, args)
+    meta_learner = init_meta_learner(logger, args) if not args.test and not args.exploit else None
     for epi in range(args.max_episodes):
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
@@ -97,7 +97,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     obs_to_store, action_to_store, reward_to_store,
                     obs__to_store, other_info_to_store, done_to_store
                 ]
-            if model.nan_filter(sample):  # store sample only if it is valid
+
+            if other_info is not None or model.nan_filter(sample):  # store sample only if it is valid; cannot filter out None in other info
                 model.store(sample)
 
             obs = obs_
@@ -128,10 +129,15 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 loss = model.update()
                 logger.log_loss(loss)
             
-            if not args.test and not args.exploit:
+            if meta_learner is not None and args.marl_method in MetaStepMethods:
                 meta_learner.step(
                     model, logger, env, args
                 )  # metalearner for selfplay need just one step per episode
+        
+        if args.marl_method in MetaStrategyMethods and (args.test or args.exploit):
+            # only methods in MetaStrategyMethods (subset of MetaStepMethods) during exploitation
+            # requires step()
+            model.meta_learner.step()  # meta_learner as the agent to be tested/exploited
         logger.log_episode_reward(step)
 
         if epi % args.log_interval == 0:
@@ -141,7 +147,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{epi}')
 
-        if not args.test and not args.exploit and epi % args.save_interval == 0 \
+        if meta_learner is not None \
+            and epi % args.save_interval == 0 \
             and args.marl_method in MetaStrategyMethods:
             meta_learner.save_model()
 

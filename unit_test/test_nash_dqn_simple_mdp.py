@@ -1,7 +1,8 @@
-from utils.func import LoadYAML2Dict
-from rollout import rollout
-from rl.algorithm import *
-from env.mdp import attack, combinatorial_lock, arbitrary_mdp
+from mars.utils.func import LoadYAML2Dict
+from mars.rollout import rollout
+from mars.rl.agents import *
+from mars.rl.agents.multiagent import MultiAgent
+from mars.env.mdp import attack, combinatorial_lock, arbitrary_mdp
 
 import argparse
 parser = argparse.ArgumentParser(
@@ -12,15 +13,16 @@ parser.add_argument('--model', type=str, default=None,
 parser_args = parser.parse_args()
 
 ### Load configurations
-yaml_file = 'confs/simple_mdp_nash_dqn_exploiter'
+yaml_file = 'mars/confs/simple_mdp_nash_dqn'  # 'mars/confs/simple_mdp_nash_dqn_exploiter'
 
-args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+args = LoadYAML2Dict(yaml_file, toAttr=True)
+args.marl_spec['global_state'] = True
 if parser_args.test:
     args.test = True
     args.render = True
     args.load_model_idx = parser_args.model
 args.device = 'cpu'
-args.algorithm = 'NashDQN'
+args.algorithm = 'NashDQN'  # args.algorithm = 'NashDQNExploiter'
 ### Create env
 env = arbitrary_mdp
 env.NEsolver()
