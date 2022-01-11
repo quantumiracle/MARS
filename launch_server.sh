@@ -10,9 +10,9 @@ declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn'
 # declare -a methods=('nash_dqn')
 mkdir -p log/$DATE
 
-for env in ${envs[@]}; do
-    for method in ${methods[@]}; do
-        echo python general_launch.py --env $env --method $method --save_id $DATE output log to: log/$DATE/${env}_${method}.log &
-        nohup python general_launch.py --env $env --method $method --save_id $DATE >> log/$DATE/${env}_${method}.log &
+for i in ${!envs[@]}; do
+    for j in ${!methods[@]}; do
+        echo CUDA_VISIBLE_DEVICES=$i python general_launch.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        nohup CUDA_VISIBLE_DEVICES=$i python general_launch.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
     done
 done
