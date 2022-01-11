@@ -129,10 +129,10 @@ for game in two_player_zero_sum_games:
         conf['train_args']['marl_method'] = method
         conf['train_args']['marl_spec'] = get_method_env_marl_spec(method, game)
 
+        conf['env_args']['num_envs'] = 2
+        conf['train_args']['max_episodes'] = 10000
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter']:
-            conf['env_args']['num_envs'] = 2
-            conf['train_args']['max_episodes'] = 10000
             conf['train_args']['update_itr'] = 0.1
             conf['train_args']['marl_spec']['global_state'] = False
             if method == 'nash_dqn':
@@ -143,8 +143,6 @@ for game in two_player_zero_sum_games:
 
         elif method == 'nash_ppo':
             conf['train_args']['multiprocess'] = False
-            conf['env_args']['num_envs'] = 2
-            conf['train_args']['max_episodes'] = 10000
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = True
             conf['agent_args']['algorithm'] = 'NashPPO'
