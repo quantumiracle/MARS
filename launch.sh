@@ -1,5 +1,5 @@
 echo "Running DATE:" $(date +"%Y-%m-%d %H:%M")
-# export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5
 
 DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
