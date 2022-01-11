@@ -40,9 +40,9 @@ class MetaLearner(Agent):
         if path is not None:
             self.model_path = path
         with open(self.model_path+'meta_strategies.npy', 'rb') as f:
-            self.meta_strategies = np.load(f)
+            self.meta_strategies = np.load(f, allow_pickle=True)
         with open(self.model_path+'policy_checkpoints.npy', 'rb') as f:
-            self.saved_checkpoints = np.load(f)
+            self.saved_checkpoints = np.load(f, allow_pickle=True)
         self.step(model)  # load meta strategy into model  
 
         if verbose:
