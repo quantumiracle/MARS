@@ -55,7 +55,7 @@ class SelfPlayMetaLearner(MetaLearner):
 
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-
+            self.last_meta_step = self.meta_step
 class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
 
     def __init__(self, logger, args, save_checkpoint=True):
@@ -115,7 +115,7 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
 
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            
+            self.last_meta_step = self.meta_step
 
 
 class FictitiousSelfPlayMetaLearner(MetaLearner):
@@ -182,7 +182,7 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
 
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-
+            self.last_meta_step = self.meta_step
 
 class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
     """
@@ -261,3 +261,4 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
 
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            self.last_meta_step = self.meta_step
