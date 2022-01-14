@@ -18,7 +18,7 @@ agent_args:
         eps_decay: 30000
 
 train_args:
-    batch_size: 128
+    batch_size: 640
     max_episodes: 1000000
     max_steps_per_episode: 10000
     optimizer: adam
@@ -38,8 +38,8 @@ train_args:
         output_activation: False # False means nan
 
 
-    marl_method: fictitious_selfplay2
+    marl_method: nxdo2
     marl_spec:  # configurations for specific MARL method
-        selfplay_score_delta: 1
+        selfplay_score_delta: 1.5
         trainable_agent_idx: 0
         opponent_idx: 1

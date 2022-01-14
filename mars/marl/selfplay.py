@@ -52,10 +52,52 @@ class SelfPlayMetaLearner(MetaLearner):
             self.last_meta_step = self.meta_step
 
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
-
+        
         if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
             model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
             self.last_meta_step = self.meta_step
+
+# class SelfPlayMetaLearner():
+#     """
+#     Meta learn is the  for MARL meta strategy, 
+#     which assigns the policy update schedule on a level higher
+#     than policy update itself in standard RL.
+#     """
+#     def __init__(self, logger, args, save_checkpoint=True):
+#         super(SelfPlayMetaLearner, self).__init__()
+#         self.model_path = logger.model_dir
+
+#         # get names
+#         self.model_name = logger.keys[args.marl_spec['trainable_agent_idx']]
+#         self.opponent_name = logger.keys[args.marl_spec['opponent_idx']]
+
+#         self.save_checkpoint = save_checkpoint
+#         self.args = args
+#         self.last_update_epi= 0
+
+#     def step(self, model, logger, *Args):
+#         """
+#         params: 
+#             :min_update_interval: mininal opponent update interval in unit of episodes
+#         """
+#         score_avg_window = self.args.log_avg_window # use the same average window as logging for score delta
+#         score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
+#              - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
+#         min_update_interval = self.args.marl_spec['min_update_interval']
+#         if score_delta  > self.args.marl_spec['selfplay_score_delta']\
+#              and logger.current_episode - self.last_update_epi > min_update_interval:
+#             # update the opponent with current model, assume they are of the same type
+#             if self.save_checkpoint:
+#                 # model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+str(logger.current_episode)) # save all checkpoints
+#                 # model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+str(logger.current_episode))
+
+#                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+'1')  # save only the latest checkpoint
+#                 model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+'1')
+#             print(f'Score delta: {score_delta}, udpate the opponent.')
+
+#             self.last_update_epi = logger.current_episode
+
+
 class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
 
     def __init__(self, logger, args, save_checkpoint=True):

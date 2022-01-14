@@ -17,6 +17,7 @@ class DQN(Agent):
     def __init__(self, env, args):
         super().__init__(env, args)
         self.model = self._select_type(env, args).to(self.device)
+        print(self.model)
         self.target = copy.deepcopy(self.model).to(self.device)
         
         if args.multiprocess:
@@ -105,12 +106,14 @@ class DQN(Agent):
 
     def update(self):
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
+        weights = torch.ones(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
         action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
+        weights = torch.FloatTensor(weights).to(self.device)
 
         # reward normalization
         # reward =  (reward - reward.mean(dim=0)) / (reward.std(dim=0) + 1e-6)
@@ -123,13 +126,14 @@ class DQN(Agent):
         next_q_value = target_next_q_values.max(1)[0]
 
         # additional value normalization (this effectively prevent increasing Q/loss value)
-        next_q_value =  (next_q_value - next_q_value.mean(dim=0)) / (next_q_value.std(dim=0) + 1e-6)
+        # next_q_value =  (next_q_value - next_q_value.mean(dim=0)) / (next_q_value.std(dim=0) + 1e-6)
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
         # Huber Loss
-        # loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
-        loss = F.mse_loss(q_value, expected_q_value.detach())
+        loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')  # slimevolley env only works with this!
+        # loss = F.mse_loss(q_value, expected_q_value.detach())
 
-        loss = loss.mean()
+        # loss = loss.mean()
+        loss = (loss * weights).mean()
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
@@ -156,7 +160,6 @@ class DQN(Agent):
         if eval:
             self.model.eval()
             self.target.eval()
-
 
 class DQNBase(NetBase):
     """Basic Q network
