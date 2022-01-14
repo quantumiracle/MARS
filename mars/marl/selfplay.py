@@ -51,11 +51,13 @@ class SelfPlayMetaLearner(MetaLearner):
 
             self.last_meta_step = self.meta_step
 
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+
+            ### The reinit seems to hurt agent performance!
+            # model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
         
-        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            self.last_meta_step = self.meta_step
+        # if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
+        #     model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        #     self.last_meta_step = self.meta_step
 
 # class SelfPlayMetaLearner():
 #     """
@@ -153,11 +155,11 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
             self.last_meta_step = self.meta_step
             
             self._switch_charac(model)
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            # model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
-        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            self.last_meta_step = self.meta_step
+        # if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
+        #     model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        #     self.last_meta_step = self.meta_step
 
 
 class FictitiousSelfPlayMetaLearner(MetaLearner):
@@ -214,7 +216,7 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
 
             self.last_meta_step = self.meta_step
 
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            # model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
         current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
@@ -222,9 +224,9 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
             self.meta_strategies[self.model_name] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed
             self._replace_agent_with_meta(model, self.args.marl_spec['opponent_idx'], current_policy_checkpoints)
 
-        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            self.last_meta_step = self.meta_step
+        # if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
+        #     model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        #     self.last_meta_step = self.meta_step
 
 class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
     """
@@ -293,7 +295,7 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
             self.last_meta_step = self.meta_step
 
             self._switch_charac(model)
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            # model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
         current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
@@ -301,6 +303,6 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
             self.meta_strategies[self.current_fixed_opponent_idx] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed         
             self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, current_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
 
-        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            self.last_meta_step = self.meta_step
+        # if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
+        #     model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        #     self.last_meta_step = self.meta_step
