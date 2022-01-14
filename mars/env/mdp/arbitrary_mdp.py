@@ -87,7 +87,10 @@ class ArbitraryMDP():
 
     def _construct_game(self, ):
         self.trans_prob_matrices, self.reward_matrices = self.generate_random_trans_and_rewards()
-        print(self.trans_prob_matrices, self.reward_matrices)
+        # print(self.trans_prob_matrices, self.reward_matrices)
+
+    def seed(self, seed):
+        np.random.seed(seed)
 
     def generate_random_trans_and_rewards(self, SameRewardForNextState=False):
         """Generate arbitrary transition matrix and reward matrix.
@@ -191,9 +194,9 @@ class ArbitraryMDP():
         self.Nash_v = self.Nash_v[::-1]
         self.Nash_q = self.Nash_q[::-1]
         self.Nash_strategies = self.Nash_strategies[::-1]
-        print('Nash values of all states (from start to end): ', self.Nash_v)
-        print('Nash Q-values of all states (from start to end): ', self.Nash_q)
-        print('Nash strategies of all states (from start to end): ', self.Nash_strategies)
+        # print('Nash values of all states (from start to end): ', self.Nash_v)
+        # print('Nash Q-values of all states (from start to end): ', self.Nash_q)
+        # print('Nash strategies of all states (from start to end): ', self.Nash_strategies)
 
         ## To evaluate the correctness of the above values
         # for v, q, s in zip(self.Nash_v, self.Nash_q, self.Nash_strategies):

@@ -172,7 +172,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         self.meta_strategies = [[] for _ in range(2)] # for both player
         self.evaluation_matrix = np.array([])  # the evaluated utility matrix (N*N) of policy league with N policies
         logger.add_extr_log('matrix_equilibrium')
-
+        print(args)
         self.eval_env = make_env(args)
         args.multiprocess = False
         eval_model1 = eval(args.algorithm)(self.eval_env, args)

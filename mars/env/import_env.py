@@ -29,13 +29,15 @@ Multi-agent:
 """
 from typing import Dict
 import gym
+import slimevolleygym
 import supersuit
 import numpy as np
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
      Atari2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
-from .wrappers.lasertag_wrappers import LaserTagWrapper 
+from .wrappers.lasertag_wrappers import LaserTagWrapper
+from .mdp import attack, combinatorial_lock, arbitrary_mdp
 
 # PettingZoo envs
 pettingzoo_envs = {
@@ -156,9 +158,19 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
         # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
         env = Atari2AgentWrapper(env)
 
+    elif env_type == 'mdp':
+        if env_name == 'arbitrary_mdp':
+            env = arbitrary_mdp
+            # env.NEsolver()
+        elif env_name == 'attack':
+            env = attack
+        elif env_name == 'combinatorial_lock':
+            env = attack
+        else:
+            raise NotImplementedError
     else:
         print(f"Error: {env_name} environment in type {env_type} not found!")
-        return 
+        raise NotImplementedError 
 
     print(f'Load {env_name} environment in type {env_type}.')  
     print(f'Env observation space: {env.observation_space} action space: {env.action_space}')  

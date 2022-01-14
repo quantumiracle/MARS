@@ -123,7 +123,8 @@ class MLP(NetBase):
                     _get_activation(layers_config['hidden_activation'])())
             layers += tmp
         if layers_config['output_activation']:
-            layers += [_get_activation(layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical!
+            # layers += [_get_activation(layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical!
+            layers += [_get_activation(layers_config['output_activation'])()]  # dim=-1 is critical!
         return nn.Sequential(*layers)
 
 

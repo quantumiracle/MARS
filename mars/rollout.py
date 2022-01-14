@@ -20,7 +20,6 @@ def rollout(env, model, args: ConfigurationDict, save_id='0') -> None:
     else:
         rollout_normal(env, model, save_id, args)
 
-
 def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     """Function to rollout experience as interaction of agents and environments, in
     a typical manner of reinforcement learning. 
@@ -45,7 +44,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 obs_to_store)  # action: (agent, env, action_dim)
             if overall_steps % 100 == 0: # do not need to do this for every step
                 model.scheduler_step(overall_steps)
-                
+
             # action item contains additional information like log probability
             if isinstance(action_, tuple): # Nash PPO
                 (a, info) = action_  # shape: (agents, envs, dim)

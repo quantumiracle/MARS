@@ -14,17 +14,13 @@ from updateModel import updateModel
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
 ### Load configurations
-game_type = 'pettingzoo'
+game_type = 'slimevolley'
 
-game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
-        'combat_tank_v1', 'pong_v2', 'tennis_v2', \
-        'ice_hockey_v1', 'double_dunk_v2'][0]
+game = ['SlimeVolley-v0'][0]
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nxdo2'][-1]   # nash_ppo are trained in train.py, cannot user here!
-
-# method = 'nash_dqn_speed'
+            'nxdo2'][0]   # nash_ppo are trained in train.py, cannot user here!
 
 
 if __name__ == '__main__':
@@ -43,22 +39,20 @@ if __name__ == '__main__':
     model = MultiAgent(env, [model1, model2], args)
     env.close()  # this env is only used for creating other intantiations
 
-    # no need for this! tranform dictionary to bytes (serialization)
-    # args = cloudpickle.dumps(args)
-    # env = cloudpickle.dumps(env)  # this only works for single env, not for multiprocess vecenv
     processes = []
     print(args)
 
     # launch multiple sample rollout processes
     info_queue = Queue()
-    for pro_id in range(num_envs):  
-        play_process = Process(target=rolloutExperience, args = (model, info_queue, args, pro_id))
-        play_process.daemon = True  # sub processes killed when main process finish
-        processes.append(play_process)
+    default_id = '0'
+    # for pro_id in range(num_envs):  
+    play_process = Process(target=rolloutExperience, args = (model, info_queue, args, default_id))
+    play_process.daemon = True  # sub processes killed when main process finish
+    processes.append(play_process)
 
     # # launch update process (single or multiple)
-    default_id = '0'
-    update_process = Process(target=updateModel, args= (model, info_queue, args, default_id))
+    # for pro_id in range(num_envs):  
+    update_process = Process(target=updateModel, args= (model, info_queue, args, '1'))
     update_process.daemon = True
     processes.append(update_process)
 

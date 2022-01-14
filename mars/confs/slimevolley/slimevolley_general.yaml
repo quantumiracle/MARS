@@ -1,7 +1,8 @@
 env_args:
-    env_name: boxing_v1
-    env_type: pettingzoo
+    env_name: SlimeVolley-v0
+    env_type: slimevolley
     num_envs: 1
+    against_baseline: False
     ram: True
     seed: random
 
@@ -18,7 +19,7 @@ agent_args:
         eps_decay: 30000  # tune according to env
 
 train_args:
-    batch_size: 128
+    batch_size: 32
     max_episodes: 20000
     max_steps_per_episode: 10000
     train_start_frame: 0
@@ -30,6 +31,8 @@ train_args:
     log_interval: 20  # log print interval 
     multiprocess: False
     net_architecture: 
-        hidden_dim_list: [64, 64, 64, 64] 
-        hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
+        hidden_dim_list: [1024, 1024, 1024] 
+        hidden_activation: Tanh  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
         output_activation: False # False means nan
+    marl_spec:
+        global_state: True
