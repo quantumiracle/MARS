@@ -29,12 +29,14 @@ class NXDOMetaLearner(MetaLearner):
         self.meta_strategies = [[] for _ in range(2)] # for both player
 
         logger.add_extr_log('matrix_equilibrium')
-
+        ori_num_envs = args.num_envs
+        args.num_envs = 1
         self.eval_env = make_env(args)
         args.multiprocess = False
         eval_model1 = eval(args.algorithm)(self.eval_env, args)
         eval_model2 = eval(args.algorithm)(self.eval_env, args)
         args.multiprocess = True
+        args.num_envs = ori_num_envs
         self.eval_models = [eval_model1, eval_model2]
 
     def step(self, model, logger, env, args):
@@ -62,7 +64,7 @@ class NXDOMetaLearner(MetaLearner):
             logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
             self.last_meta_step = self.meta_step
 
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            # model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
             ### update the opponent with epsilon meta Nash policy
             # evaluate the N*N utility matrix, N is the number of currently saved models
@@ -128,7 +130,10 @@ class NXDOMetaLearner(MetaLearner):
 
                 obs_, reward, done, info = env.step(actions)
                 obs = obs_
-                rewards += np.array(reward)
+                try:
+                    rewards += np.array(reward)
+                except:
+                    print("Reward sum error in evaluation.")
 
                 if np.any(
                 done
@@ -173,11 +178,14 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         self.evaluation_matrix = np.array([])  # the evaluated utility matrix (N*N) of policy league with N policies
         logger.add_extr_log('matrix_equilibrium')
         print(args)
+        ori_num_envs = args.num_envs
+        args.num_envs = 1
         self.eval_env = make_env(args)
         args.multiprocess = False
         eval_model1 = eval(args.algorithm)(self.eval_env, args)
         eval_model2 = eval(args.algorithm)(self.eval_env, args)
         args.multiprocess = True
+        args.num_envs = ori_num_envs
         self.eval_models = [eval_model1, eval_model2]
 
     def _switch_charac(self, model):
@@ -244,7 +252,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
                     # self.meta_strategies = self.meta_strategies[self.current_learnable_model_idx]
                     logger.extr_logs.append(f'Current episode: {self.meta_step}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategies}')
             self._switch_charac(model)
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            # model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # sample from Nash meta policy in a episode-wise manner
         current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx] 
