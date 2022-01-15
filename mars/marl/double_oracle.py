@@ -30,7 +30,7 @@ class NXDOMetaLearner(MetaLearner):
 
         logger.add_extr_log('matrix_equilibrium')
         ori_num_envs = args.num_envs
-        args.num_envs = 1
+        self.num_envs = args.num_envs = 1
         self.eval_env = make_env(args)
         args.multiprocess = False
         eval_model1 = eval(args.algorithm)(self.eval_env, args)
@@ -122,7 +122,7 @@ class NXDOMetaLearner(MetaLearner):
                 overall_steps += 1
                 obs_to_store = obs.swapaxes(
                     0, 1
-                ) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
+                ) if self.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
                 actions = []
                 for state, agent in zip(obs_to_store, agents):
                     action = agent.choose_action(state, Greedy=True)
@@ -179,7 +179,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
         logger.add_extr_log('matrix_equilibrium')
         print(args)
         ori_num_envs = args.num_envs
-        args.num_envs = 1
+        self.num_envs = args.num_envs = 1
         self.eval_env = make_env(args)
         args.multiprocess = False
         eval_model1 = eval(args.algorithm)(self.eval_env, args)

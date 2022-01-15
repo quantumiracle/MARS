@@ -44,11 +44,11 @@ def get_method_env_marl_spec(method, env):
 
 selfplay_score_deltas = { # specific for each environment
     'surround_v1': 16,
-    'boxing_v1': 60,
+    'boxing_v1': 80,
     'combat_plane_v1': 10, # this need to be tuned
     'combat_tank_v1': 10,  # this need to be tuned
     'space_war_v1': 10,
-    'pong_v2': 20,
+    'pong_v2': 30,
     'tennis_v2': 50,
     'ice_hockey_v1': 10,
     'double_dunk_v2': 20,
