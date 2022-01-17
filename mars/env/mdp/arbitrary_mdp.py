@@ -86,6 +86,7 @@ class ArbitraryMDP():
         self.NEsolver()
 
     def _construct_game(self, ):
+        # shape: [dim_transition, dim_state, dim_action (p1*p2), dim_state]
         self.trans_prob_matrices, self.reward_matrices = self.generate_random_trans_and_rewards()
         # print(self.trans_prob_matrices, self.reward_matrices)
 
