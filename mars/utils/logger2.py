@@ -78,6 +78,14 @@ class TestLogger():
         """
         self.extr_log_name = extr_log_name
 
+    def _nan_filter(self, data):
+        """ Filter out np.nan in a given array.
+        """
+        x=np.array(data)
+        x = x[~np.isnan(x)]
+
+        return x
+
     def print_and_save(self, *args):
         """ Print out information only since it usually does not require
         to save the logging in test mode. """
@@ -183,7 +191,7 @@ class Logger(TestLogger):
                     last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
             )
             for k in self.keys:
-                print(f"{k}: loss: {np.mean(self.losses[k][-self.avg_window:]):.4f}")
+                print(f"{k}: loss: {np.mean(self._nan_filter(self.losses[k][-self.avg_window:])):.4f}")
 
         elif len(self.epi_rewards[self.keys[0]])>0:  # non-empty
             print(

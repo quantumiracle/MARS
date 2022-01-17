@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import torch
 import math
 import copy
-from .nn_components import cReLU, Flatten
+from .nn_components import cReLU, Flatten, DimensionReductionActivations
 
 class NetBase(nn.Module):
     """ Base network class for policy/value function """
@@ -123,8 +123,10 @@ class MLP(NetBase):
                     _get_activation(layers_config['hidden_activation'])())
             layers += tmp
         if layers_config['output_activation']:
-            # layers += [_get_activation(layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical!
-            layers += [_get_activation(layers_config['output_activation'])()]  # dim=-1 is critical!
+            if layers_config['output_activation'] in DimensionReductionActivations:  
+                layers += [_get_activation(layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical! otherwise may not report bug but hurt performance
+            else:
+                layers += [_get_activation(layers_config['output_activation'])()]
         return nn.Sequential(*layers)
 
 
@@ -172,7 +174,10 @@ class CNN(NetBase):
                     )
             layers += tmp
         if layers_config['output_activation']:
-            layers += [_get_activation(layers_config['output_activation'])(dim=-1)]
+            if layers_config['output_activation'] in DimensionReductionActivations:
+                layers += [_get_activation(layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical! otherwise may not report bug but hurt performance
+            else:
+                layers += [_get_activation(layers_config['output_activation'])()]
         return nn.Sequential(*layers)
 
 class ImpalaCNN(NetBase):
@@ -219,7 +224,10 @@ class ImpalaCNN(NetBase):
                     )
             layers += tmp
         if layers_config['output_activation']:
-            layers += [_get_activation(layers_config['output_activation'])(dim=-1)]
+            if layers_config['output_activation'] in DimensionReductionActivations:
+                layers += [_get_activation(layers_config['output_activation'])(dim=-1)]  # dim=-1 is critical! otherwise may not report bug but hurt performance
+            else:
+                layers += [_get_activation(layers_config['output_activation'])()]
         return nn.Sequential(*layers)
 
     def _construct_cnn_layers(self, layers_config):
