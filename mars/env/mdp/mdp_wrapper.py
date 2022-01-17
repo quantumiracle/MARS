@@ -24,6 +24,7 @@ class MDPWrapper():
         self.action_space = gym.spaces.Discrete(env.num_actions)
         self.action_spaces = {a:self.action_space for a in self.agents}
         self.curr_step = 0
+        self.NEsolver()
 
     @property
     def spec(self):
