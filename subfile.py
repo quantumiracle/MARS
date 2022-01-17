@@ -1,7 +1,7 @@
 import os, fnmatch
 import shutil, errno
 
-folder = '../data/model/'
+folder = 'data/model/'
 
 def copyanything(src, dst):
     try:
@@ -13,7 +13,7 @@ def copyanything(src, dst):
 
 def iters_filter(folder, max_itr):
     """ filter out index larger than max_itr in folder """
-    files = ! ls $folder
+    files = os.listdir(folder)
     for f in files:
         try:
             indx = f.split('_')[0]
