@@ -82,14 +82,17 @@ class ArbitraryMDP():
         #                 [1,1], [-1,-1], [0,0],]] 
         #                 ]
 
+        self.seed(0)  # if want random game, uncomment this line
         self._construct_game()
         self.NEsolver()
 
     def _construct_game(self, ):
+        # shape: [dim_transition, dim_state, dim_action (p1*p2), dim_state]
         self.trans_prob_matrices, self.reward_matrices = self.generate_random_trans_and_rewards()
         # print(self.trans_prob_matrices, self.reward_matrices)
 
     def seed(self, seed):
+        # this seed is actually not userfull since it's after game construction
         np.random.seed(seed)
 
     def generate_random_trans_and_rewards(self, SameRewardForNextState=False):
