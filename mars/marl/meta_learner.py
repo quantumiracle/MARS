@@ -29,20 +29,25 @@ class MetaLearner(Agent):
         model.agents[agent_to_replace].load_model(self.model_path+checkpoints_to_replace_from[policy_idx]+postfix)
 
     def save_model(self, path: str = None):
+        if path is not None:
+            save_path = path
+        else:
+            save_path = self.model_path
         if len(self.saved_checkpoints) > 0:  # methods with family of models
-            with open(self.model_path+'meta_strategies.npy', 'wb') as f:
+            with open(save_path+'meta_strategies.npy', 'wb') as f:
                 np.save(f, self.meta_strategies)
-            with open(self.model_path+'policy_checkpoints.npy', 'wb') as f:
+            with open(save_path+'policy_checkpoints.npy', 'wb') as f:
                 np.save(f, self.saved_checkpoints)
 
     def load_model(self, model, path: str = None, verbose: bool = True):
         self.model = model
         if path is not None:
             self.model_path = path
-        with open(self.model_path+'meta_strategies.npy', 'rb') as f:
-            self.meta_strategies = np.load(f, allow_pickle=True)
         with open(self.model_path+'policy_checkpoints.npy', 'rb') as f:
             self.saved_checkpoints = np.load(f, allow_pickle=True)
+        with open(self.model_path+'meta_strategies.npy', 'rb') as f:
+            self.meta_strategies = np.load(f, allow_pickle=True)
+
         self.step(model)  # load meta strategy into model  
 
         if verbose:
