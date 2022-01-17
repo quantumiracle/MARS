@@ -46,16 +46,17 @@ class SelfPlayMetaLearner(MetaLearner):
                 # model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+str(logger.current_episode))
 
                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(self.model_path+'1')  # save only the latest checkpoint
-                model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+'1')
+                model.agents[self.args.marl_spec['opponent_idx']].load_model(self.model_path+'1')  # this step is actually initialize the next learnable model, which is not necessary
             logger.additional_logs.append(f'Score delta: {score_delta}, udpate the opponent.')
 
             self.last_meta_step = self.meta_step
 
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            ### The reinit seems to hurt agent performance!
+            # model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
         
-        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            self.last_meta_step = self.meta_step
+        # if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
+        #     model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        #     self.last_meta_step = self.meta_step
 
 # class SelfPlayMetaLearner():
 #     """
@@ -145,19 +146,19 @@ class SelfPlay2SideMetaLearner(SelfPlayMetaLearner):
              and self.meta_step - self.last_meta_step > min_update_interval:
             # update the opponent with current model, assume they are of the same type
             if self.save_checkpoint:
-                save_path = self.model_path+'1'+'_'+str(self.current_learnable_model_idx)
+                save_path = self.model_path+'1'+'_'+str(self.current_learnable_model_idx)  # 1 is the model save id; selfplay does not need to track all previous models
                 model.agents[self.current_learnable_model_idx].save_model(save_path)  # save only the latest checkpoint
-                model.agents[self.current_fixed_opponent_idx].load_model(save_path)
+                model.agents[self.current_fixed_opponent_idx].load_model(save_path)  # this step is actually initialize the next learnable model, which is not necessary
             logger.additional_logs.append(f'Score delta: {score_delta}, update the opponent.')
 
             self.last_meta_step = self.meta_step
             
             self._switch_charac(model)
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            # model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
-        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            self.last_meta_step = self.meta_step
+        # if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
+        #     model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        #     self.last_meta_step = self.meta_step
 
 
 class FictitiousSelfPlayMetaLearner(MetaLearner):
@@ -186,8 +187,10 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
         self.save_checkpoint = save_checkpoint
         self.args = args
         self.meta_step = self.last_meta_step = 0
-        self.saved_checkpoints = [[]] # for single player
-        self.meta_strategies = [[]] # for single player
+        # although there is only one learnable agent, the checkpoints and strategies are replicated for both players,
+        # so as to match with the asymetric version 
+        self.saved_checkpoints = [[] for _ in range(2)] 
+        self.meta_strategies = [[] for _ in range(2)] 
 
     def step(self, model, logger, *Args):
         """
@@ -209,22 +212,26 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
             if self.save_checkpoint:
                 save_path = self.model_path+str(self.meta_step)
                 model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(save_path) # save all checkpoints
+                # update for both players
                 self.saved_checkpoints[self.current_learnable_model_idx].append(str(self.meta_step))
+                self.saved_checkpoints[self.current_fixed_opponent_idx].append(str(self.meta_step))
                 logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
 
             self.last_meta_step = self.meta_step
 
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            # model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
-        current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
+        current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # load checkpoints from opponent's available policy set
         if len(current_policy_checkpoints) > 0: # the policy set has one or more policies to sample from
-            self.meta_strategies[self.model_name] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed
+            # update for both players
+            self.meta_strategies[self.current_learnable_model_idx] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed
+            self.meta_strategies[self.current_fixed_opponent_idx] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed
             self._replace_agent_with_meta(model, self.args.marl_spec['opponent_idx'], current_policy_checkpoints)
 
-        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
-            model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            self.last_meta_step = self.meta_step
+        # if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
+        #     model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        #     self.last_meta_step = self.meta_step
 
 class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
     """
@@ -293,7 +300,7 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
             self.last_meta_step = self.meta_step
 
             self._switch_charac(model)
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+            # model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
         current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
@@ -301,6 +308,6 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
             self.meta_strategies[self.current_fixed_opponent_idx] = np.ones(len(current_policy_checkpoints))/len(current_policy_checkpoints)  # uniformly distributed         
             self._replace_agent_with_meta(model, self.current_fixed_opponent_idx, current_policy_checkpoints, postfix = '_'+str(self.current_fixed_opponent_idx))
 
-        if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
-            model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
-            self.last_meta_step = self.meta_step
+        # if (self.meta_step - self.last_meta_step) > agent_reinit_interval:
+        #     model.agents[self.current_learnable_model_idx].reinit(nets_init=True, buffer_init=True, schedulers_init=True)  # reinitialize the model
+        #     self.last_meta_step = self.meta_step

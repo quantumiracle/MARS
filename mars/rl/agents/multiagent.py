@@ -69,7 +69,7 @@ class MultiAgent(Agent):
 
         if args.test or args.exploit:
             if args.marl_method in MetaStrategyMethods:  
-                meta_learner = MetaLearner()
+                meta_learner = MetaLearner()  # meta-learner as a single agent to test/exploit
                 assert 0 in self.not_learnable_list # 0 is the model to test/exploit
                 meta_learner.load_model(self.agents[0], path=args.load_model_full_path)  
                 self.agents[0] = meta_learner

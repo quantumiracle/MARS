@@ -44,12 +44,12 @@ def get_method_env_marl_spec(method, env):
 
 selfplay_score_deltas = { # specific for each environment
     'surround_v1': 16,
-    'boxing_v1': 60,
+    'boxing_v1': 80,
     'combat_plane_v1': 10, # this need to be tuned
     'combat_tank_v1': 10,  # this need to be tuned
     'space_war_v1': 10,
-    'pong_v2': 20,
-    'tennis_v2': 10,
+    'pong_v2': 30,
+    'tennis_v2': 50,
     'ice_hockey_v1': 10,
     'double_dunk_v2': 20,
 }
@@ -79,19 +79,19 @@ ppo_algorithm_spec = { # specs for PPO alg.
 
 ppo_net_architecture = {
     'policy':{
-      'hidden_dim_list': [64, 64, 64, 64],
+      'hidden_dim_list': [128, 128, 128, 128],
       'hidden_activation': 'ReLU',
       'output_activation': 'Softmax',
     },
     'value': {
-      'hidden_dim_list': [64, 64, 64, 64],
+      'hidden_dim_list': [128, 128, 128, 128],
       'hidden_activation': 'ReLU',
       'output_activation': False,
     }
 
 }
 
-times4_ppo_net_architecture = {
+large_ppo_net_architecture = {
     'policy':{
       'hidden_dim_list': [256, 256, 256, 256],
       'hidden_activation': 'ReLU',
@@ -105,7 +105,7 @@ times4_ppo_net_architecture = {
 
 }
 
-times4_net_architecture = {
+large_net_architecture = {
     'hidden_dim_list': [256, 256, 256, 256],
     'hidden_activation': 'ReLU',
     'output_activation': False,
@@ -155,9 +155,9 @@ for game in two_player_zero_sum_games:
         # some game specific confs
         if game in large_nets_envs:  # it requires a larger net
             if method == 'nash_ppo':
-                conf['train_args']['net_architecture'] = times4_ppo_net_architecture
+                conf['train_args']['net_architecture'] = large_ppo_net_architecture
             else:
-                conf['train_args']['net_architecture'] = times4_net_architecture
+                conf['train_args']['net_architecture'] = large_net_architecture
 
         output_path = f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:

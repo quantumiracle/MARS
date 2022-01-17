@@ -16,3 +16,6 @@ class Flatten(nn.Module):
 
 dSiLU = lambda x: torch.sigmoid(x)*(1+x*(1-torch.sigmoid(x)))
 SiLU = lambda x: x*torch.sigmoid(x)
+
+
+DimensionReductionActivations = ['Softmax', ]  # TODO add other activation functions requiring dimension reduction
