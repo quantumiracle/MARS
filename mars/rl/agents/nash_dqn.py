@@ -13,7 +13,7 @@ from .dqn import DQN, DQNBase
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 import time
 
-DEBUG = True
+DEBUG = False
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
