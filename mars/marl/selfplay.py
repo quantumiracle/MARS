@@ -204,22 +204,22 @@ class FictitiousSelfPlayMetaLearner(MetaLearner):
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
         
-        score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
-             - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
-        if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-             and self.meta_step - self.last_meta_step > min_update_interval:
-            # update the opponent with current model, assume they are of the same type
-            if self.save_checkpoint:
-                save_path = self.model_path+str(self.meta_step)
-                model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(save_path) # save all checkpoints
-                # update for both players
-                self.saved_checkpoints[self.current_learnable_model_idx].append(str(self.meta_step))
-                self.saved_checkpoints[self.current_fixed_opponent_idx].append(str(self.meta_step))
-                logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
+        # save current best response if qualified
+        step_diff = self.meta_step - self.last_meta_step
+        if step_diff > max(min_update_interval, len(self.saved_checkpoints[self.current_fixed_opponent_idx])):  # almost ensure ergodicity of opponent's policy set
+            score_delta = np.mean(logger.epi_rewards[self.model_name][-score_avg_window:])\
+                - np.mean(logger.epi_rewards[self.opponent_name][-score_avg_window:])
+            if score_delta  > self.args.marl_spec['selfplay_score_delta']:
+                if self.save_checkpoint:
+                    save_path = self.model_path+str(self.meta_step)
+                    model.agents[self.args.marl_spec['trainable_agent_idx']].save_model(save_path) # save all checkpoints
+                    # update for both players
+                    self.saved_checkpoints[self.current_learnable_model_idx].append(str(self.meta_step))
+                    self.saved_checkpoints[self.current_fixed_opponent_idx].append(str(self.meta_step))
+                    logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
 
-            self.last_meta_step = self.meta_step
-
-            # model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+                self.last_meta_step = self.meta_step
+                # model.agents[self.args.marl_spec['trainable_agent_idx']].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
         current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # load checkpoints from opponent's available policy set
@@ -285,22 +285,25 @@ class FictitiousSelfPlay2SideMetaLearner(FictitiousSelfPlayMetaLearner):
         agent_reinit_interval = 1000 # after a long time of unimproved performance against the opponent, reinit the agent
         score_avg_window = self.args.marl_spec['score_avg_window']  # mininal opponent update interval in unit of episodes
         min_update_interval = self.args.marl_spec['min_update_interval'] # the length of window for averaging the score values
-        score_delta = np.mean(logger.epi_rewards[logger.keys[self.current_learnable_model_idx]][-score_avg_window:])\
-             - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
 
-        if score_delta  > self.args.marl_spec['selfplay_score_delta']\
-            and self.meta_step - self.last_meta_step > min_update_interval:
-            # update the opponent with current model, assume they are of the same type
-            if self.save_checkpoint:
-                save_path = self.model_path+str(self.meta_step)+'_'+str(self.current_learnable_model_idx)
-                model.agents[self.current_learnable_model_idx].save_model(save_path) # save all checkpoints
-                self.saved_checkpoints[self.current_learnable_model_idx].append(str(self.meta_step))
-                logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
+        # save current best response if qualified
+        step_diff = self.meta_step - self.last_meta_step
+        if step_diff > max(min_update_interval, len(self.saved_checkpoints[self.current_fixed_opponent_idx])):  # almost ensure ergodicity of opponent's policy set
+            score_delta = np.mean(logger.epi_rewards[logger.keys[self.current_learnable_model_idx]][-score_avg_window:])\
+                - np.mean(logger.epi_rewards[logger.keys[self.current_fixed_opponent_idx]][-score_avg_window:])
 
-            self.last_meta_step = self.meta_step
+            if score_delta  > self.args.marl_spec['selfplay_score_delta']\
+                and self.meta_step - self.last_meta_step > min_update_interval:
+                # update the opponent with current model, assume they are of the same type
+                if self.save_checkpoint:
+                    save_path = self.model_path+str(self.meta_step)+'_'+str(self.current_learnable_model_idx)
+                    model.agents[self.current_learnable_model_idx].save_model(save_path) # save all checkpoints
+                    self.saved_checkpoints[self.current_learnable_model_idx].append(str(self.meta_step))
+                    logger.additional_logs.append(f'Score delta: {score_delta}, save the model to {save_path}.')
 
-            self._switch_charac(model)
-            # model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
+                self.last_meta_step = self.meta_step
+                self._switch_charac(model)
+                # model.agents[self.current_learnable_model_idx].reinit(nets_init=False, buffer_init=True, schedulers_init=True)  # reinitialize the model
 
         # load a model for each episode to achieve an empiral average policy
         current_policy_checkpoints = self.saved_checkpoints[self.current_fixed_opponent_idx]  # use the learnable to get best response of the policy set of the fixed agent
