@@ -139,7 +139,7 @@ for game in two_player_zero_sum_games:
                 conf['agent_args']['algorithm'] = 'NashDQN'
             elif method == 'nash_dqn_exploiter':
                 conf['agent_args']['algorithm'] = 'NashDQNExploiter'
-                conf['agent_args']['algorithm_spec']['exploiter_update_itr'] = 5
+                conf['agent_args']['algorithm_spec']['exploiter_update_itr'] = 3
 
         elif method == 'nash_ppo':
             conf['train_args']['multiprocess'] = False
