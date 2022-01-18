@@ -13,7 +13,7 @@ from .dqn import DQN, DQNBase
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 import time
 
-DEBUG = True
+DEBUG = False
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
@@ -177,7 +177,7 @@ class NashDQN(DQN):
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
         return actions
 
-    def compute_nash(self, q_values, return_dist_only=False):
+    def compute_nash_deprecated(self, q_values, return_dist_only=False):
         """
         Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
         """
@@ -224,31 +224,31 @@ class NashDQN(DQN):
         else: # return samples actions, nash strategies, nash values
             return np.array(all_actions), all_dists, all_ne_values
 
-    # def compute_nash(self, q_values, return_dist_only=False):
-    #     q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
-    #     all_actions = []
-    #     all_dists = []
-    #     all_ne_values = []
-    #     all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+    def compute_nash(self, q_values, return_dist_only=False):
+        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
+        all_actions = []
+        all_dists = []
+        all_ne_values = []
+        all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
 
-    #     if return_dist_only:
-    #         return all_dists
-    #     else:
-    #         # Sample actions from Nash strategies
-    #         for ne in all_dists:
-    #             actions = []
-    #             for dist in ne:  # iterate over agents
-    #                 try:
-    #                     sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
-    #                 except:
-    #                     print('Not a valid distribution from Nash equilibrium solution.')
-    #                     print(sum(ne[0]), sum(ne[1]))
-    #                     print(dist)
-    #                 a = np.where(sample_hist>0)
-    #                 actions.append(a)
-    #             all_actions.append(np.array(actions).reshape(-1))
+        if return_dist_only:
+            return all_dists
+        else:
+            # Sample actions from Nash strategies
+            for ne in all_dists:
+                actions = []
+                for dist in ne:  # iterate over agents
+                    try:
+                        sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
+                    except:
+                        print('Not a valid distribution from Nash equilibrium solution.')
+                        print(sum(ne[0]), sum(ne[1]))
+                        print(dist)
+                    a = np.where(sample_hist>0)
+                    actions.append(a)
+                all_actions.append(np.array(actions).reshape(-1))
 
-    #     return np.array(all_actions), all_dists, all_ne_values
+        return np.array(all_actions), all_dists, all_ne_values
 
 
     def compute_cce(self, q_values, return_dist=False):
