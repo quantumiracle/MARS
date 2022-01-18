@@ -14,7 +14,7 @@ parser_args = parser.parse_args()
 
 ### Load configurations
 
-method = ['fictitious_selfplay2', 'nash_dqn', 'nxdo2'][0]
+method = ['fictitious_selfplay2', 'nash_dqn', 'nxdo2'][1]
 prefix = 'mars/confs/mdp/mdp_arbitrary_mdp_'
 yaml_file = prefix + method
 
@@ -25,7 +25,7 @@ if parser_args.test:
     args.test = True
     args.render = True
     args.load_model_idx = parser_args.model
-args.device = 'gpu'
+args.device = 'cpu'
 ### Create env
 env = make_env(args)
 print(env)
