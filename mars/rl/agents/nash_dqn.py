@@ -162,7 +162,11 @@ class NashDQN(DQN):
             # if self.args.cce:
             #     actions = self.compute_cce(q_values)
             # else:
-            actions, dists, ne_vs = self.compute_nash(q_values) 
+            try: # nash computation may report error and terminate the process
+                actions, dists, ne_vs = self.compute_nash(q_values)
+            except:
+                print("Invalid nash computation.")
+                actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
 
             if DEBUG: ## test on arbitrary MDP
                 # actions, dists, ne_vs = self.compute_nash_deprecated(q_values) 
@@ -307,7 +311,11 @@ class NashDQN(DQN):
         #     next_q_value = torch.einsum('bij,bij->b', cce_dists_, target_next_q_values_)
 
         # else: # Nash Equilibrium
-        nash_dists = self.compute_nash(target_next_q_values, return_dist_only=True)  # get the mixed strategy Nash rather than specific actions
+        try: # nash computation may report error and terminate the process
+            nash_dists = self.compute_nash(target_next_q_values, return_dist_only=True)  # get the mixed strategy Nash rather than specific actions
+        except: # take a uniform distribution instead
+            print("Invalid nash computation.")
+            nash_dists = np.ones((*action.shape, self.action_dims))/float(self.action_dims)
         target_next_q_values_ = target_next_q_values_.reshape(-1, action_dim, action_dim)
         nash_dists_  = torch.FloatTensor(nash_dists).to(self.device)
         next_q_value = torch.einsum('bk,bk->b', torch.einsum('bj,bjk->bk', nash_dists_[:, 0], target_next_q_values_), nash_dists_[:, 1])
