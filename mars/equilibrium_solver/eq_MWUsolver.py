@@ -13,7 +13,7 @@ def get_payoff_vector(payoff_matrix, opponent_policy):
     payoff = opponent_policy @ payoff_matrix
     return payoff
 
-def NashEquilibriumMWUSolver(A, Itr=100, verbose=False):
+def NashEquilibriumMWUSolver(A, Itr=1000, verbose=False):
     """ Solve Nash equilibrium with multiplicative weights udpate."""
     # discount = 0.9
     row_action_num = A.shape[0]
