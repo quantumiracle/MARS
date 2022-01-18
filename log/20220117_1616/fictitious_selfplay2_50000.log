@@ -1,0 +1,247 @@
+pygame 2.0.0 (SDL 2.0.12, python 3.7.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+arbitrary_mdp mdp
+Load arbitrary_mdp environment in type mdp.
+Env observation space: Box(0.0, 12.0, (1,), float32) action space: Discrete(3)
+<mars.env.mdp.mdp_wrapper.MDPWrapper object at 0x7fb09766a8d0>
+DQNBase(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=1, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=3, bias=True)
+    )
+  )
+)
+DQNBase(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=1, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=3, bias=True)
+    )
+  )
+)
+Agents No. [0] (index starting from 0) are not learnable.
+Load meta strategy:  [array([0.013, 0.013, 0.013, ..., 0.013, 0.013, 0.013]) array([0.013, 0.013, 0.013, ..., 0.013, 0.013, 0.013])]
+Load checkpoints (policy family):  [list(['50', '5253', '7615', '8835', '9107', '9703', '11990', '12159', '12524', '13308', '13498', '13724', '14178', '14316', '14615', '15091', '15175', '15419', '15750', '16939', '17375', '17843', '17917', '18353', '18640', '19318', '19446', '19648', '20384', '20683', '20884', '21272', '21672', '22747', '23030', '23310', '24520', '24853', '26681', '26940', '28709', '29740', '29846', '30462', '30651', '30760', '31416', '31603', '32106', '32698', '33332', '33767', '33881', '36744', '37270', '38685', '39143', '41292', '42031', '42615', '42749', '43319', '44780', '45269', '45498', '45743', '45999', '46193', '46771', '46952', '47200', '48030', '48564', '48855', '49288', '49557'])
+ list(['193', '5289', '7712', '9011', '9134', '9750', '12072', '12183', '12551', '13372', '13527', '13900', '14248', '14538', '14753', '15114', '15219', '15590', '15822', '16961', '17442', '17874', '17965', '18390', '18710', '19358', '19474', '19725', '20485', '20727', '20925', '21436', '21759', '22805', '23082', '23363', '24633', '24918', '26747', '26990', '28804', '29797', '29890', '30570', '30697', '30815', '31505', '31652', '32168', '32769', '33481', '33828', '33952', '36804', '37326', '38773', '39204', '41367', '42118', '42678', '42883', '43395', '44845', '45356', '45577', '45810', '46067', '46269', '46865', '47038', '47292', '48138', '48748', '49098', '49412'])]
+Arguments:  {'env_name': 'arbitrary_mdp', 'env_type': 'mdp', 'num_envs': 1, 'ram': True, 'seed': 1, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000, 'update_itr': 1}, 'batch_size': 640, 'max_episodes': 30000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'cpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': True, 'load_model_idx': False, 'load_model_full_path': 'data/model/20220117153310/epi_50000/', 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'net_architecture': {'hidden_dim_list': [128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'fictitious_selfplay2', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': True, 'selfplay_score_delta': 1.5, 'trainable_agent_idx': 0, 'opponent_idx': 1}, 'against_baseline': False}
+Save models to : /home/zihan/research/MARS/data/model/20220117153310_exploit_50000/mdp_arbitrary_mdp_fictitious_selfplay2. 
+ Save logs to: /home/zihan/research/MARS/data/log/20220117153310_exploit_50000/mdp_arbitrary_mdp_fictitious_selfplay2.
+Episode: 1/30000 (0.0033%),                 avg. length: 2.0,                last time consumption/overall running time: 6.7369s / 6.7369 s
+agent0:                 episode reward: -1.6958,                 loss: nan
+agent1:                 episode reward: 1.6958,                 loss: nan
+Episode: 21/30000 (0.0700%),                 avg. length: 2.0,                last time consumption/overall running time: 5.8223s / 12.5592 s
+agent0:                 episode reward: 0.3713,                 loss: nan
+agent1:                 episode reward: -0.3713,                 loss: nan
+Episode: 41/30000 (0.1367%),                 avg. length: 2.0,                last time consumption/overall running time: 7.2642s / 19.8234 s
+agent0:                 episode reward: 0.2612,                 loss: nan
+agent1:                 episode reward: -0.2612,                 loss: nan
+Episode: 61/30000 (0.2033%),                 avg. length: 2.0,                last time consumption/overall running time: 6.4263s / 26.2497 s
+agent0:                 episode reward: -0.0345,                 loss: nan
+agent1:                 episode reward: 0.0345,                 loss: nan
+Episode: 81/30000 (0.2700%),                 avg. length: 2.0,                last time consumption/overall running time: 7.0533s / 33.3030 s
+agent0:                 episode reward: 0.3907,                 loss: nan
+agent1:                 episode reward: -0.3907,                 loss: nan
+Episode: 101/30000 (0.3367%),                 avg. length: 2.0,                last time consumption/overall running time: 6.8365s / 40.1395 s
+agent0:                 episode reward: 0.1053,                 loss: nan
+agent1:                 episode reward: -0.1053,                 loss: nan
+Episode: 121/30000 (0.4033%),                 avg. length: 2.0,                last time consumption/overall running time: 7.5534s / 47.6930 s
+agent0:                 episode reward: -0.0498,                 loss: nan
+agent1:                 episode reward: 0.0498,                 loss: nan
+Episode: 141/30000 (0.4700%),                 avg. length: 2.0,                last time consumption/overall running time: 6.6462s / 54.3391 s
+agent0:                 episode reward: -0.0256,                 loss: nan
+agent1:                 episode reward: 0.0256,                 loss: nan
+Episode: 161/30000 (0.5367%),                 avg. length: 2.0,                last time consumption/overall running time: 7.2716s / 61.6107 s
+agent0:                 episode reward: 0.1917,                 loss: nan
+agent1:                 episode reward: -0.1917,                 loss: nan
+Episode: 181/30000 (0.6033%),                 avg. length: 2.0,                last time consumption/overall running time: 7.4104s / 69.0211 s
+agent0:                 episode reward: -0.2623,                 loss: nan
+agent1:                 episode reward: 0.2623,                 loss: nan
+Episode: 201/30000 (0.6700%),                 avg. length: 2.0,                last time consumption/overall running time: 7.4157s / 76.4368 s
+agent0:                 episode reward: 0.1159,                 loss: nan
+agent1:                 episode reward: -0.1159,                 loss: nan
+Episode: 221/30000 (0.7367%),                 avg. length: 2.0,                last time consumption/overall running time: 96.6248s / 173.0616 s
+agent0:                 episode reward: 0.7233,                 loss: nan
+agent1:                 episode reward: -0.7233,                 loss: 0.2780
+Episode: 241/30000 (0.8033%),                 avg. length: 2.0,                last time consumption/overall running time: 237.9368s / 410.9984 s
+agent0:                 episode reward: -0.0652,                 loss: nan
+agent1:                 episode reward: 0.0652,                 loss: 0.2453
+Episode: 261/30000 (0.8700%),                 avg. length: 2.0,                last time consumption/overall running time: 241.5737s / 652.5721 s
+agent0:                 episode reward: 0.0116,                 loss: nan
+agent1:                 episode reward: -0.0116,                 loss: 0.2120
+Episode: 281/30000 (0.9367%),                 avg. length: 2.0,                last time consumption/overall running time: 239.9743s / 892.5463 s
+agent0:                 episode reward: 0.6207,                 loss: nan
+agent1:                 episode reward: -0.6207,                 loss: 0.1935
+Episode: 301/30000 (1.0033%),                 avg. length: 2.0,                last time consumption/overall running time: 244.3498s / 1136.8961 s
+agent0:                 episode reward: 0.1325,                 loss: nan
+agent1:                 episode reward: -0.1325,                 loss: 0.1841
+Episode: 321/30000 (1.0700%),                 avg. length: 2.0,                last time consumption/overall running time: 245.3408s / 1382.2369 s
+agent0:                 episode reward: 0.1630,                 loss: nan
+agent1:                 episode reward: -0.1630,                 loss: 0.1777
+Episode: 341/30000 (1.1367%),                 avg. length: 2.0,                last time consumption/overall running time: 239.3233s / 1621.5602 s
+agent0:                 episode reward: 0.0150,                 loss: nan
+agent1:                 episode reward: -0.0150,                 loss: 0.1717
+Episode: 361/30000 (1.2033%),                 avg. length: 2.0,                last time consumption/overall running time: 240.3615s / 1861.9216 s
+agent0:                 episode reward: 0.1488,                 loss: nan
+agent1:                 episode reward: -0.1488,                 loss: 0.1692
+Episode: 381/30000 (1.2700%),                 avg. length: 2.0,                last time consumption/overall running time: 241.3663s / 2103.2879 s
+agent0:                 episode reward: 0.3673,                 loss: nan
+agent1:                 episode reward: -0.3673,                 loss: 0.1637
+Episode: 401/30000 (1.3367%),                 avg. length: 2.0,                last time consumption/overall running time: 240.6137s / 2343.9017 s
+agent0:                 episode reward: 0.3432,                 loss: nan
+agent1:                 episode reward: -0.3432,                 loss: 0.1614
+Episode: 421/30000 (1.4033%),                 avg. length: 2.0,                last time consumption/overall running time: 237.7567s / 2581.6584 s
+agent0:                 episode reward: -0.0044,                 loss: nan
+agent1:                 episode reward: 0.0044,                 loss: 0.1590
+Episode: 441/30000 (1.4700%),                 avg. length: 2.0,                last time consumption/overall running time: 249.3107s / 2830.9690 s
+agent0:                 episode reward: -0.1170,                 loss: nan
+agent1:                 episode reward: 0.1170,                 loss: 0.1576
+Episode: 461/30000 (1.5367%),                 avg. length: 2.0,                last time consumption/overall running time: 251.3325s / 3082.3016 s
+agent0:                 episode reward: -0.4993,                 loss: nan
+agent1:                 episode reward: 0.4993,                 loss: 0.1560
+Episode: 481/30000 (1.6033%),                 avg. length: 2.0,                last time consumption/overall running time: 242.1713s / 3324.4729 s
+agent0:                 episode reward: 0.1300,                 loss: nan
+agent1:                 episode reward: -0.1300,                 loss: 0.1546
+Episode: 501/30000 (1.6700%),                 avg. length: 2.0,                last time consumption/overall running time: 247.1685s / 3571.6413 s
+agent0:                 episode reward: -0.3195,                 loss: nan
+agent1:                 episode reward: 0.3195,                 loss: 0.1525
+Episode: 521/30000 (1.7367%),                 avg. length: 2.0,                last time consumption/overall running time: 243.3007s / 3814.9420 s
+agent0:                 episode reward: -0.1083,                 loss: nan
+agent1:                 episode reward: 0.1083,                 loss: 0.1510
+Episode: 541/30000 (1.8033%),                 avg. length: 2.0,                last time consumption/overall running time: 250.3172s / 4065.2593 s
+agent0:                 episode reward: -0.2002,                 loss: nan
+agent1:                 episode reward: 0.2002,                 loss: 0.1515
+Episode: 561/30000 (1.8700%),                 avg. length: 2.0,                last time consumption/overall running time: 247.3861s / 4312.6454 s
+agent0:                 episode reward: 0.2484,                 loss: nan
+agent1:                 episode reward: -0.2484,                 loss: 0.1739
+Episode: 581/30000 (1.9367%),                 avg. length: 2.0,                last time consumption/overall running time: 243.3086s / 4555.9540 s
+agent0:                 episode reward: 0.1041,                 loss: nan
+agent1:                 episode reward: -0.1041,                 loss: 0.1606
+Episode: 601/30000 (2.0033%),                 avg. length: 2.0,                last time consumption/overall running time: 242.4245s / 4798.3785 s
+agent0:                 episode reward: -0.2538,                 loss: nan
+agent1:                 episode reward: 0.2538,                 loss: 0.1585
+Episode: 621/30000 (2.0700%),                 avg. length: 2.0,                last time consumption/overall running time: 246.2331s / 5044.6116 s
+agent0:                 episode reward: -0.1672,                 loss: nan
+agent1:                 episode reward: 0.1672,                 loss: 0.1559
+Episode: 641/30000 (2.1367%),                 avg. length: 2.0,                last time consumption/overall running time: 243.1361s / 5287.7478 s
+agent0:                 episode reward: 0.1007,                 loss: nan
+agent1:                 episode reward: -0.1007,                 loss: 0.1537
+Episode: 661/30000 (2.2033%),                 avg. length: 2.0,                last time consumption/overall running time: 244.2399s / 5531.9877 s
+agent0:                 episode reward: 0.0827,                 loss: nan
+agent1:                 episode reward: -0.0827,                 loss: 0.1522
+Episode: 681/30000 (2.2700%),                 avg. length: 2.0,                last time consumption/overall running time: 249.0154s / 5781.0030 s
+agent0:                 episode reward: -0.0301,                 loss: nan
+agent1:                 episode reward: 0.0301,                 loss: 0.1522
+Episode: 701/30000 (2.3367%),                 avg. length: 2.0,                last time consumption/overall running time: 242.8140s / 6023.8170 s
+agent0:                 episode reward: -0.0674,                 loss: nan
+agent1:                 episode reward: 0.0674,                 loss: 0.1501
+Episode: 721/30000 (2.4033%),                 avg. length: 2.0,                last time consumption/overall running time: 250.7719s / 6274.5890 s
+agent0:                 episode reward: -0.1301,                 loss: nan
+agent1:                 episode reward: 0.1301,                 loss: 0.1506
+Episode: 741/30000 (2.4700%),                 avg. length: 2.0,                last time consumption/overall running time: 241.1656s / 6515.7546 s
+agent0:                 episode reward: 0.0462,                 loss: nan
+agent1:                 episode reward: -0.0462,                 loss: 0.1491
+Episode: 761/30000 (2.5367%),                 avg. length: 2.0,                last time consumption/overall running time: 245.2214s / 6760.9760 s
+agent0:                 episode reward: 0.0394,                 loss: nan
+agent1:                 episode reward: -0.0394,                 loss: 0.1494
+Episode: 781/30000 (2.6033%),                 avg. length: 2.0,                last time consumption/overall running time: 256.8829s / 7017.8589 s
+agent0:                 episode reward: -0.2281,                 loss: nan
+agent1:                 episode reward: 0.2281,                 loss: 0.1472
+Episode: 801/30000 (2.6700%),                 avg. length: 2.0,                last time consumption/overall running time: 239.9249s / 7257.7838 s
+agent0:                 episode reward: 0.0737,                 loss: nan
+agent1:                 episode reward: -0.0737,                 loss: 0.1482
+Episode: 821/30000 (2.7367%),                 avg. length: 2.0,                last time consumption/overall running time: 242.6342s / 7500.4180 s
+agent0:                 episode reward: -0.1379,                 loss: nan
+agent1:                 episode reward: 0.1379,                 loss: 0.1482
+Episode: 841/30000 (2.8033%),                 avg. length: 2.0,                last time consumption/overall running time: 246.6986s / 7747.1166 s
+agent0:                 episode reward: 0.3149,                 loss: nan
+agent1:                 episode reward: -0.3149,                 loss: 0.1465
+Episode: 861/30000 (2.8700%),                 avg. length: 2.0,                last time consumption/overall running time: 239.7746s / 7986.8912 s
+agent0:                 episode reward: 0.1611,                 loss: nan
+agent1:                 episode reward: -0.1611,                 loss: 0.1469
+Episode: 881/30000 (2.9367%),                 avg. length: 2.0,                last time consumption/overall running time: 253.6369s / 8240.5281 s
+agent0:                 episode reward: 0.2574,                 loss: nan
+agent1:                 episode reward: -0.2574,                 loss: 0.1487
+Episode: 901/30000 (3.0033%),                 avg. length: 2.0,                last time consumption/overall running time: 246.0415s / 8486.5696 s
+agent0:                 episode reward: -0.0661,                 loss: nan
+agent1:                 episode reward: 0.0661,                 loss: 0.1430
+Episode: 921/30000 (3.0700%),                 avg. length: 2.0,                last time consumption/overall running time: 246.7832s / 8733.3529 s
+agent0:                 episode reward: 0.1203,                 loss: nan
+agent1:                 episode reward: -0.1203,                 loss: 0.1408
+Episode: 941/30000 (3.1367%),                 avg. length: 2.0,                last time consumption/overall running time: 246.2013s / 8979.5542 s
+agent0:                 episode reward: 0.4076,                 loss: nan
+agent1:                 episode reward: -0.4076,                 loss: 0.1395
+Episode: 961/30000 (3.2033%),                 avg. length: 2.0,                last time consumption/overall running time: 250.2856s / 9229.8398 s
+agent0:                 episode reward: -0.3330,                 loss: nan
+agent1:                 episode reward: 0.3330,                 loss: 0.1394
+Episode: 981/30000 (3.2700%),                 avg. length: 2.0,                last time consumption/overall running time: 242.3438s / 9472.1836 s
+agent0:                 episode reward: -0.1556,                 loss: nan
+agent1:                 episode reward: 0.1556,                 loss: 0.1395
+Episode: 1001/30000 (3.3367%),                 avg. length: 2.0,                last time consumption/overall running time: 243.0799s / 9715.2635 s
+agent0:                 episode reward: 0.2255,                 loss: nan
+agent1:                 episode reward: -0.2255,                 loss: 0.1397
+Episode: 1021/30000 (3.4033%),                 avg. length: 2.0,                last time consumption/overall running time: 249.7170s / 9964.9805 s
+agent0:                 episode reward: 0.0905,                 loss: nan
+agent1:                 episode reward: -0.0905,                 loss: 0.1389
+Episode: 1041/30000 (3.4700%),                 avg. length: 2.0,                last time consumption/overall running time: 249.7917s / 10214.7722 s
+agent0:                 episode reward: 0.0237,                 loss: nan
+agent1:                 episode reward: -0.0237,                 loss: 0.1379
+Episode: 1061/30000 (3.5367%),                 avg. length: 2.0,                last time consumption/overall running time: 243.1814s / 10457.9536 s
+agent0:                 episode reward: -0.1776,                 loss: nan
+agent1:                 episode reward: 0.1776,                 loss: 0.1374
+Episode: 1081/30000 (3.6033%),                 avg. length: 2.0,                last time consumption/overall running time: 255.0211s / 10712.9748 s
+agent0:                 episode reward: 0.0415,                 loss: nan
+agent1:                 episode reward: -0.0415,                 loss: 0.1386
+Episode: 1101/30000 (3.6700%),                 avg. length: 2.0,                last time consumption/overall running time: 242.6665s / 10955.6413 s
+agent0:                 episode reward: -0.0626,                 loss: nan
+agent1:                 episode reward: 0.0626,                 loss: 0.1362
+Episode: 1121/30000 (3.7367%),                 avg. length: 2.0,                last time consumption/overall running time: 248.0377s / 11203.6789 s
+agent0:                 episode reward: 0.2233,                 loss: nan
+agent1:                 episode reward: -0.2233,                 loss: 0.1355
+Episode: 1141/30000 (3.8033%),                 avg. length: 2.0,                last time consumption/overall running time: 240.7208s / 11444.3997 s
+agent0:                 episode reward: 0.0832,                 loss: nan
+agent1:                 episode reward: -0.0832,                 loss: 0.1350
+Episode: 1161/30000 (3.8700%),                 avg. length: 2.0,                last time consumption/overall running time: 252.8500s / 11697.2497 s
+agent0:                 episode reward: -0.2613,                 loss: nan
+agent1:                 episode reward: 0.2613,                 loss: 0.1345
+Episode: 1181/30000 (3.9367%),                 avg. length: 2.0,                last time consumption/overall running time: 241.5811s / 11938.8308 s
+agent0:                 episode reward: 0.1333,                 loss: nan
+agent1:                 episode reward: -0.1333,                 loss: 0.1337
+Episode: 1201/30000 (4.0033%),                 avg. length: 2.0,                last time consumption/overall running time: 248.8920s / 12187.7228 s
+agent0:                 episode reward: 0.0364,                 loss: nan
+agent1:                 episode reward: -0.0364,                 loss: 0.1346
+Episode: 1221/30000 (4.0700%),                 avg. length: 2.0,                last time consumption/overall running time: 245.5587s / 12433.2815 s
+agent0:                 episode reward: 0.1190,                 loss: nan
+agent1:                 episode reward: -0.1190,                 loss: 0.1345
+Episode: 1241/30000 (4.1367%),                 avg. length: 2.0,                last time consumption/overall running time: 254.8211s / 12688.1027 s
+agent0:                 episode reward: -0.4605,                 loss: nan
+agent1:                 episode reward: 0.4605,                 loss: 0.1354
+Episode: 1261/30000 (4.2033%),                 avg. length: 2.0,                last time consumption/overall running time: 245.1351s / 12933.2378 s
+agent0:                 episode reward: -0.4494,                 loss: nan
+agent1:                 episode reward: 0.4494,                 loss: 0.1352
+Episode: 1281/30000 (4.2700%),                 avg. length: 2.0,                last time consumption/overall running time: 244.6239s / 13177.8617 s
+agent0:                 episode reward: -0.1044,                 loss: nan
+agent1:                 episode reward: 0.1044,                 loss: 0.1345
+Episode: 1301/30000 (4.3367%),                 avg. length: 2.0,                last time consumption/overall running time: 245.9150s / 13423.7767 s
+agent0:                 episode reward: -0.1183,                 loss: nan
+agent1:                 episode reward: 0.1183,                 loss: 0.1333
+Episode: 1321/30000 (4.4033%),                 avg. length: 2.0,                last time consumption/overall running time: 253.7377s / 13677.5144 s
+agent0:                 episode reward: 0.1035,                 loss: nan
+agent1:                 episode reward: -0.1035,                 loss: 0.1338
+Episode: 1341/30000 (4.4700%),                 avg. length: 2.0,                last time consumption/overall running time: 247.9051s / 13925.4195 s
+agent0:                 episode reward: 0.1519,                 loss: nan
+agent1:                 episode reward: -0.1519,                 loss: 0.1326
+Episode: 1361/30000 (4.5367%),                 avg. length: 2.0,                last time consumption/overall running time: 252.7163s / 14178.1358 s
+agent0:                 episode reward: -0.0553,                 loss: nan
+agent1:                 episode reward: 0.0553,                 loss: 0.1335
+Episode: 1381/30000 (4.6033%),                 avg. length: 2.0,                last time consumption/overall running time: 247.0581s / 14425.1939 s
