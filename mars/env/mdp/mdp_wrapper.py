@@ -62,12 +62,15 @@ class MDPWrapper():
     def visualize_MDP(self, ):
         self.env.visualize_MDP()
 
-    def NEsolver(self,):
+    def NEsolver(self, *args, **kwargs):
         try: 
-            self.Nash_v, self.Nash_q, self.Nash_strategies = self.env.NEsolver()
+            self.Nash_v, self.Nash_q, self.Nash_strategies = self.env.NEsolver(*args, **kwargs)
             # print(self.Nash_strategies)
+            return self.Nash_v, self.Nash_q, self.Nash_strategies
+
         except:
             pass
+
 
 
 if __name__ == '__main__':

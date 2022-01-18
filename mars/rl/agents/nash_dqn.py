@@ -141,7 +141,7 @@ class NashDQN(DQN):
         # self.schedulers.append(lr_scheduler)
 
         if DEBUG:
-            self.debugger = Debugger(env, "./data/nash_dqn_simple_mdp_log_ecos.pkl")
+            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log.pkl")
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:

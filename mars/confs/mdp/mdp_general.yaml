@@ -1,0 +1,35 @@
+env_args:
+    env_name: arbitrary_mdp
+    env_type: mdp
+    num_envs: 1
+    ram: True
+    seed: random
+
+agent_args:
+    algorithm: DQN
+    algorithm_spec:
+        dueling: False
+        replay_buffer_size: 1e5
+        gamma: 0.99
+        multi_step: 1
+        target_update_interval: 1000 # updates skipped to update the target
+        eps_start: 1.
+        eps_final: 0.01
+        eps_decay: 30000  # tune according to env
+
+train_args:
+    batch_size: 128
+    max_episodes: 20000
+    max_steps_per_episode: 10000
+    train_start_frame: 0
+    optimizer: adam
+    learning_rate: 1e-4  # 1e-4 for small net
+    device: gpu
+    update_itr:  1 # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
+    log_avg_window: 20 # average window length in logging
+    log_interval: 20  # log print interval 
+    multiprocess: False
+    net_architecture: 
+        hidden_dim_list: [128, 128, 128, 128] 
+        hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
+        output_activation: False # False means nan

@@ -20,12 +20,12 @@ yaml_file = prefix + method
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 args.marl_spec['global_state'] = True
-args.max_episodes = 101000
+args.max_episodes = 50100
 if parser_args.test:
     args.test = True
     args.render = True
     args.load_model_idx = parser_args.model
-args.device = 'gpu'
+args.device = 'cpu'
 ### Create env
 env = make_env(args)
 print(env)
