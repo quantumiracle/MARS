@@ -98,6 +98,9 @@ class ArbitraryMDP():
     def generate_random_trans_and_rewards(self, SameRewardForNextState=False):
         """Generate arbitrary transition matrix and reward matrix.
 
+        :param SameRewardForNextState: r(s,a) if True else r(s,a,s')
+        :type SameRewardForNextState: bool
+
         :return: the list of transition matrix and the list of reward matrix, 
         both in shape: (dim_transition, dim_state, dim_action, dim_state)
         :rtype: [type]
@@ -169,7 +172,7 @@ class ArbitraryMDP():
         one_hot_vec[s] = 1
         return one_hot_vec
 
-    def NEsolver(self,):
+    def NEsolver(self, verbose = False):
         """
         Formulas for calculating Nash equilibrium strategies and values:
         1. Nash strategies: (\pi_a^*, \pi_b^*) = \min \max Q(s,a,b), 
@@ -198,9 +201,10 @@ class ArbitraryMDP():
         self.Nash_v = self.Nash_v[::-1]
         self.Nash_q = self.Nash_q[::-1]
         self.Nash_strategies = self.Nash_strategies[::-1]
-        # print('Nash values of all states (from start to end): ', self.Nash_v)
-        # print('Nash Q-values of all states (from start to end): ', self.Nash_q)
-        # print('Nash strategies of all states (from start to end): ', self.Nash_strategies)
+        if verbose:
+            print('Nash values of all states (from start to end): \n', self.Nash_v)
+            print('Nash Q-values of all states (from start to end): \n', self.Nash_q)
+            print('Nash strategies of all states (from start to end): \n', self.Nash_strategies)
 
         ## To evaluate the correctness of the above values
         # for v, q, s in zip(self.Nash_v, self.Nash_q, self.Nash_strategies):
@@ -241,5 +245,5 @@ if __name__ == '__main__':
     print(obs)
     done = False
     while not np.any(done):
-        obs, r, done, _ = env.step([[1,0]])
+        obs, r, done, _ = env.step([1,0])
         print(obs, r, done)
