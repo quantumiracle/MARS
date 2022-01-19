@@ -130,7 +130,7 @@ def get_exploiter(exploiter_type: str, env, args):
     if exploiter_type == 'DQN':
         ## This two lines are critical!
         args.algorithm_spec['episodic_update'] = False  # nash ppo has this as true, should be false since using DQN
-        args.algorithm_spec['update_itr'] = 1  # nash-dqn has this 0.1, has to make it 1 for fair comparison with other methods
+        args.update_itr = 1  # nash-dqn has this 0.1, has to make it 1 for fair comparison with other methods
 
         exploiter = DQN(env, args)
         exploiter.reinit()
