@@ -5,3 +5,209 @@ pong_v2 pettingzoo
   warn("Converting G to a CSC matrix; may take a while.")
 /home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:29: UserWarning: Converting A to a CSC matrix; may take a while.
   warn("Converting A to a CSC matrix; may take a while.")
+random seed: [91, 69]
+<SubprocVectorEnv instance>
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=6, bias=True)
+    )
+  )
+)
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=6, bias=True)
+    )
+  )
+)
+Agents No. [1] (index starting from 0) are not learnable.
+Arguments:  {'env_name': 'pong_v2', 'env_type': 'pettingzoo', 'num_envs': 2, 'ram': True, 'seed': 'random', 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000}, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'nxdo2', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 30, 'trainable_agent_idx': 0, 'opponent_idx': 1}}
+Save models to : /home/zihan/research/MARS/data/model/20220119_0526/pettingzoo_pong_v2_nxdo2. 
+ Save logs to: /home/zihan/research/MARS/data/log/20220119_0526/pettingzoo_pong_v2_nxdo2.
+pong_v2 pettingzoo
+Load pong_v2 environment in type pettingzoo.
+Env observation space: Box(0.0, 1.0, (128,), float32) action space: Discrete(6)
+random seed: 11
+DQNBase(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=6, bias=True)
+    )
+  )
+)
+DQNBase(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=6, bias=True)
+    )
+  )
+)
+Episode: 1/10000 (0.0100%),                 avg. length: 1226.0,                last time consumption/overall running time: 27.2510s / 27.2510 s
+env0_first_0:                 episode reward: -13.0000,                 loss: 0.0103
+env0_second_0:                 episode reward: 13.0000,                 loss: nan
+env1_first_0:                 episode reward: 9.0000,                 loss: nan
+env1_second_0:                 episode reward: -9.0000,                 loss: nan
+Episode: 21/10000 (0.2100%),                 avg. length: 979.25,                last time consumption/overall running time: 406.2569s / 433.5079 s
+env0_first_0:                 episode reward: 3.1500,                 loss: 0.0021
+env0_second_0:                 episode reward: -3.1500,                 loss: nan
+env1_first_0:                 episode reward: 4.2500,                 loss: nan
+env1_second_0:                 episode reward: -4.2500,                 loss: nan
+Episode: 41/10000 (0.4100%),                 avg. length: 897.1,                last time consumption/overall running time: 380.6903s / 814.1982 s
+env0_first_0:                 episode reward: 12.3500,                 loss: 0.0017
+env0_second_0:                 episode reward: -12.3500,                 loss: 0.0051
+env1_first_0:                 episode reward: 14.0500,                 loss: nan
+env1_second_0:                 episode reward: -14.0500,                 loss: nan
+Score delta: 33.8, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/33_0.
+Episode: 61/10000 (0.6100%),                 avg. length: 1120.1,                last time consumption/overall running time: 484.1044s / 1298.3026 s
+env0_first_0:                 episode reward: 8.8000,                 loss: nan
+env0_second_0:                 episode reward: -8.8000,                 loss: 0.0030
+env1_first_0:                 episode reward: 6.7000,                 loss: nan
+env1_second_0:                 episode reward: -6.7000,                 loss: nan
+Episode: 81/10000 (0.8100%),                 avg. length: 1275.3,                last time consumption/overall running time: 575.2971s / 1873.5997 s
+env0_first_0:                 episode reward: -12.6500,                 loss: 0.0022
+env0_second_0:                 episode reward: 12.6500,                 loss: 0.0080
+env1_first_0:                 episode reward: -12.5500,                 loss: nan
+env1_second_0:                 episode reward: 12.5500,                 loss: nan
+Score delta: 32.0, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/79_1.
+Episode: 101/10000 (1.0100%),                 avg. length: 1500.6,                last time consumption/overall running time: 664.7181s / 2538.3178 s
+env0_first_0:                 episode reward: -3.9500,                 loss: 0.0073
+env0_second_0:                 episode reward: 3.9500,                 loss: nan
+env1_first_0:                 episode reward: -4.8000,                 loss: nan
+env1_second_0:                 episode reward: 4.8000,                 loss: nan
+Episode: 121/10000 (1.2100%),                 avg. length: 1356.4,                last time consumption/overall running time: 600.9813s / 3139.2991 s
+env0_first_0:                 episode reward: 11.9000,                 loss: 0.0123
+env0_second_0:                 episode reward: -11.9000,                 loss: nan
+env1_first_0:                 episode reward: 11.2000,                 loss: nan
+env1_second_0:                 episode reward: -11.2000,                 loss: nan
+Episode: 141/10000 (1.4100%),                 avg. length: 1228.6,                last time consumption/overall running time: 544.7404s / 3684.0395 s
+env0_first_0:                 episode reward: 12.5000,                 loss: 0.0124
+env0_second_0:                 episode reward: -12.5000,                 loss: nan
+env1_first_0:                 episode reward: 14.8500,                 loss: nan
+env1_second_0:                 episode reward: -14.8500,                 loss: nan
+Episode: 161/10000 (1.6100%),                 avg. length: 1456.35,                last time consumption/overall running time: 676.4317s / 4360.4713 s
+env0_first_0:                 episode reward: 4.4000,                 loss: 0.0106
+env0_second_0:                 episode reward: -4.4000,                 loss: 0.0122
+env1_first_0:                 episode reward: 3.0500,                 loss: nan
+env1_second_0:                 episode reward: -3.0500,                 loss: nan
+Score delta: 30.4, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/151_0.
+Episode: 181/10000 (1.8100%),                 avg. length: 1435.15,                last time consumption/overall running time: 1043.8039s / 5404.2751 s
+env0_first_0:                 episode reward: -10.2000,                 loss: 0.0114
+env0_second_0:                 episode reward: 10.2000,                 loss: 0.0109
+env1_first_0:                 episode reward: -12.0000,                 loss: nan
+env1_second_0:                 episode reward: 12.0000,                 loss: nan
+Score delta: 33.0, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/180_1.
+Episode: 201/10000 (2.0100%),                 avg. length: 1227.95,                last time consumption/overall running time: 607.4188s / 6011.6939 s
+env0_first_0:                 episode reward: 15.4000,                 loss: 0.0118
+env0_second_0:                 episode reward: -15.4000,                 loss: nan
+env1_first_0:                 episode reward: 12.2000,                 loss: nan
+env1_second_0:                 episode reward: -12.2000,                 loss: nan
+Score delta: 35.0, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/201_0.
+Episode: 221/10000 (2.2100%),                 avg. length: 1609.6,                last time consumption/overall running time: 713.6818s / 6725.3757 s
+env0_first_0:                 episode reward: -11.4000,                 loss: nan
+env0_second_0:                 episode reward: 11.4000,                 loss: 0.0142
+env1_first_0:                 episode reward: -11.6500,                 loss: nan
+env1_second_0:                 episode reward: 11.6500,                 loss: nan
+Episode: 241/10000 (2.4100%),                 avg. length: 1276.9,                last time consumption/overall running time: 985.4990s / 7710.8746 s
+env0_first_0:                 episode reward: 11.9500,                 loss: 0.0115
+env0_second_0:                 episode reward: -11.9500,                 loss: 0.0104
+env1_first_0:                 episode reward: 12.1000,                 loss: nan
+env1_second_0:                 episode reward: -12.1000,                 loss: nan
+Score delta: 30.4, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/223_1.
+Episode: 261/10000 (2.6100%),                 avg. length: 1354.0,                last time consumption/overall running time: 735.7017s / 8446.5763 s
+env0_first_0:                 episode reward: -2.4500,                 loss: 0.0091
+env0_second_0:                 episode reward: 2.4500,                 loss: 0.0135
+env1_first_0:                 episode reward: -4.0000,                 loss: nan
+env1_second_0:                 episode reward: 4.0000,                 loss: nan
+Score delta: 33.0, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/247_0.
+Episode: 281/10000 (2.8100%),                 avg. length: 1221.3,                last time consumption/overall running time: 846.7326s / 9293.3090 s
+env0_first_0:                 episode reward: -6.8500,                 loss: 0.0120
+env0_second_0:                 episode reward: 6.8500,                 loss: 0.0105
+env1_first_0:                 episode reward: -4.6000,                 loss: nan
+env1_second_0:                 episode reward: 4.6000,                 loss: nan
+Score delta: 32.2, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/274_1.
+Episode: 301/10000 (3.0100%),                 avg. length: 1381.85,                last time consumption/overall running time: 928.6870s / 10221.9960 s
+env0_first_0:                 episode reward: 10.4500,                 loss: 0.0098
+env0_second_0:                 episode reward: -10.4500,                 loss: 0.0133
+env1_first_0:                 episode reward: 10.8500,                 loss: nan
+env1_second_0:                 episode reward: -10.8500,                 loss: nan
+Score delta: 33.2, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/295_0.
+Episode: 321/10000 (3.2100%),                 avg. length: 1322.95,                last time consumption/overall running time: 587.8095s / 10809.8055 s
+env0_first_0:                 episode reward: -12.3500,                 loss: nan
+env0_second_0:                 episode reward: 12.3500,                 loss: 0.0108
+env1_first_0:                 episode reward: -16.4500,                 loss: nan
+env1_second_0:                 episode reward: 16.4500,                 loss: nan
+Episode: 341/10000 (3.4100%),                 avg. length: 1325.75,                last time consumption/overall running time: 1047.2182s / 11857.0237 s
+env0_first_0:                 episode reward: -0.3500,                 loss: 0.0063
+env0_second_0:                 episode reward: 0.3500,                 loss: 0.0070
+env1_first_0:                 episode reward: -0.3000,                 loss: nan
+env1_second_0:                 episode reward: 0.3000,                 loss: nan
+Score delta: 31.8, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/327_1.
+Episode: 361/10000 (3.6100%),                 avg. length: 1914.4,                last time consumption/overall running time: 845.3460s / 12702.3697 s
+env0_first_0:                 episode reward: 9.2000,                 loss: 0.0090
+env0_second_0:                 episode reward: -9.2000,                 loss: nan
+env1_first_0:                 episode reward: 10.2500,                 loss: nan
+env1_second_0:                 episode reward: -10.2500,                 loss: nan
+Episode: 381/10000 (3.8100%),                 avg. length: 1665.75,                last time consumption/overall running time: 1294.9512s / 13997.3209 s
+env0_first_0:                 episode reward: -4.1000,                 loss: 0.0102
+env0_second_0:                 episode reward: 4.1000,                 loss: 0.0065
+env1_first_0:                 episode reward: -4.9000,                 loss: nan
+env1_second_0:                 episode reward: 4.9000,                 loss: nan
+Score delta: 35.2, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/368_0.
+Episode: 401/10000 (4.0100%),                 avg. length: 2790.1,                last time consumption/overall running time: 1505.0293s / 15502.3502 s
+env0_first_0:                 episode reward: 20.2000,                 loss: 0.0096
+env0_second_0:                 episode reward: -20.2000,                 loss: 0.0066
+env1_first_0:                 episode reward: 13.0500,                 loss: nan
+env1_second_0:                 episode reward: -13.0500,                 loss: nan
+Score delta: 32.4, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/389_1.
+Episode: 421/10000 (4.2100%),                 avg. length: 2591.5,                last time consumption/overall running time: 1677.9460s / 17180.2962 s
+env0_first_0:                 episode reward: 28.9500,                 loss: 0.0121
+env0_second_0:                 episode reward: -28.9500,                 loss: 0.0071
+env1_first_0:                 episode reward: 30.4000,                 loss: nan
+env1_second_0:                 episode reward: -30.4000,                 loss: nan
+Score delta: 194.8, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/410_0.
+Episode: 441/10000 (4.4100%),                 avg. length: 1598.0,                last time consumption/overall running time: 1926.5178s / 19106.8140 s
+env0_first_0:                 episode reward: -7.3500,                 loss: 0.0125
+env0_second_0:                 episode reward: 7.3500,                 loss: 0.0064
+env1_first_0:                 episode reward: -6.5500,                 loss: nan
+env1_second_0:                 episode reward: 6.5500,                 loss: nan
+Score delta: 43.2, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/431_1.
+Episode: 461/10000 (4.6100%),                 avg. length: 2259.85,                last time consumption/overall running time: 1640.3076s / 20747.1216 s
+env0_first_0:                 episode reward: 11.0000,                 loss: 0.0105
+env0_second_0:                 episode reward: -11.0000,                 loss: 0.0128
+env1_first_0:                 episode reward: 16.6000,                 loss: nan
+env1_second_0:                 episode reward: -16.6000,                 loss: nan
+Score delta: 32.6, save the model to .//data/model/20220119_0526/pettingzoo_pong_v2_nxdo2/456_0.
+Episode: 481/10000 (4.8100%),                 avg. length: 2229.9,                last time consumption/overall running time: 981.2300s / 21728.3516 s

@@ -5,3 +5,187 @@ surround_v1 pettingzoo
   warn("Converting G to a CSC matrix; may take a while.")
 /home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:29: UserWarning: Converting A to a CSC matrix; may take a while.
   warn("Converting A to a CSC matrix; may take a while.")
+random seed: [91, 69]
+<SubprocVectorEnv instance>
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=256, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=256, out_features=256, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=256, out_features=256, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=256, out_features=256, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=256, out_features=5, bias=True)
+    )
+  )
+)
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=256, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=256, out_features=256, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=256, out_features=256, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=256, out_features=256, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=256, out_features=5, bias=True)
+    )
+  )
+)
+No agent are not learnable.
+Arguments:  {'env_name': 'surround_v1', 'env_type': 'pettingzoo', 'num_envs': 2, 'ram': True, 'seed': 'random', 'algorithm': 'NashDQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000}, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 0.1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'net_architecture': {'hidden_dim_list': [256, 256, 256, 256], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'nash_dqn', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False}}
+Save models to : /home/zihan/research/MARS/data/model/20220119_0521/pettingzoo_surround_v1_nash_dqn. 
+ Save logs to: /home/zihan/research/MARS/data/log/20220119_0521/pettingzoo_surround_v1_nash_dqn.
+Episode: 1/10000 (0.0100%),                 avg. length: 1358.0,                last time consumption/overall running time: 17.6846s / 17.6846 s
+env0_first_0:                 episode reward: -5.0000,                 loss: 0.0106
+env0_second_0:                 episode reward: 5.0000,                 loss: 0.0099
+env1_first_0:                 episode reward: -1.0000,                 loss: nan
+env1_second_0:                 episode reward: 1.0000,                 loss: nan
+Episode: 21/10000 (0.2100%),                 avg. length: 1402.45,                last time consumption/overall running time: 629.7680s / 647.4525 s
+env0_first_0:                 episode reward: 0.6000,                 loss: 0.0096
+env0_second_0:                 episode reward: -0.6000,                 loss: 0.0096
+env1_first_0:                 episode reward: -0.5500,                 loss: nan
+env1_second_0:                 episode reward: 0.5500,                 loss: nan
+Episode: 41/10000 (0.4100%),                 avg. length: 1396.4,                last time consumption/overall running time: 946.2627s / 1593.7152 s
+env0_first_0:                 episode reward: -1.1000,                 loss: 0.0094
+env0_second_0:                 episode reward: 1.1000,                 loss: 0.0098
+env1_first_0:                 episode reward: -1.0000,                 loss: nan
+env1_second_0:                 episode reward: 1.0000,                 loss: nan
+Episode: 61/10000 (0.6100%),                 avg. length: 1465.75,                last time consumption/overall running time: 1075.0797s / 2668.7949 s
+env0_first_0:                 episode reward: -0.1500,                 loss: 0.0093
+env0_second_0:                 episode reward: 0.1500,                 loss: 0.0095
+env1_first_0:                 episode reward: 0.3000,                 loss: nan
+env1_second_0:                 episode reward: -0.3000,                 loss: nan
+Episode: 81/10000 (0.8100%),                 avg. length: 1383.4,                last time consumption/overall running time: 1047.4921s / 3716.2870 s
+env0_first_0:                 episode reward: -0.8500,                 loss: 0.0096
+env0_second_0:                 episode reward: 0.8500,                 loss: 0.0100
+env1_first_0:                 episode reward: 0.2000,                 loss: nan
+env1_second_0:                 episode reward: -0.2000,                 loss: nan
+Episode: 101/10000 (1.0100%),                 avg. length: 1484.7,                last time consumption/overall running time: 1142.4370s / 4858.7241 s
+env0_first_0:                 episode reward: -0.4000,                 loss: 0.0096
+env0_second_0:                 episode reward: 0.4000,                 loss: 0.0096
+env1_first_0:                 episode reward: -1.0000,                 loss: nan
+env1_second_0:                 episode reward: 1.0000,                 loss: nan
+Episode: 121/10000 (1.2100%),                 avg. length: 1555.75,                last time consumption/overall running time: 1205.5707s / 6064.2947 s
+env0_first_0:                 episode reward: -0.3000,                 loss: 0.0093
+env0_second_0:                 episode reward: 0.3000,                 loss: 0.0094
+env1_first_0:                 episode reward: 0.0500,                 loss: nan
+env1_second_0:                 episode reward: -0.0500,                 loss: nan
+Episode: 141/10000 (1.4100%),                 avg. length: 1454.65,                last time consumption/overall running time: 1131.4361s / 7195.7309 s
+env0_first_0:                 episode reward: -0.7000,                 loss: 0.0097
+env0_second_0:                 episode reward: 0.7000,                 loss: 0.0094
+env1_first_0:                 episode reward: 0.4500,                 loss: nan
+env1_second_0:                 episode reward: -0.4500,                 loss: nan
+Episode: 161/10000 (1.6100%),                 avg. length: 1444.75,                last time consumption/overall running time: 1110.1452s / 8305.8760 s
+env0_first_0:                 episode reward: -0.6500,                 loss: 0.0096
+env0_second_0:                 episode reward: 0.6500,                 loss: 0.0094
+env1_first_0:                 episode reward: -0.5500,                 loss: nan
+env1_second_0:                 episode reward: 0.5500,                 loss: nan
+Episode: 181/10000 (1.8100%),                 avg. length: 1516.95,                last time consumption/overall running time: 1165.7371s / 9471.6131 s
+env0_first_0:                 episode reward: -0.9500,                 loss: 0.0092
+env0_second_0:                 episode reward: 0.9500,                 loss: 0.0094
+env1_first_0:                 episode reward: 0.3000,                 loss: nan
+env1_second_0:                 episode reward: -0.3000,                 loss: nan
+Episode: 201/10000 (2.0100%),                 avg. length: 1498.75,                last time consumption/overall running time: 1152.0314s / 10623.6446 s
+env0_first_0:                 episode reward: -0.4500,                 loss: 0.0090
+env0_second_0:                 episode reward: 0.4500,                 loss: 0.0094
+env1_first_0:                 episode reward: -1.6000,                 loss: nan
+env1_second_0:                 episode reward: 1.6000,                 loss: nan
+Episode: 221/10000 (2.2100%),                 avg. length: 1508.0,                last time consumption/overall running time: 1156.7927s / 11780.4372 s
+env0_first_0:                 episode reward: 0.8500,                 loss: 0.0094
+env0_second_0:                 episode reward: -0.8500,                 loss: 0.0095
+env1_first_0:                 episode reward: 0.0000,                 loss: nan
+env1_second_0:                 episode reward: 0.0000,                 loss: nan
+Episode: 241/10000 (2.4100%),                 avg. length: 1480.8,                last time consumption/overall running time: 1140.4970s / 12920.9342 s
+env0_first_0:                 episode reward: -1.9000,                 loss: 0.0093
+env0_second_0:                 episode reward: 1.9000,                 loss: 0.0092
+env1_first_0:                 episode reward: -2.1500,                 loss: nan
+env1_second_0:                 episode reward: 2.1500,                 loss: nan
+Episode: 261/10000 (2.6100%),                 avg. length: 1478.05,                last time consumption/overall running time: 1142.5602s / 14063.4944 s
+env0_first_0:                 episode reward: -0.3500,                 loss: 0.0094
+env0_second_0:                 episode reward: 0.3500,                 loss: 0.0094
+env1_first_0:                 episode reward: -1.0000,                 loss: nan
+env1_second_0:                 episode reward: 1.0000,                 loss: nan
+Episode: 281/10000 (2.8100%),                 avg. length: 1440.8,                last time consumption/overall running time: 1106.4523s / 15169.9468 s
+env0_first_0:                 episode reward: -2.9000,                 loss: 0.0095
+env0_second_0:                 episode reward: 2.9000,                 loss: 0.0092
+env1_first_0:                 episode reward: 0.6000,                 loss: nan
+env1_second_0:                 episode reward: -0.6000,                 loss: nan
+Episode: 301/10000 (3.0100%),                 avg. length: 1482.45,                last time consumption/overall running time: 1138.1132s / 16308.0600 s
+env0_first_0:                 episode reward: -1.3000,                 loss: 0.0090
+env0_second_0:                 episode reward: 1.3000,                 loss: 0.0093
+env1_first_0:                 episode reward: -1.0000,                 loss: nan
+env1_second_0:                 episode reward: 1.0000,                 loss: nan
+Episode: 321/10000 (3.2100%),                 avg. length: 1492.75,                last time consumption/overall running time: 1144.4965s / 17452.5564 s
+env0_first_0:                 episode reward: -0.4500,                 loss: 0.0095
+env0_second_0:                 episode reward: 0.4500,                 loss: 0.0091
+env1_first_0:                 episode reward: -1.3000,                 loss: nan
+env1_second_0:                 episode reward: 1.3000,                 loss: nan
+Episode: 341/10000 (3.4100%),                 avg. length: 1483.0,                last time consumption/overall running time: 1143.9934s / 18596.5498 s
+env0_first_0:                 episode reward: 0.0000,                 loss: 0.0094
+env0_second_0:                 episode reward: 0.0000,                 loss: 0.0092
+env1_first_0:                 episode reward: -1.1000,                 loss: nan
+env1_second_0:                 episode reward: 1.1000,                 loss: nan
+Episode: 361/10000 (3.6100%),                 avg. length: 1459.5,                last time consumption/overall running time: 1127.5169s / 19724.0667 s
+env0_first_0:                 episode reward: -2.5500,                 loss: 0.0092
+env0_second_0:                 episode reward: 2.5500,                 loss: 0.0092
+env1_first_0:                 episode reward: -0.4500,                 loss: nan
+env1_second_0:                 episode reward: 0.4500,                 loss: nan
+Episode: 381/10000 (3.8100%),                 avg. length: 1476.0,                last time consumption/overall running time: 1139.3133s / 20863.3800 s
+env0_first_0:                 episode reward: -1.5500,                 loss: 0.0088
+env0_second_0:                 episode reward: 1.5500,                 loss: 0.0087
+env1_first_0:                 episode reward: -1.9000,                 loss: nan
+env1_second_0:                 episode reward: 1.9000,                 loss: nan
+Episode: 401/10000 (4.0100%),                 avg. length: 1446.1,                last time consumption/overall running time: 1119.1992s / 21982.5792 s
+env0_first_0:                 episode reward: -1.0500,                 loss: 0.0088
+env0_second_0:                 episode reward: 1.0500,                 loss: 0.0089
+env1_first_0:                 episode reward: -1.1000,                 loss: nan
+env1_second_0:                 episode reward: 1.1000,                 loss: nan
+Episode: 421/10000 (4.2100%),                 avg. length: 1383.65,                last time consumption/overall running time: 1066.7920s / 23049.3712 s
+env0_first_0:                 episode reward: -2.7500,                 loss: 0.0089
+env0_second_0:                 episode reward: 2.7500,                 loss: 0.0086
+env1_first_0:                 episode reward: -2.1000,                 loss: nan
+env1_second_0:                 episode reward: 2.1000,                 loss: nan
+Episode: 441/10000 (4.4100%),                 avg. length: 1483.95,                last time consumption/overall running time: 1146.1447s / 24195.5159 s
+env0_first_0:                 episode reward: -0.9000,                 loss: 0.0085
+env0_second_0:                 episode reward: 0.9000,                 loss: 0.0087
+env1_first_0:                 episode reward: -1.2500,                 loss: nan
+env1_second_0:                 episode reward: 1.2500,                 loss: nan
+Episode: 461/10000 (4.6100%),                 avg. length: 1470.2,                last time consumption/overall running time: 1135.7065s / 25331.2224 s
+env0_first_0:                 episode reward: -0.4000,                 loss: 0.0090
+env0_second_0:                 episode reward: 0.4000,                 loss: 0.0089
+env1_first_0:                 episode reward: 0.0000,                 loss: nan
+env1_second_0:                 episode reward: 0.0000,                 loss: nan
+Episode: 481/10000 (4.8100%),                 avg. length: 1484.7,                last time consumption/overall running time: 1144.3712s / 26475.5936 s
+env0_first_0:                 episode reward: -1.8000,                 loss: 0.0087
+env0_second_0:                 episode reward: 1.8000,                 loss: 0.0088
+env1_first_0:                 episode reward: -1.1500,                 loss: nan
+env1_second_0:                 episode reward: 1.1500,                 loss: nan
+Episode: 501/10000 (5.0100%),                 avg. length: 1443.25,                last time consumption/overall running time: 1120.0289s / 27595.6225 s
+env0_first_0:                 episode reward: -2.3000,                 loss: 0.0090
+env0_second_0:                 episode reward: 2.3000,                 loss: 0.0089
+env1_first_0:                 episode reward: -2.3500,                 loss: nan
+env1_second_0:                 episode reward: 2.3500,                 loss: nan
+Episode: 521/10000 (5.2100%),                 avg. length: 1405.7,                last time consumption/overall running time: 1080.3074s / 28675.9299 s
+env0_first_0:                 episode reward: -2.3000,                 loss: 0.0083
+env0_second_0:                 episode reward: 2.3000,                 loss: 0.0082
+env1_first_0:                 episode reward: -3.0500,                 loss: nan
+env1_second_0:                 episode reward: 3.0500,                 loss: nan
+Episode: 541/10000 (5.4100%),                 avg. length: 1308.75,                last time consumption/overall running time: 1004.1153s / 29680.0453 s
+env0_first_0:                 episode reward: -4.4500,                 loss: 0.0081
+env0_second_0:                 episode reward: 4.4500,                 loss: 0.0080
+env1_first_0:                 episode reward: -3.2000,                 loss: nan
+env1_second_0:                 episode reward: 3.2000,                 loss: nan
+Episode: 561/10000 (5.6100%),                 avg. length: 1352.05,                last time consumption/overall running time: 1043.1367s / 30723.1820 s
+env0_first_0:                 episode reward: -3.7000,                 loss: 0.0080
+env0_second_0:                 episode reward: 3.7000,                 loss: 0.0078
+env1_first_0:                 episode reward: -3.3500,                 loss: nan
+env1_second_0:                 episode reward: 3.3500,                 loss: nan
+Episode: 581/10000 (5.8100%),                 avg. length: 1447.05,                last time consumption/overall running time: 1120.5895s / 31843.7715 s
+env0_first_0:                 episode reward: -2.6000,                 loss: 0.0081
+env0_second_0:                 episode reward: 2.6000,                 loss: 0.0081
