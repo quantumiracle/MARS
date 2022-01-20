@@ -54,7 +54,7 @@ class Debugger():
         self.oracle_nash_strategies = np.vstack(self.env.Nash_strategies) # flatten to shape dim 1
         self.oracle_nash_values = np.concatenate(self.env.Nash_v) # flatten to shape dim 1
         self.oracle_nash_q_values = np.concatenate(self.env.Nash_q) # flatten to shape dim 1
-
+        print(self.oracle_nash_q_values)
     def compare_with_oracle(self, state, dists, ne_vs, verbose=False):
         """[summary]
 
@@ -85,6 +85,7 @@ class Debugger():
                 kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                 self.kl_dist_list[j].append(kl_dist)
                 mse_v = float((ne_v - ne_vs)**2) # squared error of Nash values (predicted and oracle)
+                print(ne_v, ne_vs)
                 self.mse_v_list[j].append(mse_v)
                 mse_exp = float((ne_v - br_v)**2)  # the target value of best response value (exploitability) should be the Nash value
                 self.mse_exp_list[j].append(mse_exp)
@@ -169,7 +170,6 @@ class NashDQN(DQN):
                 actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
 
             if DEBUG: ## test on arbitrary MDP
-                # actions, dists, ne_vs = self.compute_nash_deprecated(q_values) 
                 self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
 
         else:
@@ -181,7 +181,7 @@ class NashDQN(DQN):
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
         return actions
 
-    def compute_nash_deprecated(self, q_values, return_dist_only=False):
+    def compute_nash(self, q_values, update=False):
         """
         Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
         """
@@ -200,6 +200,7 @@ class NashDQN(DQN):
                 # ne = NashEquilibriumCVXPYSolver(qs)
                 # ne = NashEquilibriumGUROBISolver(qs)
                 ne, ne_v = NashEquilibriumECOSSolver(qs)
+                ne_v = ne[0]@qs@ne[1].T
                 # ne, ne_v = NashEquilibriumMWUSolver(qs)
             except:  # some cases NE cannot be solved
                 print('No Nash solution for: ', np.linalg.det(qs), qs)
@@ -223,36 +224,36 @@ class NashDQN(DQN):
                 actions.append(a)
             all_actions.append(np.array(actions).reshape(-1))
 
-        if return_dist_only:
-            return all_dists
+        if update:
+            return all_dists, all_ne_values
         else: # return samples actions, nash strategies, nash values
             return np.array(all_actions), all_dists, all_ne_values
 
-    def compute_nash(self, q_values, return_dist_only=False):
-        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
-        all_actions = []
-        all_dists = []
-        all_ne_values = []
-        all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+    # def compute_nash(self, q_values, update=False):
+    #     q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
+    #     all_actions = []
+    #     all_dists = []
+    #     all_ne_values = []
+    #     all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
 
-        if return_dist_only:
-            return all_dists
-        else:
-            # Sample actions from Nash strategies
-            for ne in all_dists:
-                actions = []
-                for dist in ne:  # iterate over agents
-                    try:
-                        sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
-                    except:
-                        print('Not a valid distribution from Nash equilibrium solution.')
-                        print(sum(ne[0]), sum(ne[1]))
-                        print(dist)
-                    a = np.where(sample_hist>0)
-                    actions.append(a)
-                all_actions.append(np.array(actions).reshape(-1))
+    #     if update:
+    #         return all_dists, all_ne_values
+    #     else:
+    #         # Sample actions from Nash strategies
+    #         for ne in all_dists:
+    #             actions = []
+    #             for dist in ne:  # iterate over agents
+    #                 try:
+    #                     sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
+    #                 except:
+    #                     print('Not a valid distribution from Nash equilibrium solution.')
+    #                     print(sum(ne[0]), sum(ne[1]))
+    #                     print(dist)
+    #                 a = np.where(sample_hist>0)
+    #                 actions.append(a)
+    #             all_actions.append(np.array(actions).reshape(-1))
 
-        return np.array(all_actions), all_dists, all_ne_values
+    #     return np.array(all_actions), all_dists, all_ne_values
 
 
     def compute_cce(self, q_values, return_dist=False):
@@ -311,20 +312,28 @@ class NashDQN(DQN):
         #     next_q_value = torch.einsum('bij,bij->b', cce_dists_, target_next_q_values_)
 
         # else: # Nash Equilibrium
-        try: # nash computation may report error and terminate the process
-            nash_dists = self.compute_nash(target_next_q_values, return_dist_only=True)  # get the mixed strategy Nash rather than specific actions
-        except: # take a uniform distribution instead
+        # try: # nash computation may report error and terminate the process
+        #     nash_dists, _ = self.compute_nash(target_next_q_values, update=True)  # get the mixed strategy Nash rather than specific actions
+        # except: # take a uniform distribution instead
+        #     print("Invalid nash computation.")
+        #     nash_dists = np.ones((*action.shape, self.action_dims))/float(self.action_dims)
+        # target_next_q_values_ = target_next_q_values_.reshape(-1, action_dim, action_dim)
+        # nash_dists_  = torch.FloatTensor(nash_dists).to(self.device)
+        # next_q_value = torch.einsum('bk,bk->b', torch.einsum('bj,bjk->bk', nash_dists_[:, 0], target_next_q_values_), nash_dists_[:, 1])
+
+        try: # nash computation may encounter error and terminate the process
+            _, next_q_value = self.compute_nash(target_next_q_values, update=True)
+        except: 
             print("Invalid nash computation.")
-            nash_dists = np.ones((*action.shape, self.action_dims))/float(self.action_dims)
-        target_next_q_values_ = target_next_q_values_.reshape(-1, action_dim, action_dim)
-        nash_dists_  = torch.FloatTensor(nash_dists).to(self.device)
-        next_q_value = torch.einsum('bk,bk->b', torch.einsum('bj,bjk->bk', nash_dists_[:, 0], target_next_q_values_), nash_dists_[:, 1])
+            next_q_value = np.zeros_like(reward)
+        next_q_value  = torch.FloatTensor(next_q_value).to(self.device)
         
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
 
         # Huber Loss
         # loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
-        loss = F.mse_loss(q_value, expected_q_value.detach())
+        loss = F.mse_loss(q_value, expected_q_value.detach(), reduction='none')
+
         loss = loss.mean()
 
         self.optimizer.zero_grad()
