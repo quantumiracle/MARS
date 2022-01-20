@@ -9,14 +9,14 @@ agent_args:
   algorithm: NashPPO
   algorithm_spec:
     episodic_update: true
-    gamma: 1.
+    gamma: 0.99
     lambda: 0.95
     eps_clip: 0.2
     K_epoch: 4
     GAE: true
 
 train_args:
-  batch_size: 64
+  batch_size: 640
   max_episodes: 100000
   max_steps_per_episode: 10000
   train_start_frame: 0
