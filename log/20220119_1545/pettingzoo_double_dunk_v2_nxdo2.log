@@ -5,3 +5,122 @@ double_dunk_v2 pettingzoo
   warn("Converting G to a CSC matrix; may take a while.")
 /home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:29: UserWarning: Converting A to a CSC matrix; may take a while.
   warn("Converting A to a CSC matrix; may take a while.")
+random seed: [91, 69]
+<SubprocVectorEnv instance>
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=18, bias=True)
+    )
+  )
+)
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=18, bias=True)
+    )
+  )
+)
+Agents No. [1] (index starting from 0) are not learnable.
+Arguments:  {'env_name': 'double_dunk_v2', 'env_type': 'pettingzoo', 'num_envs': 2, 'ram': True, 'seed': 'random', 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000}, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'nxdo2', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 50, 'trainable_agent_idx': 0, 'opponent_idx': 1}}
+Save models to : /home/zihan/research/MARS/data/model/20220119_1545/pettingzoo_double_dunk_v2_nxdo2. 
+ Save logs to: /home/zihan/research/MARS/data/log/20220119_1545/pettingzoo_double_dunk_v2_nxdo2.
+double_dunk_v2 pettingzoo
+Load double_dunk_v2 environment in type pettingzoo.
+Env observation space: Box(0.0, 1.0, (128,), float32) action space: Discrete(18)
+random seed: 11
+DQNBase(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=18, bias=True)
+    )
+  )
+)
+DQNBase(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=18, bias=True)
+    )
+  )
+)
+Episode: 1/10000 (0.0100%),                 avg. length: 9999.0,                last time consumption/overall running time: 226.8930s / 226.8930 s
+env0_first_0:                 episode reward: 327.0000,                 loss: 0.0158
+env0_second_0:                 episode reward: -327.0000,                 loss: nan
+env1_first_0:                 episode reward: 331.0000,                 loss: nan
+env1_second_0:                 episode reward: -331.0000,                 loss: nan
+Episode: 21/10000 (0.2100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5200.3421s / 5427.2351 s
+env0_first_0:                 episode reward: 328.0000,                 loss: 0.0181
+env0_second_0:                 episode reward: -328.0000,                 loss: nan
+env1_first_0:                 episode reward: 327.8000,                 loss: nan
+env1_second_0:                 episode reward: -327.8000,                 loss: nan
+Score delta: 655.6, save the model to .//data/model/20220119_1545/pettingzoo_double_dunk_v2_nxdo2/21_0.
+Episode: 41/10000 (0.4100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5238.3387s / 10665.5738 s
+env0_first_0:                 episode reward: -327.6000,                 loss: nan
+env0_second_0:                 episode reward: 327.6000,                 loss: 0.0161
+env1_first_0:                 episode reward: -327.6000,                 loss: nan
+env1_second_0:                 episode reward: 327.6000,                 loss: nan
+Episode: 61/10000 (0.6100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5495.9464s / 16161.5202 s
+env0_first_0:                 episode reward: 294.5000,                 loss: 0.0162
+env0_second_0:                 episode reward: -294.5000,                 loss: 0.0162
+env1_first_0:                 episode reward: 293.9500,                 loss: nan
+env1_second_0:                 episode reward: -293.9500,                 loss: nan
+Score delta: 654.8, save the model to .//data/model/20220119_1545/pettingzoo_double_dunk_v2_nxdo2/42_1.
+Episode: 81/10000 (0.8100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5458.9792s / 21620.4994 s
+env0_first_0:                 episode reward: -261.7500,                 loss: 0.0162
+env0_second_0:                 episode reward: 261.7500,                 loss: 0.0162
+env1_first_0:                 episode reward: -261.8000,                 loss: nan
+env1_second_0:                 episode reward: 261.8000,                 loss: nan
+Score delta: 653.6, save the model to .//data/model/20220119_1545/pettingzoo_double_dunk_v2_nxdo2/63_0.
+Episode: 101/10000 (1.0100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5711.0384s / 27331.5378 s
+env0_first_0:                 episode reward: 228.7000,                 loss: 0.0162
+env0_second_0:                 episode reward: -228.7000,                 loss: 0.0162
+env1_first_0:                 episode reward: 229.1000,                 loss: nan
+env1_second_0:                 episode reward: -229.1000,                 loss: nan
+Score delta: 654.6, save the model to .//data/model/20220119_1545/pettingzoo_double_dunk_v2_nxdo2/84_1.
+Episode: 121/10000 (1.2100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5723.0339s / 33054.5717 s
+env0_first_0:                 episode reward: -196.9500,                 loss: 0.0162
+env0_second_0:                 episode reward: 196.9500,                 loss: 0.0162
+env1_first_0:                 episode reward: -197.0000,                 loss: nan
+env1_second_0:                 episode reward: 197.0000,                 loss: nan
+Score delta: 654.4, save the model to .//data/model/20220119_1545/pettingzoo_double_dunk_v2_nxdo2/105_0.
+Episode: 141/10000 (1.4100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5957.4537s / 39012.0254 s
+env0_first_0:                 episode reward: 162.8000,                 loss: 0.0161
+env0_second_0:                 episode reward: -162.8000,                 loss: 0.0161
+env1_first_0:                 episode reward: 162.9500,                 loss: nan
+env1_second_0:                 episode reward: -162.9500,                 loss: nan
+Score delta: 656.2, save the model to .//data/model/20220119_1545/pettingzoo_double_dunk_v2_nxdo2/126_1.
+Episode: 161/10000 (1.6100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5976.9742s / 44988.9996 s
+env0_first_0:                 episode reward: -126.4500,                 loss: 0.0161
+env0_second_0:                 episode reward: 126.4500,                 loss: 0.0162

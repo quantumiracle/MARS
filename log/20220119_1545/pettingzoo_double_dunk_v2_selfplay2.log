@@ -5,3 +5,105 @@ double_dunk_v2 pettingzoo
   warn("Converting G to a CSC matrix; may take a while.")
 /home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:29: UserWarning: Converting A to a CSC matrix; may take a while.
   warn("Converting A to a CSC matrix; may take a while.")
+random seed: [91, 69]
+<SubprocVectorEnv instance>
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=18, bias=True)
+    )
+  )
+)
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=128, bias=True)
+      (7): ReLU()
+      (8): Linear(in_features=128, out_features=18, bias=True)
+    )
+  )
+)
+Agents No. [1] (index starting from 0) are not learnable.
+Arguments:  {'env_name': 'double_dunk_v2', 'env_type': 'pettingzoo', 'num_envs': 2, 'ram': True, 'seed': 'random', 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.01, 'eps_decay': 30000}, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'selfplay2', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 50, 'trainable_agent_idx': 0, 'opponent_idx': 1}}
+Save models to : /home/zihan/research/MARS/data/model/20220119_1545/pettingzoo_double_dunk_v2_selfplay2. 
+ Save logs to: /home/zihan/research/MARS/data/log/20220119_1545/pettingzoo_double_dunk_v2_selfplay2.
+Episode: 1/10000 (0.0100%),                 avg. length: 9999.0,                last time consumption/overall running time: 234.5166s / 234.5166 s
+env0_first_0:                 episode reward: 331.0000,                 loss: 0.0161
+env0_second_0:                 episode reward: -331.0000,                 loss: nan
+env1_first_0:                 episode reward: 328.0000,                 loss: nan
+env1_second_0:                 episode reward: -328.0000,                 loss: nan
+Episode: 21/10000 (0.2100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5297.8121s / 5532.3286 s
+env0_first_0:                 episode reward: 326.2000,                 loss: 0.3697
+env0_second_0:                 episode reward: -326.2000,                 loss: nan
+env1_first_0:                 episode reward: 326.6000,                 loss: nan
+env1_second_0:                 episode reward: -326.6000,                 loss: nan
+Score delta: 653.2, update the opponent.
+Episode: 41/10000 (0.4100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5329.5721s / 10861.9007 s
+env0_first_0:                 episode reward: -305.7000,                 loss: nan
+env0_second_0:                 episode reward: 305.7000,                 loss: 0.7409
+env1_first_0:                 episode reward: -288.2000,                 loss: nan
+env1_second_0:                 episode reward: 288.2000,                 loss: nan
+Episode: 61/10000 (0.6100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5339.0374s / 16200.9381 s
+env0_first_0:                 episode reward: 291.8500,                 loss: 0.0480
+env0_second_0:                 episode reward: -291.8500,                 loss: 0.0605
+env1_first_0:                 episode reward: 291.7500,                 loss: nan
+env1_second_0:                 episode reward: -291.7500,                 loss: nan
+Score delta: 645.0, update the opponent.
+Episode: 81/10000 (0.8100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5329.5628s / 21530.5008 s
+env0_first_0:                 episode reward: -238.2000,                 loss: 0.0266
+env0_second_0:                 episode reward: 238.2000,                 loss: 0.0196
+env1_first_0:                 episode reward: -245.0000,                 loss: nan
+env1_second_0:                 episode reward: 245.0000,                 loss: nan
+Score delta: 648.4, update the opponent.
+Episode: 101/10000 (1.0100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5322.7344s / 26853.2352 s
+env0_first_0:                 episode reward: 223.2500,                 loss: 0.0168
+env0_second_0:                 episode reward: -223.2500,                 loss: 0.0184
+env1_first_0:                 episode reward: 231.8500,                 loss: nan
+env1_second_0:                 episode reward: -231.8500,                 loss: nan
+Score delta: 641.4, update the opponent.
+Episode: 121/10000 (1.2100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5324.3909s / 32177.6261 s
+env0_first_0:                 episode reward: -174.1500,                 loss: 0.0160
+env0_second_0:                 episode reward: 174.1500,                 loss: 0.0141
+env1_first_0:                 episode reward: -140.4000,                 loss: nan
+env1_second_0:                 episode reward: 140.4000,                 loss: nan
+Score delta: 630.0, update the opponent.
+Episode: 141/10000 (1.4100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5321.3168s / 37498.9428 s
+env0_first_0:                 episode reward: 146.4000,                 loss: 0.0158
+env0_second_0:                 episode reward: -146.4000,                 loss: 0.0149
+env1_first_0:                 episode reward: 150.4500,                 loss: nan
+env1_second_0:                 episode reward: -150.4500,                 loss: nan
+Score delta: 615.8, update the opponent.
+Episode: 161/10000 (1.6100%),                 avg. length: 9730.8,                last time consumption/overall running time: 5181.1411s / 42680.0839 s
+env0_first_0:                 episode reward: -57.3500,                 loss: 0.0160
+env0_second_0:                 episode reward: 57.3500,                 loss: 0.0134
+env1_first_0:                 episode reward: -4.4000,                 loss: nan
+env1_second_0:                 episode reward: 4.4000,                 loss: nan
+Score delta: 610.0, update the opponent.
+Episode: 181/10000 (1.8100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5324.2241s / 48004.3080 s
+env0_first_0:                 episode reward: 55.2500,                 loss: 0.0138
+env0_second_0:                 episode reward: -55.2500,                 loss: 0.0140
+env1_first_0:                 episode reward: 13.5000,                 loss: nan
+env1_second_0:                 episode reward: -13.5000,                 loss: nan
+Score delta: 465.8, update the opponent.
+Episode: 201/10000 (2.0100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5324.4202s / 53328.7282 s
+env0_first_0:                 episode reward: -90.0500,                 loss: 0.0132
+env0_second_0:                 episode reward: 90.0500,                 loss: 0.0143
+env1_first_0:                 episode reward: -61.4000,                 loss: nan
+env1_second_0:                 episode reward: 61.4000,                 loss: nan
+Score delta: 410.4, update the opponent.
+Episode: 221/10000 (2.2100%),                 avg. length: 9999.0,                last time consumption/overall running time: 5325.3934s / 58654.1216 s
+env0_first_0:                 episode reward: 9.4000,                 loss: 0.0166
