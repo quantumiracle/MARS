@@ -238,7 +238,8 @@ if __name__ == '__main__':
 
     # two agent version
     env = MDPWrapper(ArbitraryMDP())
-    env.NEsolver()
+    nash_v, _, _ = env.NEsolver()
+    print('oracle nash v star: ', np.mean(nash_v[0], axis=0))  # the average nash value for initial states from max-player's view
     print(env.observation_space, env.action_space)
     # env.render()
     obs = env.reset()
