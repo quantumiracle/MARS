@@ -136,13 +136,13 @@ class NashPPO(Agent):
         logprobs = []
         if Greedy:
             for policy, state_per_agent in zip(self.policies, s):
-                prob = policy(torch.from_numpy(state_per_agent).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
+                prob = policy(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
                 a = torch.argmax(prob, dim=-1).detach().cpu().numpy()
                 actions.append(a)
             return actions
         else:
             for policy, state_per_agent in zip(self.policies, s):
-                prob = policy(torch.from_numpy(state_per_agent).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
+                prob = policy(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
                 dist = Categorical(prob)
                 a = dist.sample()
                 logprob = dist.log_prob(a)
