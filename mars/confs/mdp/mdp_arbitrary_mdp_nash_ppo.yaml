@@ -10,10 +10,10 @@ agent_args:
   algorithm_spec:
     episodic_update: true
     gamma: 1.0
-    lambda: 0.95
+    lambda: 0.0  # standard TD
     eps_clip: 0.2
     K_epoch: 4
-    GAE: true
+    GAE: false  # there is just no GAE in NashPPO
 
 train_args:
   batch_size: 640
@@ -31,16 +31,16 @@ train_args:
   net_architecture:
     policy:
       hidden_dim_list:
-      - 32
-      - 32
-      - 32
+      - 128
+      - 128
+      - 128
       hidden_activation: ReLU
       output_activation: Softmax
     value:
       hidden_dim_list:
-      - 32
-      - 32
-      - 32
+      - 128
+      - 128
+      - 128
       hidden_activation: ReLU
       output_activation: false
   marl_method: nash_ppo
