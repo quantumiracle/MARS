@@ -46,9 +46,9 @@ class NFSP(Agent):
         self.is_best_response = False
         if random.random() > self.eta:
             if self.args.num_envs == 1:
-                prob = self.policy(torch.from_numpy(state).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
+                prob = self.policy(torch.from_numpy(np.array(state)).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
             else:
-                prob = self.policy(torch.from_numpy(state).float().to(self.device)).squeeze()  # make sure input state shape is correct
+                prob = self.policy(torch.from_numpy(np.array(state)).float().to(self.device)).squeeze()  # make sure input state shape is correct
 
             dist = Categorical(prob)
             action = dist.sample()

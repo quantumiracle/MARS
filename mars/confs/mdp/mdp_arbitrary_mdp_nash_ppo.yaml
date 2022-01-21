@@ -9,7 +9,7 @@ agent_args:
   algorithm: NashPPO
   algorithm_spec:
     episodic_update: true
-    gamma: 0.99
+    gamma: 1.0
     lambda: 0.95
     eps_clip: 0.2
     K_epoch: 4
@@ -31,16 +31,16 @@ train_args:
   net_architecture:
     policy:
       hidden_dim_list:
-      - 128
-      - 128
-      - 128
+      - 32
+      - 32
+      - 32
       hidden_activation: ReLU
       output_activation: Softmax
     value:
       hidden_dim_list:
-      - 128
-      - 128
-      - 128
+      - 32
+      - 32
+      - 32
       hidden_activation: ReLU
       output_activation: false
   marl_method: nash_ppo
