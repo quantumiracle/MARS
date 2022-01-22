@@ -131,7 +131,8 @@ def get_exploiter(exploiter_type: str, env, args):
         ## This two lines are critical!
         args.algorithm_spec['episodic_update'] = False  # nash ppo has this as true, should be false since using DQN
         args.update_itr = 1  # nash-dqn has this 0.1, has to make it 1 for fair comparison with other methods
-
+        if 'PPO' in args.algorithm:  # in PPO conf there is not network specification for DQN
+            args.net_architecture = args.net_architecture['value']  # make exploiter same net as the value net in PPO
         exploiter = DQN(env, args)
         exploiter.reinit()
         exploitation_args = args

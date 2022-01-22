@@ -59,7 +59,7 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False):
     return final_policy, nash_value
 
 
-def NashEquilibriumParallelMWUSolver(A, Itr=100, verbose=False):
+def NashEquilibriumParallelMWUSolver(A, Itr=500, verbose=False):
     """ Solve mulitple Nash equilibrium with multiplicative weights udpate."""
     A = np.array(A)
     matrix_num = A.shape[0]
