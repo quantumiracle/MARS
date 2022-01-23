@@ -200,7 +200,7 @@ class ArbitraryMDP():
             self.Nash_strategies.append(ne_strategies)
         self.Nash_v = self.Nash_v[::-1]
         self.Nash_q = self.Nash_q[::-1]
-        self.Nash_strategies = self.Nash_strategies[::-1]
+        self.Nash_strategies = self.Nash_strategies[::-1]  # (dim_transition, dim_state, #players, dim_action)
         if verbose:
             print('Nash values of all states (from start to end): \n', self.Nash_v)
             print('Nash Q-values of all states (from start to end): \n', self.Nash_q)
@@ -238,7 +238,9 @@ if __name__ == '__main__':
 
     # two agent version
     env = MDPWrapper(ArbitraryMDP())
-    nash_v, _, _ = env.NEsolver()
+    nash_v, _, nash_strategies = env.NEsolver()
+    print(nash_strategies, np.array(nash_strategies).shape)
+    # np.save('../../../data/nash_dqn_test/oracle_nash.npy', nash_strategies)
     print('oracle nash v star: ', np.mean(nash_v[0], axis=0))  # the average nash value for initial states from max-player's view
     print(env.observation_space, env.action_space)
     # env.render()

@@ -6,5 +6,6 @@ from .nash_ppo import NashPPO
 from .nfsp import NFSP
 from .ppo import PPO
 from .ga import GA
+from .oracle_agent import OracleAgent
 # from .agent import Agent
 # from .multiagent import MultiAgent

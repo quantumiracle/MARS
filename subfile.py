@@ -27,8 +27,8 @@ def iters_filter(folder, max_itr):
 def subfiles_generate(filename, method):
     olddir = folder+filename
 
-    for i in range(1, 11):
-        idx = 10000 * i
+    for i in range(1, 6):
+        idx = 2000 * i
         
         newpath = olddir + f'/epi_{idx}/'
         oldpath = olddir + f'/mdp_arbitrary_mdp_{method}/'
@@ -46,5 +46,5 @@ def subfiles_generate(filename, method):
         os.rename(newpath+f'{idx}_policy_checkpoints.npy', newpath+'policy_checkpoints.npy')
 
 
-subfiles_generate('20220117153310', method='fictitious_selfplay2')
-# subfiles_generate('20220116204408', method='nxdo2')
+# subfiles_generate('20220120201250', method='fictitious_selfplay2')
+subfiles_generate('20220120195910', method='nxdo2')

@@ -22,7 +22,8 @@ class Agent(object):
     def choose_action(
         self, 
         state: List[StateType], 
-        *args
+        *args,
+        **kwargs
         ) -> List[ActionType]:
         pass
 
@@ -51,10 +52,10 @@ class Agent(object):
         """
         target_model.load_state_dict(current_model.state_dict())
 
-    def save_model(self, path: str = None):
+    def save_model(self, path: str = None, *args, **kwargs):
         pass
 
-    def load_model(self, path: str = None):
+    def load_model(self, path: str = None, *args, **kwargs):
         pass
 
     @property
