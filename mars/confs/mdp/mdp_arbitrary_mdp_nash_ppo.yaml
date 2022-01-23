@@ -9,11 +9,11 @@ agent_args:
   algorithm: NashPPO
   algorithm_spec:
     episodic_update: true
-    gamma: 0.99
-    lambda: 0.95
+    gamma: 1.0
+    lambda: 0.0  # standard TD
     eps_clip: 0.2
     K_epoch: 4
-    GAE: true
+    GAE: false  # there is just no GAE in NashPPO
 
 train_args:
   batch_size: 640

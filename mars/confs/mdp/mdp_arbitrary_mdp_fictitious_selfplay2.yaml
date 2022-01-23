@@ -10,12 +10,12 @@ agent_args:
     algorithm_spec:
         dueling: false
         replay_buffer_size: 1e5
-        gamma: 0.99
+        gamma: 1.
         multi_step: 1
         target_update_interval: 1000
         eps_start: 1.0
         eps_final: 0.01
-        eps_decay: 30000
+        eps_decay: 8000
 
 train_args:
     batch_size: 640
@@ -32,8 +32,8 @@ train_args:
     # test: True
     # load_model_idx: 0/1
     net_architecture: 
-        hidden_dim_list: [128, 128, 128] 
-        # hidden_dim_list: [32, 32, 32] 
+        # hidden_dim_list: [128, 128, 128] 
+        hidden_dim_list: [32, 32, 32] 
         hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
         output_activation: False # False means nan
 
