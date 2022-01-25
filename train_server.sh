@@ -7,12 +7,12 @@ echo "Save as: " $DATE
 declare -a envs=('slimevolley_SlimeVolley-v0')
 
 # declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter' 'nash_ppo')
-declare -a methods=('nash_dqn' 'nash_dqn_exploiter')
+declare -a methods=('nash_dqn' 'nash_dqn_exploiter' 'nash_ppo')
 mkdir -p log/$DATE
 
 for i in ${!envs[@]}; do
     for j in ${!methods[@]}; do
-        echo CUDA_VISIBLE_DEVICES=$j python general_train.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
-        CUDA_VISIBLE_DEVICES=$j nohup python general_train.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        echo CUDA_VISIBLE_DEVICES=$i python general_train.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        CUDA_VISIBLE_DEVICES=$i nohup python general_train.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
     done
 done
