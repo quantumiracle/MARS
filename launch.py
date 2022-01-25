@@ -22,14 +22,14 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nxdo2'][-3]   # nash_ppo are trained in train.py, cannot user here!
+            'nxdo2'][-3]   # nash_ppo are trained in train.py, cannot apply here!
 
 
 if __name__ == '__main__':
     args = get_general_args(game_type+'_'+game, method)
+    args.num_process = 1  # specify number of processes
     multiprocess_conf(args, method)
-    args.num_process = 1
-    
+
     ### Create env
     env = make_env(args)
     print(env)
