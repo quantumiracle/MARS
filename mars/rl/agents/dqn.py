@@ -20,7 +20,7 @@ class DQN(Agent):
         print(self.model)
         self.target = copy.deepcopy(self.model).to(self.device)
         
-        if args.multiprocess:
+        if args.num_process > 1:
             self.model.share_memory()
             self.target.share_memory()
             self.buffer = args.add_components['replay_buffer']

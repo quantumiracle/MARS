@@ -53,7 +53,7 @@ class PPODiscrete(Agent):
             # self.policy_old.load_state_dict(self.policy.state_dict())
             self.value = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
-        if args.multiprocess:
+        if args.num_process > 1:
             self.policy.share_memory()
             self.policy_old.share_memory()
             self.value.share_memory()
