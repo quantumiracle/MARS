@@ -152,7 +152,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             and args.marl_method in MetaStrategyMethods:
             meta_learner.save_model()
         
-            meta_learner.save_model(logger.model_dir+f'{epi}_')
+            # meta_learner.save_model(logger.model_dir+f'{epi}_')
 
 ### Genetic algorithm uses a different way of rollout. ###
 
