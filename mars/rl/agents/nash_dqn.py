@@ -128,7 +128,7 @@ class NashDQN(DQN):
         self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
 
-        if args.multiprocess:
+        if args.num_process > 1:
             self.model.share_memory()
             self.target.share_memory()
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
@@ -291,7 +291,7 @@ class NashDQN(DQN):
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
-        action = torch.FloatTensor(action).to(self.device)
+        action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
 
@@ -300,8 +300,7 @@ class NashDQN(DQN):
         target_next_q_values_ = self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
-        action_dim = int(np.sqrt(q_values.shape[-1])) # for two-symmetric-agent case only
-        action_ = torch.LongTensor([a[0]*action_dim+a[1] for a in action]).to(self.device)
+        action_ = torch.LongTensor([a[0]*self.action_dims+a[1] for a in action]).to(self.device)
         q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
 
         # compute CCE or NE

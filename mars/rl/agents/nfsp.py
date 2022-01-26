@@ -26,7 +26,7 @@ class NFSP(Agent):
         else:
             self.policy = get_model('impala_cnn')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
 
-        if args.multiprocess:
+        if args.num_process > 1:
             self.rl_agent.share_memory()
             self.policy.share_memory()
             self.replay_buffer = args.add_components['replay_buffer']

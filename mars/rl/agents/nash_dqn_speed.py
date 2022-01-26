@@ -128,7 +128,7 @@ class NashDQNSpeed(DQN):
         self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
         
-        if args.multiprocess:
+        if args.num_process > 1:
             self.model.share_memory()
             self.target.share_memory()
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents

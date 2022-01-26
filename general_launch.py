@@ -14,7 +14,6 @@ parser = argparse.ArgumentParser(description='Arguments of the general launching
 
 def launch_rollout(env, method, save_id):
     args = get_general_args(env, method)
-    num_envs = args.num_envs  # this will be changed to 1 later
     multiprocess_conf(args, method)
 
     ### Create env
@@ -36,7 +35,7 @@ def launch_rollout(env, method, save_id):
 
     # launch multiple sample rollout processes
     info_queue = Queue()
-    for pro_id in range(num_envs):  
+    for pro_id in range(args.num_process):  
         play_process = Process(target=rolloutExperience, args = (model, info_queue, args, pro_id))
         play_process.daemon = True  # sub processes killed when main process finish
         processes.append(play_process)
