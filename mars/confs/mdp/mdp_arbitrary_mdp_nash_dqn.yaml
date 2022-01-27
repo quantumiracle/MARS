@@ -24,7 +24,7 @@ train_args:
     max_episodes: 100000
     max_steps_per_episode: 10000
     optimizer: adam
-    learning_rate: 1e-4  
+    learning_rate: 1e-5  
     device: gpu
     update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
     log_avg_window: 10 # average window length in logging
@@ -34,8 +34,8 @@ train_args:
     # test: True
     # load_model_idx: 0/1
     net_architecture: 
-        # hidden_dim_list: [128, 128, 128] 
-        hidden_dim_list: [32, 32, 32] 
+        hidden_dim_list: [128, 128, 128] 
+        # hidden_dim_list: [32, 32, 32] 
         hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
         output_activation: False # False means nan
 
