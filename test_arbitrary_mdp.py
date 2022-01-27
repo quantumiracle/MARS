@@ -25,7 +25,7 @@ if parser_args.test:
     args.test = True
     args.render = True
     args.load_model_idx = parser_args.model
-args.device = 'cpu'
+args.device = 'gpu'
 ### Create env
 env = make_env(args)
 print(env)
