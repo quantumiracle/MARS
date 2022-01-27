@@ -13,7 +13,7 @@ from .dqn import DQN, DQNBase
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 import time
 
-DEBUG = True
+DEBUG = False
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
@@ -230,7 +230,7 @@ class NashDQN(DQN):
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
         return actions
 
-    def compute_nash_deprecated(self, q_values, update=False):
+    def compute_nash(self, q_values, update=False):
         """
         Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
         """
@@ -302,7 +302,7 @@ class NashDQN(DQN):
                     actions.append(a)
                 all_actions.append(np.array(actions).reshape(-1))
 
-        return np.array(all_actions), all_dists, all_ne_values
+            return np.array(all_actions), all_dists, all_ne_values
 
 
     def compute_cce(self, q_values, return_dist=False):
