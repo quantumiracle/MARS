@@ -117,7 +117,6 @@ class MLP(NetBase):
             tmp = [
                 nn.Linear(layers_config['hidden_dim_list'][j],
                           layers_config['hidden_dim_list'][j + 1])
-                ,nn.LayerNorm(layers_config['hidden_dim_list'][j + 1])
             ]
             if j < len(layers_config['hidden_dim_list']) - 2 and layers_config['hidden_activation']:  # hidden activation should not be added to last layer
                 tmp.append(
