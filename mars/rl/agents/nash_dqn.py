@@ -13,7 +13,7 @@ from .dqn import DQN, DQNBase
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 import time
 
-DEBUG = False
+DEBUG = True
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
@@ -230,53 +230,53 @@ class NashDQN(DQN):
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
         return actions
 
-    def compute_nash(self, q_values, update=False):
-        """
-        Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
-        """
-        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
-        all_actions = []
-        all_dists = []
-        all_ne_values = []
-        for qs in q_tables:  # iterate over envs
-            # Solve Nash equilibrium with solver
-            try:
-                # ne = NashEquilibriaSolver(qs)
-                # ne = ne[0]  # take the first Nash equilibria found
-                # print(np.linalg.det(qs))
-                # ne = NashEquilibriumSolver(qs)
-                # ne = NashEquilibriumLPSolver(qs)
-                # ne = NashEquilibriumCVXPYSolver(qs)
-                # ne = NashEquilibriumGUROBISolver(qs)
-                ne, ne_v = NashEquilibriumECOSSolver(qs)
-                ne_v = ne[0]@qs@ne[1].T
-                # ne, ne_v = NashEquilibriumMWUSolver(qs)
-            except:  # some cases NE cannot be solved
-                print('No Nash solution for: ', np.linalg.det(qs), qs)
-                ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
-                ne_v = 0
+    # def compute_nash_deprecated(self, q_values, update=False):
+    #     """
+    #     Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
+    #     """
+    #     q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
+    #     all_actions = []
+    #     all_dists = []
+    #     all_ne_values = []
+    #     for qs in q_tables:  # iterate over envs
+    #         # Solve Nash equilibrium with solver
+    #         try:
+    #             # ne = NashEquilibriaSolver(qs)
+    #             # ne = ne[0]  # take the first Nash equilibria found
+    #             # print(np.linalg.det(qs))
+    #             # ne = NashEquilibriumSolver(qs)
+    #             # ne = NashEquilibriumLPSolver(qs)
+    #             # ne = NashEquilibriumCVXPYSolver(qs)
+    #             # ne = NashEquilibriumGUROBISolver(qs)
+    #             ne, ne_v = NashEquilibriumECOSSolver(qs)
+    #             ne_v = ne[0]@qs@ne[1].T
+    #             # ne, ne_v = NashEquilibriumMWUSolver(qs)
+    #         except:  # some cases NE cannot be solved
+    #             print('No Nash solution for: ', np.linalg.det(qs), qs)
+    #             ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
+    #             ne_v = 0
                 
-            all_dists.append(ne)
-            all_ne_values.append(ne_v)
+    #         all_dists.append(ne)
+    #         all_ne_values.append(ne_v)
 
-            # Sample actions from Nash strategies
-            actions = []
-            for dist in ne:  # iterate over agents
-                try:
-                    sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
-                except:
-                    print('Not a valid distribution from Nash equilibrium solution.')
-                    print(sum(ne[0]), sum(ne[1]))
-                    print(qs, ne)
-                    print(dist)
-                a = np.where(sample_hist>0)
-                actions.append(a)
-            all_actions.append(np.array(actions).reshape(-1))
+    #         # Sample actions from Nash strategies
+    #         actions = []
+    #         for dist in ne:  # iterate over agents
+    #             try:
+    #                 sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
+    #             except:
+    #                 print('Not a valid distribution from Nash equilibrium solution.')
+    #                 print(sum(ne[0]), sum(ne[1]))
+    #                 print(qs, ne)
+    #                 print(dist)
+    #             a = np.where(sample_hist>0)
+    #             actions.append(a)
+    #         all_actions.append(np.array(actions).reshape(-1))
 
-        if update:
-            return all_dists, all_ne_values
-        else: # return samples actions, nash strategies, nash values
-            return np.array(all_actions), all_dists, all_ne_values
+    #     if update:
+    #         return all_dists, all_ne_values
+    #     else: # return samples actions, nash strategies, nash values
+    #         return np.array(all_actions), all_dists, all_ne_values
 
     def compute_nash(self, q_values, update=False):
         q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
@@ -346,7 +346,8 @@ class NashDQN(DQN):
 
         # Q-Learning with target network
         q_values = self.model(state)
-        target_next_q_values_ = self.target(next_state)
+        target_next_q_values_ = self.model(next_state)
+        # target_next_q_values_ = self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
         action_ = torch.LongTensor([a[0]*self.action_dims+a[1] for a in action]).to(self.device)
