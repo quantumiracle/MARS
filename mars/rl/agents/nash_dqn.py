@@ -13,7 +13,7 @@ from .dqn import DQN, DQNBase
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 import time
 
-DEBUG = False
+DEBUG = True
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
@@ -185,7 +185,7 @@ class NashDQN(DQN):
         # self.schedulers.append(lr_scheduler)
 
         if DEBUG:
-            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log.pkl")
+            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_no_target128.pkl")
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -230,7 +230,7 @@ class NashDQN(DQN):
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
         return actions
 
-    def compute_nash(self, q_values, update=False):
+    def compute_nash_deprecated(self, q_values, update=False):
         """
         Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
         """
@@ -346,7 +346,8 @@ class NashDQN(DQN):
 
         # Q-Learning with target network
         q_values = self.model(state)
-        target_next_q_values_ = self.target(next_state)
+        target_next_q_values_ = self.model(next_state)
+        # target_next_q_values_ = self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
         action_ = torch.LongTensor([a[0]*self.action_dims+a[1] for a in action]).to(self.device)
