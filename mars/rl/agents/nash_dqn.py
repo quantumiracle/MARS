@@ -13,7 +13,7 @@ from .dqn import DQN, DQNBase
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 import time
 
-DEBUG = False
+DEBUG = True
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
@@ -38,6 +38,7 @@ class Debugger():
         self.kl_dist_list=[[] for _ in range(self.max_transition)]
         self.mse_v_list=[[] for _ in range(self.max_transition)]
         self.mse_exp_list=[[] for _ in range(self.max_transition)]
+        self.brv_list = []
         self.cnt = 0
         self.save_interval = 10
         self.logging = {'num_states_per_step': self.num_states_per_step,
@@ -54,8 +55,45 @@ class Debugger():
         self.oracle_nash_strategies = np.vstack(self.env.Nash_strategies) # flatten to shape dim 1
         self.oracle_nash_values = np.concatenate(self.env.Nash_v) # flatten to shape dim 1
         self.oracle_nash_q_values = np.concatenate(self.env.Nash_q) # flatten to shape dim 1
+        self.trans_prob_matrices = self.env.env.trans_prob_matrices
+        self.reward_matrices = self.env.env.reward_matrices
         print(self.oracle_nash_q_values)
-    def compare_with_oracle(self, state, dists, ne_vs, verbose=False):
+
+    def best_response_value(self, learned_q):
+        """
+        Formulas for calculating best response values:
+        1. Nash strategies: (\pi_a^*, \pi_b^*) = \min \max Q(s,a,b), 
+            where Q(s,a,b) = r(s,a,b) + \gamma \min \max Q(s',a',b') (this is the definition of Nash Q-value);
+        2. Best response (of max player) value: Br V(s) = \min_b \pi(s,a) Q(s,a,b)
+        """
+
+        Br_v = []
+        Br_q = []
+        Nash_strategies = []
+        num_actions = learned_q.shape[-1]
+        for tm, rm, qm in zip(self.trans_prob_matrices[::-1], self.reward_matrices[::-1], learned_q[::-1]): # inverse enumerate 
+            if len(Br_v) > 0:
+                rm = np.array(rm)+np.array(Br_v[-1])  # broadcast sum on rm's last dim, last one in Nash_v is for the next state
+            br_q_values = np.einsum("ijk,ijk->ij", tm, rm)  # transition prob * reward for the last dimension in (state, action, next_state)
+            br_q_values = br_q_values.reshape(-1, num_actions, num_actions) # action list to matrix
+            Br_q.append(br_q_values)
+            br_values = []
+            ne_strategies = []
+            for q, br_q in zip(qm, br_q_values):
+                ne = NashEquilibriumECOSSolver(q)
+                ne_strategies.append(ne)
+                br_value = np.min(ne[0]@br_q)  # best response againt "Nash" strategy of first player
+                br_values.append(br_value)  # each value is a Nash equilibrium value on one state
+            Br_v.append(br_values)  # (trans, state)
+            Nash_strategies.append(ne_strategies)
+        Br_v = Br_v[::-1]  # (#trans, #states)
+        Br_q = Br_q[::-1]
+        Nash_strategies = Nash_strategies[::-1]
+
+        avg_init_br_v = -np.mean(Br_v[0])  # average best response value of initial states; minus for making it positive
+        return avg_init_br_v
+
+    def compare_with_oracle(self, state, dists, ne_vs, ne_q_vs, verbose=False):
         """[summary]
 
         :param state: current state
@@ -81,15 +119,18 @@ class Debugger():
                 ne_q = self.oracle_nash_q_values[id_state]
                 oracle_first_player_ne_strategy = ne_strategy[0]
                 nash_dqn_first_player_ne_strategy = dists[0][0]
-                br_v = np.min(nash_dqn_first_player_ne_strategy@ne_q)  # best response value (value against best response), reflects exploitability of learned Nash 
+                br_v = np.min(nash_dqn_first_player_ne_strategy@ne_q)  # best response value (value against best response), reflects exploitability of learned Nash; but this minimization is taken with oracle nash 
                 kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                 self.kl_dist_list[j].append(kl_dist)
                 mse_v = float((ne_v - ne_vs)**2) # squared error of Nash values (predicted and oracle)
-                print(ne_v, ne_vs)
                 self.mse_v_list[j].append(mse_v)
+                ### this is the exploitability/regret for each state; but not calcuated correctly, the minimization should take over best-response Q value rather than nash Q (neither oracle nor learned)
                 mse_exp = float((ne_v - br_v)**2)  # the target value of best response value (exploitability) should be the Nash value
                 self.mse_exp_list[j].append(mse_exp)
 
+        ## this is the correct calculation of exploitability: average best-response value of the inital states
+        brv = self.best_response_value(ne_q_vs, )
+        self.brv_list.append(brv)
 
         self.state_visit(id_state)
         self.log([id_state, kl_dist, ne_vs], verbose)
@@ -113,6 +154,7 @@ class Debugger():
         self.logging['kl_nash_dist'] = self.kl_dist_list
         self.logging['mse_nash_v'] = self.mse_v_list
         self.logging['mse_exploitability'] = self.mse_exp_list
+        self.logging['brv'] = self.brv_list
 
     def dump_log(self,):
         with open(self.log_path, "wb") as f:
@@ -136,6 +178,7 @@ class NashDQN(DQN):
             self.action_dims = env.action_space[0].n
         except:
             self.action_dims = env.action_space.n
+        self.env = env
         # don't forget to instantiate an optimizer although there is one in DQN
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
         # lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=50, gamma=0.95)    
@@ -170,7 +213,13 @@ class NashDQN(DQN):
                 actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
 
             if DEBUG: ## test on arbitrary MDP
-                self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
+                if self.update_cnt % 10 == 0: # skip 
+                    total_states_num = self.env.env.num_states*self.env.env.max_transition
+                    test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
+                    ne_q_vs = self.model(test_states) # Nash Q values
+                    ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
+
+                    self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=True)
 
         else:
             actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))  # (envs, agents)
