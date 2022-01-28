@@ -13,7 +13,7 @@ from .dqn import DQN, DQNBase
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 import time
 
-DEBUG = True
+DEBUG = False
 
 def kl(p, q):
     """Kullback-Leibler divergence D(P || Q) for discrete distributions
@@ -26,6 +26,11 @@ def kl(p, q):
     q = np.asarray(q, dtype=np.float)
 
     return np.sum(np.where(p != 0, p * np.log(p / q), 0))
+
+def to_one_hot(s, range):
+    one_hot_vec = np.zeros(range)
+    one_hot_vec[s] = 1
+    return one_hot_vec
 
 class Debugger():
     def __init__(self, env, log_path = None):
@@ -66,7 +71,6 @@ class Debugger():
             where Q(s,a,b) = r(s,a,b) + \gamma \min \max Q(s',a',b') (this is the definition of Nash Q-value);
         2. Best response (of max player) value: Br V(s) = \min_b \pi(s,a) Q(s,a,b)
         """
-
         Br_v = []
         Br_q = []
         Nash_strategies = []
@@ -80,7 +84,7 @@ class Debugger():
             br_values = []
             ne_strategies = []
             for q, br_q in zip(qm, br_q_values):
-                ne = NashEquilibriumECOSSolver(q)
+                ne, _ = NashEquilibriumECOSSolver(q)
                 ne_strategies.append(ne)
                 br_value = np.min(ne[0]@br_q)  # best response againt "Nash" strategy of first player
                 br_values.append(br_value)  # each value is a Nash equilibrium value on one state
@@ -185,7 +189,7 @@ class NashDQN(DQN):
         # self.schedulers.append(lr_scheduler)
 
         if DEBUG:
-            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_no_target128.pkl")
+            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100.pkl")
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -215,7 +219,16 @@ class NashDQN(DQN):
             if DEBUG: ## test on arbitrary MDP
                 if self.update_cnt % 10 == 0: # skip 
                     total_states_num = self.env.env.num_states*self.env.env.max_transition
-                    test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
+                    if self.env.env.OneHotObs:
+                        range = self.env.env.num_states*(self.env.env.max_transition+1)
+                        states = np.arange(total_states_num)
+                        one_hot_states = []
+                        for s in states:
+                            one_hot_states.append(to_one_hot(s, range))
+                        test_states = torch.FloatTensor(np.repeat(one_hot_states, 2, axis=0).reshape(-1, 2*range)).to(self.device)
+                        # print(test_states)
+                    else:
+                        test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
                     ne_q_vs = self.model(test_states) # Nash Q values
                     ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
 
@@ -256,27 +269,27 @@ class NashDQN(DQN):
                 ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
                 ne_v = 0
                 
-    #         all_dists.append(ne)
-    #         all_ne_values.append(ne_v)
+            all_dists.append(ne)
+            all_ne_values.append(ne_v)
 
-    #         # Sample actions from Nash strategies
-    #         actions = []
-    #         for dist in ne:  # iterate over agents
-    #             try:
-    #                 sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
-    #             except:
-    #                 print('Not a valid distribution from Nash equilibrium solution.')
-    #                 print(sum(ne[0]), sum(ne[1]))
-    #                 print(qs, ne)
-    #                 print(dist)
-    #             a = np.where(sample_hist>0)
-    #             actions.append(a)
-    #         all_actions.append(np.array(actions).reshape(-1))
+            # Sample actions from Nash strategies
+            actions = []
+            for dist in ne:  # iterate over agents
+                try:
+                    sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
+                except:
+                    print('Not a valid distribution from Nash equilibrium solution.')
+                    print(sum(ne[0]), sum(ne[1]))
+                    print(qs, ne)
+                    print(dist)
+                a = np.where(sample_hist>0)
+                actions.append(a)
+            all_actions.append(np.array(actions).reshape(-1))
 
-    #     if update:
-    #         return all_dists, all_ne_values
-    #     else: # return samples actions, nash strategies, nash values
-    #         return np.array(all_actions), all_dists, all_ne_values
+        if update:
+            return all_dists, all_ne_values
+        else: # return samples actions, nash strategies, nash values
+            return np.array(all_actions), all_dists, all_ne_values
 
     def compute_nash(self, q_values, update=False):
         q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
@@ -346,8 +359,8 @@ class NashDQN(DQN):
 
         # Q-Learning with target network
         q_values = self.model(state)
-        target_next_q_values_ = self.model(next_state)
-        # target_next_q_values_ = self.target(next_state)
+        # target_next_q_values_ = self.model(next_state)
+        target_next_q_values_ = self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
         action_ = torch.LongTensor([a[0]*self.action_dims+a[1] for a in action]).to(self.device)
@@ -361,15 +374,6 @@ class NashDQN(DQN):
         #     next_q_value = torch.einsum('bij,bij->b', cce_dists_, target_next_q_values_)
 
         # else: # Nash Equilibrium
-        # try: # nash computation may report error and terminate the process
-        #     nash_dists, _ = self.compute_nash(target_next_q_values, update=True)  # get the mixed strategy Nash rather than specific actions
-        # except: # take a uniform distribution instead
-        #     print("Invalid nash computation.")
-        #     nash_dists = np.ones((*action.shape, self.action_dims))/float(self.action_dims)
-        # target_next_q_values_ = target_next_q_values_.reshape(-1, action_dim, action_dim)
-        # nash_dists_  = torch.FloatTensor(nash_dists).to(self.device)
-        # next_q_value = torch.einsum('bk,bk->b', torch.einsum('bj,bjk->bk', nash_dists_[:, 0], target_next_q_values_), nash_dists_[:, 1])
-
         try: # nash computation may encounter error and terminate the process
             _, next_q_value = self.compute_nash(target_next_q_values, update=True)
         except: 
@@ -391,9 +395,7 @@ class NashDQN(DQN):
 
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.model, self.target)
-            # self.update_cnt = 0
         self.update_cnt += 1
-        # print(self.update_cnt)
         return loss.item()
 
 class NashDQNBase(DQNBase):
