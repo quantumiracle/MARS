@@ -145,7 +145,29 @@ class ArbitraryMDP():
         else:
             return obs
 
-    def step(self, a):
+    # def step(self, a):
+    #     """The environment transition function.
+    #     For a given state and action, the transition is stochastic. 
+    #     For representation of states, considering the num_states=3 case, the first three states are (0,1,2);
+    #     after one transition, the possible states are (3,4,5), etc. Such that states after different numbers of 
+    #     transitions can be distinguished. 
+        
+    #     :param a: action
+    #     """
+    #     trans_prob = self.trans_prob_matrices[self.trans][self.state%self.num_states][a]
+    #     next_state = np.random.choice([i for i in range(self.num_states)], p=trans_prob) + (self.trans+1) * self.num_states
+    #     reward = self.reward_matrices[self.trans][self.state%self.num_states][a][next_state%self.num_states]
+
+    #     self.state = next_state
+    #     obs = self.state
+    #     self.trans += 1
+    #     done = False if self.trans < self.max_transition else True
+    #     if self.OneHotObs:
+    #         return self._to_one_hot(obs), reward, done, None
+    #     else:
+    #         return obs, reward, done, None
+
+    def step(self, a, s=None):
         """The environment transition function.
         For a given state and action, the transition is stochastic. 
         For representation of states, considering the num_states=3 case, the first three states are (0,1,2);
@@ -154,6 +176,11 @@ class ArbitraryMDP():
         
         :param a: action
         """
+        if s is not None:
+            # set a state s for debugging
+            self.trans = int(s/self.num_states)
+            self.state = s
+            
         trans_prob = self.trans_prob_matrices[self.trans][self.state%self.num_states][a]
         next_state = np.random.choice([i for i in range(self.num_states)], p=trans_prob) + (self.trans+1) * self.num_states
         reward = self.reward_matrices[self.trans][self.state%self.num_states][a][next_state%self.num_states]
