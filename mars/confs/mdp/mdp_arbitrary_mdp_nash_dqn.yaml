@@ -13,7 +13,7 @@ agent_args:
         multi_step: 1
         dueling: False
         target_update_interval: 1000 # updates skipped to update the target
-        eps_start: 0.0
+        eps_start: 1.0
         eps_final: 0.0
         eps_decay: 8000  # tune according to env
         exploiter_update_itr: 1  # iterative update of the exploiter
@@ -24,7 +24,7 @@ train_args:
     max_episodes: 100000
     max_steps_per_episode: 10000
     optimizer: adam
-    learning_rate: 1e-5  
+    learning_rate: 1e-4  
     device: gpu
     update_itr: 1  # iterations of updates per frame, 0~inf; <1 means several steps are skipped per update
     log_avg_window: 10 # average window length in logging

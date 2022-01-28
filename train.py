@@ -15,7 +15,7 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nfsp', 'nxdo2', 'nash_ppo'][-1] 
+            'nfsp', 'nxdo2', 'nash_ppo'][-5] 
 
 # method = 'nash_dqn_speed'
 
