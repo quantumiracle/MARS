@@ -48,10 +48,10 @@ class MDPWrapper():
     def close(self):
         self.env.close()
 
-    def step(self, action):
+    def step(self, action, *args, **kwargs):
         self.curr_step += 1
         a = self.env.action_map(action)
-        obs, r, done, info = self.env.step(a)
+        obs, r, done, info = self.env.step(a, *args, **kwargs)
         if self.env.max_transition is not None and self.curr_step >= self.env.max_transition:
             done = True
         if self.OneHotObs:

@@ -27,6 +27,11 @@ def kl(p, q):
 
     return np.sum(np.where(p != 0, p * np.log(p / q), 0))
 
+def to_one_hot(s, range):
+    one_hot_vec = np.zeros(range)
+    one_hot_vec[s] = 1
+    return one_hot_vec
+
 class Debugger():
     def __init__(self, env, log_path = None):
         self.env = env
@@ -38,6 +43,7 @@ class Debugger():
         self.kl_dist_list=[[] for _ in range(self.max_transition)]
         self.mse_v_list=[[] for _ in range(self.max_transition)]
         self.mse_exp_list=[[] for _ in range(self.max_transition)]
+        self.brv_list = []
         self.cnt = 0
         self.save_interval = 10
         self.logging = {'num_states_per_step': self.num_states_per_step,
@@ -54,8 +60,44 @@ class Debugger():
         self.oracle_nash_strategies = np.vstack(self.env.Nash_strategies) # flatten to shape dim 1
         self.oracle_nash_values = np.concatenate(self.env.Nash_v) # flatten to shape dim 1
         self.oracle_nash_q_values = np.concatenate(self.env.Nash_q) # flatten to shape dim 1
+        self.trans_prob_matrices = self.env.env.trans_prob_matrices
+        self.reward_matrices = self.env.env.reward_matrices
         print(self.oracle_nash_q_values)
-    def compare_with_oracle(self, state, dists, ne_vs, verbose=False):
+
+    def best_response_value(self, learned_q):
+        """
+        Formulas for calculating best response values:
+        1. Nash strategies: (\pi_a^*, \pi_b^*) = \min \max Q(s,a,b), 
+            where Q(s,a,b) = r(s,a,b) + \gamma \min \max Q(s',a',b') (this is the definition of Nash Q-value);
+        2. Best response (of max player) value: Br V(s) = \min_b \pi(s,a) Q(s,a,b)
+        """
+        Br_v = []
+        Br_q = []
+        Nash_strategies = []
+        num_actions = learned_q.shape[-1]
+        for tm, rm, qm in zip(self.trans_prob_matrices[::-1], self.reward_matrices[::-1], learned_q[::-1]): # inverse enumerate 
+            if len(Br_v) > 0:
+                rm = np.array(rm)+np.array(Br_v[-1])  # broadcast sum on rm's last dim, last one in Nash_v is for the next state
+            br_q_values = np.einsum("ijk,ijk->ij", tm, rm)  # transition prob * reward for the last dimension in (state, action, next_state)
+            br_q_values = br_q_values.reshape(-1, num_actions, num_actions) # action list to matrix
+            Br_q.append(br_q_values)
+            br_values = []
+            ne_strategies = []
+            for q, br_q in zip(qm, br_q_values):
+                ne, _ = NashEquilibriumECOSSolver(q)
+                ne_strategies.append(ne)
+                br_value = np.min(ne[0]@br_q)  # best response againt "Nash" strategy of first player
+                br_values.append(br_value)  # each value is a Nash equilibrium value on one state
+            Br_v.append(br_values)  # (trans, state)
+            Nash_strategies.append(ne_strategies)
+        Br_v = Br_v[::-1]  # (#trans, #states)
+        Br_q = Br_q[::-1]
+        Nash_strategies = Nash_strategies[::-1]
+
+        avg_init_br_v = -np.mean(Br_v[0])  # average best response value of initial states; minus for making it positive
+        return avg_init_br_v
+
+    def compare_with_oracle(self, state, dists, ne_vs, ne_q_vs, verbose=False):
         """[summary]
 
         :param state: current state
@@ -81,15 +123,18 @@ class Debugger():
                 ne_q = self.oracle_nash_q_values[id_state]
                 oracle_first_player_ne_strategy = ne_strategy[0]
                 nash_dqn_first_player_ne_strategy = dists[0][0]
-                br_v = np.min(nash_dqn_first_player_ne_strategy@ne_q)  # best response value (value against best response), reflects exploitability of learned Nash 
+                br_v = np.min(nash_dqn_first_player_ne_strategy@ne_q)  # best response value (value against best response), reflects exploitability of learned Nash; but this minimization is taken with oracle nash 
                 kl_dist = kl(oracle_first_player_ne_strategy, nash_dqn_first_player_ne_strategy)
                 self.kl_dist_list[j].append(kl_dist)
                 mse_v = float((ne_v - ne_vs)**2) # squared error of Nash values (predicted and oracle)
-                print(ne_v, ne_vs)
                 self.mse_v_list[j].append(mse_v)
+                ### this is the exploitability/regret for each state; but not calcuated correctly, the minimization should take over best-response Q value rather than nash Q (neither oracle nor learned)
                 mse_exp = float((ne_v - br_v)**2)  # the target value of best response value (exploitability) should be the Nash value
                 self.mse_exp_list[j].append(mse_exp)
 
+        ## this is the correct calculation of exploitability: average best-response value of the inital states
+        brv = self.best_response_value(ne_q_vs, )
+        self.brv_list.append(brv)
 
         self.state_visit(id_state)
         self.log([id_state, kl_dist, ne_vs], verbose)
@@ -113,6 +158,7 @@ class Debugger():
         self.logging['kl_nash_dist'] = self.kl_dist_list
         self.logging['mse_nash_v'] = self.mse_v_list
         self.logging['mse_exploitability'] = self.mse_exp_list
+        self.logging['brv'] = self.brv_list
 
     def dump_log(self,):
         with open(self.log_path, "wb") as f:
@@ -136,13 +182,14 @@ class NashDQN(DQN):
             self.action_dims = env.action_space[0].n
         except:
             self.action_dims = env.action_space.n
+        self.env = env
         # don't forget to instantiate an optimizer although there is one in DQN
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
         # lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=50, gamma=0.95)    
         # self.schedulers.append(lr_scheduler)
 
         if DEBUG:
-            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log.pkl")
+            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100.pkl")
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -170,7 +217,22 @@ class NashDQN(DQN):
                 actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
 
             if DEBUG: ## test on arbitrary MDP
-                self.debugger.compare_with_oracle(state, dists, ne_vs, verbose=True)
+                if self.update_cnt % 10 == 0: # skip 
+                    total_states_num = self.env.env.num_states*self.env.env.max_transition
+                    if self.env.env.OneHotObs:
+                        range = self.env.env.num_states*(self.env.env.max_transition+1)
+                        states = np.arange(total_states_num)
+                        one_hot_states = []
+                        for s in states:
+                            one_hot_states.append(to_one_hot(s, range))
+                        test_states = torch.FloatTensor(np.repeat(one_hot_states, 2, axis=0).reshape(-1, 2*range)).to(self.device)
+                        # print(test_states)
+                    else:
+                        test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
+                    ne_q_vs = self.model(test_states) # Nash Q values
+                    ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
+
+                    self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=True)
 
         else:
             actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))  # (envs, agents)
@@ -253,7 +315,7 @@ class NashDQN(DQN):
                     actions.append(a)
                 all_actions.append(np.array(actions).reshape(-1))
 
-        return np.array(all_actions), all_dists, all_ne_values
+            return np.array(all_actions), all_dists, all_ne_values
 
 
     def compute_cce(self, q_values, return_dist=False):
@@ -297,6 +359,7 @@ class NashDQN(DQN):
 
         # Q-Learning with target network
         q_values = self.model(state)
+        # target_next_q_values_ = self.model(next_state)
         target_next_q_values_ = self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
@@ -311,15 +374,6 @@ class NashDQN(DQN):
         #     next_q_value = torch.einsum('bij,bij->b', cce_dists_, target_next_q_values_)
 
         # else: # Nash Equilibrium
-        # try: # nash computation may report error and terminate the process
-        #     nash_dists, _ = self.compute_nash(target_next_q_values, update=True)  # get the mixed strategy Nash rather than specific actions
-        # except: # take a uniform distribution instead
-        #     print("Invalid nash computation.")
-        #     nash_dists = np.ones((*action.shape, self.action_dims))/float(self.action_dims)
-        # target_next_q_values_ = target_next_q_values_.reshape(-1, action_dim, action_dim)
-        # nash_dists_  = torch.FloatTensor(nash_dists).to(self.device)
-        # next_q_value = torch.einsum('bk,bk->b', torch.einsum('bj,bjk->bk', nash_dists_[:, 0], target_next_q_values_), nash_dists_[:, 1])
-
         try: # nash computation may encounter error and terminate the process
             _, next_q_value = self.compute_nash(target_next_q_values, update=True)
         except: 
@@ -341,9 +395,7 @@ class NashDQN(DQN):
 
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.model, self.target)
-            # self.update_cnt = 0
         self.update_cnt += 1
-        # print(self.update_cnt)
         return loss.item()
 
 class NashDQNBase(DQNBase):

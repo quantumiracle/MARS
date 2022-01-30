@@ -261,8 +261,8 @@ class NashPPO(Agent):
                     ratio = torch.exp(logprob - oldlogprob[:, i])
                     ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
                 
-                surr1 = ratio_list[0] * ratio_list[1] * advantage
-                surr2 = torch.clamp(ratio_list[0] * ratio_list[1], 1-self.eps_clip, 1+self.eps_clip)
+                surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
+                surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1-self.eps_clip, 1+self.eps_clip)
                 policy_loss1 = -torch.min(surr1, surr2).mean()
 
                 self.optimizer.zero_grad()
@@ -278,8 +278,8 @@ class NashPPO(Agent):
                     ratio = torch.exp(logprob - oldlogprob[:, i])
                     ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
                 
-                surr1 = ratio_list[0] * ratio_list[1] * advantage
-                surr2 = torch.clamp(ratio_list[0] * ratio_list[1], 1-self.eps_clip, 1+self.eps_clip)
+                surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
+                surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1-self.eps_clip, 1+self.eps_clip)
                 policy_loss2 = torch.min(surr1, surr2).mean()
                 
                 self.optimizer.zero_grad()
