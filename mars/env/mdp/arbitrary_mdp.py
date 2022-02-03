@@ -226,7 +226,7 @@ class ArbitraryMDP():
             self.Nash_v.append(ne_values)  # (trans, state)
             self.Nash_strategies.append(ne_strategies)
         self.Nash_v = self.Nash_v[::-1]
-        self.Nash_q = self.Nash_q[::-1]
+        self.Nash_q = self.Nash_q[::-1]  # (dim_transition, dim_state, dim_action, dim_action)
         self.Nash_strategies = self.Nash_strategies[::-1]  # (dim_transition, dim_state, #players, dim_action)
         if verbose:
             print('Nash values of all states (from start to end): \n', self.Nash_v)
