@@ -200,7 +200,7 @@ class MultiAgent(Agent):
                     samples = [[states[0, j], actions[:, j].reshape(-1), rewards[0, j], next_states[0, j], np.any(d)] for j, d in enumerate(np.array(dones).T)]
             except:  # when num_envs = 1 
                 if self.args.marl_spec['global_state']: 
-                    samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]
+                    samples = [[np.array(states).reshape(-1), actions, rewards[0], np.array(next_states).reshape(-1), np.all(dones)]]  # done for both player
                 else:
                     samples = [[np.array(states[0]), actions, rewards[0], np.array(next_states[0]), np.all(dones)]]
            
