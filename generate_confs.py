@@ -144,6 +144,7 @@ for game in two_player_zero_sum_games:
                 conf['agent_args']['algorithm_spec']['exploiter_update_itr'] = 3
 
         elif method == 'nash_ppo':
+            conf['train_args']['max_episodes'] = 30000  # added 
             conf['train_args']['multiprocess'] = False
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = True
