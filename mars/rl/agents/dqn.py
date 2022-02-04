@@ -25,7 +25,7 @@ class DQN(Agent):
             self.target.share_memory()
             self.buffer = args.add_components['replay_buffer']
         else:
-            self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size']))) # first float then int to handle the scientific number like 1e5
+            self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size'])), args.algorithm_spec['multi_step'], args.algorithm_spec['gamma']) # first float then int to handle the scientific number like 1e5
 
         self.update_target(self.model, self.target)
 
@@ -34,7 +34,7 @@ class DQN(Agent):
         self.schedulers.append(self.epsilon_scheduler)
 
         self.gamma = float(args.algorithm_spec['gamma'])
-        self.multi_step = args.algorithm_spec['multi_step']  # TODO
+        self.multi_step = args.algorithm_spec['multi_step'] 
         self.target_update_interval = args.algorithm_spec['target_update_interval']
 
         self.update_cnt = 1
