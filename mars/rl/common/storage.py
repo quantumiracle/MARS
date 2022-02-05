@@ -7,7 +7,21 @@ import itertools
 
 transition = namedtuple('transition', 'state, action, reward, next_state, is_terminal')
 
-class ReplayBuffer_deprecated(object):
+def ReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size):
+    """ Function to choose a proper replay buffer"""
+    if n_multi_step == 1:
+        return SimpleReplayBuffer(capacity)  # this one is simple and quick
+    else:
+        return MultiStepReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size)
+class SimpleReplayBuffer(object):
+    """Replay Buffer class for one-step return. This is the
+    simplest and quicker setting.
+
+    :param capacity: number of samples stored in total
+    :type capacity: int
+    :return: None
+    :rtype: None
+    """
     def __init__(self, capacity, *args, **kwargs):
         self.buffer = deque(maxlen=capacity)
 
@@ -24,73 +38,88 @@ class ReplayBuffer_deprecated(object):
     def get_len(self):
         return len(self.buffer)
 
+class MultiStepReplayBuffer(object):
+    """Replay Buffer class for multi-step return.
 
-class ReplayBuffer(object):
-    '''
-    Replay Buffer class.
-    warn: does not support multi-env yet if n_multi_step > 1, samples from different envs
-    need to be stored in different buffers in that case.
-    '''
-    def __init__(self, capacity, n_multi_step, gamma):
-        self.buffer = deque(maxlen=capacity)
+    :param capacity: number of samples stored in total
+    :type capacity: int
+    :param n_multi_step: n for n-step return
+    :type n_multi_step: int
+    :param gamma: reward discount factor for calculating n-step return
+    :type gamma: float
+    :param num_envs: number of environments; note that when num_envs > 1, samples need to be stored separately per environment to calculate n-step return without mutual interference
+    :type num_envs: int
+    :param batch_size: batch size for update
+    :type batch_size: int
+    :return: None
+    :rtype: None
+    """
+    def __init__(self, capacity, n_multi_step, gamma, num_envs, batch_size):
+        self.buffer = [deque(maxlen=capacity) for _ in range(num_envs)]  # list of deque
         self.n_multi_step = n_multi_step
         self.gamma = gamma
+        self.num_envs = num_envs
         self.location = 0
+        self.per_env_batch_sizes = [batch_size//self.num_envs for _ in range(self.num_envs)]
+        if batch_size % self.num_envs != 0:  # divieded with remainder
+            self.per_env_batch_sizes[0] += 1  # use one more samples in the first env buffer
 
     def __len__(self):
-        return len(self.buffer)
+        return len(self.buffer[0])
 
     def push(self, samples):
-        for sample in samples:  # sample in each env
-            self.buffer.append(transition(*sample))  # extend will transform transition to np.array
+        for env_idx, sample in enumerate(samples):  # sample in each env
+            self.buffer[env_idx].append(transition(*sample))  # extend will transform transition to np.array
 
     def sample(self, batch_size):
         '''
         Sample batch_size memories from the buffer.
         NB: It deals the N-step DQN
         '''
-        # randomly pick batch_size elements from the buffer
-        indices = np.random.choice(len(self.buffer), batch_size, replace=False)
-
         states = []
         actions = []
         next_states = []
         rewards = []
         dones = []
 
-		# for each indices
-        for i in indices:
-            sum_reward = 0
-            states_look_ahead = self.buffer[i].next_state
-            done_look_ahead = self.buffer[i].is_terminal
+        for env_idx, per_env_buffer in enumerate(self.buffer):
+            # randomly pick batch_size elements from the buffer
+            indices = np.random.choice(len(per_env_buffer), self.per_env_batch_sizes[env_idx], replace=False)
 
-            # N-step look ahead loop to compute the reward and pick the new 'next_state' (of the n-th state)
-            for n in range(self.n_multi_step):
-                if len(self.buffer) > i+n:
-                    # compute the n-th reward
-                    sum_reward += (self.gamma**n) * self.buffer[i+n].reward
-                    if self.buffer[i+n].is_terminal:
-                        states_look_ahead = self.buffer[i+n].next_state
-                        done_look_ahead = self.buffer[i+n].is_terminal
-                        break
-                    else:
-                        states_look_ahead = self.buffer[i+n].next_state
-                        done_look_ahead = self.buffer[i+n].is_terminal
+            # for each indices
+            for i in indices:
+                sum_reward = 0
+                states_look_ahead = per_env_buffer[i].next_state
+                done_look_ahead = per_env_buffer[i].is_terminal
 
-            # Populate the arrays with the next_state, reward and dones just computed
-            states.append(self.buffer[i].state)
-            actions.append(self.buffer[i].action)
-            next_states.append(states_look_ahead)
-            rewards.append(sum_reward)
-            dones.append(done_look_ahead)
+                # N-step look ahead loop to compute the reward and pick the new 'next_state' (of the n-th state)
+                for n in range(self.n_multi_step):
+                    if len(per_env_buffer) > i+n:
+                        # compute the n-th reward
+                        sum_reward += (self.gamma**n) * per_env_buffer[i+n].reward
+                        if per_env_buffer[i+n].is_terminal:
+                            states_look_ahead = per_env_buffer[i+n].next_state
+                            done_look_ahead = per_env_buffer[i+n].is_terminal
+                            break
+                        else:
+                            states_look_ahead = per_env_buffer[i+n].next_state
+                            done_look_ahead = per_env_buffer[i+n].is_terminal
+
+                # Populate the arrays with the next_state, reward and dones just computed
+                states.append(per_env_buffer[i].state)
+                actions.append(per_env_buffer[i].action)
+                next_states.append(states_look_ahead)
+                rewards.append(sum_reward)
+                dones.append(done_look_ahead)
 
         return np.array(states, dtype=np.float32), np.array(actions), np.array(rewards, dtype=np.float32), np.array(next_states, dtype=np.float32), np.array(dones)
 
     def clear(self,):
-        self.buffer.clear()
+        for i in range(self.num_envs):
+            self.buffer[i].clear()
 
     def get_len(self):
-        return len(self.buffer)
+        return len(self.buffer[0])  # each per_env_buffer has same size
 
 
 class ReservoirBuffer(object):

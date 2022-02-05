@@ -25,7 +25,8 @@ class DQN(Agent):
             self.target.share_memory()
             self.buffer = args.add_components['replay_buffer']
         else:
-            self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size'])), args.algorithm_spec['multi_step'], args.algorithm_spec['gamma']) # first float then int to handle the scientific number like 1e5
+            self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size'])), \
+                args.algorithm_spec['multi_step'], args.algorithm_spec['gamma'], args.num_envs, args.batch_size) # first float then int to handle the scientific number like 1e5
 
         self.update_target(self.model, self.target)
 
