@@ -12,14 +12,14 @@ agent_args:
         dueling: False
         replay_buffer_size: 1e5
         gamma: 0.99
-        multi_step: 1
+        multi_step: 5
         target_update_interval: 1000 # updates skipped to update the target
         eps_start: 1.
         eps_final: 0.01
-        eps_decay: 30000  # tune according to env
+        eps_decay: 1000000  # tune according to env
 
 train_args:
-    batch_size: 32
+    batch_size: 128
     max_episodes: 20000
     max_steps_per_episode: 10000
     train_start_frame: 0
@@ -31,7 +31,7 @@ train_args:
     log_interval: 20  # log print interval 
     multiprocess: False
     net_architecture: 
-        hidden_dim_list: [1024, 1024, 1024] 
+        hidden_dim_list: [128, 128, 128] 
         hidden_activation: Tanh  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
         output_activation: False # False means nan
     marl_spec:
