@@ -12,7 +12,7 @@ from .dqn import DQN, DQNBase
 from .debug import Debugger, to_one_hot
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 
-DEBUG = True
+DEBUG = False
 class NashDQN(DQN):
     """
     Nash-DQN algorithm
