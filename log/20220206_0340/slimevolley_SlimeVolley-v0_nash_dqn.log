@@ -1,0 +1,32 @@
+pygame 2.0.1 (SDL 2.0.14, Python 3.7.0)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+SlimeVolley-v0 slimevolley
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:26: UserWarning: Converting G to a CSC matrix; may take a while.
+  warn("Converting G to a CSC matrix; may take a while.")
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:29: UserWarning: Converting A to a CSC matrix; may take a while.
+  warn("Converting A to a CSC matrix; may take a while.")
+random seed: [91, 69]
+<SubprocVectorEnv instance>
+ParallelDQN(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=12, out_features=1024, bias=True)
+      (1): Tanh()
+      (2): Linear(in_features=1024, out_features=1024, bias=True)
+      (3): Tanh()
+      (4): Linear(in_features=1024, out_features=1024, bias=True)
+      (5): Tanh()
+      (6): Linear(in_features=1024, out_features=6, bias=True)
+    )
+  )
+)
+Traceback (most recent call last):
+  File "general_train.py", line 31, in <module>
+    launch_rollout(parser_args.env, parser_args.method, parser_args.save_id)
+  File "general_train.py", line 18, in launch_rollout
+    model1 = eval(args.algorithm)(env, args)
+  File "/home/zihan/research/MARS/mars/rl/agents/nash_dqn.py", line 41, in __init__
+    self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100_2step.pkl")
+  File "/home/zihan/research/MARS/mars/rl/agents/debug.py", line 29, in __init__
+    self.num_states_per_step = int(self.env.observation_space.shape[0])
+AttributeError: 'list' object has no attribute 'shape'
