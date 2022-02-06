@@ -10,7 +10,7 @@ agent_args:
     algorithm_spec:
         replay_buffer_size: 1e5  
         gamma: 1.
-        multi_step: 1
+        multi_step: 2
         dueling: False
         target_update_interval: 1000 # updates skipped to update the target
         eps_start: 1.0
@@ -21,7 +21,7 @@ agent_args:
 
 train_args:
     batch_size: 64
-    max_episodes: 100000
+    max_episodes: 300000
     max_steps_per_episode: 10000
     optimizer: adam
     learning_rate: 1e-4  

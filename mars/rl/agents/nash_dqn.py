@@ -12,7 +12,7 @@ from .dqn import DQN, DQNBase
 from .debug import Debugger, to_one_hot
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 
-DEBUG = False
+DEBUG = True
 class NashDQN(DQN):
     """
     Nash-DQN algorithm
@@ -38,7 +38,7 @@ class NashDQN(DQN):
         # self.schedulers.append(lr_scheduler)
 
         if DEBUG:
-            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100.pkl")
+            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100_2step.pkl")
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
