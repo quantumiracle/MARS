@@ -156,13 +156,13 @@ def multiprocess_buffer_register(args, method):
     manager = BaseManager()
     manager.start()
     add_components = {
-        'replay_buffer': manager.replay_buffer(int(float(args.algorithm_spec['replay_buffer_size'])))  
+        'replay_buffer': manager.replay_buffer(int(float(args.algorithm_spec['replay_buffer_size'])), \
+            args.algorithm_spec['multi_step'], args.algorithm_spec['gamma'], args.num_envs, args.batch_size)  
     }
     
-    # args.replay_buffer = manager.replay_buffer(int(float(args.algorithm_spec['replay_buffer_size'])))  
     if method == 'nfsp':
         add_components['reservoir_buffer'] = manager.reservoir_buffer(int(float(args.algorithm_spec['replay_buffer_size'])))  
-        # args.reservoir_buffer = manager.reservoir_buffer(int(float(args.algorithm_spec['replay_buffer_size'])))  
+    
     args.add_components = add_components
 
     return args
