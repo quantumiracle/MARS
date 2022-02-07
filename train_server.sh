@@ -7,7 +7,7 @@ echo "Save as: " $DATE
 declare -a envs=('slimevolley_SlimeVolley-v0')
 
 # declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter' 'nash_ppo')
-declare -a methods=('nash_ppo')
+declare -a methods=('nash_dqn' 'nash_dqn_exploiter')
 mkdir -p log/$DATE
 
 for i in ${!envs[@]}; do
