@@ -15,8 +15,8 @@ agent_args:
     K_epoch: 4
     GAE: true
 train_args:
-  batch_size: 32
-  max_episodes: 50000
+  batch_size: 128
+  max_episodes: 10000
   max_steps_per_episode: 10000
   train_start_frame: 0
   optimizer: adam
@@ -32,14 +32,16 @@ train_args:
       - 64
       - 64
       - 64
-      hidden_activation: Tanh
+      - 64
+      hidden_activation: ReLU
       output_activation: Softmax
     value:
       hidden_dim_list:
       - 64
       - 64
       - 64
-      hidden_activation: Tanh
+      - 64
+      hidden_activation: ReLU
       output_activation: false
   marl_spec:
     global_state: true
