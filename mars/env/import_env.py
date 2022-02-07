@@ -158,6 +158,14 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
         # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
         env = Atari2AgentWrapper(env)
 
+    elif env_type == 'safetygym':
+        import safety_gym
+        try:
+            env = gym.make(env_name)
+        except:
+            print(f"Error: No such env in Safety Gym: {env_name}!")       
+        env = Atari2AgentWrapper(env) 
+
     elif env_type == 'mdp':
         if env_name == 'arbitrary_mdp':
             env = arbitrary_mdp

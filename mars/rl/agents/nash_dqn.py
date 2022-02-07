@@ -12,7 +12,7 @@ from .dqn import DQN, DQNBase
 from .debug import Debugger, to_one_hot
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 
-DEBUG = False
+DEBUG = True
 class NashDQN(DQN):
     """
     Nash-DQN algorithm
@@ -38,7 +38,7 @@ class NashDQN(DQN):
         # self.schedulers.append(lr_scheduler)
 
         if DEBUG:
-            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100_2step.pkl")
+            self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100_5step_1033.pkl")
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -66,7 +66,7 @@ class NashDQN(DQN):
                 actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
 
             if DEBUG: ## test on arbitrary MDP
-                if self.update_cnt % 10 == 0: # skip 
+                if self.update_cnt % 111 == 0: # skip some steps, 111 is not divided by number of transitions
                     total_states_num = self.env.env.num_states*self.env.env.max_transition
                     if self.env.env.OneHotObs:
                         range = self.env.env.num_states*(self.env.env.max_transition+1)
@@ -81,7 +81,7 @@ class NashDQN(DQN):
                     ne_q_vs = self.model(test_states) # Nash Q values
                     ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
 
-                    self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=True)
+                    self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=False)
 
         else:
             actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))  # (envs, agents)

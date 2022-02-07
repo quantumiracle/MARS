@@ -38,6 +38,7 @@ class Debugger():
         self.save_interval = 10
         self.logging = {'num_states_per_step': self.num_states_per_step,
                         'max_transition': self.max_transition,
+                        'oracle_exploitability': np.mean(self.env.Nash_v[0], axis=0),  # the average nash value for initial states from max-player's view
                         'cnt': [],
                         'state_visit': {},
                         'kl_nash_dist': [],
@@ -52,7 +53,7 @@ class Debugger():
         self.oracle_nash_q_values = np.concatenate(self.env.Nash_q) # flatten to shape dim 1
         self.trans_prob_matrices = self.env.env.trans_prob_matrices
         self.reward_matrices = self.env.env.reward_matrices
-        print(self.oracle_nash_q_values)
+        print('oracle nash v star: ', np.mean(self.env.Nash_v[0], axis=0))  # the average nash value for initial states from max-player's view
 
     def best_response_value(self, learned_q):
         """
