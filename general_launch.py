@@ -41,8 +41,9 @@ def launch_rollout(env, method, save_id):
         processes.append(play_process)
 
     # launch update process (single or multiple)
-    update_process = Process(target=updateModel, args= (model, info_queue, args, save_id))
-    update_process.daemon = True
+    for pro_id in range(args.num_process):  
+        update_process = Process(target=updateModel, args= (model, info_queue, args, pro_id))
+        update_process.daemon = True
     processes.append(update_process)
 
     [p.start() for p in processes]
