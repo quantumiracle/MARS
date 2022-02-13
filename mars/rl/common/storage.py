@@ -57,7 +57,6 @@ class ReplayBuffer(object):
     """
     def __init__(self, capacity, n_multi_step, gamma, num_envs, batch_size):
         self.buffer = [deque(maxlen=capacity) for _ in range(num_envs)]  # list of deque
-        print(num_envs, self.buffer)
         self.n_multi_step = n_multi_step
         self.gamma = gamma
         self.num_envs = num_envs
@@ -85,7 +84,6 @@ class ReplayBuffer(object):
         dones = []
         
         for env_idx, per_env_buffer in enumerate(self.buffer):
-            print(env_idx, len(per_env_buffer))
             # randomly pick batch_size elements from the buffer
             indices = np.random.choice(len(per_env_buffer), self.per_env_batch_sizes[env_idx], replace=False)
 
@@ -114,7 +112,7 @@ class ReplayBuffer(object):
                 next_states.append(states_look_ahead)
                 rewards.append(sum_reward)
                 dones.append(done_look_ahead)
-        print(np.array(states, dtype=np.float32).shape)
+
         return np.array(states, dtype=np.float32), np.array(actions), np.array(rewards, dtype=np.float32), np.array(next_states, dtype=np.float32), np.array(dones)
 
     def clear(self,):
