@@ -168,8 +168,8 @@ def multiprocess_buffer_register(args, method):
     return args
 
 def multiprocess_conf(args, method):
+    args.num_envs = 1  # this means one env per process; before buffer register
     args = multiprocess_buffer_register(args, method)
-    args.num_envs = 1  # this means one env per process
     args.max_episodes = int(args.max_episodes / args.num_process)
     args.multiprocess = True  # this is critical for launching multiprocess
     args.num_process = 5
