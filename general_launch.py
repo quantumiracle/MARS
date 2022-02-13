@@ -15,7 +15,8 @@ parser = argparse.ArgumentParser(description='Arguments of the general launching
 def launch_rollout(env, method, save_id):
     args = get_general_args(env, method)
     multiprocess_conf(args, method)
-
+    args.num_process = 1
+    
     ### Create env
     env = make_env(args)
     print(env)
