@@ -14,30 +14,30 @@ transition = namedtuple('transition', 'state, action, reward, next_state, is_ter
 #     else:
 #         return ReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size)
 
-# class ReplayBuffer(object):
-#     """Replay Buffer class for one-step return. This is the
-#     simplest and quicker setting.
+class SimpleReplayBuffer(object):
+    """Replay Buffer class for one-step return. This is the
+    simplest and quicker setting.
 
-#     :param capacity: number of samples stored in total
-#     :type capacity: int
-#     :return: None
-#     :rtype: None
-#     """
-#     def __init__(self, capacity, *args, **kwargs):
-#         self.buffer = deque(maxlen=capacity)
+    :param capacity: number of samples stored in total
+    :type capacity: int
+    :return: None
+    :rtype: None
+    """
+    def __init__(self, capacity, *args, **kwargs):
+        self.buffer = deque(maxlen=capacity)
 
-#     def push(self, samples):
-#         self.buffer.extend(samples)
+    def push(self, samples):
+        self.buffer.extend(samples)
 
-#     def sample(self, batch_size):
-#         state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
-#         return state, action, reward, next_state, done
+    def sample(self, batch_size):
+        state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
+        return state, action, reward, next_state, done
 
-#     def clear(self,):
-#         self.buffer.clear()
+    def clear(self,):
+        self.buffer.clear()
 
-#     def get_len(self):
-#         return len(self.buffer)
+    def get_len(self):
+        return len(self.buffer)
 
 class ReplayBuffer(object):
     """Replay Buffer class for multi-step return.
