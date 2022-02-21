@@ -7,12 +7,13 @@ import itertools
 
 transition = namedtuple('transition', 'state, action, reward, next_state, is_terminal')
 
-def ReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size):
-    """ Function to choose a proper replay buffer"""
-    if n_multi_step == 1:
-        return SimpleReplayBuffer(capacity)  # this one is simple and quick
-    else:
-        return MultiStepReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size)
+# def ReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size):
+#     """ Function to choose a proper replay buffer"""
+#     if n_multi_step == 1:
+#         return SimpleReplayBuffer(capacity)  # this one is simple and quick
+#     else:
+#         return ReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size)
+
 class SimpleReplayBuffer(object):
     """Replay Buffer class for one-step return. This is the
     simplest and quicker setting.
@@ -38,7 +39,7 @@ class SimpleReplayBuffer(object):
     def get_len(self):
         return len(self.buffer)
 
-class MultiStepReplayBuffer(object):
+class ReplayBuffer(object):
     """Replay Buffer class for multi-step return.
 
     :param capacity: number of samples stored in total
@@ -81,7 +82,7 @@ class MultiStepReplayBuffer(object):
         next_states = []
         rewards = []
         dones = []
-
+        
         for env_idx, per_env_buffer in enumerate(self.buffer):
             # randomly pick batch_size elements from the buffer
             indices = np.random.choice(len(per_env_buffer), self.per_env_batch_sizes[env_idx], replace=False)

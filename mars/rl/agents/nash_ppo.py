@@ -239,7 +239,7 @@ class NashPPO(Agent):
                 vs_target = r[:, 0] + self.gamma * vs_prime * done_mask # r is the first player's here
                 common_layer_loss = F.mse_loss(vs.squeeze(dim=-1) , vs_target.detach()).mean()
 
-                # calculate advantage with common layer value
+                # calculate generalized advantage with common layer value
                 delta = vs_target - vs.squeeze(dim=-1)
                 delta = delta.detach()
                 advantage_lst = []

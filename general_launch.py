@@ -44,7 +44,7 @@ def launch_rollout(env, method, save_id):
     for pro_id in range(args.num_process):  
         update_process = Process(target=updateModel, args= (model, info_queue, args, pro_id))
         update_process.daemon = True
-    processes.append(update_process)
+        processes.append(update_process)
 
     [p.start() for p in processes]
     while all([p.is_alive()for p in processes]):
