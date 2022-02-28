@@ -18,17 +18,14 @@ class ArbitraryMDP():
         self.given_trans = given_trans
         self.given_rewards = given_rewards
         self.OneHotObs = False
-        ## A fixed simple test, with: num_states=1, num_actions_per_player=3, num_trans=2
+        ## rock-paper-scissor test
         # self.given_rewards = [
-        #             [[ [0], [2], [-1],
-        #                 [-1], [0], [1],
-        #                 [1], [-1], [0],]], 
-
-        #             [[  [0], [-1], [-1],
-        #                 [2], [0], [1],
-        #                 [1], [-1], [0],]]
+        #             [[ [0], [-1], [1],
+        #                 [1], [0], [-1],
+        #                 [-1], [1], [0],]], 
         #                 ]
 
+        ## A fixed simple test, with: num_states=1, num_actions_per_player=3, num_trans=2
         # self.given_trans = [
         #             [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
         #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
