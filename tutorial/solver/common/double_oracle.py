@@ -173,3 +173,158 @@ class OracleDoubleOralce(DoubleOralce):
                 exploitability_records.append(exploitability)
                 np.save(self.save_path, exploitability_records)
 
+
+
+class QLearningDoubleOralce(DoubleOralce):
+    def __init__(self, env, save_path, solve_episodes):
+        super(QLearningDoubleOralce, self).__init__(env, save_path, solve_episodes)
+        """ (Sampling version) Double oracle with best response calculated by Q-learning
+        """
+
+    def update_meta_strategy(self, max_player, min_player):
+        # meta-Nash distribution
+        if len(max_player['q_set']) * len(min_player['q_set']) >= 2:  # enough policies to get Nash
+            (max_player['meta_strategy'], min_player['meta_strategy']), _ = NashEquilibriumCVXPYSolver(self.evaluation_matrix)
+        else: # uniform for initialization only
+            max_qs = len(max_player['q_set'])
+            max_player['meta_strategy'] = 1./max_qs*np.ones(max_qs)
+            min_qs = len(min_player['q_set'])
+            min_player['meta_strategy'] = 1./min_qs*np.ones(min_qs)
+
+    def policy_against_policy_value(self, max_policy, min_policy):
+        V = []
+        Q = []
+        max_policy = max_policy.reshape(self.num_trans, self.num_states, self.num_actions)
+        min_policy = min_policy.reshape(self.num_trans, self.num_states, self.num_actions)
+
+        for tm, rm, max_pm, min_pm in zip(self.trans_matrices[::-1], self.reward_matrices[::-1], max_policy[::-1], min_policy[::-1]): # inverse enumerate 
+            if len(V) > 0:
+                rm = np.array(rm)+np.array(V[-1])  # broadcast sum on rm's last dim, last one in Nash_v is for the next state
+            q_values = np.einsum("ijk,ijk->ij", tm, rm)  # transition prob * reward for the last dimension in (state, action, next_state)
+            q_values = q_values.reshape(-1, self.num_actions, self.num_actions) # action list to matrix
+            Q.append(q_values)
+            values = []
+            for max_p, min_p, q in zip(max_pm, min_pm, q_values):
+                value = np.min(max_p@q@min_p)
+                values.append(value)  # each value is a Nash equilibrium value on one state
+            V.append(values)  # (trans, state)
+        V = V[::-1]  # (#trans, #states)
+        Q = Q[::-1]
+
+        avg_init_v = np.mean(V[0])  # average best response value of initial states; minus for making it positive
+        return avg_init_v
+
+    def solve(self, epsilon=0.2, gamma=0.99, br_itrs = 10, tau=0.0001):
+        # ini_max_policy = np.array(self.num_trans*self.num_states*[1./self.num_actions*np.ones(self.num_actions)]) # shape: [num_transition, num_states, num_action]
+        # ini_min_policy = np.array(self.num_trans*self.num_states*[1./self.num_actions*np.ones(self.num_actions)])
+
+        ini_max_q = self.get_markov_q()
+        ini_min_q = self.get_markov_q()
+
+        max_player = {
+            'side': 'max',
+            'q_set': [ini_max_q],
+            'meta_strategy': np.array([1.])
+        }
+        min_player = {
+            'side': 'min',
+            'q_set': [ini_min_q],
+            'meta_strategy': np.array([1.])
+        }
+        fixed_side = 'max'
+        exploitability_records = []
+
+        for i in range(self.solve_episodes):
+            obs = self.env.reset()
+            done = False
+
+            if i % br_itrs == 0:  # switch side
+                if fixed_side == 'max':
+                    if i != 0: # store new br table, and generate new meta strategy
+                        min_player['q_set'].append(br_q)
+                        # update evaluation matrix
+                        eval_scores = []
+                        for q in max_player['q_set']:
+                            p=self.q_table_to_greedy_policy(q)
+                            br_p=self.q_table_to_greedy_policy(br_q)
+                            score = self.policy_against_policy_value(max_policy=p, min_policy=br_p)
+                            eval_scores.append(score)  # score always from the max player's view
+                        self.evaluation_matrix = self.update_matrix(self.evaluation_matrix, min_player['side'], eval_scores)
+
+                    # udpate side
+                    fixed_side = 'min'
+
+                else:
+                    if i != 0: # store new br table, and generate new meta strategy
+                        max_player['q_set'].append(br_q)
+                        # update evaluation matrix
+                        eval_scores = []
+                        for q in min_player['q_set']:
+                            p=self.q_table_to_greedy_policy(q)
+                            br_p=self.q_table_to_greedy_policy(br_q)
+                            score = self.policy_against_policy_value(max_policy=br_p, min_policy=p)
+                            eval_scores.append(score)  # score always from the max player's view
+                        self.evaluation_matrix = self.update_matrix(self.evaluation_matrix, max_player['side'], eval_scores)
+
+                    # udpate side
+                    fixed_side = 'max'
+
+                self.update_meta_strategy(max_player, min_player)
+                br_q = self.get_markov_q()  # init new best response side Q table
+
+            # sample policy for the current episode
+            if fixed_side == 'max':
+                max_q_at_episode = self.sample_policy(max_player['q_set'], max_player['meta_strategy'])
+            else:
+                min_q_at_episode = self.sample_policy(min_player['q_set'], min_player['meta_strategy'])
+
+            while not np.any(done):
+                if fixed_side == 'max':
+                    # fixed side uses greedy choice
+                    max_action = self.get_greedy_action(max_q_at_episode[obs[0][0]])
+                    # br side uses e-greedy choice
+                    if np.random.random() > epsilon:
+                        min_action = self.get_greedy_action(br_q[obs[0][0]])
+                    else:
+                        min_action = self.get_random_action(self.num_actions)
+                else:
+                    if np.random.random() > epsilon:
+                        max_action = self.get_greedy_action(br_q[obs[0][0]])
+                    else:
+                        max_action = self.get_random_action(self.num_actions)
+
+                    min_action = self.get_greedy_action(min_q_at_episode[obs[0][0]])
+
+                action = [max_action, min_action]
+                next_obs, r, done, _ = self.env.step(action)
+
+                # update best response side
+                if fixed_side  == 'max': # br is min
+                    if done[1]: # there is no action and reward for terminal state, so cannot get q value for its next state
+                        target = r[1]
+                    else:
+                        target = r[1] + gamma * np.max(br_q[next_obs[0][0]])
+                    br_q[obs[0][0], min_action] = tau*target + (1-tau)*br_q[obs[0][0], min_action]
+
+                else:
+                    if done[0]: 
+                        target = r[0]
+                    else:
+                        target = r[0] + gamma * np.max(br_q[next_obs[0][0]])
+                    br_q[obs[0][0], max_action] = tau*target + (1-tau)*br_q[obs[0][0], max_action]
+
+                obs = next_obs
+
+            ##  get exploitability of the max player
+            if i % 10 == 0:
+                # first average q, then get greedy policy (the resulting policy is deterministic)
+                # average_q = self.weighted_average_q_table(max_player['q_set'], max_player['meta_strategy'])
+                # mix_policy = self.q_table_to_greedy_policy(average_q)
+
+                # first get greedy policy, then average policies according to meta strategy
+                greedy_policies = [self.q_table_to_greedy_policy(q) for q in max_player['q_set']]
+                mix_policy = self.weighted_average_q_table(greedy_policies, max_player['meta_strategy'])
+                exploitability = self.best_response_value_given_markov_policy(mix_policy)
+                print(f'itr: {i}, exploitability: {exploitability}', )
+                exploitability_records.append(exploitability)
+                np.save(self.save_path, exploitability_records)
