@@ -1,2 +1,2 @@
-from .double_oracle import DoubleOralce, OracleDoubleOralce
-from .fictitious_selfplay import FictitiousSelfPlay, OracleFictitiousSelfPlay
+from .double_oracle import DoubleOralce, OracleDoubleOralce, QLearningDoubleOralce
+from .fictitious_selfplay import FictitiousSelfPlay, OracleFictitiousSelfPlay, QLearningFictitiousSelfPlay

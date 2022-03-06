@@ -366,3 +366,50 @@ class MarkovGameSolver:
                 print(f'itr: {i}, exploitability: {exploitability}', )
                 exploitability_records.append(exploitability)
                 np.save(self.save_path, exploitability_records)
+
+
+    ## below are for Q-learning best response
+    def get_markov_q(self):
+        return np.zeros((self.num_trans*self.num_states, self.num_actions))
+
+    def get_greedy_action(self, q):
+        return np.argmax(q)
+
+    def get_random_action(self, dim):
+        return np.random.randint(0, dim, size=1)[0]
+
+    def weighted_average_q_table(self, q_tables, weights):
+        mix_q = self.get_markov_q()
+        for q, w in zip(q_tables, weights):
+            mix_q = mix_q + q*w
+        return mix_q
+
+    def best_response_value_given_markov_policy(self, policy, side='max'):
+        Br_v = []
+        Br_q = []
+        policy = policy.reshape(self.num_trans, self.num_states, self.num_actions)
+        for tm, rm, pm in zip(self.trans_matrices[::-1], self.reward_matrices[::-1], policy[::-1]): # inverse enumerate 
+            if len(Br_v) > 0:
+                rm = np.array(rm)+np.array(Br_v[-1])  # broadcast sum on rm's last dim, last one in Nash_v is for the next state
+            br_q_values = np.einsum("ijk,ijk->ij", tm, rm)  # transition prob * reward for the last dimension in (state, action, next_state)
+            br_q_values = br_q_values.reshape(-1, self.num_actions, self.num_actions) # action list to matrix
+            Br_q.append(br_q_values)
+            br_values = []
+            for p, br_q in zip(pm, br_q_values):
+                if side == 'max':
+                    br_value = np.min(p@br_q)  # best response againt "Nash" strategy of first player
+                else:
+                    br_value = np.max(br_q@p)
+                br_values.append(br_value)  # each value is a Nash equilibrium value on one state
+            Br_v.append(br_values)  # (trans, state)
+        Br_v = Br_v[::-1]  # (#trans, #states)
+        Br_q = Br_q[::-1]
+
+        avg_init_br_v = -np.mean(Br_v[0])  # average best response value of initial states; minus for making it positive
+        return avg_init_br_v
+
+    def q_table_to_greedy_policy(self, q_table):
+        greedy_idxs = np.argmax(q_table, axis=-1)
+        greedy_policy = (np.arange(self.num_actions) == greedy_idxs[...,None]).astype(int)  # from extreme (min/max) idx to one-hot simplex
+
+        return greedy_policy
