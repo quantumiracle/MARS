@@ -46,9 +46,9 @@ MARL Algorithms to do:
 - [ ] QMIX
 - [ ] QTRAN
 - [ ] MAPPO
-- [x] Nash-DQN
+<!-- - [x] Nash-DQN
 - [x] Nash-DQN-Exploiter
-
+ -->
 Supported environments:
 - [x] Openai Gym
 - [x] PettingZoo
