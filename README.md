@@ -7,6 +7,10 @@
 ## Status
 WIP. Not released yet.
 
+If you have any question (propose an ISSUE if it's general problem) or want to contribute to this repository, feel free to contact me: *zhding96@gmail.com*
+
+Large-scale competitive games are generally hard, I'm still struggling with developing this repo.
+
 ## Usage Instruction
 Some tutorials (`./tutorials/`) are provided for simple MARL concepts, including building an arbitrary matrix game, solving the Nash equilibrium with different algorithms for matrix games, building arbitrary Markov game, solving Markov games, etc. 
 
@@ -42,9 +46,9 @@ MARL Algorithms to do:
 - [ ] QMIX
 - [ ] QTRAN
 - [ ] MAPPO
-- [x] Nash-DQN
+<!-- - [x] Nash-DQN
 - [x] Nash-DQN-Exploiter
-
+ -->
 Supported environments:
 - [x] Openai Gym
 - [x] PettingZoo

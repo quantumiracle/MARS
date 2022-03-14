@@ -35,7 +35,7 @@ def launch_rollout(env, method, save_id):
 
     # launch multiple sample rollout processes
     info_queue = Queue()
-    for pro_id in range(args.num_process):  
+    for pro_id in range(1):  
         play_process = Process(target=rolloutExperience, args = (model, info_queue, args, pro_id))
         play_process.daemon = True  # sub processes killed when main process finish
         processes.append(play_process)
