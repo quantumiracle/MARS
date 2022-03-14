@@ -43,6 +43,17 @@ class EpsilonScheduler():
         self.ini_frame_idx = self.current_frame_idx
 
     def step(self, frame_idx):
+        """
+        The choice of eps_decay:
+        ------------------------
+        start = 1
+        final = 0.01
+        decay = 10**6  # the decay steps can be 1/10 over all steps 10000*1000
+        final + (start-final)*np.exp(-1*(10**7)/decay)
+        
+        => 0.01
+
+        """
         self.current_frame_idx = frame_idx
         delta_frame_idx = self.current_frame_idx - self.ini_frame_idx
         self.epsilon = self.eps_final + (self.eps_start - self.eps_final) * math.exp(-1. * delta_frame_idx / self.eps_decay)
