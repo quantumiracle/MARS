@@ -92,7 +92,8 @@ for game in games:
         conf['train_args']['max_episodes'] = 10000
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter']:
-            conf['agent_args']['algorithm_spec']['multi_step'] = 5
+            conf['agent_args']['algorithm_spec']['multi_step'] = 1
+            conf['agent_args']['algorithm_spec']['eps_decay'] = 1000000  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1  # 0.1
             conf['train_args']['marl_spec']['global_state'] = False
             if method == 'nash_dqn':

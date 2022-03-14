@@ -136,6 +136,7 @@ for game in two_player_zero_sum_games:
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter']:
             conf['agent_args']['algorithm_spec']['multi_step'] = 1
+            conf['agent_args']['algorithm_spec']['eps_decay'] = 1000000  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = False
             if method == 'nash_dqn':
