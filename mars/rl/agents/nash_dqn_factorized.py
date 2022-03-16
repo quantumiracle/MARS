@@ -45,16 +45,23 @@ class NashDQNFactorized(DQN):
         if DEBUG:
             self.debugger = Debugger(env, "./data/factorized_nash_dqn_test/nash_dqn_simple_mdp_log.pkl")
 
-    def model(self, state):
+    def model_(self, state):
         """
         Merged Q table: Q(s,a,b)
         """
         q1 = self.q_net_1(state)  # shape: (#batch, #action1)
         q2 = self.q_net_2(state)  # shape: (#batch, #action2)
         merged_q = 0.5*(q1[:, :, None] - q2[:, None])  # shape: (#batch, #action1, #action2)
+        return merged_q.view(merged_q.shape[0], -1)  # reshape
 
-        return merged_q
-
+    def target_(self, state):
+        """
+        Merged Q table: Q(s,a,b)
+        """
+        q1 = self.target_q_net_1(state)  # shape: (#batch, #action1)
+        q2 = self.target_q_net_2(state)  # shape: (#batch, #action2)
+        merged_q = 0.5*(q1[:, :, None] - q2[:, None])  # shape: (#batch, #action1, #action2)
+        return merged_q.view(merged_q.shape[0], -1)  # reshape
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -71,7 +78,7 @@ class NashDQNFactorized(DQN):
 
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
-                q_values = self.model(state).detach().cpu().numpy()  # needs state: (batch, agents*state_dim)
+                q_values = self.model_(state).detach().cpu().numpy()  # needs state: (batch, agents*state_dim)
             try: # nash computation may report error and terminate the process
                 actions, dists, ne_vs = self.compute_nash(q_values)
             except:
@@ -90,7 +97,7 @@ class NashDQNFactorized(DQN):
                         test_states = torch.FloatTensor(np.repeat(one_hot_states, 2, axis=0).reshape(-1, 2*range)).to(self.device)
                     else:
                         test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
-                    ne_q_vs = self.model(test_states) # Nash Q values
+                    ne_q_vs = self.model_(test_states) # Nash Q values
                     ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
 
                     self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=False)
@@ -144,12 +151,12 @@ class NashDQNFactorized(DQN):
             q = model(state)
             q = q.gather(1, action.unsqueeze(1)).squeeze(1)
             next_q = target(next_state)
-            next_q = torch.max(next_q, dim=-1)
+            next_q = torch.max(next_q, dim=-1)[0]
             target_q = reward + (self.gamma ** multi_step) * next_q * (1 - done)
             loss = F.mse_loss(q, target_q.detach(), reduction='none')
             return loss.mean()
-        a1 = torch.LongTensor(action[:, 0]).to(self.device)
-        a2 = torch.LongTensor(action[:, 1]).to(self.device)
+        a1 = action[:, 0]
+        a2 = action[:, 1]
         q1_loss = DQN_loss(self.q_net_1, self.target_q_net_1, state, a1, reward, next_state, done, self.multi_step)
         q2_loss = DQN_loss(self.q_net_2, self.target_q_net_2, state, a2, -reward, next_state, done, self.multi_step)
 
@@ -159,8 +166,8 @@ class NashDQNFactorized(DQN):
         self.dqn_optimizer.step()
 
         # Nash loss
-        q_values = self.model(state)
-        target_next_q_values_ = self.target(next_state)
+        q_values = self.model_(state)
+        target_next_q_values_ = self.target_(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
         action_ = torch.LongTensor([a[0]*self.action_dims+a[1] for a in action]).to(self.device)  # encode the actions from both players to be one scalar
         q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
@@ -179,7 +186,8 @@ class NashDQNFactorized(DQN):
         self.nash_optimizer.step()
 
         if self.update_cnt % self.target_update_interval == 0:
-            self.update_target(self.model, self.target)
+            self.update_target(self.q_net_1, self.target_q_net_1)
+            self.update_target(self.q_net_2, self.target_q_net_2)
         self.update_cnt += 1
         return nash_loss.item()
 
@@ -199,12 +207,13 @@ class NashDQNFactorizedBase(DQNBase):
                 self._observation_shape = tuple(map(operator.add, env.observation_space.shape, env.observation_space.shape)) # double the shape
             else:
                 self._observation_shape = env.observation_space.shape
+                self._action_shape = env.action_space.n
         except:
             if two_side_obs:
                 self._observation_shape = tuple(map(operator.add, env.observation_space[0].shape, env.observation_space[0].shape)) # double the shape
             else:
                 self._observation_shape = env.observation_space[0].shape
-        self._action_shape = env.action_space[0].n
+                self._action_shape = env.action_space[0].n
         self._construct_net(env, net_args)
 
     def _construct_net(self, env, net_args):
