@@ -10,7 +10,7 @@ two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1',
 
 methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nfsp', 'nash_dqn', \
-            'nash_dqn_exploiter', 'nash_ppo', 'nxdo', 'nxdo2']
+            'nash_dqn_exploiter', 'nash_dqn_factorized', 'nash_ppo', 'nxdo', 'nxdo2']
 
 game_type = 'pettingzoo'
 
@@ -134,13 +134,15 @@ for game in two_player_zero_sum_games:
         conf['env_args']['num_envs'] = 2
         conf['train_args']['max_episodes'] = 50000
         # some method specific confs
-        if method in ['nash_dqn', 'nash_dqn_exploiter']:
+        if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
             conf['agent_args']['algorithm_spec']['multi_step'] = 1
             conf['agent_args']['algorithm_spec']['eps_decay'] = 1000000  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = False
             if method == 'nash_dqn':
                 conf['agent_args']['algorithm'] = 'NashDQN'
+            if method == 'nash_dqn_factorized':
+                conf['agent_args']['algorithm'] = 'NashDQNFactorized'
             elif method == 'nash_dqn_exploiter':
                 conf['agent_args']['algorithm'] = 'NashDQNExploiter'
                 conf['agent_args']['algorithm_spec']['exploiter_update_itr'] = 3
