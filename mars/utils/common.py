@@ -8,4 +8,4 @@ MetaStrategyMethods = ['fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'n
 MetaStepMethods = ['selfplay', 'selfplay2', 'fictitious_selfplay', 'fictitious_selfplay2', 'nxdo', 'nxdo2'] 
 
 # These methods are based on Nash
-NashBasedMethods = ['nash_dqn', 'nash_dqn_exploiter', 'nash_ppo']
+NashBasedMethods = ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized', 'nash_ppo']
