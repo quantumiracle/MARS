@@ -1,3 +1,4 @@
+from heapq import merge
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -11,6 +12,7 @@ from ..common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .debug import Debugger, to_one_hot
 from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
+from .nash_dqn import NashDQNBase
 
 DEBUG = False
 
@@ -23,14 +25,18 @@ class NashDQNFactorized(DQN):
         self.num_envs = args.num_envs
         self.q_net_1 = NashDQNFactorizedBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
         self.q_net_2 = NashDQNFactorizedBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
+        self.nash_q = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
         self.target_q_net_1 = copy.deepcopy(self.q_net_1).to(self.device)
         self.target_q_net_2 = copy.deepcopy(self.q_net_2).to(self.device)
+        self.target_nash_q = copy.deepcopy(self.nash_q).to(self.device)
 
         if args.num_process > 1:
             self.q_net_1.share_memory()
             self.q_net_2.share_memory()
+            self.nash_q.share_memory()
             self.target_q_net_1.share_memory()
             self.target_q_net_2.share_memory()
+            self.target_nash_q.share_memory()
 
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
         try:
@@ -39,29 +45,41 @@ class NashDQNFactorized(DQN):
             self.action_dims = env.action_space.n
         self.env = env
         # don't forget to instantiate an optimizer although there is one in DQN
-        self.nash_optimizer = choose_optimizer(args.optimizer)(list(self.q_net_1.parameters())+list(self.q_net_2.parameters()), lr=float(args.learning_rate))
+        self.nash_optimizer = choose_optimizer(args.optimizer)(list(self.q_net_1.parameters())+list(self.q_net_2.parameters())+list(self.nash_q.parameters()), lr=0.2*float(args.learning_rate)) # smaller lr for fine-tuning with nash loss
         self.dqn_optimizer = choose_optimizer(args.optimizer)(list(self.q_net_1.parameters())+list(self.q_net_2.parameters()), lr=float(args.learning_rate))
 
         if DEBUG:
             self.debugger = Debugger(env, "./data/factorized_nash_dqn_test/nash_dqn_simple_mdp_log.pkl")
+        
+    def _get_nash_q(self, state, single_side_q1, single_side_q2, nash_q_correction):
+        """
+        Merged Q table: Q(s,a,b) = 0.5*(Q(s,a)-Q(s,b)) + delta_Q(s,a,b)
+        """
+        # sum of single side Q
+        q1 = single_side_q1(state)  # shape: (#batch, #action1)
+        q2 = single_side_q2(state)  # shape: (#batch, #action2)
+        merged_q = 0.5*(q1[:, :, None] - q2[:, None])  # 0.5*(Q(s,a)-Q(s,b)); shape: (#batch, #action1, #action2)
+        merged_q = merged_q.view(merged_q.shape[0], -1)  # reshape: (#batch, #action1 * #action2)
+
+        delta_nash_q = nash_q_correction(state) # shape: (#batch, #action1 * #action2)
+
+        nash_q = merged_q + delta_nash_q # Q(s,a,b) = 0.5*(Q(s,a)-Q(s,b)) + delta_Q(s,a,b)
+
+        return nash_q     
 
     def model_(self, state):
         """
-        Merged Q table: Q(s,a,b)
+        Merged Q table: Q(s,a,b) = 0.5*(Q(s,a)-Q(s,b)) + delta_Q(s,a,b)
         """
-        q1 = self.q_net_1(state)  # shape: (#batch, #action1)
-        q2 = self.q_net_2(state)  # shape: (#batch, #action2)
-        merged_q = 0.5*(q1[:, :, None] - q2[:, None])  # shape: (#batch, #action1, #action2)
-        return merged_q.view(merged_q.shape[0], -1)  # reshape
+        nash_q = self._get_nash_q(state, self.q_net_1, self.q_net_2, self.nash_q)
+        return nash_q
 
     def target_(self, state):
         """
         Merged Q table: Q(s,a,b)
         """
-        q1 = self.target_q_net_1(state)  # shape: (#batch, #action1)
-        q2 = self.target_q_net_2(state)  # shape: (#batch, #action2)
-        merged_q = 0.5*(q1[:, :, None] - q2[:, None])  # shape: (#batch, #action1, #action2)
-        return merged_q.view(merged_q.shape[0], -1)  # reshape
+        target_nash_q = self._get_nash_q(state, self.target_q_net_1, self.target_q_net_2, self.target_nash_q)
+        return target_nash_q
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -188,6 +206,7 @@ class NashDQNFactorized(DQN):
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.q_net_1, self.target_q_net_1)
             self.update_target(self.q_net_2, self.target_q_net_2)
+            self.update_target(self.nash_q, self.target_nash_q)
         self.update_cnt += 1
         return nash_loss.item()
 
