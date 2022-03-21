@@ -210,6 +210,38 @@ class NashDQNFactorized(DQN):
         self.update_cnt += 1
         return nash_loss.item()
 
+    def save_model(self, path):
+        try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
+            torch.save(self.q_net_1.state_dict(), path+'_qnet1', _use_new_zipfile_serialization=False) 
+            torch.save(self.q_net_2.state_dict(), path+'_qnet2', _use_new_zipfile_serialization=False)
+            torch.save(self.nash_q.state_dict(), path+'_nashq', _use_new_zipfile_serialization=False)
+            torch.save(self.target_q_net_1.state_dict(), path+'_target_qnet1', _use_new_zipfile_serialization=False) 
+            torch.save(self.target_q_net_2.state_dict(), path+'_target_qnet2', _use_new_zipfile_serialization=False)
+            torch.save(self.target_nash_q.state_dict(), path+'_target_nashq', _use_new_zipfile_serialization=False)
+        except:  # for lower versions
+            torch.save(self.q_net_1.state_dict(), path+'_qnet1') 
+            torch.save(self.q_net_2.state_dict(), path+'_qnet2')
+            torch.save(self.nash_q.state_dict(), path+'_nashq')
+            torch.save(self.target_q_net_1.state_dict(), path+'_target_qnet1') 
+            torch.save(self.target_q_net_2.state_dict(), path+'_target_qnet2')
+            torch.save(self.target_nash_q.state_dict(), path+'_target_nashq')
+
+    def load_model(self, path, eval=True):
+        self.q_net_1.load_state_dict(torch.load(path+'_qnet1'))
+        self.q_net_2.load_state_dict(torch.load(path+'_qnet2'))
+        self.nash_q.load_state_dict(torch.load(path+'_nashq'))
+        self.target_q_net_1.load_state_dict(torch.load(path+'_target_qnet1'))
+        self.target_q_net_2.load_state_dict(torch.load(path+'_target_qnet2'))
+        self.target_nash_q.load_state_dict(torch.load(path+'_target_nashq'))
+
+        if eval:
+            self.q_net_1.eval()
+            self.q_net_2.eval()
+            self.nash_q.eval()
+            self.target_q_net_1.eval()
+            self.target_q_net_2.eval()
+            self.target_nash_q.eval()
+
 class NashDQNFactorizedBase(DQNBase):
     """
     Nash-DQN for parallel env sampling
