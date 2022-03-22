@@ -42,7 +42,7 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
         if model.ready_to_update:
             loss = model.update()
         
-        if loss is not None and (itr+1) % meta_update_interval == 0:
+        if loss is not None:
             logger.log_loss(loss)
 
         if meta_learner is not None \
