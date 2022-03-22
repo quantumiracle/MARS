@@ -129,6 +129,8 @@ class Logger(TestLogger):
     def __init__(self, env, save_id, args: ConfigurationDict) -> None:
         super().__init__(env, save_id, args)
         self.save_id = save_id
+        if '-' in self.save_id: # multiprocessing, each with a logger
+           [self.save_id, self.process_id] = self.save_id.split('_')
         self.losses = self._clear_dict_as_list(self.keys)
 
         self.post_fix = self._create_dirs(args)
@@ -150,7 +152,6 @@ class Logger(TestLogger):
         :type args: dict
         """
         post_fix = f"{args.env_type}_{args.env_name}_{args.marl_method}/"
-
         self.log_dir = f'./{args.save_path}/data/log/{self.save_id}/' + post_fix
         self.runs_dir = f'./{args.save_path}/data/tensorboard/{self.save_id}/' + post_fix
         self.model_dir = f'./{args.save_path}/data/model/{self.save_id}/' + post_fix
@@ -164,7 +165,7 @@ class Logger(TestLogger):
     def log_episode_reward(self, step: int) -> None:
         for k, v in self.rewards.items():
             self.epi_rewards[k].append(v)
-            self.writer.add_scalar(f"Process ID: {self.save_id}, episode Reward/{k}",
+            self.writer.add_scalar(f"Process ID: {self.process_id}, episode Reward/{k}",
                                    self.epi_rewards[k][-1],
                                    self.current_episode)
 
@@ -175,7 +176,8 @@ class Logger(TestLogger):
     def log_loss(self, loss: List[float]) -> None:
         for k, l in zip(self.losses.keys(), loss):
             self.losses[k].append(l)
-            self.writer.add_scalar(f"RL Loss/{k}", self.losses[k][-1],
+            self.writer.add_scalar(f"Process ID: {self.process_id}, RL Loss/{k}", 
+                                   self.losses[k][-1],
                                    self.current_itr)
         self.current_itr += 1  # update iteration
 
