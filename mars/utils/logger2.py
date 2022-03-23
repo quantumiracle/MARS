@@ -130,7 +130,7 @@ class Logger(TestLogger):
         super().__init__(env, save_id, args)
         self.save_id = save_id
         if '-' in self.save_id: # multiprocessing, each with a logger
-           [self.save_id, self.process_id] = self.save_id.split('_')
+           [self.save_id, self.process_id] = self.save_id.split('-')
         self.losses = self._clear_dict_as_list(self.keys)
 
         self.post_fix = self._create_dirs(args)
