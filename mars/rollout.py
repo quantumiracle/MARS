@@ -104,6 +104,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             obs = obs_
             logger.log_reward(np.array(reward).reshape(-1))
             loss = None
+
+            # non-epsodic update of the model
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
@@ -124,6 +126,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             ):  # if any player in a game is done, the game episode done; may not be correct for some envs
                 break
 
+        # epsodic update of the model
         if model.ready_to_update:
             if args.algorithm_spec['episodic_update']:
                 loss = model.update()

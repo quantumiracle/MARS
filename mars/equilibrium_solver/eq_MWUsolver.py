@@ -8,6 +8,7 @@ https://dl.acm.org/doi/abs/10.1145/3219166.3219235?casa_token=4Vu0L6uBun8AAAAA:X
 """
 import numpy as np
 import time, copy
+import sys
 
 def get_payoff_vector(payoff_matrix, opponent_policy):
     payoff = opponent_policy @ payoff_matrix
@@ -16,6 +17,7 @@ def get_payoff_vector(payoff_matrix, opponent_policy):
 def NashEquilibriumMWUSolver(A, Itr=500, verbose=False):
     """ Solve Nash equilibrium with multiplicative weights udpate."""
     # discount = 0.9
+    EPS = 1e-7 # prevent numerical problem
     row_action_num = A.shape[0]
     col_action_num = A.shape[1]
     learning_rate = np.sqrt(np.log(row_action_num)/Itr)  # sqrt(log |A| / T)
@@ -27,20 +29,20 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False):
 
     for i in range(Itr):
         # for row player, maximizer
-        # payoff_vec = get_payoff_vector(A.T, policies[1])
-        payoff_vec = policies[1] @ A.T
+        policies_ = copy.deepcopy(policies)  # track old value before update (update is inplace)
+        payoff_vec = policies_[1] @ A.T
         policies[0] = policies[0] * np.exp(learning_rate*payoff_vec)
 
         # for col player, minimizer
         # payoff_vec = get_payoff_vector(A, policies[0])
-        payoff_vec = policies[0] @ A
+        payoff_vec = policies_[0] @ A
         policies[1] = policies[1] * np.exp(-learning_rate*payoff_vec)
 
         # above is unnormalized, normalize it to be distribution
         # for k in range(len(policies)):
         #     abs_policy = np.abs(policies[k])
         #     policies[k] = abs_policy/np.sum(abs_policy)
-        policies = policies/np.expand_dims(np.sum(policies, axis=-1), -1)
+        policies = policies/np.expand_dims(EPS+np.sum(policies, axis=-1), -1)
 
         # MWU is average-iterate coverging, so accumulate polices
         final_policy += policies
@@ -59,8 +61,9 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False):
     return final_policy, nash_value
 
 
-def NashEquilibriumParallelMWUSolver(A, Itr=100, verbose=False):
+def NashEquilibriumParallelMWUSolver(A, Itr=500, verbose=False):
     """ Solve mulitple Nash equilibrium with multiplicative weights udpate."""
+    EPS = 1e-7 # prevent numerical problem
     A = np.array(A)
     matrix_num = A.shape[0]
     row_action_num = A.shape[1]
@@ -74,17 +77,17 @@ def NashEquilibriumParallelMWUSolver(A, Itr=100, verbose=False):
 
     for i in range(Itr):
         # for row player, maximizer
-        payoff_vec = np.einsum('nb,nab->na', policies[:, 1], A) 
+        policies_ = copy.deepcopy(policies)  # track old value before update (update is inplace)
+        payoff_vec = np.einsum('nb,nab->na', policies_[:, 1], A) 
         policies[:, 0] = policies[:, 0] * np.exp(learning_rate*payoff_vec)
 
         # for col player, minimizer
-        payoff_vec = np.einsum('na,nab->nb', policies[:, 0], A) 
+        payoff_vec = np.einsum('na,nab->nb', policies_[:, 0], A) 
         policies[:, 1] = policies[:, 1] * np.exp(-learning_rate*payoff_vec)
 
 
         # above is unnormalized, normalize it to be distribution
-        policies = policies/np.expand_dims(np.sum(policies, axis=-1), -1)
-
+        policies = policies/np.expand_dims(EPS+np.sum(policies, axis=-1), -1)
         # MWU is average-iterate coverging, so accumulate polices
         final_policy += policies
 
@@ -94,11 +97,10 @@ def NashEquilibriumParallelMWUSolver(A, Itr=100, verbose=False):
         print(f'For row player, strategy is {final_policy[:, 0]}')
         print(f'For column player, strategy is {final_policy[:, 1]}')
         print(learning_rate)
-
+    
     nash_value = np.einsum('nb,nb->n', np.einsum('na,nab->nb', policies[:, 0], A), final_policy[:, 1])
 
     return final_policy, nash_value
-
 
 if __name__ == "__main__":
     ###   TEST LP NASH SOLVER ###

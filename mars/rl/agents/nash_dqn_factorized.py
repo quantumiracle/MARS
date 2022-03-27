@@ -100,7 +100,10 @@ class NashDQNFactorized(DQN):
             try: # nash computation may report error and terminate the process
                 actions, dists, ne_vs = self.compute_nash(q_values)
             except:
-                print("Invalid nash computation.")
+                print("Error: Invalid nash computation in choose_action function.")
+                actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
+            if np.isnan(actions).any():
+                print("Error: Nan action value in Nash computation is derived in the choose_action function.")
                 actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
 
             if DEBUG: ## test on arbitrary MDP
@@ -137,7 +140,7 @@ class NashDQNFactorized(DQN):
         all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
 
         if update:
-            return all_dists, all_ne_values
+            return all_dists, all_ne_values #  Nash distributions, Nash values
         else:
             # Sample actions from Nash strategies
             for ne in all_dists:
@@ -146,14 +149,14 @@ class NashDQNFactorized(DQN):
                     try:
                         sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
                     except:
-                        print('Not a valid distribution from Nash equilibrium solution.')
+                        print('Error: Not a valid distribution from Nash equilibrium solution.')
                         print(sum(ne[0]), sum(ne[1]))
                         print(dist)
                     a = np.where(sample_hist>0)
                     actions.append(a)
                 all_actions.append(np.array(actions).reshape(-1))
 
-            return np.array(all_actions), all_dists, all_ne_values
+            return np.array(all_actions), all_dists, all_ne_values  # Nash actions, Nash distributions, Nash values
 
     def update(self):
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
@@ -164,7 +167,7 @@ class NashDQNFactorized(DQN):
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
 
-        # invididual DQN loss
+        # invididual DQN loss calculation
         def DQN_loss(model, target, state, action, reward, next_state, done, multi_step):
             q = model(state)
             q = q.gather(1, action.unsqueeze(1)).squeeze(1)
@@ -173,6 +176,7 @@ class NashDQNFactorized(DQN):
             target_q = reward + (self.gamma ** multi_step) * next_q * (1 - done)
             loss = F.mse_loss(q, target_q.detach(), reduction='none')
             return loss.mean()
+
         a1 = action[:, 0]
         a2 = action[:, 1]
         q1_loss = DQN_loss(self.q_net_1, self.target_q_net_1, state, a1, reward, next_state, done, self.multi_step)
@@ -191,9 +195,17 @@ class NashDQNFactorized(DQN):
         q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
         try: # nash computation may encounter error and terminate the process
             _, next_q_value = self.compute_nash(target_next_q_values, update=True)
+            if np.isnan(next_q_value).any():
+                import pdb; pdb.set_trace()
+
         except: 
-            print("Invalid nash computation.")
+            print("Error: Invalid nash computation in the update function.")
             next_q_value = np.zeros_like(reward)
+
+        if np.isnan(next_q_value).any():
+            print("Error: Nan Nash value in Nash computation is derived in the udpate function.")
+            next_q_value = np.zeros_like(reward)
+
         next_q_value  = torch.FloatTensor(next_q_value).to(self.device)
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
         nash_loss = F.mse_loss(q_value, expected_q_value.detach(), reduction='none')
@@ -270,7 +282,7 @@ class NashDQNFactorizedBase(DQNBase):
     def _construct_net(self, env, net_args):
             input_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = self._observation_shape)
             output_space = gym.spaces.Discrete(self._action_shape)
-            if len(self._observation_shape) <= 1: # not 3d image
+            if len(self._observation_shape) <= 1: # not 2d image
                 self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')
             else:
                 self.net = get_model('cnn')(input_space, output_space, net_args, model_for='discrete_q')
