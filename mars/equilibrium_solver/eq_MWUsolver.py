@@ -28,8 +28,8 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False):
     final_policy = copy.deepcopy(policies)
 
     for i in range(Itr):
-        # for row player, maximizer
         policies_ = copy.deepcopy(policies)  # track old value before update (update is inplace)
+        # for row player, maximizer
         payoff_vec = policies_[1] @ A.T
         policies[0] = policies[0] * np.exp(learning_rate*payoff_vec)
 
@@ -76,8 +76,8 @@ def NashEquilibriumParallelMWUSolver(A, Itr=500, verbose=False):
     final_policy = copy.deepcopy(policies)
 
     for i in range(Itr):
-        # for row player, maximizer
         policies_ = copy.deepcopy(policies)  # track old value before update (update is inplace)
+        # for row player, maximizer
         payoff_vec = np.einsum('nb,nab->na', policies_[:, 1], A) 
         policies[:, 0] = policies[:, 0] * np.exp(learning_rate*payoff_vec)
 
