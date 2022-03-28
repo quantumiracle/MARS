@@ -209,9 +209,9 @@ class NashDQNFactorized(DQN):
         nash_loss = F.mse_loss(q_value, expected_q_value.detach(), reduction='none')
         nash_loss = nash_loss.mean()
 
-        self.nash_optimizer.zero_grad()
-        nash_loss.backward()
-        self.nash_optimizer.step()
+        # self.nash_optimizer.zero_grad()
+        # nash_loss.backward()
+        # self.nash_optimizer.step()
 
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.q_net_1, self.target_q_net_1)
