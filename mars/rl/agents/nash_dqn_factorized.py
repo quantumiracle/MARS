@@ -195,8 +195,6 @@ class NashDQNFactorized(DQN):
         q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
         try: # nash computation may encounter error and terminate the process
             _, next_q_value = self.compute_nash(target_next_q_values, update=True)
-            if np.isnan(next_q_value).any():
-                import pdb; pdb.set_trace()
 
         except: 
             print("Error: Invalid nash computation in the update function.")
