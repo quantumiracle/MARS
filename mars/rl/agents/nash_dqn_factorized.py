@@ -81,6 +81,8 @@ class NashDQNFactorized(DQN):
         target_nash_q = self._get_nash_q(state, self.target_q_net_1, self.target_q_net_2, self.target_nash_q)
         return target_nash_q
 
+    ### FOR TEST PURPOSE ONLY ###
+    ### two side DQN ###
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
             epsilon = 0.
@@ -95,42 +97,74 @@ class NashDQNFactorized(DQN):
             state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
 
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
-            with torch.no_grad():
-                q_values = self.model_(state).detach().cpu().numpy()  # needs state: (batch, agents*state_dim)
-            try: # nash computation may report error and terminate the process
-                actions, dists, ne_vs = self.compute_nash(q_values)
-            except:
-                print("Error: Invalid nash computation in choose_action function.")
-                actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
-            if np.isnan(actions).any():
-                print("Error: Nan action value in Nash computation is derived in the choose_action function.")
-                actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
-
-            if DEBUG: ## test on arbitrary MDP
-                if self.update_cnt % 111 == 0: # skip some steps, 111 is not divided by number of transitions
-                    total_states_num = self.env.env.num_states*self.env.env.max_transition
-                    if self.env.env.OneHotObs:
-                        range = self.env.env.num_states*(self.env.env.max_transition+1)
-                        states = np.arange(total_states_num)
-                        one_hot_states = []
-                        for s in states:
-                            one_hot_states.append(to_one_hot(s, range))
-                        test_states = torch.FloatTensor(np.repeat(one_hot_states, 2, axis=0).reshape(-1, 2*range)).to(self.device)
-                    else:
-                        test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
-                    ne_q_vs = self.model_(test_states) # Nash Q values
-                    ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
-
-                    self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=False)
-
+            q1 = self.q_net_1(state)  # shape: (#batch, #action1)
+            q2 = self.q_net_2(state)  # shape: (#batch, #action2)   
+            a1 = torch.argmax(q1, dim=-1, keepdim=True) # shape: (#batch, 1)
+            a2 = torch.argmax(q2, dim=-1, keepdim=True) # shape: (#batch, 1)
+            actions = torch.hstack((a1, a2)).detach().cpu().numpy()
+    
         else:
             actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))  # (envs, agents)
         
         if self.num_envs == 1:
             actions = actions[0]  # list of actions to its item
         else:
-            actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
+            actions = np.array(actions).T  # to shape: (agents, envs, (action_dim=1))
+
         return actions
+
+
+    # def choose_action(self, state, Greedy=False, epsilon=None):
+    #     if Greedy:
+    #         epsilon = 0.
+    #     elif epsilon is None:
+    #         epsilon = self.epsilon_scheduler.get_epsilon()
+    #     if not isinstance(state, torch.Tensor):
+    #         state = torch.Tensor(state).to(self.device)
+    #     if self.num_envs == 1: # state: (agents, state_dim)
+    #         state = state.unsqueeze(0).view(1, -1) # change state from (agents, state_dim) to (1, agents*state_dim)
+    #     else: # state: (agents, envs, state_dim)
+    #         state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
+    #         state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
+
+    #     if random.random() > epsilon:  # NoisyNet does not use e-greedy
+    #         with torch.no_grad():
+    #             q_values = self.model_(state).detach().cpu().numpy()  # needs state: (batch, agents*state_dim)
+    #         try: # nash computation may report error and terminate the process
+    #             actions, dists, ne_vs = self.compute_nash(q_values)
+    #         except:
+    #             print("Error: Invalid nash computation in choose_action function.")
+    #             actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
+    #         if np.isnan(actions).any():
+    #             print("Error: Nan action value in Nash computation is derived in the choose_action function.")
+    #             actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
+
+    #         if DEBUG: ## test on arbitrary MDP
+    #             if self.update_cnt % 111 == 0: # skip some steps, 111 is not divided by number of transitions
+    #                 total_states_num = self.env.env.num_states*self.env.env.max_transition
+    #                 if self.env.env.OneHotObs:
+    #                     range = self.env.env.num_states*(self.env.env.max_transition+1)
+    #                     states = np.arange(total_states_num)
+    #                     one_hot_states = []
+    #                     for s in states:
+    #                         one_hot_states.append(to_one_hot(s, range))
+    #                     test_states = torch.FloatTensor(np.repeat(one_hot_states, 2, axis=0).reshape(-1, 2*range)).to(self.device)
+    #                 else:
+    #                     test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
+    #                 ne_q_vs = self.model_(test_states) # Nash Q values
+    #                 ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
+
+    #                 self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=False)
+
+    #     else:
+    #         actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))  # (envs, agents)
+        
+    #     if self.num_envs == 1:
+    #         actions = actions[0]  # list of actions to its item
+    #     else:
+    #         actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
+
+    #     return actions
 
     def compute_nash(self, q_values, update=False):
         q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
