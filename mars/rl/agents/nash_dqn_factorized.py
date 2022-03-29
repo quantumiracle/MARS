@@ -195,16 +195,16 @@ class NashDQNFactorized(DQN):
         q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
         try: # nash computation may encounter error and terminate the process
             _, next_q_value = self.compute_nash(target_next_q_values, update=True)
+            next_q_value  = torch.FloatTensor(next_q_value).to(self.device)
 
         except: 
             print("Error: Invalid nash computation in the update function.")
-            next_q_value = np.zeros_like(reward)
+            next_q_value = torch.zeros_like(reward)
 
         if np.isnan(next_q_value).any():
             print("Error: Nan Nash value in Nash computation is derived in the udpate function.")
-            next_q_value = np.zeros_like(reward)
+            next_q_value = torch.zeros_like(reward)
 
-        next_q_value  = torch.FloatTensor(next_q_value).to(self.device)
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
         nash_loss = F.mse_loss(q_value, expected_q_value.detach(), reduction='none')
         nash_loss = nash_loss.mean()
