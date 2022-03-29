@@ -201,7 +201,7 @@ class NashDQNFactorized(DQN):
             print("Error: Invalid nash computation in the update function.")
             next_q_value = torch.zeros_like(reward)
 
-        if np.isnan(next_q_value).any():
+        if torch.isnan(next_q_value).any():
             print("Error: Nan Nash value in Nash computation is derived in the udpate function.")
             next_q_value = torch.zeros_like(reward)
 
