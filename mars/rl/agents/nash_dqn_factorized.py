@@ -210,6 +210,7 @@ class NashDQNFactorized(DQN):
             next_q = target(next_state)
             next_q = torch.max(next_q, dim=-1)[0]
             target_q = reward + (self.gamma ** multi_step) * next_q * (1 - done)
+            target_q = (target_q - target_q.mean()) / (target_q.std() + 1e-7)   # normalization to avoid increasing Q value
             loss = F.mse_loss(q, target_q.detach(), reduction='none')
             return loss.mean()
 
@@ -254,7 +255,7 @@ class NashDQNFactorized(DQN):
             self.update_target(self.q_net_2, self.target_q_net_2)
             self.update_target(self.nash_q, self.target_nash_q)
         self.update_cnt += 1
-        return nash_loss.item()
+        return q1_loss.item() + q2_loss.item() + nash_loss.item()
 
     def save_model(self, path):
         try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
