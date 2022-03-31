@@ -58,6 +58,8 @@ class MultiAgent(Agent):
                 if agent.not_learnable:
                     self.not_learnable_list.append(i)
             else: # training mode
+                if i>0 and args.marl_method in NashBasedMethods: # only one common model is trained
+                    self.not_learnable_list.append(i)
                 if agent.not_learnable or (args.marl_method in MetaStepMethods and i != args.marl_spec['trainable_agent_idx']):  # nxdo2 is special, fixed one side at beginning
                     self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
@@ -191,9 +193,7 @@ class MultiAgent(Agent):
             # 'states' (agents, envs, state_dim) -> (envs, agents, state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples
-            try:  # Used when num_envs > 1. 
-                ## TODO Here the samples with done as True are filtered out for Nash algorithms!!
-                # samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
+            try:  # when num_envs > 1. 
                 if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
                     samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
                 else:  # only use the observation from the first agent (assume the symmetry in the game and the single state contains the full information: speed up learning!)
@@ -206,14 +206,12 @@ class MultiAgent(Agent):
            
             # one model for all agents, the model is the first one
             # of self.agents, it directly stores the sample constaining all
-            for agent in self.agents: # actually only one agent in list
+            for agent in self.agents[:1]: # actually only one agent in list
                 agent.store(samples) 
 
         elif self.args.marl_method == 'nash_ppo' and not self.args.exploit:
             [states, actions, rewards, next_states, logprobs, dones] = samples
             if self.args.num_envs > 1:  # Used when num_envs > 1. 
-                ## TODO Here the samples with done as True are filtered out for Nash algorithms!!
-                # samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), False] for j, d in enumerate(np.array(dones).T) if not np.all(d)]
                 assert self.args.marl_spec['global_state']  # this has to be true for Nash PPO
                 samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[:, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
                 
@@ -225,7 +223,7 @@ class MultiAgent(Agent):
 
             # one model for all agents, the model is the first one
             # of self.agents, it directly stores the sample constaining all
-            for agent in self.agents: # actually only one agent in list
+            for agent in self.agents[:1]: # actually only one agent in list
                 agent.store(samples) 
 
         else:
