@@ -14,7 +14,7 @@ def get_payoff_vector(payoff_matrix, opponent_policy):
     payoff = opponent_policy @ payoff_matrix
     return payoff
 
-def NashEquilibriumMWUSolver(A, Itr=500, verbose=False):
+def NashEquilibriumMWUSolver(A, Itr=500, verbose=False, adaptive_lr_rate=-1/3):
     """ Solve Nash equilibrium with multiplicative weights udpate."""
     # discount = 0.9
     EPS = 1e-7 # prevent numerical problem
@@ -28,6 +28,8 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False):
     final_policy = copy.deepcopy(policies)
 
     for i in range(Itr):
+        if adaptive_lr_rate and (i+1) % 20 == 0:
+            learning_rate = np.power(i, adaptive_lr_rate)
         policies_ = copy.deepcopy(policies)  # track old value before update (update is inplace)
         # for row player, maximizer
         payoff_vec = policies_[1] @ A.T
@@ -61,14 +63,14 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False):
     return final_policy, nash_value
 
 
-def NashEquilibriumParallelMWUSolver(A, Itr=100, verbose=False):
+def NashEquilibriumParallelMWUSolver(A, Itr=100, verbose=False, adaptive_lr_rate=-1/3):
     """ Solve mulitple Nash equilibrium with multiplicative weights udpate."""
     EPS = 1e-7 # prevent numerical problem
     A = np.array(A)
     matrix_num = A.shape[0]
     row_action_num = A.shape[1]
     col_action_num = A.shape[2]
-    learning_rate = np.sqrt(np.log(row_action_num)/Itr)  # sqrt(log |A| / T)
+    learning_rate = 100*np.sqrt(np.log(row_action_num)/Itr)  # sqrt(log |A| / T)
 
     row_policy = np.ones(row_action_num)/row_action_num
     col_policy = np.ones(col_action_num)/col_action_num
@@ -76,6 +78,8 @@ def NashEquilibriumParallelMWUSolver(A, Itr=100, verbose=False):
     final_policy = copy.deepcopy(policies)
 
     for i in range(Itr):
+        if adaptive_lr_rate and (i+1) % 20 == 0:
+            learning_rate = np.power(i, adaptive_lr_rate)
         policies_ = copy.deepcopy(policies)  # track old value before update (update is inplace)
         # for row player, maximizer
         payoff_vec = np.einsum('nb,nab->na', policies_[:, 1], A) 
