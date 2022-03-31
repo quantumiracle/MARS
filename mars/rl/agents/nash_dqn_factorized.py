@@ -60,7 +60,6 @@ class NashDQNFactorized(DQN):
         q2 = single_side_q2(state)  # shape: (#batch, #action2)
         merged_q = 0.5*(q1[:, :, None] - q2[:, None])  # 0.5*(Q(s,a)-Q(s,b)); shape: (#batch, #action1, #action2)
         merged_q = merged_q.view(merged_q.shape[0], -1)  # reshape: (#batch, #action1 * #action2)
-
         delta_nash_q = nash_q_correction(state) # shape: (#batch, #action1 * #action2)
 
         ### TEST ONLY
@@ -188,6 +187,7 @@ class NashDQNFactorized(DQN):
                         print('Error: Not a valid distribution from Nash equilibrium solution.')
                         print(sum(ne[0]), sum(ne[1]))
                         print(dist)
+                    # print(dist)
                     # a = np.argmax(dist)
                     a = np.where(sample_hist>0)
                     actions.append(a)
