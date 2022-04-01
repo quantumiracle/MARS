@@ -133,6 +133,7 @@ for game in two_player_zero_sum_games:
 
         conf['env_args']['num_envs'] = 2
         conf['train_args']['max_episodes'] = 50000
+        conf['train_args']['max_steps_per_episode'] = 300 # truncated game for speed up
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
             conf['agent_args']['algorithm_spec']['multi_step'] = 1
