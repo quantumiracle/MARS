@@ -63,7 +63,7 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False, adaptive_lr_rate=-1/3):
     return final_policy, nash_value
 
 
-def NashEquilibriumParallelMWUSolver(A, Itr=100, verbose=False, adaptive_lr_rate=-1/3):
+def NashEquilibriumParallelMWUSolver(A, Itr=1000, verbose=False, adaptive_lr_rate=-1/3):
     """ Solve mulitple Nash equilibrium with multiplicative weights udpate."""
     EPS = 1e-7 # prevent numerical problem
     A = np.array(A)
