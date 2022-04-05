@@ -192,7 +192,7 @@ class NashDQNFactorized(DQN):
                         print('Error: Not a valid distribution from Nash equilibrium solution.')
                         print(sum(ne[0]), sum(ne[1]))
                         print(dist)
-                    print(dist)
+                    # print(dist)
                     a = np.where(sample_hist>0)
                     # a = np.argmax(dist)
                     actions.append(a)
