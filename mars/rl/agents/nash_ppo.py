@@ -24,7 +24,6 @@ class NashPPO(Agent):
         self.K_epoch = args.algorithm_spec['K_epoch']
         self.GAE = args.algorithm_spec['GAE']
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        # self.device = 'cpu'
         if isinstance(env.observation_space, list):  # when using parallel envs
             observation_space = env.observation_space[0]
         else:
@@ -36,34 +35,28 @@ class NashPPO(Agent):
             merged_action_space_dim = env.action_space[0].n + env.action_space[0].n
         merged_action_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(merged_action_space_dim,))
 
-        # args_param = args.net_architecture
-        # args_param['policy']['output_activation'] = 'Linear'
-        # args_param['hidden_dim_list'] = [64, 64]
-        feature_space = env.observation_space
-        double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (observation_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
 
         if len(observation_space.shape) <= 1:
+            feature_space = env.observation_space
+            double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
+
             for _ in range(2):
-                # tmp_action = gym.spaces.Discrete(env.action_space.n * 2)
-                # self.feature_nets.append(MLP(env.observation_space, [tmp_action, tmp_action], args_param, model_for='discrete_policy').to(self.device))
                 self.feature_nets.append(MLP(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
-
-                # self.policies.append(nn.Sequential(nn.Linear(env.action_space.n * 2, env.action_space.n),nn.Softmax()).to(self.device))
                 self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
-
-                # self.values.append(nn.Linear(env.action_space.n * 2, 1).to(self.device))
                 self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
             
-            # self.common_layers = nn.Linear(env.action_space.n * 4, 1).to(self.device)
             self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         else:
-            for _ in range(2):
-                # TODO feature extraction before 
-                self.policies.append(CNN(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
-                self.values.append(CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
+            feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
+            double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
 
-            self.common_layers = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+            for _ in range(2):
+                self.feature_nets.append(CNN(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
+                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
+                self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
+
+            self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         if args.num_process > 1:
             self.policies = [policy.share_memory() for policy in self.policies]
