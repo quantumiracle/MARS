@@ -26,19 +26,19 @@ train_args:
   log_interval: 20
   multiprocess: false
   net_architecture:
-    policy:
+    feature:
       hidden_dim_list:
-      - 256
-      - 256
       - 256
       - 256
       hidden_activation: ReLU
+      output_activation: false
+    policy:
+      hidden_dim_list:
+      - 256
+      hidden_activation: false
       output_activation: Softmax
     value:
       hidden_dim_list:
-      - 256
-      - 256
-      - 256
       - 256
       hidden_activation: ReLU
       output_activation: false

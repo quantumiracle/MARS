@@ -57,13 +57,18 @@ ppo_algorithm_spec = { # specs for PPO alg.
 }
 
 ppo_net_architecture = {
-    'policy':{
-      'hidden_dim_list': [64, 64, 64, 64],
+    'feature':{
+      'hidden_dim_list': [64, 64],
       'hidden_activation': 'ReLU',
+      'output_activation': False,
+    },
+    'policy':{
+      'hidden_dim_list': [64],
+      'hidden_activation': False,
       'output_activation': 'Softmax',
     },
     'value': {
-      'hidden_dim_list': [64, 64, 64, 64],
+      'hidden_dim_list': [64],
       'hidden_activation': 'ReLU',
       'output_activation': False,
     }
@@ -88,7 +93,7 @@ for game in games:
         conf['train_args']['marl_method'] = method
         conf['train_args']['marl_spec'] = get_method_env_marl_spec(method, game)
 
-        conf['env_args']['num_envs'] = 2
+        conf['env_args']['num_envs'] = 1
         conf['train_args']['max_episodes'] = 50000
         conf['train_args']['max_steps_per_episode'] = 300 # truncated game for speed up
         # some method specific confs
