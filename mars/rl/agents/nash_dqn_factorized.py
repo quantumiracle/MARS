@@ -172,7 +172,12 @@ class NashDQNFactorized(DQN):
         all_actions = []
         all_dists = []
         all_ne_values = []
-        all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+
+        # all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+        for q_table in q_tables:
+            dist, value = NashEquilibriumECOSSolver(q_table)
+            all_dists.append(dist)
+            all_ne_values.append(value)
 
         if update:
             return all_dists, all_ne_values #  Nash distributions, Nash values
@@ -187,7 +192,7 @@ class NashDQNFactorized(DQN):
                         print('Error: Not a valid distribution from Nash equilibrium solution.')
                         print(sum(ne[0]), sum(ne[1]))
                         print(dist)
-                    # print(dist)
+                    print(dist)
                     a = np.where(sample_hist>0)
                     # a = np.argmax(dist)
                     actions.append(a)
