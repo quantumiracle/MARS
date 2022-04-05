@@ -145,7 +145,12 @@ class NashDQN(DQN):
         all_actions = []
         all_dists = []
         all_ne_values = []
+
         all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+        # for q_table in q_tables:
+        #     dist, value = NashEquilibriumECOSSolver(q_table)
+        #     all_dists.append(dist)
+        #     all_ne_values.append(value)
 
         if update:
             return all_dists, all_ne_values

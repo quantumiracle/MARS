@@ -18,6 +18,9 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False, adaptive_lr_rate=-1/3):
     """ Solve Nash equilibrium with multiplicative weights udpate."""
     # discount = 0.9
     EPS = 1e-7 # prevent numerical problem
+    std = np.std(A)
+    A = A/(std+EPS)  # normalization: MWU is sensitive to the scale of matrix value, smaller value should have larger learning rate
+
     row_action_num = A.shape[0]
     col_action_num = A.shape[1]
     learning_rate = np.sqrt(np.log(row_action_num)/Itr)  # sqrt(log |A| / T)
@@ -59,14 +62,17 @@ def NashEquilibriumMWUSolver(A, Itr=500, verbose=False, adaptive_lr_rate=-1/3):
         print(f'For column player, strategy is {final_policy[1]}')
         print(learning_rate)
 
-    nash_value = final_policy[0] @ A @ final_policy[1].T
+    nash_value = (final_policy[0] @ A @ final_policy[1].T)*(std+EPS)  # unnormalize to get original values
     return final_policy, nash_value
 
 
-def NashEquilibriumParallelMWUSolver(A, Itr=1000, verbose=False, adaptive_lr_rate=-1/3):
+def NashEquilibriumParallelMWUSolver(A, Itr=300, verbose=False, adaptive_lr_rate=-1/3):
     """ Solve mulitple Nash equilibrium with multiplicative weights udpate."""
     EPS = 1e-7 # prevent numerical problem
     A = np.array(A)
+    std = np.std(A)
+    A = A/(std+EPS)  # normalization: MWU is sensitive to the scale of matrix value, smaller value should have larger learning rate
+
     matrix_num = A.shape[0]
     row_action_num = A.shape[1]
     col_action_num = A.shape[2]
@@ -102,7 +108,7 @@ def NashEquilibriumParallelMWUSolver(A, Itr=1000, verbose=False, adaptive_lr_rat
         print(f'For column player, strategy is {final_policy[:, 1]}')
         print(learning_rate)
     
-    nash_value = np.einsum('nb,nb->n', np.einsum('na,nab->nb', policies[:, 0], A), final_policy[:, 1])
+    nash_value = np.einsum('nb,nb->n', np.einsum('na,nab->nb', policies[:, 0], A), final_policy[:, 1])*(std+EPS)  # unnormalize to get original values
 
     return final_policy, nash_value
 
@@ -118,12 +124,12 @@ if __name__ == "__main__":
     # [ 0.545,  0.583,  0.585,  0.562,  0.537,  0.606],
     # [ 0.548,  0.576,  0.58,   0.574,  0.563,  0.564]])
 
-    # A=np.array([[ 0.001,  0.001,  0.00,     0.00,     0.005,  0.01, ],
-    # [ 0.033,  0.166,  0.086,  0.002, -0.109,  0.3,  ],
-    # [ 0.001,  0.003,  0.023,  0.019, -0.061, -0.131,],
-    # [-0.156, -0.039,  0.051,  0.016, -0.028, -0.287,],
-    # [ 0.007,  0.029,  0.004,  0.005,  0.003, -0.012],
-    # [ 0.014,  0.018, -0.001,  0.008, -0.009,  0.007]])
+    A=np.array([[ 0.001,  0.001,  0.00,     0.00,     0.005,  0.01, ],
+    [ 0.033,  0.166,  0.086,  0.002, -0.109,  0.3,  ],
+    [ 0.001,  0.003,  0.023,  0.019, -0.061, -0.131,],
+    [-0.156, -0.039,  0.051,  0.016, -0.028, -0.287,],
+    [ 0.007,  0.029,  0.004,  0.005,  0.003, -0.012],
+    [ 0.014,  0.018, -0.001,  0.008, -0.009,  0.007]])
 
     t0=time.time()
     ne = NashEquilibriumMWUSolver(A, verbose=True)
@@ -131,8 +137,8 @@ if __name__ == "__main__":
     t1=time.time()
     print(t1-t0)
 
-    print(As, As.shape)
-    ne = NashEquilibriumParallelMWUSolver(As, verbose=True)
-    print(ne)
-    t1=time.time()
-    print(t1-t0)
+    # print(As, As.shape)
+    # ne = NashEquilibriumParallelMWUSolver(As, verbose=True)
+    # print(ne)
+    # t1=time.time()
+    # print(t1-t0)
