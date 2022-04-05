@@ -58,7 +58,7 @@ def NashEquilibriumECOSSolver(M):
 
     nash_value = normalized_p1_dist@M@normalized_p2_dist.T
 
-    return (normalized_p1_dist, normalized_p2_dist), nash_value*std
+    return (normalized_p1_dist, normalized_p2_dist), nash_value
 
 if __name__ == "__main__":
     # A = np.array([[0, -1, 1], [1, 0, -1], [-1, 1, 0]])
