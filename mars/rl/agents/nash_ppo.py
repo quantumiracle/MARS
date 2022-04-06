@@ -10,7 +10,6 @@ from .agent import Agent
 from ..common.networks import MLP, CNN, get_model
 from ..common.rl_utils import choose_optimizer
 from mars.utils.typing import List, Tuple, StateType, ActionType, SampleType, SingleEnvMultiAgentSampleType
-import operator
 import gym
 
 class NashPPO(Agent):
@@ -35,48 +34,45 @@ class NashPPO(Agent):
         except:
             merged_action_space_dim = env.action_space[0].n + env.action_space[0].n
         merged_action_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(merged_action_space_dim,))
-        # args.net_architecture['policy']
-        args_param = args.net_architecture
-        args_param['policy']['output_activation'] = 'Linear'
-        args_param['hidden_dim_list'] = [64, 64]
-        # import pdb; pdb.set_trace()
-        #softmax = nn.functional.softmax()
+
+
         if len(observation_space.shape) <= 1:
+            feature_space = env.observation_space
+            double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
+
             for _ in range(2):
-                tmp_action = gym.spaces.Discrete(env.action_space.n * 2)
-                self.feature_nets.append(MLP(env.observation_space, [tmp_action, tmp_action], args_param, model_for='discrete_policy').to(self.device))
-                # import pdb; pdb.set_trace()
-                self.policies.append(nn.Sequential(nn.Linear(env.action_space.n * 2, env.action_space.n),nn.Softmax()).to(self.device))
-                self.values.append(nn.Linear(env.action_space.n * 2, 1).to(self.device))
-            # self.common_layers = MLP(env.observation_space, merged_action_space, args.net_architecture['value'], model_for='discrete_q').to(self.device)
-            self.common_layers = nn.Linear(env.action_space.n * 4, 1).to(self.device)
+                self.feature_nets.append(MLP(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
+                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
+                self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
+            
+            self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+
         else:
+            feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
+            double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
+
             for _ in range(2):
-                self.policies.append(CNN(env.observation_space, env.action_space, args.net_architecture['policy'],
-                                         model_for='discrete_policy').to(self.device))
-                self.values.append(
-                    CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(
-                        self.device))
-            # self.common_layers = CNN(env.observation_space, merged_action_space, args.net_architecture['value'], model_for='discrete_q').to(self.device)
-            self.common_layers = CNN(env.observation_space, env.action_space, args.net_architecture['value'],
-                                     model_for='value').to(self.device)
+                self.feature_nets.append(CNN(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
+                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
+                self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
+
+            self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+
         if args.num_process > 1:
             self.policies = [policy.share_memory() for policy in self.policies]
             self.values = [value.share_memory() for value in self.values]
             self.common_layers.share_memory()
+
         policy_params, value_params, common_val_params, feature_net_param = [], [], [], []
         for p, v, z in zip(self.feature_nets, self.policies, self.values):
             policy_params += list(p.parameters())
             value_params += list(v.parameters())
             common_val_params += list(z.parameters())
+
         feature_net_param += list(self.common_layers.parameters())
-        # TODO a single optimizer for two nets may be problematic
         self.optimizer = choose_optimizer(args.optimizer)(policy_params + value_params + common_val_params + feature_net_param, lr=float(args.learning_rate))
-        self.common_layer_optimizer = choose_optimizer(args.optimizer)(policy_params + value_params + common_val_params + feature_net_param,
-                                                                        lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
-        self._num_channel = args.num_envs * (env.num_agents if isinstance(env.num_agents, int) else env.num_agents[
-            0])  # env.num_agents is a list when using parallel envs
+        self._num_channel = args.num_envs * (env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0])  # env.num_agents is a list when using parallel envs
         self.data = [[] for _ in range(self._num_channel)]
 
     def pi(
@@ -106,8 +102,8 @@ class NashPPO(Agent):
         return self.values[idx].forward(x)
 
     def reinit(self, ):
+        # TODO
         self.policy.reinit()
-        self.policy_old.reinit()
         self.value.reinit()
 
     def store(self, transitions: SampleType) -> None:
@@ -115,8 +111,6 @@ class NashPPO(Agent):
         :param transitions: a list of samples from different environments (if using parallel env)
         :type transitions: SampleType
         """
-        # self.data.append(transition)
-        # self.data.extend(transitions)
         # If several transitions are pushed at the same time,
         # they are not from the same trajectory, therefore they need
         # to be stored separately since PPO is on-policy.
@@ -202,42 +196,39 @@ class NashPPO(Agent):
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data:  # iterate over data from different environments
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
-            # done_mask = done_mask.repeat(6,1).T
+
             # need to prcess the samples, separate for agents
             s_ = s.view(s.shape[0], 2, -1)
             s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)
-            for iteration_ in range(self.K_epoch):
+
+            for _ in range(self.K_epoch):
                 loss = 0.0
                 ppo_loss_total = 0.0
                 feature_x_list = []
                 feature_x_prime_list = []
+
                 # standard PPO
                 for i in range(2):  # for each agent
+                    # shared feature extraction
                     feature_x = self.feature_nets[i](s_[:, i, :])
                     feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
-                    # feature_x_list.append(feature_x)
-                    # feature_x_prime_list.append(feature_x_prime)
+
                     vs = self.v(feature_x, i)  # take the state for the specific agent
-                    # use generalized advantage estimation (GAE)
                     vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
-                    # import pdb; pdb.set_trace()
-                    #assert vs_prime.shape == done_mask.shape
+                    assert vs_prime.shape == done_mask.shape
                     r = r.detach()
                     vs_target = r[:, i] + self.gamma * vs_prime * done_mask
-                    assert vs_prime.shape == done_mask.shape
                     delta = vs_target - vs.squeeze(dim=-1)
-                    # delta = delta.detach()
                     advantage_lst = []
                     advantage = 0.0
-                    for delta_t in torch.flip(delta,
-                                              [-1]):  # reverse the delta along the time sequence in an episodic data
+                    for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
                         advantage = self.gamma * self.lmbda * advantage + delta_t
                         advantage_lst.append(advantage)
                     advantage_lst.reverse()
                     advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                    advantage = (advantage - advantage.mean()) / (
-                                advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
                     advantage = advantage.detach()
+
                     # value and policy loss for one agent
                     pi = self.pi(feature_x, i)
                     dist = Categorical(pi)
@@ -255,8 +246,8 @@ class NashPPO(Agent):
                     self.optimizer.step()
                     # loss += ppo_loss
                     total_loss += ppo_loss.item()
+
                 # loss for common layers (value function)
-                # import pdb; pdb.set_trace()
                 feature_x_list = []
                 feature_x_prime_list = []
                 # standard PPO
@@ -266,11 +257,11 @@ class NashPPO(Agent):
                     feature_x_list.append(feature_x)
                     feature_x_prime_list.append(feature_x_prime)
                 vs = self.common_layers(torch.cat(feature_x_list, axis=1))  # TODO just use the first state (assume it has full info)
-                vs_prime = self.common_layers(torch.cat(feature_x_prime_list, axis=1)).squeeze(
-                    dim=-1)  # TODO just use the first state (assume it has full info)
+                vs_prime = self.common_layers(torch.cat(feature_x_prime_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
                 assert vs_prime.shape == done_mask.shape
                 vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
                 common_layer_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach()).mean()
+
                 # calculate generalized advantage with common layer value
                 delta = vs_target - vs.squeeze(dim=-1)
                 delta = delta.detach()
@@ -281,10 +272,9 @@ class NashPPO(Agent):
                     advantage_lst.append(advantage)
                 advantage_lst.reverse()
                 advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                advantage = (advantage - advantage.mean()) / (
-                            advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
                 advantage = advantage.detach()
-                # TODO can the following be written once? (error in previous trial)
+
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
                     pi = self.pi(feature_x_list[i], i)
@@ -296,9 +286,7 @@ class NashPPO(Agent):
                 surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
                 surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss1 = -torch.min(surr1, surr2).mean()
-                # self.optimizer.zero_grad()
-                # policy_loss1.backward()
-                # self.optimizer.step()
+
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
                     pi = self.pi(feature_x_list[i], i)
@@ -310,28 +298,15 @@ class NashPPO(Agent):
                 surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss2 = torch.min(surr1, surr2).mean()
-                # self.optimizer.zero_grad()
-                # policy_loss2.backward()
-                # common_layer_loss.backward()
-                # self.optimizer.step()
-                # self.common_layer_optimizer.zero_grad()
-                # common_layer_loss.backward()
-                # self.common_layer_optimizer.step()
-                # if (iteration_ % 500 == 0):
-                #     print('@@')
-                #     print('indpendent loss = {}, p1 = {}, p2 = {}, common = {}'.format(ppo_loss_total,policy_loss1 * 0.08, policy_loss2 * 0.08, common_layer_loss * 1.0))
+
                 loss = 0.08 * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
-                #loss += ppo_loss_total
-                # self.common_layer_optimizer.zero_grad()
-                # loss.backward()
-                # self.common_layer_optimizer.step()
-                # import pdb; pdb.set_trace()
+
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
                 total_loss += loss.item()
         self.data = [[] for _ in range(self._num_channel)]
-        # Copy new weights into old policy:
+
         return total_loss
 
     def save_model(self, path=None):

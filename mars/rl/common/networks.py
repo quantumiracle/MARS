@@ -53,9 +53,9 @@ class NetBase(nn.Module):
             return 2*self._action_dim 
         elif model_for == 'discrete_policy':  # categorical
             return self._action_dim
-        elif model_for == 'discrete_q': 
+        elif model_for in ['discrete_q', 'feature']: 
             return self._action_dim
-        elif model_for == 'continuous_q' or 'value':
+        elif model_for in ['continuous_q', 'value']:
             return 1
 
     def _construct_net(self, args):

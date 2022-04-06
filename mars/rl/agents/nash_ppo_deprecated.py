@@ -294,7 +294,6 @@ class NashPPO(Agent):
 
         self.data = [[] for _ in range(self._num_channel)]
 
-        # Copy new weights into old policy:
         return total_loss
 
     def save_model(self, path=None):
