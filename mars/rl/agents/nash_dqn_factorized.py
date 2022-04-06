@@ -63,8 +63,8 @@ class NashDQNFactorized(DQN):
         delta_nash_q = nash_q_correction(state) # shape: (#batch, #action1 * #action2)
 
         ### TEST ONLY
-        nash_q = merged_q
-        # nash_q = merged_q + delta_nash_q # Q(s,a,b) = 0.5*(Q(s,a)-Q(s,b)) + delta_Q(s,a,b)
+        # nash_q = merged_q
+        nash_q = merged_q + delta_nash_q # Q(s,a,b) = 0.5*(Q(s,a)-Q(s,b)) + delta_Q(s,a,b)
 
         return nash_q     
 
@@ -175,12 +175,12 @@ class NashDQNFactorized(DQN):
         # import time
         # time.sleep(0.01)
 
-        all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+        # all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
 
-        # for q_table in q_tables:
-        #     dist, value = NashEquilibriumECOSSolver(q_table)
-        #     all_dists.append(dist)
-        #     all_ne_values.append(value)
+        for q_table in q_tables:
+            dist, value = NashEquilibriumECOSSolver(q_table)
+            all_dists.append(dist)
+            all_ne_values.append(value)
 
         if update:
             return all_dists, all_ne_values #  Nash distributions, Nash values
@@ -255,9 +255,9 @@ class NashDQNFactorized(DQN):
         nash_loss = F.mse_loss(q_value, expected_q_value.detach(), reduction='none')
         nash_loss = nash_loss.mean()
 
-        # self.nash_optimizer.zero_grad()
-        # nash_loss.backward()
-        # self.nash_optimizer.step()
+        self.nash_optimizer.zero_grad()
+        nash_loss.backward()
+        self.nash_optimizer.step()
 
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.q_net_1, self.target_q_net_1)

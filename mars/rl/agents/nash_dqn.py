@@ -145,12 +145,14 @@ class NashDQN(DQN):
         all_actions = []
         all_dists = []
         all_ne_values = []
+        # import time
+        # time.sleep(0.01)
 
-        all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
-        # for q_table in q_tables:
-        #     dist, value = NashEquilibriumECOSSolver(q_table)
-        #     all_dists.append(dist)
-        #     all_ne_values.append(value)
+        # all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+        for q_table in q_tables:
+            dist, value = NashEquilibriumECOSSolver(q_table)
+            all_dists.append(dist)
+            all_ne_values.append(value)
 
         if update:
             return all_dists, all_ne_values
