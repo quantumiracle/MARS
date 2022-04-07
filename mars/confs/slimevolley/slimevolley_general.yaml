@@ -31,8 +31,8 @@ train_args:
     log_interval: 20  # log print interval 
     multiprocess: False
     net_architecture: 
-        hidden_dim_list: [128, 128, 128] 
-        hidden_activation: Tanh  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
+        hidden_dim_list: [128, 128, 128, 128] 
+        hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
         output_activation: False # False means nan
     marl_spec:
         global_state: True
