@@ -23,7 +23,7 @@ self_play_method_marl_specs = {
 selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
                             'fictitious_selfplay2', 'nxdo', 'nxdo2'}
 
-large_nets_envs = {'surround_v1', 'ice_hockey_v1', 'combat_tank_v1'}
+large_nets_envs = {'ice_hockey_v1', 'combat_tank_v1'}
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:
