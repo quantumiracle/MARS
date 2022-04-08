@@ -215,7 +215,6 @@ class NashDQN(DQN):
 
         # Q-Learning with target network
         q_values = self.model(state)
-        # target_next_q_values_ = self.model(next_state)
         target_next_q_values_ = self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
@@ -242,7 +241,6 @@ class NashDQN(DQN):
         # Huber Loss
         # loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')
         loss = F.mse_loss(q_value, expected_q_value.detach(), reduction='none')
-
         loss = loss.mean()
 
         self.optimizer.zero_grad()

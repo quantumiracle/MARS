@@ -141,7 +141,6 @@ class DQN(Agent):
 
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.model, self.target)
-            # self.update_cnt = 0
         self.update_cnt += 1
 
         return loss.detach().item()
@@ -234,57 +233,6 @@ class DuelingDQN(DQNBase):
         advantage = self.advantage(x)
         value = self.value(x)
         return value + advantage - advantage.mean(1, keepdim=True)
-
-# class DuelingDQN(DQNBase):
-#     """
-#     Dueling Network Architectures for Deep Reinforcement Learning
-#     https://arxiv.org/abs/1511.06581
-#     Different from above, a self-contained version, using a shared network body for advantage and value heads.
-#     """
-#     def __init__(self, env, hidden_dim=64, activation=nn.Tanh(), **kwargs):
-#         super().__init__(env, hidden_dim, **kwargs)
-#         self.construct_net(hidden_dim, nn.Tanh())
-        
-#         self.advantage = self.fc
-
-#         self.value = nn.Sequential(
-#             nn.Linear(self._feature_size(), hidden_dim),
-#             activation,
-#             nn.Linear(hidden_dim, 1))
-        
-#     def construct_net(self, hidden_dim=64, activation=nn.ReLU()):
-#         self.flatten = Flatten()
-#         activation = nn.Tanh()
-        
-#         if len(self._observation_shape) <= 1: # not image
-#             self.features = nn.Sequential(
-#                 nn.Linear(self._observation_shape[0], hidden_dim),
-#                 activation,
-#                 nn.Linear(hidden_dim, hidden_dim),
-#                 activation,
-#             )
-#         else:
-#             self.features = nn.Sequential(
-#                 nn.Conv2d(self._observation_shape[0], 8, kernel_size=4, stride=2),
-#                 activation,
-#                 nn.Conv2d(16, 8, kernel_size=5, stride=1),
-#                 activation,
-#                 nn.Conv2d(16, 8, kernel_size=3, stride=1),
-#                 activation,
-#             )
-        
-#         self.fc = nn.Sequential(
-#             nn.Linear(self._feature_size(), hidden_dim),
-#             activation,
-#             nn.Linear(hidden_dim, self._action_shape)
-#         )
-
-#     def net(self, x):
-#         x = self.features(x)
-#         x = self.flatten(x)
-#         advantage = self.advantage(x)
-#         value = self.value(x)
-#         return value + advantage - advantage.mean(1, keepdim=True)
 
 class ParallelDQN(DQNBase):
     """ DQN for parallel env sampling
