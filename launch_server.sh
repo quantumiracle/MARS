@@ -3,7 +3,7 @@ echo "Running DATE:" $(date +"%Y-%m-%d %H:%M")
 DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
 
-declare -a envs=('pettingzoo_boxing_v1' 'pettingzoo_pong_v2' 'pettingzoo_surround_v1' 'pettingzoo_tennis_v2' 'slimevolley_SlimeVolley-v0' 'combat_tank_v1' 'ice_hockey_v1')
+declare -a envs=('pettingzoo_boxing_v1' 'pettingzoo_pong_v2' 'pettingzoo_surround_v1' 'pettingzoo_tennis_v2' 'slimevolley_SlimeVolley-v0' 'pettingzoo_combat_tank_v1' 'pettingzoo_ice_hockey_v1')
 # declare -a envs=('slimevolley_SlimeVolley-v0' 'pettingzoo_boxing_v1')
 # declare -a envs=('pettingzoo_boxing_v1')
 # declare -a envs=('pettingzoo_surround_v1' 'pettingzoo_tennis_v2')
