@@ -23,7 +23,9 @@ self_play_method_marl_specs = {
 selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
                             'fictitious_selfplay2', 'nxdo', 'nxdo2'}
 
-large_nets_envs = {'ice_hockey_v1', 'combat_tank_v1'}
+# large_nets_envs = {'ice_hockey_v1', 'combat_tank_v1'}
+large_nets_envs = {}
+
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:
@@ -143,6 +145,8 @@ for game in two_player_zero_sum_games:
 
         conf['env_args']['num_envs'] = 2
         conf['train_args']['max_episodes'] = 50000
+        if game == 'surround_v1':
+            conf['train_args']['max_episodes'] = 100000
         conf['train_args']['max_steps_per_episode'] = 300 # truncated game for speed up
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
