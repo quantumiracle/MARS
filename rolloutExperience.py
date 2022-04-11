@@ -127,7 +127,8 @@ def rollout_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> 
         if (epi+1) % args.save_interval == 0 \
         and not args.marl_method in MetaStepMethods \
         and logger.model_dir is not None:
-            model.save_model(logger.model_dir+f'{epi+1}')
+            # model.save_model(logger.model_dir+f'{epi+1}')
+            model.save_model(logger.model_dir+f'{1}')
 
 ### Genetic algorithm uses a different way of rollout. ###
 
