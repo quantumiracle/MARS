@@ -65,11 +65,12 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
         if (itr+1) % (meta_update_interval*args.log_interval) == 0:
             logger.print_and_save()
 
-        if (itr+1) % (meta_update_interval*args.save_interval) == 0 \
-            and not args.marl_method in MetaStepMethods \
-            and logger.model_dir is not None:
-            # model.save_model(logger.model_dir+f'{itr+1}')
-            model.save_model(logger.model_dir+f'{0}')  # to not save all time, but just one
+        # TODO does this function really save model in training?
+        # if (itr+1) % (meta_update_interval*args.save_interval) == 0 \
+        #     and not args.marl_method in MetaStepMethods \
+        #     and logger.model_dir is not None:
+        #     # model.save_model(logger.model_dir+f'{itr+1}')
+        #     model.save_model(logger.model_dir+f'{0}')  # to not save all time, but just one
 
         if meta_learner is not None \
             and (itr+1) % (meta_update_interval*args.save_interval) == 0 \
