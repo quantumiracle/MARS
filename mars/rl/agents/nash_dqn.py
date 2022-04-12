@@ -205,7 +205,7 @@ class NashDQN(DQN):
             return np.array(all_actions)
 
     def update(self):
-        DoubleTrick = True
+        DoubleTrick = False
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
@@ -243,7 +243,7 @@ class NashDQN(DQN):
             next_q_value = np.einsum('nb,nb->n', left_multi, next_dist[:, 1]) 
 
         next_q_value  = torch.FloatTensor(next_q_value).to(self.device)
-        
+
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
 
         # Huber Loss
