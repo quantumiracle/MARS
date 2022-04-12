@@ -205,6 +205,7 @@ class NashDQN(DQN):
             return np.array(all_actions)
 
     def update(self):
+        DoubleTrick = True
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
@@ -215,7 +216,7 @@ class NashDQN(DQN):
 
         # Q-Learning with target network
         q_values = self.model(state)
-        target_next_q_values_ = self.target(next_state)
+        target_next_q_values_ = self.model(next_state) if DoubleTrick else self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
         action_ = torch.LongTensor([a[0]*self.action_dims+a[1] for a in action]).to(self.device)
@@ -230,10 +231,17 @@ class NashDQN(DQN):
 
         # else: # Nash Equilibrium
         try: # nash computation may encounter error and terminate the process
-            _, next_q_value = self.compute_nash(target_next_q_values, update=True)
+            next_dist, next_q_value = self.compute_nash(target_next_q_values, update=True)
         except: 
             print("Invalid nash computation.")
             next_q_value = np.zeros_like(reward)
+
+        if DoubleTrick: # calculate next_q_value using double DQN trick
+            next_dist = np.array(next_dist)  # shape: (#batch, #agent, #action)
+            target_next_q_values = target_next_q_values.reshape((-1, self.action_dims, self.action_dims))
+            left_multi = np.einsum('na,nab->nb', next_dist[:, 0], target_next_q_values) # shape: (#batch, #action)
+            next_q_value = np.einsum('nb,nb->n', left_multi, next_dist[:, 1]) 
+
         next_q_value  = torch.FloatTensor(next_q_value).to(self.device)
         
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
