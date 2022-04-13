@@ -23,8 +23,8 @@ self_play_method_marl_specs = {
 selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
                             'fictitious_selfplay2', 'nxdo', 'nxdo2'}
 
-large_nets_envs = {'boxing_v1', 'pong_v2', 'surround_v1', 'tennis_v2'}
-# large_nets_envs = {}
+# large_nets_envs = {'boxing_v1', 'pong_v2', 'surround_v1', 'tennis_v2'}
+large_nets_envs = {}
 
 
 def get_method_env_marl_spec(method, env):
