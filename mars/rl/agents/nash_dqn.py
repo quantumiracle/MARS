@@ -205,7 +205,7 @@ class NashDQN(DQN):
             return np.array(all_actions)
 
     def update(self):
-        DoubleTrick = True
+        DoubleTrick = False
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
