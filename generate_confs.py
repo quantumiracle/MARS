@@ -23,8 +23,8 @@ self_play_method_marl_specs = {
 selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
                             'fictitious_selfplay2', 'nxdo', 'nxdo2'}
 
-large_nets_envs = {'boxing_v1', 'pong_v2', 'surround_v1', 'tennis_v2'}
-# large_nets_envs = {}
+# large_nets_envs = {'boxing_v1', 'pong_v2', 'surround_v1', 'tennis_v2'}
+large_nets_envs = {}
 
 
 def get_method_env_marl_spec(method, env):
@@ -153,7 +153,7 @@ for game in two_player_zero_sum_games:
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
             conf['agent_args']['algorithm_spec']['multi_step'] = 1
-            conf['agent_args']['algorithm_spec']['eps_decay'] = 1000000  # proper for training 10000 episodes
+            conf['agent_args']['algorithm_spec']['eps_decay'] = 400000 # 1000000  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = False
             if method == 'nash_dqn':
