@@ -21,6 +21,51 @@ def rollout(env, model, args: ConfigurationDict, save_id='0') -> None:
         rollout_normal(env, model, save_id, args)
 
 
+def eval(env, model, eval_logger, args):
+    obs = env.reset()
+    greedy_list = model.number_of_agents * [True]  # greedy evaluation for all agents
+    episode_reward = {a: 0 for a in env.agents}
+    for step in range(args.max_steps_per_episode):
+        obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
+        action_ = model.choose_action(
+            obs_to_store, greedy_list)  # action: (agent, env, action_dim)
+
+        # action processing
+        if isinstance(action_, tuple): # Nash PPO
+            (a, info) = action_  # shape: (agents, envs, dim)
+            action_to_store = a
+            other_info = info
+        elif any(isinstance(a_, tuple) for a_ in action_):  # exploitation with PPO
+            action_to_store, other_info = [], []
+            for a_ in action_:  # loop over agent
+                if isinstance(a_, tuple): # action item contains additional information
+                    (a, info) = a_
+                    action_to_store.append(a)
+                    other_info.append(info)
+                else:
+                    action_to_store.append(a_)
+                    other_info.append(None)
+        else:
+            action_to_store = action_
+            other_info = None
+        if args.num_envs > 1:
+            action = np.array(action_to_store).swapaxes(0, 1)  # transform from (agents, envs, dim) to (envs, agents, dim)
+        else:
+            action = action_to_store
+
+        obs_, reward, done, info = env.step(action)  # required action shape: (envs, agents, dim)
+        obs = obs_
+
+        for k, v in zip(env.agents, reward):
+            episode_reward[k] += v
+
+        if np.any(done):  # if any player in a game is done, the game episode done; may not be correct for some envs
+            break
+
+    eval_logger.extr_logs['episode'].append(step)
+    for k, v in zip(env.agents, reward):
+        eval_logger.extr_logs['episode_reward'][k].append(episode_reward[k])
+
 def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     """Function to rollout experience as interaction of agents and environments, in
     a typical manner of reinforcement learning. 
@@ -35,6 +80,11 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     print("Arguments: ", args)
     overall_steps = 0
     logger = init_logger(env, save_id, args)
+    if args.exploit:
+        logger.add_extr_log('eval')
+        logger.extr_logs = {}
+        logger.extr_logs['episode'] = []
+        logger.extr_logs['episode_reward'] = {a: [] for a in env.agents}
     meta_learner = init_meta_learner(logger, args) if not args.test and not args.exploit else None
     for epi in range(args.max_episodes):
         obs = env.reset()
@@ -46,12 +96,11 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             if overall_steps % 100 == 0: # do not need to do this for every step
                 model.scheduler_step(overall_steps)
 
-            # action item contains additional information like log probability
-            if isinstance(action_, tuple): # Nash PPO
+            # action processing
+            if isinstance(action_, tuple): # Nash PPO: action item contains additional information like log probability
                 (a, info) = action_  # shape: (agents, envs, dim)
                 action_to_store = a
                 other_info = info
-            
             elif any(isinstance(a_, tuple) for a_ in action_):  # exploitation with PPO
                 action_to_store, other_info = [], []
                 for a_ in action_:  # loop over agent
@@ -62,21 +111,19 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     else:
                         action_to_store.append(a_)
                         other_info.append(None)
-
             else:
                 action_to_store = action_
                 other_info = None
-
             if args.num_envs > 1:
                 action = np.array(action_to_store).swapaxes(0, 1)  # transform from (agents, envs, dim) to (envs, agents, dim)
             else:
                 action = action_to_store
 
             obs_, reward, done, info = env.step(action)  # required action shape: (envs, agents, dim)
-            # time.sleep(0.05)
             if args.render:
                 env.render()
 
+            # storage information processing
             if args.num_envs > 1:  # transform from (envs, agents, dim) to (agents, envs, dim)
                 obs__to_store = obs_.swapaxes(0, 1)
                 reward_to_store = reward.swapaxes(0, 1)
@@ -120,7 +167,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 if loss is not None:
                     logger.log_loss(loss)
 
-            # done break needs to go after everything else， including the update
+            # done break: needs to go after everything else， including the update
             if np.any(
                     done
             ):  # if any player in a game is done, the game episode done; may not be correct for some envs
@@ -144,6 +191,9 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         logger.log_episode_reward(step)
 
         if epi % args.log_interval == 0:
+            if args.exploit:
+                eval(env, model, logger, args)
+
             logger.print_and_save()
         if epi % args.save_interval == 0 \
             and not args.marl_method in MetaStepMethods \

@@ -279,7 +279,8 @@ class DummyLogger(Logger):
 def init_logger(
         env,
         save_id,
-        args: ConfigurationDict) -> Union[DummyLogger, TestLogger, Logger]:
+        args: ConfigurationDict, 
+        type=None) -> Union[DummyLogger, TestLogger, Logger]:
     """A function to initiate a proper logger.
 
     :param env: environment object
@@ -291,10 +292,14 @@ def init_logger(
     :return: logger
     :rtype: object
     """
-    if args.algorithm == 'GA':
-        logger = DummyLogger(env, save_id, args)
-    elif args.test:
-        logger = TestLogger(env, save_id, args)
+    if type is not None:
+        if type == 'test': 
+            logger = TestLogger(env, save_id, args)
     else:
-        logger = Logger(env, save_id, args)
+        if args.algorithm == 'GA':
+            logger = DummyLogger(env, save_id, args)
+        elif args.test:
+            logger = TestLogger(env, save_id, args)
+        else:
+            logger = Logger(env, save_id, args)
     return logger

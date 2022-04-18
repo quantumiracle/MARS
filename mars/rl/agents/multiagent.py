@@ -117,6 +117,7 @@ class MultiAgent(Agent):
     def choose_action(
         self, 
         states: Union[List[StateType], List[List[StateType]]],
+        greedy_list = []
         ) -> Union[List[ActionType], List[List[ActionType]]]:
         """Choose actions from given states/observations.
         Shape of states:  (agents, envs, state_dim)
@@ -127,7 +128,8 @@ class MultiAgent(Agent):
         :rtype: list
         """        
         actions = []
-        greedy_list = self._choose_greedy()
+        if len(greedy_list)==0: # otherwise using the passed in greedy list
+            greedy_list = self._choose_greedy()
 
         if self.args.marl_method in NashBasedMethods: 
             if self.args.exploit:  # in exploitation mode, nash policy only control one agent

@@ -154,8 +154,8 @@ class DQN(Agent):
             torch.save(self.target.state_dict(), path+'_target')
 
     def load_model(self, path, eval=True):
-        self.model.load_state_dict(torch.load(path+'_model'))
-        self.target.load_state_dict(torch.load(path+'_target'))
+        self.model.load_state_dict(torch.load(path+'_model', map_location=torch.device(self.device)))
+        self.target.load_state_dict(torch.load(path+'_target', map_location=torch.device(self.device)))
 
         if eval:
             self.model.eval()
