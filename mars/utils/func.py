@@ -123,7 +123,7 @@ def get_model_path(method, folder):
     elif method in SelfplayBasedMethods:
         file_path = get_latest_file_in_folder(folder)  # only one-side model is trained/saved
     else:
-        file_path = get_latest_file_in_folder(folder, id=0)  # load from the first agent model of the two
+        file_path = get_latest_file_in_folder(folder, id=0)  # load from the first agent model of the two; most atari games does not share agent for left and right sides
     return file_path
 
 def get_exploiter(exploiter_type: str, env, args):

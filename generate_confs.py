@@ -23,7 +23,7 @@ self_play_method_marl_specs = {
 selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
                             'fictitious_selfplay2', 'nxdo', 'nxdo2'}
 
-# large_nets_envs = {'boxing_v1', 'pong_v2', 'surround_v1', 'tennis_v2'}
+large_nets_envs = {'tennis_v2'}
 large_nets_envs = {}
 
 
@@ -44,15 +44,30 @@ def get_method_env_marl_spec(method, env):
     return marl_spec
 
 
+# for full episode length
+# selfplay_score_deltas = { # specific for each environment
+#     'surround_v1': 16,
+#     'boxing_v1': 80,
+#     'combat_plane_v1': 10, # this need to be tuned
+#     'combat_tank_v1': 10,  # this need to be tuned
+#     'space_war_v1': 10,
+#     'pong_v2': 30,
+#     'basketball_pong_v2': 30,
+#     'tennis_v2': 50,
+#     'ice_hockey_v1': 10,
+#     'double_dunk_v2': 50,
+# }
+
+# for truncated games with 300 episode length
 selfplay_score_deltas = { # specific for each environment
-    'surround_v1': 16,
+    'surround_v1': 3,
     'boxing_v1': 80,
     'combat_plane_v1': 10, # this need to be tuned
     'combat_tank_v1': 10,  # this need to be tuned
     'space_war_v1': 10,
-    'pong_v2': 30,
+    'pong_v2': 4,
     'basketball_pong_v2': 30,
-    'tennis_v2': 50,
+    'tennis_v2': 5,
     'ice_hockey_v1': 10,
     'double_dunk_v2': 50,
 }
@@ -143,17 +158,16 @@ for game in two_player_zero_sum_games:
         conf['train_args']['marl_method'] = method
         conf['train_args']['marl_spec'] = get_method_env_marl_spec(method, game)
 
-        conf['env_args']['num_envs'] = 2
-        if game in large_nets_envs:
-            conf['train_args']['max_episodes'] = 100000
-        else:
-            conf['train_args']['max_episodes'] = 50000
+        conf['env_args']['num_envs'] = 1
+        conf['train_args']['max_episodes'] = 50000
 
         conf['train_args']['max_steps_per_episode'] = 300 # truncated game for speed up
+        conf['agent_args']['algorithm_spec']['eps_decay'] = 100000  # proper for training 10000 episodes
+
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
             conf['agent_args']['algorithm_spec']['multi_step'] = 1
-            conf['agent_args']['algorithm_spec']['eps_decay'] = 400000 # 1000000  # proper for training 10000 episodes
+            conf['agent_args']['algorithm_spec']['eps_decay'] = 1000000 # 1000000  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = False
             if method == 'nash_dqn':

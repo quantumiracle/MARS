@@ -96,6 +96,8 @@ for game in games:
         conf['env_args']['num_envs'] = 1
         conf['train_args']['max_episodes'] = 50000
         conf['train_args']['max_steps_per_episode'] = 300 # truncated game for speed up
+        conf['agent_args']['algorithm_spec']['eps_decay'] = 100000  # proper for training 10000 episodes
+        
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
             conf['agent_args']['algorithm_spec']['multi_step'] = 1
