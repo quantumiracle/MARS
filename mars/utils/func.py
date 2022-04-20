@@ -127,7 +127,6 @@ def get_model_path(method, folder):
     return file_path
 
 def get_exploiter(exploiter_type: str, env, args):
-    args.max_episodes = 10000  # unify the exploitation episodes
     args.algorithm_spec['eps_decay'] = 10*args.max_episodes   # decay faster in exploitation than training
 
     if exploiter_type == 'DQN':

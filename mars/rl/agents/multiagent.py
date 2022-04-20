@@ -46,6 +46,7 @@ class MultiAgent(Agent):
         self.number_of_agents = len(self.agents)
         self.not_learnable_list = []
         self.mergeAllSamplesInOne = False
+        self.idx_exploited_model = args['idx_exploited_model']  # model to be exploited
 
         ## Below is a complicated filter process for configuring multiagent class ##
         for i, agent in enumerate(agents):
@@ -53,7 +54,7 @@ class MultiAgent(Agent):
                 agent.fix()
                 self.not_learnable_list.append(i)
             elif args.exploit:
-                if i == 0:  # fix the model to be exploited
+                if i == self.idx_exploited_model:  # fix the model to be exploited
                     agent.fix()
                 if agent.not_learnable:
                     self.not_learnable_list.append(i)
@@ -72,10 +73,10 @@ class MultiAgent(Agent):
         if args.test or args.exploit:
             if args.marl_method in MetaStrategyMethods:  
                 meta_learner = MetaLearner()  # meta-learner as a single agent to test/exploit
-                assert 0 in self.not_learnable_list # 0 is the model to test/exploit
-                meta_learner.load_model(self.agents[0], path=args.load_model_full_path)  
-                self.agents[0] = meta_learner
-                self.meta_learner = self.agents[0]
+                assert self.idx_exploited_model in self.not_learnable_list # 0 is the model to test/exploit
+                meta_learner.load_model(self.agents[self.idx_exploited_model], path=args.load_model_full_path)  
+                self.agents[self.idx_exploited_model] = meta_learner
+                self.meta_learner = self.agents[self.idx_exploited_model]
 
             else:
                 if args.load_model_full_path:  # if the full path is specified, it has higher priority than the model index
@@ -90,7 +91,7 @@ class MultiAgent(Agent):
                 self.mergeAllSamplesInOne = True                
 
         if self.args.marl_method in NashBasedMethods and self.args.exploit:
-            assert 0 in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
+            assert self.idx_exploited_model in self.not_learnable_list  # the first agent must be the model to be exploited in Nash method, since the first agent stores samples 
 
     def _choose_greedy(self, )->List[bool]:
         """
@@ -134,7 +135,7 @@ class MultiAgent(Agent):
         if self.args.marl_method in NashBasedMethods: 
             if self.args.exploit:  # in exploitation mode, nash policy only control one agent
                 for i, (state, agent, greedy) in enumerate(zip(states, self.agents, greedy_list)):
-                    if i == 0:  # the first agent must be the model to be exploited
+                    if i == self.idx_exploited_model:  # the first agent must be the model to be exploited
                         if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
                             nash_actions = self.agents[i].choose_action(states, Greedy=greedy)  # nash_actions contain all agents
                         else:  # only use the observation from the first agent
@@ -156,6 +157,7 @@ class MultiAgent(Agent):
             for state, agent, greedy in zip(states, self.agents, greedy_list):
                 action = agent.choose_action(state, Greedy=greedy)
                 actions.append(action)
+
         return actions
 
     def scheduler_step(self, frame: int) -> None:
