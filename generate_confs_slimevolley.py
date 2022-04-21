@@ -58,17 +58,17 @@ ppo_algorithm_spec = { # specs for PPO alg.
 
 ppo_net_architecture = {
     'feature':{
-      'hidden_dim_list': [64, 64],
+      'hidden_dim_list': [128, 128],
       'hidden_activation': 'ReLU',
       'output_activation': False,
     },
     'policy':{
-      'hidden_dim_list': [64],
+      'hidden_dim_list': [128],
       'hidden_activation': False,
       'output_activation': 'Softmax',
     },
     'value': {
-      'hidden_dim_list': [64],
+      'hidden_dim_list': [128],
       'hidden_activation': 'ReLU',
       'output_activation': False,
     }
