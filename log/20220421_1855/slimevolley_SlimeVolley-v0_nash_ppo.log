@@ -1,0 +1,17 @@
+pygame 2.0.1 (SDL 2.0.14, Python 3.7.0)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+SlimeVolley-v0 slimevolley
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:26: UserWarning: Converting G to a CSC matrix; may take a while.
+  warn("Converting G to a CSC matrix; may take a while.")
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:29: UserWarning: Converting A to a CSC matrix; may take a while.
+  warn("Converting A to a CSC matrix; may take a while.")
+random seed: [23, 24, 37, 60, 35]
+<SubprocVectorEnv instance>
+Traceback (most recent call last):
+  File "general_train.py", line 31, in <module>
+    launch_rollout(parser_args.env, parser_args.method, parser_args.save_id)
+  File "general_train.py", line 18, in launch_rollout
+    model1 = eval(args.algorithm)(env, args)
+  File "/home/zihan/research/MARS/mars/rl/agents/nash_ppo.py", line 41, in __init__
+    double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
+AttributeError: 'list' object has no attribute 'shape'
