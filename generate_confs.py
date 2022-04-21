@@ -62,14 +62,14 @@ def get_method_env_marl_spec(method, env):
 selfplay_score_deltas = { # specific for each environment
     'surround_v1': 3,
     'boxing_v1': 80,
-    'combat_plane_v1': 10, # this need to be tuned
-    'combat_tank_v1': 10,  # this need to be tuned
+    'combat_plane_v1': 5, # this need to be tuned
+    'combat_tank_v1': 5,  # this need to be tuned
     'space_war_v1': 10,
-    'pong_v2': 4,
+    'pong_v2': 10,
     'basketball_pong_v2': 30,
     'tennis_v2': 7,
-    'ice_hockey_v1': 10,
-    'double_dunk_v2': 50,
+    'ice_hockey_v1': 6,
+    'double_dunk_v2': 19,
 }
 
 train_start_frame = {  # for NFSP method only
