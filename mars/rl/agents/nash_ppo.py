@@ -35,9 +35,8 @@ class NashPPO(Agent):
             merged_action_space_dim = env.action_space[0].n + env.action_space[0].n
         merged_action_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(merged_action_space_dim,))
 
-
         if len(observation_space.shape) <= 1:
-            feature_space = env.observation_space
+            feature_space = observation_space
             double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
 
             for _ in range(2):
