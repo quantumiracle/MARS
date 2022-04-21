@@ -39,7 +39,7 @@ def get_method_env_marl_spec(method, env):
 
 
 selfplay_score_deltas = { # specific for each environment
-    'SlimeVolley-v0': 4,
+    'SlimeVolley-v0': 3,
 }
 
 train_start_frame = {  # for NFSP method only

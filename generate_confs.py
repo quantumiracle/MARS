@@ -67,7 +67,7 @@ selfplay_score_deltas = { # specific for each environment
     'space_war_v1': 10,
     'pong_v2': 4,
     'basketball_pong_v2': 30,
-    'tennis_v2': 5,
+    'tennis_v2': 7,
     'ice_hockey_v1': 10,
     'double_dunk_v2': 50,
 }
@@ -158,7 +158,6 @@ for game in two_player_zero_sum_games:
         conf['train_args']['marl_method'] = method
         conf['train_args']['marl_spec'] = get_method_env_marl_spec(method, game)
 
-    
         conf['env_args']['num_envs'] = 5
         conf['train_args']['max_episodes'] = 10000
 

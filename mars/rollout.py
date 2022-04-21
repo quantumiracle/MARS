@@ -21,7 +21,7 @@ def rollout(env, model, args: ConfigurationDict, save_id='0') -> None:
         rollout_normal(env, model, save_id, args)
 
 
-def eval(env, model, eval_logger, args):
+def eval(env, model, eval_logger, at_epi, args):
     obs = env.reset()
     greedy_list = model.number_of_agents * [True]  # greedy evaluation for all agents
     episode_reward = {a: 0 for a in env.agents}
@@ -62,7 +62,7 @@ def eval(env, model, eval_logger, args):
         if np.any(done):  # if any player in a game is done, the game episode done; may not be correct for some envs
             break
 
-    eval_logger.extr_logs['episode'].append(step)
+    eval_logger.extr_logs['episode'].append(at_epi)
     for k, v in zip(env.agents, reward):
         eval_logger.extr_logs['episode_reward'][k].append(episode_reward[k])
 
@@ -192,7 +192,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
 
         if epi % args.log_interval == 0:
             if args.exploit:
-                eval(env, model, logger, args)
+                eval(env, model, logger, epi, args)
 
             logger.print_and_save()
         if epi % args.save_interval == 0 \
