@@ -15,7 +15,7 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
 
 method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nash_dqn_factorized', 'nfsp', 'nxdo2', 'nash_ppo'][-6] 
+            'nash_dqn_factorized', 'nfsp', 'nxdo2', 'nash_ppo'][1] 
 
 args = get_general_args(game_type+'_'+game, method)
 args.multiprocess = False

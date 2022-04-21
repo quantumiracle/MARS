@@ -107,14 +107,14 @@ class DQN(Agent):
 
     def update(self):
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
-        weights = torch.ones(self.batch_size)
+        # weights = torch.ones(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
         action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
-        weights = torch.FloatTensor(weights).to(self.device)
+        # weights = torch.FloatTensor(weights).to(self.device)
 
         # reward normalization
         # reward =  (reward - reward.mean(dim=0)) / (reward.std(dim=0) + 1e-6)
@@ -134,8 +134,8 @@ class DQN(Agent):
         loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')  # slimevolley env only works with this!
         # loss = F.mse_loss(q_value, expected_q_value.detach())
 
-        # loss = loss.mean()
-        loss = (loss * weights).mean()
+        loss = loss.mean()
+        # loss = (loss * weights).mean()
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
