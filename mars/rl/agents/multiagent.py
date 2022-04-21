@@ -46,8 +46,12 @@ class MultiAgent(Agent):
         self.number_of_agents = len(self.agents)
         self.not_learnable_list = []
         self.mergeAllSamplesInOne = False
-        self.idx_exploited_model = args['idx_exploited_model']  # model to be exploited
-
+        try:
+            self.idx_exploited_model = args['idx_exploited_model']  # model to be exploited
+        except: 
+            print('Error: no exploited model index given!')
+            self.idx_exploited_model = 0
+            
         ## Below is a complicated filter process for configuring multiagent class ##
         for i, agent in enumerate(agents):
             if args.test:
