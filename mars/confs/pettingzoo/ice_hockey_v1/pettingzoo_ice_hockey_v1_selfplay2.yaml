@@ -1,7 +1,7 @@
 env_args:
   env_name: ice_hockey_v1
   env_type: pettingzoo
-  num_envs: 1
+  num_envs: 5
   ram: true
   seed: random
 agent_args:
@@ -14,10 +14,10 @@ agent_args:
     target_update_interval: 1000
     eps_start: 1.0
     eps_final: 0.001
-    eps_decay: 500000
+    eps_decay: 100000
 train_args:
   batch_size: 128
-  max_episodes: 50000
+  max_episodes: 10000
   max_steps_per_episode: 300
   train_start_frame: 0
   optimizer: adam
