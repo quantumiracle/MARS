@@ -68,7 +68,7 @@ selfplay_score_deltas = { # specific for each environment
     'pong_v2': 10,
     'basketball_pong_v2': 30,
     'tennis_v2': 7,
-    'ice_hockey_v1': 6,
+    'ice_hockey_v1': 2,
     'double_dunk_v2': 19,
 }
 
