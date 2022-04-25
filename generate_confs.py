@@ -64,12 +64,12 @@ selfplay_score_deltas = { # specific for each environment
     'boxing_v1': 80,
     'combat_plane_v1': 5, # this need to be tuned
     'combat_tank_v1': 5,  # this need to be tuned
-    'space_war_v1': 10,
+    'space_war_v1': 5,
     'pong_v2': 10,
-    'basketball_pong_v2': 30,
+    'basketball_pong_v2': 15,
     'tennis_v2': 7,
     'ice_hockey_v1': 2,
-    'double_dunk_v2': 19,
+    'double_dunk_v2': 15,
 }
 
 train_start_frame = {  # for NFSP method only
