@@ -396,7 +396,7 @@ class Dict2TupleWrapper():
 
     def seed(self, seed):
         self.env.seed(seed)
-        np.random.seed(seed)
+        # np.random.seed(seed)
 
     def render(self,):
         self.env.render()

@@ -50,6 +50,8 @@ def launch_rollout(env, method, save_id):
     while all([p.is_alive()for p in processes]):
         pass
 
+    [p.join() for p in processes]
+
         
 if __name__ == '__main__':
     parser.add_argument('--env', type=str, default=None, help='environment')

@@ -19,7 +19,7 @@ method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
 
 args = get_general_args(game_type+'_'+game, method)
 args.multiprocess = False
-args.num_envs = 2
+args.num_envs = 1
 args.device = 'cpu'
 print(args)
 args.render=False

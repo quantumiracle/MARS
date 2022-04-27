@@ -173,7 +173,7 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
         elif env_name == 'attack':
             env = attack
         elif env_name == 'combinatorial_lock':
-            env = attack
+            env = combinatorial_lock
         else:
             raise NotImplementedError
     else:
@@ -204,10 +204,11 @@ def make_env(args):
     if isinstance(args.seed, (int, list)):
         env.seed(args.seed)  # seed can be either int or list of int
     elif args.seed == 'random':
+        np.random.seed(seed=None)  # make np random
         if args.num_process > 1 or args.num_envs == 1:
-            random_seed = int(np.random.randint(1,100))
+            random_seed = int(np.random.randint(1,1000))
         else:  # more than one env
-            random_seed = [int(seed) for seed in np.random.randint(1,100, args.num_envs)]
+            random_seed = [int(seed) for seed in np.random.randint(1,1000, args.num_envs)]
         print(f"random seed: {random_seed}")
         env.seed(random_seed)
 
