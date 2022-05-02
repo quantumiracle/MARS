@@ -15,11 +15,14 @@ class MDPWrapper():
             self.OneHotObs = self.env.OneHotObs
         except:
             pass
-        # for observation, discrete to box, fake space
-        if self.OneHotObs:
-            self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(env.observation_space.n,))
-        else:
-            self.observation_space = gym.spaces.Box(low=0.0, high=env.observation_space.n, shape=(1,))
+        
+        if 'RichObs' in env.__class__.__name__:  # rich observation env uses Box observation space instead Discrete
+            self.observation_space = env.observation_space
+        else: # others have a Discrete observation space, fake it a Box
+            if self.OneHotObs:
+                self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(env.observation_space.n,))
+            else:
+                self.observation_space = gym.spaces.Box(low=0.0, high=env.observation_space.n, shape=(1,))
         self.observation_spaces = {ag: self.observation_space for ag in self.agents}
         self.action_space = gym.spaces.Discrete(env.num_actions)
         self.action_spaces = {a:self.action_space for a in self.agents}

@@ -1,15 +1,23 @@
 import numpy as np
+import math
 import gym
-# from scipy.sparse import csr_matrix
+from gym.spaces import Box
+import scipy.linalg
+
 from .utils.nash_solver import NashEquilibriumECOSSolver
 # from utils.nash_solver import NashEquilibriumECOSSolver
 
-class ArbitraryMDP():
-    def __init__(self, num_states=3, num_actions_per_player=3, num_trans=10, given_trans=None, given_rewards=None):
+
+class RichObsArbitraryMDP():
+    def __init__(self, num_states=3, num_actions_per_player=3, num_trans=2, given_trans=None, given_rewards=None):
         self.num_states = num_states  # number of states for each timestep
         self.num_actions = num_actions_per_player
         self.num_actions_total = self.num_actions**2
-        self.observation_space = gym.spaces.Discrete(self.num_states*(num_trans+1))
+        #self.observation_space = gym.spaces.Discrete(self.num_states*(num_trans+1))
+
+        self.observation_dim = 2 ** int(math.ceil(np.log2(num_trans+num_states+1)))
+        self.observation_space = Box(low=0.0, high=1.0, shape=(self.observation_dim,),dtype=np.float)
+
         self.action_space = gym.spaces.Discrete(self.num_actions)
         self.max_transition = num_trans
         self.reward_range = [-1,1]
@@ -17,6 +25,9 @@ class ArbitraryMDP():
         self.given_trans = given_trans
         self.given_rewards = given_rewards
         self.OneHotObs = False
+        self.noise = 0.1
+
+        self.rotation = scipy.linalg.hadamard(self.observation_space.shape[0])
         ## rock-paper-scissor test
         # self.given_rewards = [
         #             [[ [0], [-1], [1],
@@ -93,10 +104,8 @@ class ArbitraryMDP():
 
     def generate_random_trans_and_rewards(self, SameRewardForNextState=False):
         """Generate arbitrary transition matrix and reward matrix.
-
         :param SameRewardForNextState: r(s,a) if True else r(s,a,s')
         :type SameRewardForNextState: bool
-
         :return: the list of transition matrix and the list of reward matrix, 
         both in shape: (dim_transition, dim_state, dim_action, dim_state)
         :rtype: [type]
@@ -135,12 +144,10 @@ class ArbitraryMDP():
     def reset(self, ):
         self.state = np.random.randint(0, self.num_states)  # randomly pick one state as initial
         self.trans = 0
-        obs = self.state
-        if self.OneHotObs:
-            return self._to_one_hot(obs)
-        else:
-            return obs
 
+        obs = self.make_obs()
+
+        return obs
     # def step(self, a):
     #     """The environment transition function.
     #     For a given state and action, the transition is stochastic. 
@@ -182,18 +189,28 @@ class ArbitraryMDP():
         reward = self.reward_matrices[self.trans][self.state%self.num_states][a][next_state%self.num_states]
 
         self.state = next_state
-        obs = self.state
+        #obs = self.state
         self.trans += 1
         done = False if self.trans < self.max_transition else True
-        if self.OneHotObs:
-            return self._to_one_hot(obs), reward, done, None
-        else:
-            return obs, reward, done, None
+
+        obs = self.make_obs()
+
+        return obs, reward, done, None
 
     def _to_one_hot(self, s):
         one_hot_vec = np.zeros(self.num_states*(self.max_transition+1))
         one_hot_vec[s] = 1
         return one_hot_vec
+
+    def make_obs(self):
+
+        gaussian = np.zeros(self.observation_space.shape)
+        gaussian[:(self.max_transition+self.num_states+1)] = np.random.normal(0,self.noise,[self.max_transition+self.num_states+1]) # self.trans can be self.max_transition+1
+        gaussian[self.state%self.num_states] += 1  # self.state%self.num_states gives the ture state index at current step
+        gaussian[self.num_states+self.trans] += 1
+
+        x = (self.rotation*np.matrix(gaussian).T).T
+        return np.reshape(np.array(x), x.shape[1])
 
     def NEsolver(self, verbose = False):
         """
@@ -260,12 +277,12 @@ if __name__ == '__main__':
     #     print(obs, r, done)
 
     # two agent version
-    env = MDPWrapper(ArbitraryMDP())
+    env = MDPWrapper(RichObsArbitraryMDP())
     nash_v, _, nash_strategies = env.NEsolver()
     print(nash_strategies, np.array(nash_strategies).shape)
     # np.save('../../../data/nash_dqn_test/oracle_nash.npy', nash_strategies)
     print('oracle nash v star: ', np.mean(nash_v[0], axis=0))  # the average nash value for initial states from max-player's view
-    print(env.observation_space, env.action_space)
+    print('spaces: ', env.observation_space, env.action_space)
     # env.render()
     obs = env.reset()
     print(obs)
