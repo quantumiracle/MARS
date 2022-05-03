@@ -37,7 +37,7 @@ from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_
      Atari2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 from .wrappers.lasertag_wrappers import LaserTagWrapper
-from .mdp import attack, combinatorial_lock, arbitrary_mdp
+from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_mdp
 
 # PettingZoo envs
 pettingzoo_envs = {
@@ -170,6 +170,8 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
         if env_name == 'arbitrary_mdp':
             env = arbitrary_mdp
             # env.NEsolver()
+        elif env_name == 'arbitrary_richobs_mdp':
+            env = arbitrary_richobs_mdp
         elif env_name == 'attack':
             env = attack
         elif env_name == 'combinatorial_lock':

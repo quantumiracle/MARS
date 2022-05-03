@@ -11,12 +11,13 @@ class MDPWrapper():
         self.num_agents = len(self.agents)   
         self.max_transition=  self.env.max_transition
         self.OneHotObs = False
+        self.RichObs = True if 'RichObs' in env.__class__.__name__ else False
         try:
             self.OneHotObs = self.env.OneHotObs
         except:
             pass
-        
-        if 'RichObs' in env.__class__.__name__:  # rich observation env uses Box observation space instead Discrete
+
+        if self.RichObs:  # rich observation env uses Box observation space instead Discrete
             self.observation_space = env.observation_space
         else: # others have a Discrete observation space, fake it a Box
             if self.OneHotObs:
@@ -36,7 +37,7 @@ class MDPWrapper():
     def reset(self, observation=None):
         obs = self.env.reset()
         self.curr_step = 0
-        if self.OneHotObs:
+        if self.RichObs or self.OneHotObs:
             return [obs, obs]
         else:
             return [[obs], [obs]]
@@ -57,7 +58,8 @@ class MDPWrapper():
         obs, r, done, info = self.env.step(a, *args, **kwargs)
         if self.env.max_transition is not None and self.curr_step >= self.env.max_transition:
             done = True
-        if self.OneHotObs:
+
+        if self.RichObs or self.OneHotObs:
             return [obs, obs], [r, -r], [done, done], [info, info]
         else: 
             return [[obs], [obs]], [r, -r], [done, done], [info, info]
