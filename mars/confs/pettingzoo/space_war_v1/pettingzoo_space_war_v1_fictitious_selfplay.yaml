@@ -18,7 +18,7 @@ agent_args:
 train_args:
   batch_size: 128
   max_episodes: 10000
-  max_steps_per_episode: 10000
+  max_steps_per_episode: 300
   train_start_frame: 0
   optimizer: adam
   learning_rate: 1e-4
@@ -37,6 +37,6 @@ train_args:
     output_activation: false
   marl_method: fictitious_selfplay
   marl_spec:
-    selfplay_score_delta: 10
+    selfplay_score_delta: 3
     trainable_agent_idx: 0
     opponent_idx: 1

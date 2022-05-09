@@ -11,7 +11,7 @@ class FictitiousSelfPlay(MarkovGameSolver):
         add_to_player['policy_set'].append(new_policy) # add new policy to policy set to form mixture
 
     def update_meta_strategy(self, max_player, min_player):
-        # unifor distribution
+        # uniform distribution
         max_policies = len(max_player['policy_set'])
         max_player['meta_strategy'] = 1./max_policies*np.ones(max_policies)
         min_policies = len(min_player['policy_set'])
@@ -194,7 +194,7 @@ class QLearningFictitiousSelfPlay(FictitiousSelfPlay):
                         num_qs = len(min_player['q_set'])
                         min_player['meta_strategy'] = 1./num_qs*np.ones(num_qs)
                     
-                    # udpate side
+                    # update side
                     fixed_side = 'min'
 
                 else:
@@ -203,7 +203,7 @@ class QLearningFictitiousSelfPlay(FictitiousSelfPlay):
                         num_qs = len(max_player['q_set'])
                         max_player['meta_strategy'] = 1./num_qs*np.ones(num_qs)
                     
-                    # udpate side
+                    # update side
                     fixed_side = 'max'
 
                 br_q = self.get_markov_q()  # init new best response side Q table
