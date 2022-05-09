@@ -45,32 +45,32 @@ def get_method_env_marl_spec(method, env):
 
 
 # for full episode length
-selfplay_score_deltas = { # specific for each environment
-    'surround_v1': 16,
-    'boxing_v1': 80,
-    'combat_plane_v1': 10, # this need to be tuned
-    'combat_tank_v1': 10,  # this need to be tuned
-    'space_war_v1': 10,
-    'pong_v2': 30,
-    'basketball_pong_v2': 30,
-    'tennis_v2': 50,
-    'ice_hockey_v1': 10,
-    'double_dunk_v2': 50,
-}
+# selfplay_score_deltas = { # specific for each environment
+#     'surround_v1': 16,
+#     'boxing_v1': 80,
+#     'combat_plane_v1': 10, # this need to be tuned
+#     'combat_tank_v1': 10,  # this need to be tuned
+#     'space_war_v1': 10,
+#     'pong_v2': 30,
+#     'basketball_pong_v2': 30,
+#     'tennis_v2': 50,
+#     'ice_hockey_v1': 10,
+#     'double_dunk_v2': 50,
+# }
 
 # for truncated games with 300 episode length
-# selfplay_score_deltas = { # specific for each environment
-#     'surround_v1': 3,
-#     'boxing_v1': 80,
-#     'combat_plane_v1': 5, # this need to be tuned
-#     'combat_tank_v1': 5,  # this need to be tuned
-#     'space_war_v1': 3,
-#     'pong_v2': 10,
-#     'basketball_pong_v2': 5,
-#     'tennis_v2': 7,
-#     'ice_hockey_v1': 2,
-#     'double_dunk_v2': 15,
-# }
+selfplay_score_deltas = { # specific for each environment
+    'surround_v1': 3,
+    'boxing_v1': 80,
+    'combat_plane_v1': 5, # this need to be tuned
+    'combat_tank_v1': 5,  # this need to be tuned
+    'space_war_v1': 3,
+    'pong_v2': 10,
+    'basketball_pong_v2': 5,
+    'tennis_v2': 7,
+    'ice_hockey_v1': 2,
+    'double_dunk_v2': 15,
+}
 
 train_start_frame = {  # for NFSP method only
     'slimevolley': 1000,
@@ -161,7 +161,7 @@ for game in two_player_zero_sum_games:
         conf['env_args']['num_envs'] = 5
         conf['train_args']['max_episodes'] = 10000
 
-        conf['train_args']['max_steps_per_episode'] = 10000 # truncated game for speed up
+        conf['train_args']['max_steps_per_episode'] = 300 # truncated game for speed up
         conf['agent_args']['algorithm_spec']['eps_decay'] = 10*conf['train_args']['max_episodes']  # decay faster
         conf['agent_args']['algorithm_spec']['multi_step'] = 1
 
