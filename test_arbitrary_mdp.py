@@ -14,18 +14,18 @@ parser_args = parser.parse_args()
 
 ### Load configurations
 
-method = ['fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nxdo2', 'nfsp', 'nash_ppo'][0]
+method = ['fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nxdo2', 'nfsp', 'nash_ppo'][2]
 prefix = 'mars/confs/mdp/mdp_arbitrary_mdp_'
 yaml_file = prefix + method
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 args.marl_spec['global_state'] = True
-args.max_episodes = 200100
+args.max_episodes = 50100
 if parser_args.test:
     args.test = True
     args.render = True
     args.load_model_idx = parser_args.model
-args.device = 'cpu'
+args.device = 'gpu'
 ### Create env
 env = make_env(args)
 print(env)
