@@ -307,7 +307,7 @@ class ParallelDuelingDQN(DuelingDQN, ParallelDQN):
             def f(self):
                 self.a-=1
                 print(self.a)          
-        class C(B,A):
+        class C(B,A):  # the order indicates piority for overwritting
             def __init__(self,):
                 super(C, self).__init__()   
         c=C()

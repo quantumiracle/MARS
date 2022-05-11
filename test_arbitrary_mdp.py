@@ -14,7 +14,7 @@ parser_args = parser.parse_args()
 
 ### Load configurations
 
-method = ['fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nxdo2', 'nfsp', 'nash_ppo'][2]
+method = ['selfplay2', 'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nxdo2', 'nfsp', 'nash_ppo'][0]
 prefix = 'mars/confs/mdp/mdp_arbitrary_mdp_'
 yaml_file = prefix + method
 
