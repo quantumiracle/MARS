@@ -1,6 +1,6 @@
 import sys, os
 sys.path.append("../..")
-from tutorial.solver.common import DoubleOralce, OracleDoubleOralce, FictitiousSelfPlay, OracleFictitiousSelfPlay
+from tutorial.solver.common import SelfPlay, QLearningSelfPlay, DoubleOralce, OracleDoubleOralce, FictitiousSelfPlay, OracleFictitiousSelfPlay
 from mars.env.mdp import ArbitraryMDP, MDPWrapper
 import numpy as np
 
