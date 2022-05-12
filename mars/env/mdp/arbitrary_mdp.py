@@ -5,7 +5,7 @@ from .utils.nash_solver import NashEquilibriumECOSSolver
 # from utils.nash_solver import NashEquilibriumECOSSolver
 
 class ArbitraryMDP():
-    def __init__(self, num_states=3, num_actions_per_player=3, num_trans=10, given_trans=None, given_rewards=None):
+    def __init__(self, num_states=3, num_actions_per_player=3, num_trans=3, given_trans=None, given_rewards=None):
         self.num_states = num_states  # number of states for each timestep
         self.num_actions = num_actions_per_player
         self.num_actions_total = self.num_actions**2
