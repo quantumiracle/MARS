@@ -127,7 +127,7 @@ def get_model_path(method, folder):
     return file_path
 
 def get_exploiter(exploiter_type: str, env, args):
-    args.algorithm_spec['eps_decay'] = 8000  #100000   # fixed value for fair comparison; decay faster in exploitation than training
+    args.algorithm_spec['eps_decay'] = 100000  #100000   # fixed value for fair comparison; decay faster in exploitation than training
 
     if exploiter_type == 'DQN':
         ## This two lines are critical!
