@@ -3,8 +3,8 @@ DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
 export CUDA_VISIBLE_DEVICES=2
 
-# declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
-declare -a methods=('fictitious_selfplay2')
+declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
+# declare -a methods=('fictitious_selfplay2')
 
 mkdir -p log/$DATE
 
