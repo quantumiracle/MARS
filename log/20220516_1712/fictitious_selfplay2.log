@@ -1,0 +1,37 @@
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:26: UserWarning: Converting G to a CSC matrix; may take a while.
+  warn("Converting G to a CSC matrix; may take a while.")
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/ecos/ecos.py:29: UserWarning: Converting A to a CSC matrix; may take a while.
+  warn("Converting A to a CSC matrix; may take a while.")
+pygame 2.0.1 (SDL 2.0.14, Python 3.7.0)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Traceback (most recent call last):
+  File "train_arbitrary_mdp.py", line 27, in <module>
+    args = LoadYAML2Dict(yaml_file, toAttr=True)
+  File "/home/zihan/research/MARS/mars/utils/func.py", line 38, in LoadYAML2Dict
+    loaded = yaml.safe_load(f)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/__init__.py", line 162, in safe_load
+    return load(stream, SafeLoader)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/__init__.py", line 114, in load
+    return loader.get_single_data()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/constructor.py", line 49, in get_single_data
+    node = self.get_single_node()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/composer.py", line 36, in get_single_node
+    document = self.compose_document()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/composer.py", line 55, in compose_document
+    node = self.compose_node(None, None)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/composer.py", line 133, in compose_mapping_node
+    item_value = self.compose_node(node, item_key)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/composer.py", line 127, in compose_mapping_node
+    while not self.check_event(MappingEndEvent):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/yaml/parser.py", line 439, in parse_block_mapping_key
+    "expected <block end>, but found %r" % token.id, token.start_mark)
+yaml.parser.ParserError: while parsing a block mapping
+  in "mars/confs/mdp/mdp_arbitrary_mdp_fictitious_selfplay2.yaml", line 21, column 5
+expected <block end>, but found '<block mapping start>'
+  in "mars/confs/mdp/mdp_arbitrary_mdp_fictitious_selfplay2.yaml", line 35, column 9
