@@ -1,0 +1,96 @@
+pygame 2.0.1 (SDL 2.0.14, Python 3.7.0)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+arbitrary_mdp mdp
+Load arbitrary_mdp environment in type mdp.
+Env observation space: Box(0.0, 42.0, (1,), float32) action space: Discrete(6)
+<mars.env.mdp.mdp_wrapper.MDPWrapper object at 0x7f073d372be0>
+DQNBase(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=1, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=6, bias=True)
+    )
+  )
+)
+DQNBase(
+  (net): MLP(
+    (body): Sequential(
+      (0): Linear(in_features=1, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=128, out_features=128, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=128, out_features=6, bias=True)
+    )
+  )
+)
+Error: no exploited model index given!
+Agents No. [0] (index starting from 0) are not learnable.
+Agent No. [0] loads model from:  data/model/20220516171217/mdp_arbitrary_mdp_selfplay2/10000_0
+Arguments:  {'env_name': 'arbitrary_mdp', 'env_type': 'mdp', 'num_envs': 1, 'ram': True, 'seed': 1, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 1.0, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.0, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 640, 'max_episodes': 30000, 'max_steps_per_episode': 10000, 'train_start_frame': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': True, 'load_model_idx': False, 'load_model_full_path': 'data/model/20220516171217/mdp_arbitrary_mdp_selfplay2/10000_0', 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 1000, 'net_architecture': {'hidden_dim_list': [128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'selfplay2', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': True, 'selfplay_score_delta': 2.0, 'trainable_agent_idx': 0, 'opponent_idx': 1}, 'against_baseline': False}
+Save models to : /home/zihan/research/MARS/data/model/20220516171217_exploit_10000/mdp_arbitrary_mdp_selfplay2. 
+ Save logs to: /home/zihan/research/MARS/data/log/20220516171217_exploit_10000/mdp_arbitrary_mdp_selfplay2.
+Episode: 1/30000 (0.0033%),                 avg. length: 5.0,                last time consumption/overall running time: 1.0170s / 1.0170 s
+agent0:                 episode reward: -0.2381,                 loss: nan
+agent1:                 episode reward: 0.2381,                 loss: nan
+Episode: 21/30000 (0.0700%),                 avg. length: 5.0,                last time consumption/overall running time: 0.1492s / 1.1662 s
+agent0:                 episode reward: 0.5231,                 loss: nan
+agent1:                 episode reward: -0.5231,                 loss: nan
+Episode: 41/30000 (0.1367%),                 avg. length: 5.0,                last time consumption/overall running time: 0.1944s / 1.3606 s
+agent0:                 episode reward: 0.4963,                 loss: nan
+agent1:                 episode reward: -0.4963,                 loss: nan
+Episode: 61/30000 (0.2033%),                 avg. length: 5.0,                last time consumption/overall running time: 0.1963s / 1.5569 s
+agent0:                 episode reward: 0.5203,                 loss: nan
+agent1:                 episode reward: -0.5203,                 loss: nan
+Episode: 81/30000 (0.2700%),                 avg. length: 5.0,                last time consumption/overall running time: 0.1955s / 1.7524 s
+agent0:                 episode reward: 0.5182,                 loss: nan
+agent1:                 episode reward: -0.5182,                 loss: nan
+Episode: 101/30000 (0.3367%),                 avg. length: 5.0,                last time consumption/overall running time: 0.1981s / 1.9505 s
+agent0:                 episode reward: -0.2459,                 loss: nan
+agent1:                 episode reward: 0.2459,                 loss: nan
+Episode: 121/30000 (0.4033%),                 avg. length: 5.0,                last time consumption/overall running time: 0.7476s / 2.6981 s
+agent0:                 episode reward: 0.0766,                 loss: nan
+agent1:                 episode reward: -0.0766,                 loss: 0.4605
+Episode: 141/30000 (0.4700%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9813s / 3.6794 s
+agent0:                 episode reward: 0.7510,                 loss: nan
+agent1:                 episode reward: -0.7510,                 loss: 0.4334
+Episode: 161/30000 (0.5367%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9831s / 4.6625 s
+agent0:                 episode reward: 0.2586,                 loss: nan
+agent1:                 episode reward: -0.2586,                 loss: 0.4283
+Episode: 181/30000 (0.6033%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9630s / 5.6255 s
+agent0:                 episode reward: 0.7818,                 loss: nan
+agent1:                 episode reward: -0.7818,                 loss: 0.4260
+Episode: 201/30000 (0.6700%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9569s / 6.5824 s
+agent0:                 episode reward: -0.2522,                 loss: nan
+agent1:                 episode reward: 0.2522,                 loss: 0.4273
+Episode: 221/30000 (0.7367%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9628s / 7.5453 s
+agent0:                 episode reward: 0.1803,                 loss: nan
+agent1:                 episode reward: -0.1803,                 loss: 0.4265
+Episode: 241/30000 (0.8033%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9412s / 8.4864 s
+agent0:                 episode reward: 0.3291,                 loss: nan
+agent1:                 episode reward: -0.3291,                 loss: 0.4241
+Episode: 261/30000 (0.8700%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9530s / 9.4395 s
+agent0:                 episode reward: 0.3866,                 loss: nan
+agent1:                 episode reward: -0.3866,                 loss: 0.4223
+Episode: 281/30000 (0.9367%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9453s / 10.3848 s
+agent0:                 episode reward: 0.4604,                 loss: nan
+agent1:                 episode reward: -0.4604,                 loss: 0.4210
+Episode: 301/30000 (1.0033%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9563s / 11.3410 s
+agent0:                 episode reward: 0.6221,                 loss: nan
+agent1:                 episode reward: -0.6221,                 loss: 0.4138
+Episode: 321/30000 (1.0700%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9521s / 12.2931 s
+agent0:                 episode reward: 0.7240,                 loss: nan
+agent1:                 episode reward: -0.7240,                 loss: 0.4123
+Episode: 341/30000 (1.1367%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9504s / 13.2436 s
+agent0:                 episode reward: 0.5575,                 loss: nan
+agent1:                 episode reward: -0.5575,                 loss: 0.4109
+Episode: 361/30000 (1.2033%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9501s / 14.1937 s
+agent0:                 episode reward: 0.4138,                 loss: nan
+agent1:                 episode reward: -0.4138,                 loss: 0.4097
+Episode: 381/30000 (1.2700%),                 avg. length: 5.0,                last time consumption/overall running time: 0.9523s / 15.1460 s
