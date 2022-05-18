@@ -23,7 +23,7 @@ self_play_method_marl_specs = {
 selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
                             'fictitious_selfplay2', 'nxdo', 'nxdo2'}
 
-large_nets_envs = {'tennis_v2'}
+# large_nets_envs = {'tennis_v2'}
 large_nets_envs = {}
 
 
@@ -134,6 +134,12 @@ large_ppo_net_architecture = {
 
 }
 
+standard_net_architecture = {
+    'hidden_dim_list': [128, 128, 128, 128],
+    'hidden_activation': 'ReLU',
+    'output_activation': False,
+}
+
 large_net_architecture = {
     'hidden_dim_list': [256, 256, 256, 256],
     'hidden_activation': 'ReLU',
@@ -165,6 +171,13 @@ for game in two_player_zero_sum_games:
         conf['agent_args']['algorithm_spec']['eps_decay'] = 10*conf['train_args']['max_episodes']  # decay faster
         conf['agent_args']['algorithm_spec']['multi_step'] = 1
 
+        # some game specific confs
+        if game in large_nets_envs:  # it requires a larger net
+            if method == 'nash_ppo':
+                conf['train_args']['net_architecture'] = large_ppo_net_architecture
+            else:
+                conf['train_args']['net_architecture'] = large_net_architecture
+
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
             conf['env_args']['num_envs'] = 1
@@ -189,14 +202,13 @@ for game in two_player_zero_sum_games:
             conf['train_args']['net_architecture'] = ppo_net_architecture
 
         elif method == 'nfsp':
-            conf['train_args']['train_start_frame'] = train_start_frame[game]
-
-        # some game specific confs
-        if game in large_nets_envs:  # it requires a larger net
-            if method == 'nash_ppo':
-                conf['train_args']['net_architecture'] = large_ppo_net_architecture
+            conf['agent_args']['algorithm'] = 'NFSP'
+            if game in large_nets_envs:
+                conf['train_args']['net_architecture']['policy'] = large_net_architecture
             else:
-                conf['train_args']['net_architecture'] = large_net_architecture
+                conf['train_args']['net_architecture']['policy'] = standard_net_architecture
+                conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
+            conf['train_args']['train_start_frame'] = train_start_frame[game]
 
         output_path = f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:

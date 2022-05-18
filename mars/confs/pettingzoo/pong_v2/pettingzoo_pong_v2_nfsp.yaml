@@ -5,7 +5,7 @@ env_args:
   ram: true
   seed: random
 agent_args:
-  algorithm: DQN
+  algorithm: NFSP
   algorithm_spec:
     dueling: false
     replay_buffer_size: 1e5
@@ -35,6 +35,14 @@ train_args:
     - 128
     hidden_activation: ReLU
     output_activation: false
+    policy:
+      hidden_dim_list:
+      - 128
+      - 128
+      - 128
+      - 128
+      hidden_activation: ReLU
+      output_activation: Softmax
   marl_method: nfsp
   marl_spec:
     eta: 0.1

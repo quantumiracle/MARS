@@ -36,7 +36,13 @@ train_args:
         hidden_dim_list: [32, 32, 32] 
         hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)
         output_activation: False # False means nan
-
+        policy:
+            hidden_dim_list:
+            - 32
+            - 32
+            - 32
+            hidden_activation: ReLU
+            output_activation: Softmax
 
     marl_method: nfsp
     marl_spec:  # configurations for specific MARL method

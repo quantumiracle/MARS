@@ -75,6 +75,12 @@ ppo_net_architecture = {
 
 }
 
+standard_net_architecture = {
+    'hidden_dim_list': [128, 128, 128],
+    'hidden_activation': 'ReLU',
+    'output_activation': False,
+}
+
 
 # creat folders for holding confs
 for game in games:
@@ -123,6 +129,9 @@ for game in games:
             conf['train_args']['net_architecture'] = ppo_net_architecture
 
         elif method == 'nfsp':
+            conf['agent_args']['algorithm'] = 'NFSP'
+            conf['train_args']['net_architecture']['policy'] = standard_net_architecture
+            conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
             conf['train_args']['train_start_frame'] = train_start_frame[game]
 
         output_path = f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
