@@ -43,7 +43,7 @@ selfplay_score_deltas = { # specific for each environment
 }
 
 train_start_frame = {  # for NFSP method only
-    'SlimeVolley-v0': 1000,
+    'SlimeVolley-v0': 10000,
 }
 
 
