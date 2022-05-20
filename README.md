@@ -41,6 +41,8 @@ python general_train.py --env pettingzoo_boxing_v1 --method nfsp --save_id train
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id exploit_0 --to_exploit second
 ```
 
+More examples are provided in `./examples/` and `./unit_test/`. Note that these files need to be put under the **root** directory (`./`) to run.
+
 ### Advanced:
 
 **Train with MARL algorithm with multiprocess sampling and update**:
@@ -55,12 +57,20 @@ python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id mult
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id multiprocess_train_0 --save_id exploit_0 --to_exploit second
 ```
 
-**Test a trained MARL model in single-agent Atari**
+**Test a trained MARL model in single-agent Atari**:
 
 This function is for limited environments (like *boxing*) since not all envs in PettingZoo Atari has single-agent counterpart.
 
 ```
 python general_test.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id test_0
+```
+
+**Bash script for server**:
+
+Those bash scripts to run multiple tasks on servers are provided in `./server_bash_scripts`. For example, to run a training bash script (put it in the **root** directory):
+
+```bash
+./general_train.sh
 ```
 
 
@@ -89,7 +99,7 @@ MARL Algorithms to do:
 <!-- - [x] Nash-DQN
 - [x] Nash-DQN-Exploiter
  -->
- Supported environments:
+  Supported environments:
 - [x] Openai Gym
 - [x] PettingZoo
 - [x] LaserTag
