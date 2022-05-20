@@ -1,8 +1,8 @@
 import numpy as np
 import gym
 # from scipy.sparse import csr_matrix
-from .utils.nash_solver import NashEquilibriumECOSSolver
-# from utils.nash_solver import NashEquilibriumECOSSolver
+# from .utils.nash_solver import NashEquilibriumECOSSolver
+from utils.nash_solver import NashEquilibriumECOSSolver
 
 class ArbitraryMDP():
     def __init__(self, num_states=6, num_actions_per_player=6, num_trans=6, given_trans=None, given_rewards=None):
