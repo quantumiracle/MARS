@@ -113,12 +113,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">MARS</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../mars/algorithm/agent.html">Agent</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../mars/algorithm/dqn.html">DQN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../mars/algorithm/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mars/utils/data_struct.html">Data Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mars/utils/func.html">Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/env/env.html">Environment</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
 <ul>
@@ -202,17 +205,18 @@
 <h2>Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>The followings are required in the main script, for either training/testing/exploitation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
-<span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
-<span class="kn">from</span> <span class="nn">rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
-<span class="kn">from</span> <span class="nn">rl.algorithm</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
+<span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">mars.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents.multiagent</span> <span class="kn">import</span> <span class="n">MultiAgent</span>
 </pre></div>
 </div>
 </li>
 <li><p>Typical usage for a single-agent game, e.g. <em>CartPole-v1 OpenAI Gym</em>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">### Load configurations</span>
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;PATH TO YAML&#39;</span>
-<span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars/confs/gym_cartpolev1_dqn&#39;</span> <span class="c1">#PATH TO YAML</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1">### Create env</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
@@ -236,7 +240,7 @@
 <ul>
 <li><p>Typical usage for a single-agent game, e.g. <em>CartPole-v1 OpenAI Gym</em>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">### Load configurations</span>
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;PATH TO YAML&#39;</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars/confs/gym_cartpolev1_dqn&#39;</span> <span class="c1">#PATH TO YAML</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 

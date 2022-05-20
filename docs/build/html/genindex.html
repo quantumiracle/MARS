@@ -106,12 +106,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">MARS</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="mars/algorithm/agent.html">Agent</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mars/algorithm/dqn.html">DQN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mars/algorithm/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mars/utils/data_struct.html">Data Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mars/utils/func.html">Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mars/env/env.html">Environment</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
 <ul>
@@ -190,7 +193,9 @@
  | <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -200,21 +205,22 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.TestLogger._clear_dict">_clear_dict() (mars_core.utils.logger.TestLogger method)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger._clear_dict">_clear_dict() (mars.utils.logger.TestLogger method)</a>
 </li>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.TestLogger._clear_dict_as_list">_clear_dict_as_list() (mars_core.utils.logger.TestLogger method)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger._clear_dict_as_list">_clear_dict_as_list() (mars.utils.logger.TestLogger method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.Logger._create_dirs">_create_dirs() (mars_core.utils.logger.Logger method)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.Logger._create_dirs">_create_dirs() (mars.utils.logger.Logger method)</a>
 
       <ul>
-        <li><a href="mars/utils/logger.html#mars_core.utils.logger.TestLogger._create_dirs">(mars_core.utils.logger.TestLogger method)</a>
+        <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger._create_dirs">(mars.utils.logger.TestLogger method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -223,13 +229,13 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.Logger.add_extr_log">add_extr_log() (mars_core.utils.logger.Logger method)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger.add_extr_log">add_extr_log() (mars.utils.logger.TestLogger method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent">Agent (class in mars_core.rl.algorithm.common.agent)</a>
+      <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent">Agent (class in mars.rl.agents.agent)</a>
 </li>
-      <li><a href="mars/utils/data_struct.html#mars_core.utils.data_struct.AttrDict">AttrDict (class in mars_core.utils.data_struct)</a>
+      <li><a href="mars/utils/data_struct.html#mars.utils.data_struct.AttrDict">AttrDict (class in mars.utils.data_struct)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -237,16 +243,20 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.choose_action">choose_action() (mars_core.rl.algorithm.common.agent.Agent method)</a>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.meta_learner.MetaLearner.choose_action">choose_action() (mars.marl.meta_learner.MetaLearner method)</a>
 
       <ul>
-        <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.choose_action">(mars_core.rl.algorithm.common.agent.MultiAgent method)</a>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.choose_action">(mars.rl.agents.agent.Agent method)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.choose_action">(mars_core.rl.algorithm.dqn.DQN method)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQN.choose_action">(mars.rl.agents.dqn.DQN method)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQNBase.choose_action">(mars_core.rl.algorithm.dqn.DQNBase method)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQNBase.choose_action">(mars.rl.agents.dqn.DQNBase method)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.ParallelDQN.choose_action">(mars_core.rl.algorithm.dqn.ParallelDQN method)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.ParallelDQN.choose_action">(mars.rl.agents.dqn.ParallelDQN method)</a>
+</li>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.multiagent.MultiAgent.choose_action">(mars.rl.agents.multiagent.MultiAgent method)</a>
+</li>
+        <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.choose_action">(mars.rl.agents.ppo.PPODiscrete method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -255,15 +265,23 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN">DQN (class in mars_core.rl.algorithm.dqn)</a>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQN">DQN (class in mars.rl.agents.dqn)</a>
 </li>
-      <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQNBase">DQNBase (class in mars_core.rl.algorithm.dqn)</a>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQNBase">DQNBase (class in mars.rl.agents.dqn)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DuelingDQN">DuelingDQN (class in mars_core.rl.algorithm.dqn)</a>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DuelingDQN">DuelingDQN (class in mars.rl.agents.dqn)</a>
 </li>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.DummyLogger">DummyLogger (class in mars_core.utils.logger)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.DummyLogger">DummyLogger (class in mars.utils.logger)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.double_oracle.NXDOMetaLearner.evaluate">evaluate() (mars.marl.double_oracle.NXDOMetaLearner method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -271,11 +289,33 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.fix">fix() (mars_core.rl.algorithm.common.agent.Agent method)</a>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlay2SideMetaLearner">FictitiousSelfPlay2SideMetaLearner (class in mars.marl.selfplay)</a>
+</li>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlayMetaLearner">FictitiousSelfPlayMetaLearner (class in mars.marl.selfplay)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQNBase.forward">forward() (mars_core.rl.algorithm.dqn.DQNBase method)</a>
+      <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.fix">fix() (mars.rl.agents.agent.Agent method)</a>
+</li>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQNBase.forward">forward() (mars.rl.agents.dqn.DQNBase method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mars/utils/func.html#mars.utils.func.get_exploiter">get_exploiter() (in module mars.utils.func)</a>
+</li>
+      <li><a href="mars/utils/func.html#mars.utils.func.get_general_args">get_general_args() (in module mars.utils.func)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mars/utils/func.html#mars.utils.func.get_latest_file_in_folder">get_latest_file_in_folder() (in module mars.utils.func)</a>
+</li>
+      <li><a href="mars/utils/func.html#mars.utils.func.get_model_path">get_model_path() (in module mars.utils.func)</a>
+</li>
+      <li><a href="mars/equilibrium_solver/solvers.html#mars.equilibrium_solver.eq_MWUsolver.get_payoff_vector">get_payoff_vector() (in module mars.equilibrium_solver.eq_MWUsolver)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -283,11 +323,11 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/utils/func.html#mars_core.utils.func.InDepthUpdateDictAwithB">InDepthUpdateDictAwithB() (in module mars_core.utils.func)</a>
+      <li><a href="mars/utils/func.html#mars.utils.func.InDepthUpdateDictAwithB">InDepthUpdateDictAwithB() (in module mars.utils.func)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.init_logger">init_logger() (in module mars_core.utils.logger)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.init_logger">init_logger() (in module mars.utils.logger)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -295,39 +335,43 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.load_model">load_model() (mars_core.rl.algorithm.common.agent.Agent method)</a>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.meta_learner.MetaLearner.load_model">load_model() (mars.marl.meta_learner.MetaLearner method)</a>
 
       <ul>
-        <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.load_model">(mars_core.rl.algorithm.common.agent.MultiAgent method)</a>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.load_model">(mars.rl.agents.agent.Agent method)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.load_model">(mars_core.rl.algorithm.dqn.DQN method)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQN.load_model">(mars.rl.agents.dqn.DQN method)</a>
+</li>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.multiagent.MultiAgent.load_model">(mars.rl.agents.multiagent.MultiAgent method)</a>
+</li>
+        <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.load_model">(mars.rl.agents.ppo.PPODiscrete method)</a>
 </li>
       </ul></li>
-      <li><a href="mars/utils/func.html#mars_core.utils.func.LoadYAML2Dict">LoadYAML2Dict() (in module mars_core.utils.func)</a>
+      <li><a href="mars/utils/func.html#mars.utils.func.LoadYAML2Dict">LoadYAML2Dict() (in module mars.utils.func)</a>
 </li>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.DummyLogger.log_episode_reward">log_episode_reward() (mars_core.utils.logger.DummyLogger method)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.DummyLogger.log_episode_reward">log_episode_reward() (mars.utils.logger.DummyLogger method)</a>
 
       <ul>
-        <li><a href="mars/utils/logger.html#mars_core.utils.logger.Logger.log_episode_reward">(mars_core.utils.logger.Logger method)</a>
+        <li><a href="mars/utils/logger.html#mars.utils.logger.Logger.log_episode_reward">(mars.utils.logger.Logger method)</a>
 </li>
-        <li><a href="mars/utils/logger.html#mars_core.utils.logger.TestLogger.log_episode_reward">(mars_core.utils.logger.TestLogger method)</a>
+        <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger.log_episode_reward">(mars.utils.logger.TestLogger method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.Logger.log_loss">log_loss() (mars_core.utils.logger.Logger method)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.Logger.log_loss">log_loss() (mars.utils.logger.Logger method)</a>
 
       <ul>
-        <li><a href="mars/utils/logger.html#mars_core.utils.logger.TestLogger.log_loss">(mars_core.utils.logger.TestLogger method)</a>
+        <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger.log_loss">(mars.utils.logger.TestLogger method)</a>
 </li>
       </ul></li>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.DummyLogger.log_reward">log_reward() (mars_core.utils.logger.DummyLogger method)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.DummyLogger.log_reward">log_reward() (mars.utils.logger.DummyLogger method)</a>
 
       <ul>
-        <li><a href="mars/utils/logger.html#mars_core.utils.logger.TestLogger.log_reward">(mars_core.utils.logger.TestLogger method)</a>
+        <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger.log_reward">(mars.utils.logger.TestLogger method)</a>
 </li>
       </ul></li>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.Logger">Logger (class in mars_core.utils.logger)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.Logger">Logger (class in mars.utils.logger)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -335,50 +379,121 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.make_batch">make_batch() (mars.rl.agents.ppo.PPODiscrete method)</a>
+</li>
+      <li><a href="mars/env/env.html#mars.env.import_env.make_env">make_env() (in module mars.env.import_env)</a>
+</li>
       <li>
-    mars_core.rl.algorithm.dqn
+    mars.env.import_env
 
       <ul>
-        <li><a href="mars/algorithm/dqn.html#module-mars_core.rl.algorithm.dqn">module</a>
+        <li><a href="mars/env/env.html#module-mars.env.import_env">module</a>
 </li>
       </ul></li>
       <li>
-    mars_core.utils.data_struct
+    mars.equilibrium_solver.eq_ECOSsolver
 
       <ul>
-        <li><a href="mars/utils/data_struct.html#module-mars_core.utils.data_struct">module</a>
+        <li><a href="mars/equilibrium_solver/solvers.html#module-mars.equilibrium_solver.eq_ECOSsolver">module</a>
 </li>
       </ul></li>
       <li>
-    mars_core.utils.func
+    mars.equilibrium_solver.eq_GUROBIsolver
 
       <ul>
-        <li><a href="mars/utils/func.html#module-mars_core.utils.func">module</a>
+        <li><a href="mars/equilibrium_solver/solvers.html#module-mars.equilibrium_solver.eq_GUROBIsolver">module</a>
 </li>
       </ul></li>
       <li>
-    mars_core.utils.logger
+    mars.equilibrium_solver.eq_MWUsolver
 
       <ul>
-        <li><a href="mars/utils/logger.html#module-mars_core.utils.logger">module</a>
+        <li><a href="mars/equilibrium_solver/solvers.html#module-mars.equilibrium_solver.eq_MWUsolver">module</a>
+</li>
+      </ul></li>
+      <li>
+    mars.marl.double_oracle
+
+      <ul>
+        <li><a href="mars/marl/meta_learner.html#module-mars.marl.double_oracle">module</a>
+</li>
+      </ul></li>
+      <li>
+    mars.marl.selfplay
+
+      <ul>
+        <li><a href="mars/marl/meta_learner.html#module-mars.marl.selfplay">module</a>
+</li>
+      </ul></li>
+      <li>
+    mars.rl.agents.dqn
+
+      <ul>
+        <li><a href="mars/rl/dqn.html#module-mars.rl.agents.dqn">module</a>
+</li>
+      </ul></li>
+      <li>
+    mars.rl.agents.ppo
+
+      <ul>
+        <li><a href="mars/rl/ppo.html#module-mars.rl.agents.ppo">module</a>
+</li>
+      </ul></li>
+      <li>
+    mars.utils.data_struct
+
+      <ul>
+        <li><a href="mars/utils/data_struct.html#module-mars.utils.data_struct">module</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
+    mars.utils.func
+
+      <ul>
+        <li><a href="mars/utils/func.html#module-mars.utils.func">module</a>
+</li>
+      </ul></li>
+      <li>
+    mars.utils.logger
+
+      <ul>
+        <li><a href="mars/utils/logger.html#module-mars.utils.logger">module</a>
+</li>
+      </ul></li>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.meta_learner.MetaLearner">MetaLearner (class in mars.marl.meta_learner)</a>
+</li>
+      <li>
     module
 
       <ul>
-        <li><a href="mars/algorithm/dqn.html#module-mars_core.rl.algorithm.dqn">mars_core.rl.algorithm.dqn</a>
+        <li><a href="mars/env/env.html#module-mars.env.import_env">mars.env.import_env</a>
 </li>
-        <li><a href="mars/utils/data_struct.html#module-mars_core.utils.data_struct">mars_core.utils.data_struct</a>
+        <li><a href="mars/equilibrium_solver/solvers.html#module-mars.equilibrium_solver.eq_ECOSsolver">mars.equilibrium_solver.eq_ECOSsolver</a>
 </li>
-        <li><a href="mars/utils/func.html#module-mars_core.utils.func">mars_core.utils.func</a>
+        <li><a href="mars/equilibrium_solver/solvers.html#module-mars.equilibrium_solver.eq_GUROBIsolver">mars.equilibrium_solver.eq_GUROBIsolver</a>
 </li>
-        <li><a href="mars/utils/logger.html#module-mars_core.utils.logger">mars_core.utils.logger</a>
+        <li><a href="mars/equilibrium_solver/solvers.html#module-mars.equilibrium_solver.eq_MWUsolver">mars.equilibrium_solver.eq_MWUsolver</a>
+</li>
+        <li><a href="mars/marl/meta_learner.html#module-mars.marl.double_oracle">mars.marl.double_oracle</a>
+</li>
+        <li><a href="mars/marl/meta_learner.html#module-mars.marl.selfplay">mars.marl.selfplay</a>
+</li>
+        <li><a href="mars/rl/dqn.html#module-mars.rl.agents.dqn">mars.rl.agents.dqn</a>
+</li>
+        <li><a href="mars/rl/ppo.html#module-mars.rl.agents.ppo">mars.rl.agents.ppo</a>
+</li>
+        <li><a href="mars/utils/data_struct.html#module-mars.utils.data_struct">mars.utils.data_struct</a>
+</li>
+        <li><a href="mars/utils/func.html#module-mars.utils.func">mars.utils.func</a>
+</li>
+        <li><a href="mars/utils/logger.html#module-mars.utils.logger">mars.utils.logger</a>
 </li>
       </ul></li>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent">MultiAgent (class in mars_core.rl.algorithm.common.agent)</a>
+      <li><a href="mars/rl/agent.html#mars.rl.agents.multiagent.MultiAgent">MultiAgent (class in mars.rl.agents.multiagent)</a>
+</li>
+      <li><a href="mars/utils/func.html#mars.utils.func.multiprocess_buffer_register">multiprocess_buffer_register() (in module mars.utils.func)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -386,7 +501,21 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DuelingDQN.net">net() (mars_core.rl.algorithm.dqn.DuelingDQN method)</a>
+      <li><a href="mars/equilibrium_solver/solvers.html#mars.equilibrium_solver.eq_ECOSsolver.NashEquilibriumECOSSolver">NashEquilibriumECOSSolver() (in module mars.equilibrium_solver.eq_ECOSsolver)</a>
+</li>
+      <li><a href="mars/equilibrium_solver/solvers.html#mars.equilibrium_solver.eq_GUROBIsolver.NashEquilibriumGUROBISolver">NashEquilibriumGUROBISolver() (in module mars.equilibrium_solver.eq_GUROBIsolver)</a>
+</li>
+      <li><a href="mars/equilibrium_solver/solvers.html#mars.equilibrium_solver.eq_MWUsolver.NashEquilibriumMWUSolver">NashEquilibriumMWUSolver() (in module mars.equilibrium_solver.eq_MWUsolver)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mars/equilibrium_solver/solvers.html#mars.equilibrium_solver.eq_MWUsolver.NashEquilibriumParallelMWUSolver">NashEquilibriumParallelMWUSolver() (in module mars.equilibrium_solver.eq_MWUsolver)</a>
+</li>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DuelingDQN.net">net() (mars.rl.agents.dqn.DuelingDQN method)</a>
+</li>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.double_oracle.NXDO2SideMetaLearner">NXDO2SideMetaLearner (class in mars.marl.double_oracle)</a>
+</li>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.double_oracle.NXDOMetaLearner">NXDOMetaLearner (class in mars.marl.double_oracle)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -394,18 +523,24 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.ParallelDQN">ParallelDQN (class in mars_core.rl.algorithm.dqn)</a>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.ParallelDQN">ParallelDQN (class in mars.rl.agents.dqn)</a>
 </li>
-      <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.ParallelDuelingDQN">ParallelDuelingDQN (class in mars_core.rl.algorithm.dqn)</a>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.ParallelDuelingDQN">ParallelDuelingDQN (class in mars.rl.agents.dqn)</a>
+</li>
+      <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.pi">pi() (mars.rl.agents.ppo.PPODiscrete method)</a>
+</li>
+      <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPO">PPO() (in module mars.rl.agents.ppo)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.DummyLogger.print_and_save">print_and_save() (mars_core.utils.logger.DummyLogger method)</a>
+      <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete">PPODiscrete (class in mars.rl.agents.ppo)</a>
+</li>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.DummyLogger.print_and_save">print_and_save() (mars.utils.logger.DummyLogger method)</a>
 
       <ul>
-        <li><a href="mars/utils/logger.html#mars_core.utils.logger.Logger.print_and_save">(mars_core.utils.logger.Logger method)</a>
+        <li><a href="mars/utils/logger.html#mars.utils.logger.Logger.print_and_save">(mars.utils.logger.Logger method)</a>
 </li>
-        <li><a href="mars/utils/logger.html#mars_core.utils.logger.TestLogger.print_and_save">(mars_core.utils.logger.TestLogger method)</a>
+        <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger.print_and_save">(mars.utils.logger.TestLogger method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -414,12 +549,24 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.ready_to_update">ready_to_update (mars_core.rl.algorithm.common.agent.Agent property)</a>
+      <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.ready_to_update">ready_to_update (mars.rl.agents.agent.Agent property)</a>
 
       <ul>
-        <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.ready_to_update">(mars_core.rl.algorithm.common.agent.MultiAgent property)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQN.ready_to_update">(mars.rl.agents.dqn.DQN property)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.ready_to_update">(mars_core.rl.algorithm.dqn.DQN property)</a>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.multiagent.MultiAgent.ready_to_update">(mars.rl.agents.multiagent.MultiAgent property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQN.reinit">reinit() (mars.rl.agents.dqn.DQN method)</a>
+
+      <ul>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQNBase.reinit">(mars.rl.agents.dqn.DQNBase method)</a>
+</li>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DuelingDQN.reinit">(mars.rl.agents.dqn.DuelingDQN method)</a>
+</li>
+        <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.reinit">(mars.rl.agents.ppo.PPODiscrete method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -428,28 +575,54 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.save_model">save_model() (mars_core.rl.algorithm.common.agent.Agent method)</a>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.meta_learner.MetaLearner.save_model">save_model() (mars.marl.meta_learner.MetaLearner method)</a>
 
       <ul>
-        <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.save_model">(mars_core.rl.algorithm.common.agent.MultiAgent method)</a>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.save_model">(mars.rl.agents.agent.Agent method)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.save_model">(mars_core.rl.algorithm.dqn.DQN method)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQN.save_model">(mars.rl.agents.dqn.DQN method)</a>
+</li>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.multiagent.MultiAgent.save_model">(mars.rl.agents.multiagent.MultiAgent method)</a>
+</li>
+        <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.save_model">(mars.rl.agents.ppo.PPODiscrete method)</a>
 </li>
       </ul></li>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.scheduler_step">scheduler_step() (mars_core.rl.algorithm.common.agent.Agent method)</a>
+      <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.scheduler_step">scheduler_step() (mars.rl.agents.agent.Agent method)</a>
 
       <ul>
-        <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.scheduler_step">(mars_core.rl.algorithm.common.agent.MultiAgent method)</a>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.multiagent.MultiAgent.scheduler_step">(mars.rl.agents.multiagent.MultiAgent method)</a>
+</li>
+      </ul></li>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.selfplay.SelfPlay2SideMetaLearner">SelfPlay2SideMetaLearner (class in mars.marl.selfplay)</a>
+</li>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.selfplay.SelfPlayMetaLearner">SelfPlayMetaLearner (class in mars.marl.selfplay)</a>
+</li>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.double_oracle.NXDO2SideMetaLearner.step">step() (mars.marl.double_oracle.NXDO2SideMetaLearner method)</a>
+
+      <ul>
+        <li><a href="mars/marl/meta_learner.html#mars.marl.double_oracle.NXDOMetaLearner.step">(mars.marl.double_oracle.NXDOMetaLearner method)</a>
+</li>
+        <li><a href="mars/marl/meta_learner.html#mars.marl.meta_learner.MetaLearner.step">(mars.marl.meta_learner.MetaLearner method)</a>
+</li>
+        <li><a href="mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlay2SideMetaLearner.step">(mars.marl.selfplay.FictitiousSelfPlay2SideMetaLearner method)</a>
+</li>
+        <li><a href="mars/marl/meta_learner.html#mars.marl.selfplay.FictitiousSelfPlayMetaLearner.step">(mars.marl.selfplay.FictitiousSelfPlayMetaLearner method)</a>
+</li>
+        <li><a href="mars/marl/meta_learner.html#mars.marl.selfplay.SelfPlay2SideMetaLearner.step">(mars.marl.selfplay.SelfPlay2SideMetaLearner method)</a>
+</li>
+        <li><a href="mars/marl/meta_learner.html#mars.marl.selfplay.SelfPlayMetaLearner.step">(mars.marl.selfplay.SelfPlayMetaLearner method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.store">store() (mars_core.rl.algorithm.common.agent.Agent method)</a>
+      <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.store">store() (mars.rl.agents.agent.Agent method)</a>
 
       <ul>
-        <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.store">(mars_core.rl.algorithm.common.agent.MultiAgent method)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQN.store">(mars.rl.agents.dqn.DQN method)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.store">(mars_core.rl.algorithm.dqn.DQN method)</a>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.multiagent.MultiAgent.store">(mars.rl.agents.multiagent.MultiAgent method)</a>
+</li>
+        <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.store">(mars.rl.agents.ppo.PPODiscrete method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -458,16 +631,16 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/utils/logger.html#mars_core.utils.logger.TestLogger">TestLogger (class in mars_core.utils.logger)</a>
+      <li><a href="mars/utils/logger.html#mars.utils.logger.TestLogger">TestLogger (class in mars.utils.logger)</a>
 </li>
-      <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQNBase.training">training (mars_core.rl.algorithm.dqn.DQNBase attribute)</a>
+      <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQNBase.training">training (mars.rl.agents.dqn.DQNBase attribute)</a>
 
       <ul>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DuelingDQN.training">(mars_core.rl.algorithm.dqn.DuelingDQN attribute)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DuelingDQN.training">(mars.rl.agents.dqn.DuelingDQN attribute)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.ParallelDQN.training">(mars_core.rl.algorithm.dqn.ParallelDQN attribute)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.ParallelDQN.training">(mars.rl.agents.dqn.ParallelDQN attribute)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.ParallelDuelingDQN.training">(mars_core.rl.algorithm.dqn.ParallelDuelingDQN attribute)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.ParallelDuelingDQN.training">(mars.rl.agents.dqn.ParallelDuelingDQN attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -476,19 +649,35 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.update">update() (mars_core.rl.algorithm.common.agent.Agent method)</a>
+      <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.update">update() (mars.rl.agents.agent.Agent method)</a>
 
       <ul>
-        <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.MultiAgent.update">(mars_core.rl.algorithm.common.agent.MultiAgent method)</a>
+        <li><a href="mars/rl/dqn.html#mars.rl.agents.dqn.DQN.update">(mars.rl.agents.dqn.DQN method)</a>
 </li>
-        <li><a href="mars/algorithm/dqn.html#mars_core.rl.algorithm.dqn.DQN.update">(mars_core.rl.algorithm.dqn.DQN method)</a>
+        <li><a href="mars/rl/agent.html#mars.rl.agents.multiagent.MultiAgent.update">(mars.rl.agents.multiagent.MultiAgent method)</a>
+</li>
+        <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.update">(mars.rl.agents.ppo.PPODiscrete method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mars/algorithm/agent.html#mars_core.rl.algorithm.common.agent.Agent.update_target">update_target() (mars_core.rl.algorithm.common.agent.Agent method)</a>
+      <li><a href="mars/marl/meta_learner.html#mars.marl.double_oracle.NXDO2SideMetaLearner.update_matrix">update_matrix() (mars.marl.double_oracle.NXDO2SideMetaLearner method)</a>
+
+      <ul>
+        <li><a href="mars/marl/meta_learner.html#mars.marl.double_oracle.NXDOMetaLearner.update_matrix">(mars.marl.double_oracle.NXDOMetaLearner method)</a>
 </li>
-      <li><a href="mars/utils/func.html#mars_core.utils.func.UpdateDictAwithB">UpdateDictAwithB() (in module mars_core.utils.func)</a>
+      </ul></li>
+      <li><a href="mars/rl/agent.html#mars.rl.agents.agent.Agent.update_target">update_target() (mars.rl.agents.agent.Agent method)</a>
+</li>
+      <li><a href="mars/utils/func.html#mars.utils.func.UpdateDictAwithB">UpdateDictAwithB() (in module mars.utils.func)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.v">v() (mars.rl.agents.ppo.PPODiscrete method)</a>
 </li>
   </ul></td>
 </tr></table>

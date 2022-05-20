@@ -112,12 +112,15 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">MARS</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../mars/algorithm/agent.html">Agent</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../mars/algorithm/dqn.html">DQN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../mars/algorithm/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mars/utils/data_struct.html">Data Structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mars/utils/func.html">Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/env/env.html">Environment</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
 <ul>
@@ -196,14 +199,15 @@
 <h2>Single-agent RL<a class="headerlink" href="#single-agent-rl" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li><p>Train a model on single-agent game, e.g. <em>CartPole-v1 OpenAI Gym</em>, using PPO algorithm:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
-<span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
-<span class="kn">from</span> <span class="nn">rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
-<span class="kn">from</span> <span class="nn">rl.algorithm</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
+<span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">mars.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents.multiagent</span> <span class="kn">import</span> <span class="n">MultiAgent</span>
 
 <span class="c1">### Load configurations</span>
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/gym_cartpolev1_ppo&#39;</span>
-<span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars/confs/gym_cartpolev1_dqn&#39;</span> <span class="c1">#PATH TO YAML</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1">### Create env</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
@@ -220,13 +224,14 @@
 </div>
 </li>
 <li><p>Test the trained model:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
-<span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
-<span class="kn">from</span> <span class="nn">rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
-<span class="kn">from</span> <span class="nn">rl.algorithm</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
+<span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">mars.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents.multiagent</span> <span class="kn">import</span> <span class="n">MultiAgent</span>
 
 <span class="c1">### Load configurations</span>
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/gym_cartpolev1_ppo&#39;</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars/confs/gym_cartpolev1_dqn&#39;</span> <span class="c1">#PATH TO YAML</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1">## Change/specify some arguments if necessary</span>
@@ -252,15 +257,17 @@
 <div class="section" id="multi-agent-rl">
 <h2>Multi-agent RL<a class="headerlink" href="#multi-agent-rl" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p>Train a model on two-agent game, e.g. <em>boxing-v1 PettingZoo</em>, using self-play with DQN algorithm:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
-<span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
-<span class="kn">from</span> <span class="nn">rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
-<span class="kn">from</span> <span class="nn">rl.algorithm</span> <span class="kn">import</span> <span class="o">*</span>
+<li><p>(Single-process) Train a model on two-agent game, e.g. <em>boxing-v1 PettingZoo</em>, using self-play with DQN algorithm:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
+<span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">mars.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents.multiagent</span> <span class="kn">import</span> <span class="n">MultiAgent</span>
 
 <span class="c1">### Load configurations</span>
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/pettingzoo_boxingv1_selfplay_dqn&#39;</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/pettingzoo/boxing_v1/pettingzoo_boxing_v1_selfplay&#39;</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">args</span><span class="o">.</span><span class="n">multiprocess</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="c1">### Create env</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
@@ -277,10 +284,71 @@
 </pre></div>
 </div>
 </li>
+<li><p>(Multi-process-separate for sampling and model update) Train a model on two-agent game, e.g. <em>boxing-v1 PettingZoo</em>, using self-play with DQN algorithm:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;forkserver&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents.multiagent</span> <span class="kn">import</span> <span class="n">MultiAgent</span>
+<span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">get_general_args</span><span class="p">,</span> <span class="n">multiprocess_buffer_register</span>
+<span class="kn">from</span> <span class="nn">rolloutExperience</span> <span class="kn">import</span> <span class="n">rolloutExperience</span>
+<span class="kn">from</span> <span class="nn">updateModel</span> <span class="kn">import</span> <span class="n">updateModel</span>
+
+<span class="c1">### Load configurations</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/pettingzoo/boxing_v1/pettingzoo_boxing_v1_selfplay&#39;</span>
+<span class="n">ori_args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ori_args</span><span class="o">.</span><span class="n">multiprocess</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1">### Create env</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">ori_args</span><span class="p">)</span>
+<span class="n">args</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+<span class="c1">### Specify models for each agent</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">multiprocess_buffer_register</span><span class="p">(</span><span class="n">ori_args</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+<span class="n">model1</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+<span class="n">model2</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">MultiAgent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">model1</span><span class="p">,</span> <span class="n">model2</span><span class="p">],</span> <span class="n">args</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># this env is only used for creating other intantiations</span>
+
+<span class="n">processes</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ori_args</span><span class="p">)</span>
+
+<span class="c1">### launch multiple sample rollout processes</span>
+<span class="n">info_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">pro_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ori_args</span><span class="o">.</span><span class="n">num_envs</span><span class="p">):</span>  
+    <span class="n">play_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">rolloutExperience</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">info_queue</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">pro_id</span><span class="p">))</span>
+    <span class="n">play_process</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># sub processes killed when main process finish</span>
+    <span class="n">processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">play_process</span><span class="p">)</span>
+
+    <span class="c1">### launch update process (single or multiple)</span>
+    <span class="n">update_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">updateModel</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span> <span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">info_queue</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">))</span>
+    <span class="n">update_process</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">update_process</span><span class="p">)</span>
+
+    <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">]</span>
+    <span class="k">while</span> <span class="nb">all</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">]):</span>
+        <span class="k">pass</span>
+
+</pre></div>
+</div>
+</li>
 <li><p>Test the trained model:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">### Load configurations</span>
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/pettingzoo_boxingv1_selfplay_dqn&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
+<span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">mars.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents.multiagent</span> <span class="kn">import</span> <span class="n">MultiAgent</span>
+
+<span class="c1">### Load configurations</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/pettingzoo/boxing_v1/pettingzoo_boxing_v1_selfplay&#39;</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">args</span><span class="o">.</span><span class="n">multiprocess</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="c1">## Change/specify some arguments if necessary</span>
 <span class="n">args</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># the test mode will automatically fix all models</span>
@@ -298,6 +366,51 @@
 
 <span class="c1">### Rollout</span>
 <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Exploit the trained model:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">mars.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mars.rl.agents.multiagent</span> <span class="kn">import</span> <span class="n">MultiAgent</span>
+<span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">get_general_args</span><span class="p">,</span> <span class="n">get_model_path</span><span class="p">,</span> <span class="n">get_exploiter</span>
+
+<span class="c1">### Load configurations</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/pettingzoo/boxing_v1/pettingzoo_boxing_v1_selfplay&#39;</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">args</span><span class="o">.</span><span class="n">multiprocess</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1">### Change/specify some arguments if necessary</span>
+<span class="n">game_type</span> <span class="o">=</span> <span class="s1">&#39;pettingzoo&#39;</span>
+<span class="n">game</span> <span class="o">=</span> <span class="s1">&#39;boxing_v1&#39;</span>
+<span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;selfplay&#39;</span>
+<span class="n">args</span><span class="o">.</span><span class="n">against_baseline</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">args</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">args</span><span class="o">.</span><span class="n">exploit</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">args</span><span class="o">.</span><span class="n">render</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">load_id</span> <span class="o">=</span> <span class="o">**</span><span class="n">idx</span> <span class="n">to</span> <span class="n">fill</span> <span class="n">here</span><span class="o">**</span>
+<span class="n">folder</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;data/model/</span><span class="si">{</span><span class="n">load_id</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">game_type</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">game</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s1">/&#39;</span>
+
+<span class="n">args</span><span class="o">.</span><span class="n">load_model_full_path</span> <span class="o">=</span> <span class="n">get_model_path</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+
+<span class="c1">### Create env</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+<span class="c1">### Specify models for each agent</span>
+<span class="n">trained_model</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+<span class="c1"># trained_model.fix()  # no longer need to specify here</span>
+
+<span class="c1">### Load exploiter with specified args (just change the previous args)</span>
+<span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">[</span><span class="s1">&#39;hidden_dim_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">]</span>
+<span class="n">exploiter</span><span class="p">,</span> <span class="n">exploitation_args</span> <span class="o">=</span> <span class="n">get_exploiter</span><span class="p">(</span><span class="s1">&#39;DQN&#39;</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="c1"># use DQN agent as exploiter</span>
+
+<span class="c1">### Construct multi-agent model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">MultiAgent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">trained_model</span><span class="p">,</span> <span class="n">exploiter</span><span class="p">],</span> <span class="n">exploitation_args</span><span class="p">)</span>
+
+<span class="c1">### Rollout</span>
+<span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">exploitation_args</span><span class="p">,</span> <span class="n">save_id</span> <span class="o">=</span> <span class="n">load_id</span><span class="o">+</span><span class="s1">&#39;_exploit&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </li>

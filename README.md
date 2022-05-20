@@ -7,8 +7,14 @@
 ## Status
 WIP. Not released yet.
 
+If you have any question (propose an ISSUE if it's general problem) or want to contribute to this repository, feel free to contact me: *zhding96@gmail.com*
+
+Large-scale competitive games are generally hard, I'm still struggling with developing this repo.
+
 ## Usage Instruction
-For usage instruction document, see [here](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html). 
+Some tutorials (`./tutorials/`) are provided for simple MARL concepts, including building an arbitrary matrix game, solving the Nash equilibrium with different algorithms for matrix games, building arbitrary Markov game, solving Markov games, etc. 
+
+For comprehensive usage instruction document, see [here](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html). 
 
 MARS is still under-development and not prepared to release yet. You may find it hard to clone b.c. the author is testing algorithms with some models hosted on Git.
 
@@ -41,8 +47,8 @@ MARL Algorithms to do:
 - [ ] QTRAN
 - [ ] MAPPO
 <!-- - [x] Nash-DQN
-- [x] Nash-DQN-Exploiter -->
-
+- [x] Nash-DQN-Exploiter
+ -->
 Supported environments:
 - [x] Openai Gym
 - [x] PettingZoo
