@@ -1,11 +1,21 @@
 import numpy as np
 import gym
-# from scipy.sparse import csr_matrix
 from .utils.nash_solver import NashEquilibriumECOSSolver
 # from utils.nash_solver import NashEquilibriumECOSSolver
 
 class ArbitraryMDP():
-    def __init__(self, num_states=6, num_actions_per_player=6, num_trans=6, given_trans=None, given_rewards=None):
+    def __init__(self, num_states=6, num_actions_per_player=6, num_trans=6, given_trans=None, given_rewards=None, OneHotObs=False, FixedSeed=False):
+        """A randomly generated two-player zero-sum Markov game. Default reward range [-1,1].
+
+        Args:
+            num_states (int, optional): _description_. Defaults to 6.
+            num_actions_per_player (int, optional): _description_. Defaults to 6.
+            num_trans (int, optional): _description_. Defaults to 6.
+            given_trans (_type_, optional): transition matrix with shape (dim_transition, dim_state, dim_action, dim_state). Defaults to None.
+            given_rewards (_type_, optional): reward matrix with shape (dim_transition, dim_state, dim_action, dim_state). Defaults to None.
+            OneHotObs (bool, optional): if True set observation as one-hot vector. Defaults to False.
+            FixedSeed (bool, optional): if True fix the environment randomness (always the same environemnt). Defaults to False.
+        """
         self.num_states = num_states  # number of states for each timestep
         self.num_actions = num_actions_per_player
         self.num_actions_total = self.num_actions**2
@@ -16,76 +26,16 @@ class ArbitraryMDP():
         self.state = None
         self.given_trans = given_trans
         self.given_rewards = given_rewards
-        self.OneHotObs = False
-        ## rock-paper-scissor test
-        # self.given_rewards = [
-        #             [[ [0], [-1], [1],
-        #                 [1], [0], [-1],
-        #                 [-1], [1], [0],]], 
-        #                 ]
+        self.OneHotObs = OneHotObs
 
-        ## A fixed simple test, with: num_states=1, num_actions_per_player=3, num_trans=2
-        # self.given_trans = [
-        #             [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
-        #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
-        #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],],
-
-        #                [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
-        #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
-        #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],]] ,
-
-        #              [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
-        #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
-        #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],],
-
-        #                [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
-        #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
-        #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],]] 
-        #                 ]
-
-                    # [[ [1, 0], [1, 0], [1, 0],
-                    #         [1, 0], [1, 0], [1, 0],
-                    #         [1, 0], [1, 0], [1, 0],],
-
-                    #     [[1, 0], [1, 0], [1, 0],
-                    #         [1, 0], [1, 0], [1, 0],
-                    #         [1, 0], [1, 0], [1, 0],]] ,
-
-                    #     [[ [1, 0], [1, 0], [1, 0],
-                    #         [1, 0], [1, 0], [1, 0],
-                    #         [1, 0], [1, 0], [1, 0],],
-
-                    #     [[1, 0], [1, 0], [1, 0],
-                    #         [1, 0], [1, 0], [1, 0],
-                    #         [1, 0], [1, 0], [1, 0],]] 
-                    #         ]
-
-        # self.given_rewards = [
-        #             [[ [0, 0], [2, 2], [-1, -1],
-        #                 [-1, -1], [0,0], [1,1],
-        #                 [1,1], [-1,-1], [0,0],],
-
-        #                [[0, 0], [2, 2], [-1, -1],
-        #                 [-1, -1], [0,0], [1,1],
-        #                 [1,1], [-1,-1], [0,0],]] ,
-
-        #              [[ [0, 0], [2, -2], [-1, -1],
-        #                 [-1, -1], [0,0], [1,1],
-        #                 [1,1], [-1,-1], [0,0],],
-
-        #                [[0, 0], [2, -2], [-1, -1],
-        #                 [-1, -1], [0,0], [1,1],
-        #                 [1,1], [-1,-1], [0,0],]] 
-        #                 ]
-
-        self.seed(0)  # if want random game, uncomment this line
+        if FixedSeed:
+            self.seed(0)  # if want random game, uncomment this line
         self._construct_game()
         self.NEsolver()
 
     def _construct_game(self, ):
         # shape: [dim_transition, dim_state, dim_action (p1*p2), dim_state]
         self.trans_prob_matrices, self.reward_matrices = self.generate_random_trans_and_rewards()
-        # print(self.trans_prob_matrices, self.reward_matrices)
 
     def seed(self, seed):
         # this seed is actually not userfull since it's after game construction
@@ -141,29 +91,7 @@ class ArbitraryMDP():
         else:
             return obs
 
-    # def step(self, a):
-    #     """The environment transition function.
-    #     For a given state and action, the transition is stochastic. 
-    #     For representation of states, considering the num_states=3 case, the first three states are (0,1,2);
-    #     after one transition, the possible states are (3,4,5), etc. Such that states after different numbers of 
-    #     transitions can be distinguished. 
-        
-    #     :param a: action
-    #     """
-    #     trans_prob = self.trans_prob_matrices[self.trans][self.state%self.num_states][a]
-    #     next_state = np.random.choice([i for i in range(self.num_states)], p=trans_prob) + (self.trans+1) * self.num_states
-    #     reward = self.reward_matrices[self.trans][self.state%self.num_states][a][next_state%self.num_states]
-
-    #     self.state = next_state
-    #     obs = self.state
-    #     self.trans += 1
-    #     done = False if self.trans < self.max_transition else True
-    #     if self.OneHotObs:
-    #         return self._to_one_hot(obs), reward, done, None
-    #     else:
-    #         return obs, reward, done, None
-
-    def step(self, a, s=None):
+    def step(self, a, set_to_s=None):
         """The environment transition function.
         For a given state and action, the transition is stochastic. 
         For representation of states, considering the num_states=3 case, the first three states are (0,1,2);
@@ -171,11 +99,12 @@ class ArbitraryMDP():
         transitions can be distinguished. 
         
         :param a: action
+        :param s: optional argument for setting environment to specific state s
         """
-        if s is not None:
+        if set_to_s is not None:
             # set a state s for debugging
-            self.trans = int(s/self.num_states)
-            self.state = s
+            self.trans = int(set_to_s/self.num_states)
+            self.state = set_to_s
             
         trans_prob = self.trans_prob_matrices[self.trans][self.state%self.num_states][a]
         next_state = np.random.choice([i for i in range(self.num_states)], p=trans_prob) + (self.trans+1) * self.num_states
@@ -250,6 +179,8 @@ class ArbitraryMDP():
 if __name__ == '__main__':
     from mdp_wrapper import MDPWrapper
 
+    ###### Some unit tests are provided here #######
+
     # single agent version
     # env = ArbitraryMDP()
     # obs = env.reset()
@@ -263,13 +194,58 @@ if __name__ == '__main__':
     env = MDPWrapper(ArbitraryMDP())
     nash_v, _, nash_strategies = env.NEsolver()
     print(nash_strategies, np.array(nash_strategies).shape)
-    # np.save('../../../data/nash_dqn_test/oracle_nash.npy', nash_strategies)
+    # np.save('../../../data/nash_dqn_test/oracle_nash.npy', nash_strategies) # if you want to save the solved NE
     print('oracle nash v star: ', np.mean(nash_v[0], axis=0))  # the average nash value for initial states from max-player's view
     print(env.observation_space, env.action_space)
-    # env.render()
     obs = env.reset()
-    print(obs)
     done = False
     while not np.any(done):
         obs, r, done, _ = env.step([1,0])
-        print(obs, r, done)
+        # print(obs, r, done)
+
+    ## rock-paper-scissor test
+    # given_rewards = [
+    #             [[ [0], [-1], [1],
+    #                 [1], [0], [-1],
+    #                 [-1], [1], [0],]], 
+    #                 ]
+    # env = MDPWrapper(ArbitraryMDP(num_states=1, num_actions_per_player=3, num_trans=1, given_rewards=given_rewards))
+
+
+    ## A fixed simple test, with: num_states=1, num_actions_per_player=3, num_trans=2
+    # given_trans = [
+    #             [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+    #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+    #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],],
+
+    #                [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+    #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+    #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],]] ,
+
+    #              [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+    #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+    #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],],
+
+    #                [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+    #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],
+    #                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],]] 
+    #                 ]
+
+    # given_rewards = [
+    #             [[ [0, 0], [2, 2], [-1, -1],
+    #                 [-1, -1], [0,0], [1,1],
+    #                 [1,1], [-1,-1], [0,0],],
+
+    #                [[0, 0], [2, 2], [-1, -1],
+    #                 [-1, -1], [0,0], [1,1],
+    #                 [1,1], [-1,-1], [0,0],]] ,
+
+    #              [[ [0, 0], [2, -2], [-1, -1],
+    #                 [-1, -1], [0,0], [1,1],
+    #                 [1,1], [-1,-1], [0,0],],
+
+    #                [[0, 0], [2, -2], [-1, -1],
+    #                 [-1, -1], [0,0], [1,1],
+    #                 [1,1], [-1,-1], [0,0],]] 
+    #                 ]
+    # env = MDPWrapper(ArbitraryMDP(num_states=1, num_actions_per_player=3, num_trans=2, given_trans=given_trans, given_rewards=given_rewards))
