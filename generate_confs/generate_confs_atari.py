@@ -11,8 +11,8 @@ two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1',
                             'space_war_v1', 'pong_v2', 'basketball_pong_v2', 'boxing_v1', \
                             'tennis_v2', 'ice_hockey_v1', 'double_dunk_v2']
 
-methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
-            'fictitious_selfplay2', 'nfsp', 'nash_dqn', \
+methods = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
+            'fictitious_selfplay_sym', 'nfsp', 'nash_dqn', \
             'nash_dqn_exploiter', 'nash_dqn_factorized', 'nash_ppo', 'psro_sym', 'psro']
 
 game_type = 'pettingzoo'
@@ -23,8 +23,8 @@ self_play_method_marl_specs = {
         'opponent_idx': 1   
         }
 
-selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
-                            'fictitious_selfplay2', 'psro_sym', 'psro'}
+selfplay_based_methods = {'selfplay', 'selfplay_sym', 'fictitious_selfplay', \
+                            'fictitious_selfplay_sym', 'psro_sym', 'psro'}
 
 # large_nets_envs = {'tennis_v2'}
 large_nets_envs = {}

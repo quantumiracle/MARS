@@ -8,8 +8,8 @@ target_path = '../'  # from the root of the MARS
 
 games = ['SlimeVolley-v0']
 
-methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
-            'fictitious_selfplay2', 'nfsp', 'nash_dqn', \
+methods = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
+            'fictitious_selfplay_sym', 'nfsp', 'nash_dqn', \
             'nash_dqn_exploiter', 'nash_dqn_factorized', 'nash_ppo', 'psro_sym', 'psro']
 
 game_type = 'slimevolley'
@@ -20,8 +20,8 @@ self_play_method_marl_specs = {
         'opponent_idx': 1   
         }
 
-selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
-                            'fictitious_selfplay2', 'psro_sym', 'psro'}
+selfplay_based_methods = {'selfplay', 'selfplay_sym', 'fictitious_selfplay', \
+                            'fictitious_selfplay_sym', 'psro_sym', 'psro'}
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:
