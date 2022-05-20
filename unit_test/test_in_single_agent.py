@@ -4,13 +4,12 @@ multi-agent setting with single-agent env (Gym),
 not for testing single-agent models.
 """
 
-from utils.func import LoadYAML2Dict
-from env.import_env import make_env
-from rollout import rollout
-from rl.algorithm import *
-from general_train import get_general_args
-from general_exploit import get_latest_file_in_folder
-from utils.common import SelfplayBasedMethods
+from mars.utils.func import LoadYAML2Dict
+from mars.env.import_env import make_env
+from mars.rollout import rollout
+from mars.rl.algorithm import *
+from mars.utils.func import get_general_args, get_latest_file_in_folder
+from mars.utils.common import SelfplayBasedMethods
 
 def map_pettingzoo_to_gym(EnvNamePettingzoo):
     map_dict = {
@@ -27,7 +26,7 @@ def map_pettingzoo_to_gym(EnvNamePettingzoo):
 ### Load configurations
 game_type = 'pettingzoo'
 game = ['boxing_v1', 'surround_v1', 'combat_plane_v1'][0]
-method = ['selfplay2', 'fictitious_selfplay2', 'nash_dqn', 'nash_dqn_exploiter', 'nfsp', 'nxdo2'][2]
+method = ['selfplay', 'fictitious_selfplay', 'nash_dqn', 'nash_dqn_exploiter', 'nfsp', 'psro'][2]
 
 args = get_general_args(game_type+'_'+game, method)
 print(args)

@@ -66,7 +66,7 @@ class MultiAgent(Agent):
             else: # training mode
                 if i>0 and args.marl_method in NashBasedMethods: # only one common model is trained
                     self.not_learnable_list.append(i)
-                if agent.not_learnable or (args.marl_method in MetaStepMethods and i != args.marl_spec['trainable_agent_idx']):  # nxdo2 is special, fixed one side at beginning
+                if agent.not_learnable or (args.marl_method in MetaStepMethods and i != args.marl_spec['trainable_agent_idx']):  # psro is special, fixed one side at beginning
                     self.not_learnable_list.append(i)
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
