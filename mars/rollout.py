@@ -196,12 +196,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
 
             logger.print_and_save()
 
-        # if epi % args.save_interval == 0 \
-        #     and not args.marl_method in MetaStepMethods \
-        #     and logger.model_dir is not None:
-        #     model.save_model(logger.model_dir+f'{epi}')
-
         if epi % args.save_interval == 0 \
+            and not args.marl_method in MetaStepMethods \
             and logger.model_dir is not None:
             model.save_model(logger.model_dir+f'{epi}')
 
