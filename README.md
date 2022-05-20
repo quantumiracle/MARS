@@ -20,13 +20,53 @@ MARS is still under-development and not prepared to release yet. You may find it
 
 
 ## Installation
-Use Python 3.6
+Use Python 3.7
 ```
 pip install -r requirements.txt
 ```
 
+## Quick Usage
+
+### Basic:
+
+**Train with MARL algorithm**:
+
+```bash
+python general_train.py --env pettingzoo_boxing_v1 --method nfsp --save_id train_0
+```
+
+**Exploit a trained model**:
+
+```
+python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id exploit_0 --to_exploit second
+```
+
+### Advanced:
+
+**Train with MARL algorithm with multiprocess sampling and update**:
+
+```
+python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0
+```
+
+**Exploit it is the same**:
+
+```
+python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id multiprocess_train_0 --save_id exploit_0 --to_exploit second
+```
+
+**Test a trained MARL model in single-agent Atari**
+
+This function is for limited environments (like *boxing*) since not all envs in PettingZoo Atari has single-agent counterpart.
+
+```
+python general_test.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id test_0
+```
+
+
 
 ## Development
+
 Basic RL Algorithms to do:
 - [x] DQN
 - [x] PPO
@@ -49,7 +89,7 @@ MARL Algorithms to do:
 <!-- - [x] Nash-DQN
 - [x] Nash-DQN-Exploiter
  -->
-Supported environments:
+ Supported environments:
 - [x] Openai Gym
 - [x] PettingZoo
 - [x] LaserTag
