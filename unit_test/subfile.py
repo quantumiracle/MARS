@@ -46,5 +46,5 @@ def subfiles_generate(filename, method):
         os.rename(newpath+f'{idx}_policy_checkpoints.npy', newpath+'policy_checkpoints.npy')
 
 
-# subfiles_generate('20220120201250', method='fictitious_selfplay2')
-subfiles_generate('20220120195910', method='nxdo2')
+# subfiles_generate('20220120201250', method='fictitious_selfplay')
+subfiles_generate('20220120195910', method='psro')

@@ -20,9 +20,9 @@ game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
         'combat_tank_v1', 'pong_v2', 'tennis_v2', \
         'ice_hockey_v1', 'double_dunk_v2', 'SlimeVolley-v0'][-1]
 
-method = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
-            'fictitious_selfplay2', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nxdo2'][-3]   # nash_ppo are trained in train.py, cannot apply here!
+method = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
+            'fictitious_selfplay_sym', 'nfsp', 'nash_dqn', 'nash_dqn_exploiter', \
+            'psro', 'psro_sym'][-3]   # nash_ppo are trained in train.py, cannot apply here!
 
 
 if __name__ == '__main__':

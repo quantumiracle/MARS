@@ -49,7 +49,7 @@ python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id tra
 python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0
 ```
 
-**Exploit it is the same**:
+**Exploit a trained model (same as above)**:
 
 ```
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id multiprocess_train_0 --save_id exploit_0 --to_exploit second

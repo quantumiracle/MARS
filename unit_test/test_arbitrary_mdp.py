@@ -13,8 +13,7 @@ parser.add_argument('--model', type=str, default=None,
 parser_args = parser.parse_args()
 
 ### Load configurations
-# yaml_file = 'mars/confs/mdp_arbitrary_mdp_fictitious_selfplay2'  # 'mars/confs/mdp_arbitrary_mdp_nash_dqn_exploiter'
-yaml_file = 'mars/confs/mdp_arbitrary_mdp_nxdo2'
+yaml_file = 'mars/confs/mdp_arbitrary_mdp_psro'
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 args.marl_spec['global_state'] = True

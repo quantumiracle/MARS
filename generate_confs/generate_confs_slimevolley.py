@@ -10,7 +10,7 @@ games = ['SlimeVolley-v0']
 
 methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
             'fictitious_selfplay2', 'nfsp', 'nash_dqn', \
-            'nash_dqn_exploiter', 'nash_dqn_factorized', 'nash_ppo', 'nxdo', 'nxdo2']
+            'nash_dqn_exploiter', 'nash_dqn_factorized', 'nash_ppo', 'psro_sym', 'psro']
 
 game_type = 'slimevolley'
 
@@ -21,7 +21,7 @@ self_play_method_marl_specs = {
         }
 
 selfplay_based_methods = {'selfplay', 'selfplay2', 'fictitious_selfplay', \
-                            'fictitious_selfplay2', 'nxdo', 'nxdo2'}
+                            'fictitious_selfplay2', 'psro_sym', 'psro'}
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:

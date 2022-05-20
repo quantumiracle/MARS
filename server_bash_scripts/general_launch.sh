@@ -5,7 +5,7 @@ echo "Save as: " $DATE
 
 declare -a envs=('pettingzoo_boxing_v1' 'pettingzoo_pong_v2' 'pettingzoo_surround_v1' 'pettingzoo_tennis_v2' 'slimevolley_SlimeVolley-v0' 'pettingzoo_combat_tank_v1' 'pettingzoo_ice_hockey_v1')
 
-declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
+declare -a methods=('selfplay' 'fictitious_selfplay' 'psro' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
 
 mkdir -p log/$DATE
 
