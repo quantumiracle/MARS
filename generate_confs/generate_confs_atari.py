@@ -4,6 +4,9 @@
 import os
 import yaml, copy
 
+
+target_path = '../'  # from the root of the MARS
+
 two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', \
                             'space_war_v1', 'pong_v2', 'basketball_pong_v2', 'boxing_v1', \
                             'tennis_v2', 'ice_hockey_v1', 'double_dunk_v2']
@@ -149,10 +152,10 @@ large_net_architecture = {
 
 # creat folders for holding confs
 for game in two_player_zero_sum_games:
-    os.makedirs(f"mars/confs/{game_type}/{game}", exist_ok=True)
+    os.makedirs(target_path+f"mars/confs/{game_type}/{game}", exist_ok=True)
 
 # load general confs
-with open(f'mars/confs/{game_type}/{game_type}_general.yaml') as f:
+with open(target_path+f'mars/confs/{game_type}/{game_type}_general.yaml') as f:
     general_confs = yaml.safe_load(f)
     print(general_confs)
 
@@ -210,7 +213,7 @@ for game in two_player_zero_sum_games:
                 conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
             conf['train_args']['train_start_frame'] = train_start_frame[game]
 
-        output_path = f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
+        output_path = target_path+f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
             yaml.dump(conf, outfile, default_flow_style=False, sort_keys=False)
             print(f'Dump confs: {output_path}.')

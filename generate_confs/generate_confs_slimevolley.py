@@ -4,6 +4,8 @@
 import os
 import yaml, copy
 
+target_path = '../'  # from the root of the MARS
+
 games = ['SlimeVolley-v0']
 
 methods = ['selfplay', 'selfplay2', 'fictitious_selfplay', \
@@ -84,10 +86,10 @@ standard_net_architecture = {
 
 # creat folders for holding confs
 for game in games:
-    os.makedirs(f"mars/confs/{game_type}/{game}", exist_ok=True)
+    os.makedirs(target_path+f"mars/confs/{game_type}/{game}", exist_ok=True)
 
 # load general confs
-with open(f'mars/confs/{game_type}/{game_type}_general.yaml') as f:
+with open(target_path+f'mars/confs/{game_type}/{game_type}_general.yaml') as f:
     general_confs = yaml.safe_load(f)
     print(general_confs)
 
@@ -134,7 +136,7 @@ for game in games:
             conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
             conf['train_args']['train_start_frame'] = train_start_frame[game]
 
-        output_path = f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
+        output_path = target_path+f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
             yaml.dump(conf, outfile, default_flow_style=False, sort_keys=False)
             print(f'Dump confs: {output_path}.')
