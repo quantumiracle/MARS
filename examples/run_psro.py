@@ -5,7 +5,7 @@ from rl.algorithm import *
 
 ### Load configurations
 # yaml_file = 'confs/slimevolley_slimevolleyv0_nxdo_dqn'
-yaml_file = 'confs/pettingzoo_boxingv1_nxdo_dqn'
+yaml_file = 'confs/pettingzoo_boxingv1_psro'
 
 
 args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
