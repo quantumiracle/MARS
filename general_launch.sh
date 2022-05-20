@@ -1,20 +1,21 @@
 echo "Running DATE:" $(date +"%Y-%m-%d %H:%M")
-export CUDA_VISIBLE_DEVICES=6
 
 DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
 
-#declare -a envs=('pettingzoo_boxing_v1' 'pettingzoo_pong_v2' 'pettingzoo_surround_v1' 'pettingzoo_tennis_v2' 'pettingzoo_double_dunk_v2')
-declare -a envs=('pettingzoo_tennis_v2')
-# declare -a envs=('pettingzoo_tennis_v2' 'pettingzoo_double_dunk_v2')
+# declare -a envs=('pettingzoo_boxing_v1' 'pettingzoo_pong_v2' 'pettingzoo_surround_v1' 'pettingzoo_tennis_v2' 'slimevolley_SlimeVolley-v0' 'pettingzoo_combat_tank_v1' 'pettingzoo_ice_hockey_v1')
+# declare -a envs=('slimevolley_SlimeVolley-v0' 'pettingzoo_boxing_v1')
+declare -a envs=('pettingzoo_double_dunk_v2' 'pettingzoo_space_war_v1' 'pettingzoo_surround_v1' 'pettingzoo_basketball_pong_v2')
+# declare -a envs=('slimevolley_SlimeVolley-v0' 'pettingzoo_boxing_v1' 'pettingzoo_tennis_v2' 'pettingzoo_pong_v2' 'pettingzoo_ice_hockey_v1')
 
-# declare -a methods=('selfplay' 'fictitiousselfplay' 'nxdo' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
+# declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_dqn' 'nash_dqn_exploiter')
+# declare -a methods=('nash_dqn')
 declare -a methods=('nash_dqn' 'nash_dqn_exploiter')
 mkdir -p log/$DATE
 
-for env in ${envs[@]}; do
-    for method in ${methods[@]}; do
-        echo python general_launch.py --env $env --method $method --save_id $DATE output log to: log/$DATE/${env}_${method}.log &
-        nohup python general_launch.py --env $env --method $method --save_id $DATE > log/$DATE/${env}_${method}.log &
+for i in ${!envs[@]}; do
+    for j in ${!methods[@]}; do
+        echo CUDA_VISIBLE_DEVICES=$((i + 2)) python general_launch.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        CUDA_VISIBLE_DEVICES=$((i + 2)) nohup python general_launch.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
     done
 done
