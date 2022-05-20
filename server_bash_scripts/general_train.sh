@@ -3,12 +3,9 @@ echo "Running DATE:" $(date +"%Y-%m-%d %H:%M")
 DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
 
-# declare -a envs=('slimevolley_SlimeVolley-v0' 'pettingzoo_boxing_v1' 'pettingzoo_tennis_v2' 'pettingzoo_pong_v2' 'pettingzoo_ice_hockey_v1')
-declare -a envs=('pettingzoo_double_dunk_v2' 'pettingzoo_space_war_v1' 'pettingzoo_surround_v1' 'pettingzoo_basketball_pong_v2')
+declare -a envs=('slimevolley_SlimeVolley-v0' 'pettingzoo_boxing_v1' 'pettingzoo_tennis_v2' 'pettingzoo_pong_v2' 'pettingzoo_ice_hockey_v1')
 
 declare -a methods=('selfplay2' 'fictitious_selfplay2' 'nxdo2' 'nfsp' 'nash_ppo')
-# declare -a methods=('nash_dqn' 'nash_dqn_factorized')
-# declare -a methods=('nash_ppo')
 
 mkdir -p log/$DATE
 
