@@ -7,7 +7,7 @@
 * [Self-Play](#self-play)
 * [Fictitious Self-Play](#fictitious-self-play)
 * [Neural Fictitious Self-Play](#neural-fictitious-self-play)
-* [Policy Space Response Oracle](#policy-space-response-oracle)
+* [Policy-Space Response Oracles](#policy-space-response-oracles)
 
 ### Self-Play
 

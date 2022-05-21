@@ -1,0 +1,910 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mars.env.wrappers.vecenv_wrappers &mdash; MARS 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> MARS
+          
+
+          
+            
+            <img src="../../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/intro.html">Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">MARS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mars.env.wrappers.vecenv_wrappers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mars.env.wrappers.vecenv_wrappers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Code adopted from tianshou repo to vectorize env:</span>
+<span class="sd">* DummyVectorEnv</span>
+<span class="sd">* SubprocVectorEnv</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.context</span> <span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">connection</span>
+<span class="kn">import</span> <span class="nn">cloudpickle</span>
+
+
+<div class="viewcode-block" id="CloudpickleWrapper"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.CloudpickleWrapper">[docs]</a><span class="k">class</span> <span class="nc">CloudpickleWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A cloudpickle wrapper used in SubprocVectorEnv.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cloudpickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cloudpickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EnvWorker"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker">[docs]</a><span class="k">class</span> <span class="nc">EnvWorker</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An abstract worker for an environment.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_fn</span> <span class="o">=</span> <span class="n">env_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span> <span class="c1"># for pettingzoo parallel env</span>
+            <span class="n">action_spaces_dict</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;action_spaces&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_spaces_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># assume asymetric agents in the game</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="EnvWorker.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.reset">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="EnvWorker.send_action"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.send_action">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">send_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="EnvWorker.get_result"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.get_result">[docs]</a>    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span></div>
+
+<div class="viewcode-block" id="EnvWorker.step"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Perform one timestep of the environment&#39;s dynamic.</span>
+<span class="sd">        &quot;send_action&quot; and &quot;get_result&quot; are coupled in sync simulation, so</span>
+<span class="sd">        typically users only call &quot;step&quot; function. But they can be called</span>
+<span class="sd">        separately in async simulation, i.e. someone calls &quot;send_action&quot; first,</span>
+<span class="sd">        and calls &quot;get_result&quot; later.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="EnvWorker.wait"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.wait">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span>
+        <span class="n">workers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;EnvWorker&quot;</span><span class="p">],</span> <span class="n">wait_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;EnvWorker&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Given a list of workers, return those ready ones.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="EnvWorker.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># issue 299</span>
+            <span class="k">return</span> <span class="n">r</span> 
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not seed action space&#39;</span><span class="p">)</span></div>
+            
+<div class="viewcode-block" id="EnvWorker.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.render">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Render the environment.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="EnvWorker.close_env"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.close_env">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">close_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="EnvWorker.close"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.EnvWorker.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_env</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="DummyEnvWorker"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.DummyEnvWorker">[docs]</a><span class="k">class</span> <span class="nc">DummyEnvWorker</span><span class="p">(</span><span class="n">EnvWorker</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dummy worker used in sequential vector environments.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env_fn</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env_fn</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DummyEnvWorker.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.DummyEnvWorker.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DummyEnvWorker.wait"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.DummyEnvWorker.wait">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="n">workers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;DummyEnvWorker&quot;</span><span class="p">],</span> <span class="n">wait_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;DummyEnvWorker&quot;</span><span class="p">]:</span>
+        <span class="c1"># Sequential EnvWorker objects are always ready</span>
+        <span class="k">return</span> <span class="n">workers</span></div>
+
+<div class="viewcode-block" id="DummyEnvWorker.send_action"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.DummyEnvWorker.send_action">[docs]</a>    <span class="k">def</span> <span class="nf">send_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DummyEnvWorker.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.DummyEnvWorker.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DummyEnvWorker.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.DummyEnvWorker.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DummyEnvWorker.close_env"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.DummyEnvWorker.close_env">[docs]</a>    <span class="k">def</span> <span class="nf">close_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="RunningMeanStd"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.RunningMeanStd">[docs]</a><span class="k">class</span> <span class="nc">RunningMeanStd</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calulates the running mean and std of a data stream.</span>
+<span class="sd">    https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Parallel_algorithm</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="RunningMeanStd.update"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.RunningMeanStd.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add a batch of item into RMS with the same shape, modify mean/var/count.&quot;&quot;&quot;</span>
+        <span class="n">batch_mean</span><span class="p">,</span> <span class="n">batch_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">batch_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">batch_mean</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+        <span class="n">total_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="n">batch_count</span>
+
+        <span class="n">new_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">batch_count</span> <span class="o">/</span> <span class="n">total_count</span>
+        <span class="n">m_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+        <span class="n">m_b</span> <span class="o">=</span> <span class="n">batch_var</span> <span class="o">*</span> <span class="n">batch_count</span>
+        <span class="n">m_2</span> <span class="o">=</span> <span class="n">m_a</span> <span class="o">+</span> <span class="n">m_b</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">*</span> <span class="n">batch_count</span> <span class="o">/</span> <span class="n">total_count</span>
+        <span class="n">new_var</span> <span class="o">=</span> <span class="n">m_2</span> <span class="o">/</span> <span class="n">total_count</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">new_mean</span><span class="p">,</span> <span class="n">new_var</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">total_count</span></div></div>
+
+<div class="viewcode-block" id="BaseVectorEnv"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.BaseVectorEnv">[docs]</a><span class="k">class</span> <span class="nc">BaseVectorEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for vectorized environments wrapper.</span>
+<span class="sd">    Usage:</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">    env_num = 8</span>
+<span class="sd">    envs = DummyVectorEnv([lambda: gym.make(task) for _ in range(env_num)])</span>
+<span class="sd">    assert len(envs) == env_num</span>
+
+<span class="sd">    It accepts a list of environment generators. In other words, an environment</span>
+<span class="sd">    generator ``efn`` of a specific task means that ``efn()`` returns the</span>
+<span class="sd">    environment of the given task, for example, ``gym.make(task)``.</span>
+<span class="sd">    All of the VectorEnv must inherit :class:`BaseVectorEnv`.</span>
+<span class="sd">    Here are some other usages:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        envs.seed(2)  # which is equal to the next line</span>
+<span class="sd">        envs.seed([2, 3, 4, 5, 6, 7, 8, 9])  # set specific seed for each env</span>
+<span class="sd">        obs = envs.reset()  # reset all environments</span>
+<span class="sd">        obs = envs.reset([0, 5, 7])  # reset 3 specific environments</span>
+<span class="sd">        obs, rew, done, info = envs.step([1] * 8)  # step synchronously</span>
+<span class="sd">        envs.render()  # render all environments</span>
+<span class="sd">        envs.close()  # close all environments</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        If you use your own environment, please make sure the ``seed`` method</span>
+<span class="sd">        is set up properly, e.g.,</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        def seed(self, seed):</span>
+<span class="sd">            np.random.seed(seed)</span>
+
+<span class="sd">    Otherwise, the outputs of these envs may be the same with each other.</span>
+
+<span class="sd">    :param env_fns: a list of callable envs, ``env_fns[i]()`` generates the ith env.</span>
+<span class="sd">    :param worker_fn: a callable worker, ``worker_fn(env_fns[i])`` generates a</span>
+<span class="sd">        worker which contains the i-th env.</span>
+<span class="sd">    :param wait_num: use in asynchronous simulation if the time cost of</span>
+<span class="sd">        ``env.step`` varies with time and synchronously waiting for all</span>
+<span class="sd">        environments to finish a step is time-wasting. In that case, we can</span>
+<span class="sd">        return when ``wait_num`` environments finish a step and keep on</span>
+<span class="sd">        simulation in these environments. If ``None``, asynchronous simulation</span>
+<span class="sd">        is disabled; else, ``1 &lt;= wait_num &lt;= env_num``.</span>
+<span class="sd">    :type wait_num: int</span>
+<span class="sd">    :param timeout: use in asynchronous simulation same as above, in each</span>
+<span class="sd">        vectorized step it only deal with those environments spending time</span>
+<span class="sd">        within ``timeout`` seconds.</span>
+<span class="sd">    :type timeout: float</span>
+<span class="sd">    :param norm_obs: Whether to track mean/std of data and normalise observation</span>
+<span class="sd">        on return. For now, observation normalization only support observation of</span>
+<span class="sd">        type np.ndarray.</span>
+<span class="sd">    :type norm_obs: bool</span>
+<span class="sd">    :param obs_rms: class to track mean&amp;std of observation. If not given, it will</span>
+<span class="sd">        initialize a new one. Usually in envs that is used to evaluate algorithm,</span>
+<span class="sd">        obs_rms should be passed in. Default to None.</span>
+<span class="sd">    :param update_obs_rms: Whether to update obs_rms. Default to True.</span>
+<span class="sd">    :type update_obs_rms: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env_fns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">]],</span>
+        <span class="n">worker_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">]],</span> <span class="n">EnvWorker</span><span class="p">],</span>
+        <span class="n">wait_num</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">norm_obs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">obs_rms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RunningMeanStd</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">update_obs_rms</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_fns</span> <span class="o">=</span> <span class="n">env_fns</span>
+        <span class="c1"># A VectorEnv contains a pool of EnvWorkers, which corresponds to</span>
+        <span class="c1"># interact with the given envs (one worker &lt;-&gt; one env).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="p">[</span><span class="n">worker_fn</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">env_fns</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">worker_class</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">worker_class</span><span class="p">,</span> <span class="n">EnvWorker</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker_class</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_num</span> <span class="o">=</span> <span class="n">wait_num</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait_num</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">),</span> \
+            <span class="sa">f</span><span class="s2">&quot;wait_num should be in [1, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">)</span><span class="si">}</span><span class="s2">], but got </span><span class="si">{</span><span class="n">wait_num</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;timeout is </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">, it should be positive if provided!&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_async</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait_num</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">)</span> <span class="ow">or</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waiting_conn</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EnvWorker</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># environments in self.ready_id is actually ready</span>
+        <span class="c1"># but environments in self.waiting_id are just waiting when checked,</span>
+        <span class="c1"># and they may be ready now, but this is not known until we check it</span>
+        <span class="c1"># in the step() function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waiting_id</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># all environments are ready in the beginning</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ready_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_num</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># initialize observation running mean/std</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_obs</span> <span class="o">=</span> <span class="n">norm_obs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_obs_rms</span> <span class="o">=</span> <span class="n">update_obs_rms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span> <span class="o">=</span> <span class="n">RunningMeanStd</span><span class="p">()</span> <span class="k">if</span> <span class="n">obs_rms</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">norm_obs</span> <span class="k">else</span> <span class="n">obs_rms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_assert_is_not_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;Methods of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> cannot be called after close.&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return len(self), which is the number of environments.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_num</span>
+
+    <span class="k">def</span> <span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Switch the attribute getter depending on the key.</span>
+<span class="sd">        Any class who inherits ``gym.Env`` will inherit some attributes, like</span>
+<span class="sd">        ``action_space``. However, we would like the attribute lookup to go straight</span>
+<span class="sd">        into the worker (in fact, this vector env&#39;s action_space is always None).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if key in [&#39;metadata&#39;, &#39;reward_range&#39;, &#39;spec&#39;, &#39;action_space&#39;,</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="s1">&#39;reward_range&#39;</span><span class="p">,</span> <span class="s1">&#39;action_space&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;observation_space&#39;</span><span class="p">]:</span>  <span class="c1"># reserved keys in gym.Env</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Fetch a list of env attributes.</span>
+<span class="sd">        This function tries to retrieve an attribute from each individual wrapped</span>
+<span class="sd">        environment, if it does not belong to the wrapping vector environment class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_wrap_id</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_num</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">else</span> <span class="nb">id</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span> <span class="nf">_assert_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">waiting_id</span><span class="p">,</span> \
+                <span class="sa">f</span><span class="s2">&quot;Cannot interact with environment </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> which is stepping now.&quot;</span>
+            <span class="k">assert</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ready_id</span><span class="p">,</span> \
+                <span class="sa">f</span><span class="s2">&quot;Can only interact with ready environments </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ready_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+<div class="viewcode-block" id="BaseVectorEnv.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.BaseVectorEnv.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset the state of some envs and return initial observations.</span>
+<span class="sd">        If id is None, reset the state of all the environments and return</span>
+<span class="sd">        initial observations, otherwise reset the specific environments with</span>
+<span class="sd">        the given id, either an int or a list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_not_closed</span><span class="p">()</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_async</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_assert_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_obs_rms</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseVectorEnv.step"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.BaseVectorEnv.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Run one timestep of some environments&#39; dynamics.</span>
+<span class="sd">        If id is None, run one timestep of all the environments’ dynamics;</span>
+<span class="sd">        otherwise run one timestep for some environments with given id,  either</span>
+<span class="sd">        an int or a list. When the end of episode is reached, you are</span>
+<span class="sd">        responsible for calling reset(id) to reset this environment’s state.</span>
+<span class="sd">        Accept a batch of action and return a tuple (batch_obs, batch_rew,</span>
+<span class="sd">        batch_done, batch_info) in numpy format.</span>
+<span class="sd">        :param action: a batch of action provided by the agent.</span>
+<span class="sd">        :type action: numpy.ndarray</span>
+<span class="sd">        :return: A tuple including four items:</span>
+<span class="sd">        * ``obs`` a numpy.ndarray, the agent&#39;s observation of current environments</span>
+<span class="sd">        * ``rew`` a numpy.ndarray, the amount of rewards returned after \</span>
+<span class="sd">            previous actions</span>
+<span class="sd">        * ``done`` a numpy.ndarray, whether these episodes have ended, in \</span>
+<span class="sd">            which case further step() calls will return undefined results</span>
+<span class="sd">        * ``info`` a numpy.ndarray, contains auxiliary diagnostic \</span>
+<span class="sd">            information (helpful for debugging, and sometimes learning)</span>
+<span class="sd">        For the async simulation:</span>
+<span class="sd">        Provide the given action to the environments. The action sequence</span>
+<span class="sd">        should correspond to the ``id`` argument, and the ``id`` argument</span>
+<span class="sd">        should be a subset of the ``env_id`` in the last returned ``info``</span>
+<span class="sd">        (initially they are env_ids of all the environments). If action is</span>
+<span class="sd">        None, fetch unfinished step() calls instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_not_closed</span><span class="p">()</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_async</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+                <span class="c1"># print(i, j, action[i])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">:</span>
+                <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span>
+                <span class="c1"># info[&quot;env_id&quot;] = j</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_assert_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">env_id</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="nb">id</span><span class="p">)):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">[</span><span class="n">env_id</span><span class="p">]</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">waiting_conn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">[</span><span class="n">env_id</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">waiting_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ready_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ready_id</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">]</span>
+            <span class="n">ready_conns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EnvWorker</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">ready_conns</span><span class="p">:</span>
+                <span class="n">ready_conns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker_class</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">waiting_conn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait_num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="n">ready_conns</span><span class="p">:</span>
+                <span class="n">waiting_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waiting_conn</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">waiting_conn</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">waiting_index</span><span class="p">)</span>
+                <span class="n">env_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waiting_id</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">waiting_index</span><span class="p">)</span>
+                <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span>
+                <span class="n">info</span><span class="p">[</span><span class="s2">&quot;env_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_id</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ready_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+        <span class="n">obs_stack</span><span class="p">,</span> <span class="n">rew_stack</span><span class="p">,</span> <span class="n">done_stack</span><span class="p">,</span> <span class="n">info_stack</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_obs_rms</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">obs_stack</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_obs</span><span class="p">(</span><span class="n">obs_stack</span><span class="p">),</span> <span class="n">rew_stack</span><span class="p">,</span> <span class="n">done_stack</span><span class="p">,</span> <span class="n">info_stack</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="BaseVectorEnv.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.BaseVectorEnv.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+        <span class="sd">&quot;&quot;&quot;Set the seed for all environments.</span>
+<span class="sd">        Accept ``None``, an int (which will extend ``i`` to</span>
+<span class="sd">        ``[i, i + 1, i + 2, ...]``) or a list.</span>
+<span class="sd">        :return: The list of seeds used in this env&#39;s random number generators.</span>
+<span class="sd">        The first value in the list should be the &quot;main&quot; seed, or the value</span>
+<span class="sd">        which a reproducer pass to &quot;seed&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_not_closed</span><span class="p">()</span>
+        <span class="n">seed_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seed_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">seed</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_num</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">seed_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">seed</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_num</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seed_list</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">,</span> <span class="n">seed_list</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="BaseVectorEnv.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.BaseVectorEnv.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Render all of the environments.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_not_closed</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_async</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">waiting_id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Environments </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">waiting_id</span><span class="si">}</span><span class="s2"> are still stepping, cannot &quot;</span>
+                <span class="s2">&quot;render them now.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="BaseVectorEnv.close"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.BaseVectorEnv.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Close all of the environments.</span>
+<span class="sd">        This function will be called only once (if not, it will be called during</span>
+<span class="sd">        garbage collected). This way, ``close`` of all workers can be assured.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_not_closed</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">:</span>
+            <span class="n">w</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="BaseVectorEnv.normalize_obs"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.BaseVectorEnv.normalize_obs">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Normalize observations by statistics in obs_rms.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_obs</span><span class="p">:</span>
+            <span class="n">clip_max</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># this magic number is from openai baselines</span>
+            <span class="c1"># see baselines/common/vec_env/vec_normalize.py#L10</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">var</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eps</span><span class="p">)</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="o">-</span><span class="n">clip_max</span><span class="p">,</span> <span class="n">clip_max</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">obs</span></div>
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Redirect to self.close().&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DummyVectorEnv"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.DummyVectorEnv">[docs]</a><span class="k">class</span> <span class="nc">DummyVectorEnv</span><span class="p">(</span><span class="n">BaseVectorEnv</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dummy vectorized environment wrapper, implemented in for-loop.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">    </span>
+<span class="sd">        Please refer to :class:`~tianshou.env.BaseVectorEnv` for other APIs&#39; usage.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_fns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env_fns</span><span class="p">,</span> <span class="n">DummyEnvWorker</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+
+<span class="n">_NP_TO_CT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_bool</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint8</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint16</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint32</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint64</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int8</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int16</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int32</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int64</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_float</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_double</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="ShArray"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.ShArray">[docs]</a><span class="k">class</span> <span class="nc">ShArray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper of multiprocessing Array.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">generic</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="n">Array</span><span class="p">(</span><span class="n">_NP_TO_CT</span><span class="p">[</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">shape</span><span class="p">)))</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+
+<div class="viewcode-block" id="ShArray.save"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.ShArray.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get_obj</span><span class="p">()</span>
+        <span class="n">dst_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">dst_np</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ShArray.get"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.ShArray.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get_obj</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_setup_buf</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">ShArray</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_setup_buf</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">_setup_buf</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ShArray</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_worker</span><span class="p">(</span>
+    <span class="n">parent</span><span class="p">:</span> <span class="n">connection</span><span class="o">.</span><span class="n">Connection</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">:</span> <span class="n">connection</span><span class="o">.</span><span class="n">Connection</span><span class="p">,</span>
+    <span class="n">env_fn_wrapper</span><span class="p">:</span> <span class="n">CloudpickleWrapper</span><span class="p">,</span>
+    <span class="n">obs_bufs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">ShArray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_encode_obs</span><span class="p">(</span>
+        <span class="n">obs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">ShArray</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">ShArray</span><span class="p">):</span>
+            <span class="n">buffer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">buffer</span><span class="p">):</span>
+                <span class="n">_encode_obs</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">obs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">_encode_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">buffer</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">parent</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">env_fn_wrapper</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cmd</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>  <span class="c1"># the pipe has been closed</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span>
+                <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">obs_bufs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">_encode_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">obs_bufs</span><span class="p">)</span>
+                    <span class="n">obs</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
+                <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">obs_bufs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">_encode_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">obs_bufs</span><span class="p">)</span>
+                    <span class="n">obs</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;close&quot;</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">())</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">break</span>
+            <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;render&quot;</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;render&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;seed&quot;</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;getattr&quot;</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="SubprocEnvWorker"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocEnvWorker">[docs]</a><span class="k">class</span> <span class="nc">SubprocEnvWorker</span><span class="p">(</span><span class="n">EnvWorker</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Subprocess worker used in SubprocVectorEnv and ShmemVectorEnv.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">],</span> <span class="n">share_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">child_remote</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">share_memory</span> <span class="o">=</span> <span class="n">share_memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">ShArray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">share_memory</span><span class="p">:</span>
+            <span class="n">dummy</span> <span class="o">=</span> <span class="n">env_fn</span><span class="p">()</span>
+            <span class="n">obs_space</span> <span class="o">=</span> <span class="n">dummy</span><span class="o">.</span><span class="n">observation_space</span>
+            <span class="n">dummy</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">del</span> <span class="n">dummy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">_setup_buf</span><span class="p">(</span><span class="n">obs_space</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">child_remote</span><span class="p">,</span>
+            <span class="n">CloudpickleWrapper</span><span class="p">(</span><span class="n">env_fn</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">_worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">child_remote</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env_fn</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;getattr&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_decode_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">def</span> <span class="nf">decode_obs</span><span class="p">(</span>
+            <span class="n">buffer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">ShArray</span><span class="p">]]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">ShArray</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">decode_obs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">decode_obs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">buffer</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+        <span class="k">return</span> <span class="n">decode_obs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SubprocEnvWorker.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocEnvWorker.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">share_memory</span><span class="p">:</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_obs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">obs</span></div>
+
+<div class="viewcode-block" id="SubprocEnvWorker.wait"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocEnvWorker.wait">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="n">workers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;SubprocEnvWorker&quot;</span><span class="p">],</span>
+        <span class="n">wait_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;SubprocEnvWorker&quot;</span><span class="p">]:</span>
+        <span class="n">remain_conns</span> <span class="o">=</span> <span class="n">conns</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">parent_remote</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">workers</span><span class="p">]</span>
+        <span class="n">ready_conns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">connection</span><span class="o">.</span><span class="n">Connection</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">remain_time</span><span class="p">,</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">remain_conns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ready_conns</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">wait_num</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
+                <span class="n">remain_time</span> <span class="o">=</span> <span class="n">timeout</span> <span class="o">-</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">remain_time</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="c1"># connection.wait hangs if the list is empty</span>
+            <span class="n">new_ready_conns</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">remain_conns</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">remain_time</span><span class="p">)</span>
+            <span class="n">ready_conns</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_ready_conns</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">remain_conns</span> <span class="o">=</span> <span class="p">[</span><span class="n">conn</span> <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="n">remain_conns</span> <span class="k">if</span> <span class="n">conn</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ready_conns</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">workers</span><span class="p">[</span><span class="n">conns</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">con</span><span class="p">)]</span> <span class="k">for</span> <span class="n">con</span> <span class="ow">in</span> <span class="n">ready_conns</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="SubprocEnvWorker.send_action"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocEnvWorker.send_action">[docs]</a>    <span class="k">def</span> <span class="nf">send_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">action</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="SubprocEnvWorker.get_result"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocEnvWorker.get_result">[docs]</a>    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">share_memory</span><span class="p">:</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_obs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="SubprocEnvWorker.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocEnvWorker.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SubprocEnvWorker.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocEnvWorker.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;render&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SubprocEnvWorker.close_env"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocEnvWorker.close_env">[docs]</a>    <span class="k">def</span> <span class="nf">close_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">send</span><span class="p">([</span><span class="s2">&quot;close&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+            <span class="c1"># mp may be deleted so it may raise AttributeError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent_remote</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">BrokenPipeError</span><span class="p">,</span> <span class="ne">EOFError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="c1"># ensure the subproc is terminated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="SubprocVectorEnv"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.vecenv_wrappers.SubprocVectorEnv">[docs]</a><span class="k">class</span> <span class="nc">SubprocVectorEnv</span><span class="p">(</span><span class="n">BaseVectorEnv</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Vectorized environment wrapper based on subprocess.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        Please refer to :class:`~tianshou.env.BaseVectorEnv` for other APIs&#39; usage.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_fns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">worker_fn</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">SubprocEnvWorker</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SubprocEnvWorker</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">share_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env_fns</span><span class="p">,</span> <span class="n">worker_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Zihan Ding.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

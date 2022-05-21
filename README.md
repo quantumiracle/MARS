@@ -106,7 +106,14 @@ MARL Algorithms to do:
 - [x] SlimeVolley
 - [ ] SMAC
 
-## Self-play
+## License
+
+MARS is distributed under the terms of Apache License (Version 2.0).
+
+See [Apache License](https://github.com/taichi-dev/taichi/blob/master/LICENSE) for details.
+
+## Some Results
+
 <img src="https://github.com/quantumiracle/MARS/blob/master/img/slimevolley-selfplay.gif" height=400 width=1000 >
 
 Two agents in *SlimeVolley-v0* trained with self-play. 

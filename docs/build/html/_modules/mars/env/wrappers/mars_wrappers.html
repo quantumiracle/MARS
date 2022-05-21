@@ -1,0 +1,639 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mars.env.wrappers.mars_wrappers &mdash; MARS 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> MARS
+          
+
+          
+            
+            <img src="../../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/intro.html">Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">MARS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mars.env.wrappers.mars_wrappers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mars.env.wrappers.mars_wrappers</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="PettingzooClassicWrapper"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassicWrapper">[docs]</a><span class="k">class</span> <span class="nc">PettingzooClassicWrapper</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; A class for PettingZoo classic games.</span>
+
+<span class="sd">    :param env: game environment</span>
+<span class="sd">    :type env: object</span>
+<span class="sd">    :param observation_mask: mask the observation to be anyvalue, defaults to None.</span>
+<span class="sd">    :type observation_mask: int or None, optional</span>
+<span class="sd">    &quot;&quot;&quot;</span>   
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">observation_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  
+        <span class="nb">super</span><span class="p">(</span><span class="n">PettingzooClassicWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="o">=</span> <span class="n">observation_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_spaces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">)</span>      
+        <span class="c1"># for rps_v1, discrete to box, fake space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_spaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+
+        <span class="c1"># for holdem</span>
+        <span class="c1"># obs_space = self.env.observation_spaces.values()</span>
+        <span class="c1"># obs_len = obs_space.shape[0]-action_space.n</span>
+        <span class="c1"># self.observation_spaces = Box(shape=(obs_len,),low=obs_space.low[:obs_len],high=obs_space.high[:obs_len])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
+
+<div class="viewcode-block" id="PettingzooClassicWrapper.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassicWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obs</span></div>
+
+<div class="viewcode-block" id="PettingzooClassicWrapper.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassicWrapper.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PettingzooClassicWrapper.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassicWrapper.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PettingzooClassicWrapper.close"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassicWrapper.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PettingzooClassicWrapper.step"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassicWrapper.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># masked observation with a certain value</span>
+            <span class="n">observation</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">observation</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span></div></div>
+
+<div class="viewcode-block" id="PettingzooClassic_Iterate2Parallel"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassic_Iterate2Parallel">[docs]</a><span class="k">class</span> <span class="nc">PettingzooClassic_Iterate2Parallel</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; A class transforms the iterative environment in PettingZoo</span>
+<span class="sd">    to parallel version, i.e., from iterative rollout among each player</span>
+<span class="sd">    to their simultaneuous moves at the same step.</span>
+
+<span class="sd">    :param env: game environment</span>
+<span class="sd">    :type env: object</span>
+<span class="sd">    :param observation_mask: mask the observation to be anyvalue, defaults to None.</span>
+<span class="sd">    :type observation_mask: int or None, optional</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">observation_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>         
+        <span class="nb">super</span><span class="p">(</span><span class="n">PettingzooClassic_Iterate2Parallel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="o">=</span> <span class="n">observation_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_spaces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_spaces</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;observation&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_spaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
+
+<div class="viewcode-block" id="PettingzooClassic_Iterate2Parallel.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassic_Iterate2Parallel.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span> <span class="c1"># return zeros</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="n">obs</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="s1">&#39;observation&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="PettingzooClassic_Iterate2Parallel.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassic_Iterate2Parallel.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PettingzooClassic_Iterate2Parallel.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassic_Iterate2Parallel.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PettingzooClassic_Iterate2Parallel.close"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassic_Iterate2Parallel.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PettingzooClassic_Iterate2Parallel.step"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.PettingzooClassic_Iterate2Parallel.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_dict</span><span class="p">):</span>
+        <span class="n">obs_dict</span><span class="p">,</span> <span class="n">reward_dict</span><span class="p">,</span> <span class="n">done_dict</span><span class="p">,</span> <span class="n">info_dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">agent</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">action_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>  <span class="c1"># observation is the last action of opponent</span>
+            <span class="n">valid_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">observation</span><span class="p">[</span><span class="s1">&#39;action_mask&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">done</span><span class="p">:</span> 
+                <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># for classic game: if one player done (requires to set action None), another is not, it causes problem when using parallel API</span>
+            <span class="k">elif</span> <span class="n">action</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_actions</span><span class="p">:</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">valid_actions</span><span class="p">)</span> <span class="c1"># randomly select a valid action</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># masked zero/ones observation</span>
+                <span class="n">obs_dict</span><span class="p">[</span><span class="n">agent</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mask</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obs_dict</span><span class="p">[</span><span class="n">agent</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s1">&#39;observation&#39;</span><span class="p">]</span>  <span class="c1"># observation contains {&#39;observation&#39;: ..., &#39;action_mask&#39;: ...}</span>
+            <span class="n">reward_dict</span><span class="p">[</span><span class="n">agent</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">rewards</span><span class="p">[</span><span class="n">agent</span><span class="p">]</span>
+            <span class="n">done_dict</span><span class="p">[</span><span class="n">agent</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">dones</span><span class="p">[</span><span class="n">agent</span><span class="p">]</span>  <span class="c1"># the returned done from env.last() does not work</span>
+            <span class="n">info_dict</span><span class="p">[</span><span class="n">agent</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+
+        <span class="k">return</span> <span class="n">obs_dict</span><span class="p">,</span> <span class="n">reward_dict</span><span class="p">,</span> <span class="n">done_dict</span><span class="p">,</span> <span class="n">info_dict</span></div></div>
+
+<div class="viewcode-block" id="Atari2AgentWrapper"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Atari2AgentWrapper">[docs]</a><span class="k">class</span> <span class="nc">Atari2AgentWrapper</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Wrap single agent OpenAI gym atari game to be multi-agent version &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Atari2AgentWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;first_0&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_spaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
+
+<div class="viewcode-block" id="Atari2AgentWrapper.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Atari2AgentWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">obs</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Atari2AgentWrapper.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Atari2AgentWrapper.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Atari2AgentWrapper.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Atari2AgentWrapper.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Atari2AgentWrapper.step"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Atari2AgentWrapper.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">obs</span><span class="p">],</span> <span class="p">[</span><span class="n">reward</span><span class="p">],</span> <span class="p">[</span><span class="n">done</span><span class="p">],</span> <span class="p">[</span><span class="n">info</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Atari2AgentWrapper.close"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Atari2AgentWrapper.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+<span class="c1"># class SlimeVolleyWrapper(gym.Wrapper):</span>
+<span class="c1">#     &quot;&quot;&quot; </span>
+<span class="c1">#     Wrapper to transform SlimeVolley environment (https://github.com/hardmaru/slimevolleygym) </span>
+<span class="c1">#     into PettingZoo (https://github.com/PettingZoo-Team/PettingZoo) env style. </span>
+<span class="c1">#     Specifically, most important changes are:</span>
+<span class="c1">#     1. to make reset() return a dictionary of obsevations: {&#39;agent1_name&#39;: obs1, &#39;agent2_name&#39;: obs2}</span>
+<span class="c1">#     2. to make step() return dict of obs, dict of rewards, dict of dones, dict of infos, in a similar format as above.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     # action transformation of SlimeVolley, the inner action is MultiBinary, which can be transformed into Discrete</span>
+<span class="c1">#     action_table = [[0, 0, 0], # NOOP</span>
+<span class="c1">#                     [1, 0, 0], # LEFT (forward)</span>
+<span class="c1">#                     [1, 0, 1], # UPLEFT (forward jump)</span>
+<span class="c1">#                     [0, 0, 1], # UP (jump)</span>
+<span class="c1">#                     [0, 1, 1], # UPRIGHT (backward jump)</span>
+<span class="c1">#                     [0, 1, 0]] # RIGHT (backward)</span>
+
+
+<span class="c1">#     def __init__(self, env, against_baseline=False):</span>
+<span class="c1">#         # super(SlimeVolleyWrapper, self).__init__()</span>
+<span class="c1">#         super().__init__(env)</span>
+        <span class="c1"># self.env = env</span>
+<span class="c1">#         self.agents = [&#39;first_0&#39;, &#39;second_0&#39;]</span>
+<span class="c1">#         self.observation_space = self.env.observation_space</span>
+<span class="c1">#         self.observation_spaces = {name: self.env.observation_space for name in self.agents}</span>
+<span class="c1">#         self.action_space = gym.spaces.Discrete(len(self.action_table))</span>
+<span class="c1">#         self.action_spaces = {name: self.action_space for name in self.agents}</span>
+<span class="c1">#         self.against_baseline = against_baseline</span>
+
+    <span class="c1"># @property</span>
+    <span class="c1"># def spec(self):</span>
+    <span class="c1">#     return self.env.spec</span>
+
+<span class="c1">#     def reset(self, observation=None):</span>
+<span class="c1">#         obs1 = self.env.reset()</span>
+<span class="c1">#         obs2 = obs1 # both sides always see the same initial observation.</span>
+<span class="c1">#         obs = {}</span>
+<span class="c1">#         obs[self.agents[0]] = obs1</span>
+<span class="c1">#         obs[self.agents[1]] = obs2</span>
+<span class="c1">#         return obs</span>
+
+    <span class="c1"># def seed(self, seed):</span>
+    <span class="c1">#     self.env.seed(seed)</span>
+    <span class="c1">#     np.random.seed(seed)</span>
+
+<span class="c1">#     def render(self,):</span>
+<span class="c1">#         self.env.render()</span>
+
+<span class="c1">#     def step(self, actions):</span>
+<span class="c1">#         obs, rewards, dones, infos = {},{},{},{}</span>
+<span class="c1">#         actions_ = [self.env.discreteToBox(int(a)) for a in actions.values()]  # from discrete to multibinary action</span>
+<span class="c1">#         if self.against_baseline:</span>
+<span class="c1">#             obs1, reward, done, info = self.env.step(actions_[1])</span>
+<span class="c1">#             obs0 = obs1</span>
+<span class="c1">#             rewards[self.agents[0]] = -reward</span>
+<span class="c1">#             rewards[self.agents[1]] = reward # the reward is for the learnable agent (second)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             # normal 2-player setting</span>
+<span class="c1">#             if len(self.observation_space.shape)&gt;1: </span>
+<span class="c1">#                 # for image-based env, fake the action list as one input to pass through NoopResetEnv, etc wrappers</span>
+<span class="c1">#                 obs0, reward, done, info = self.env.step(actions_)</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 obs0, reward, done, info = self.env.step(*actions_)</span>
+<span class="c1">#             obs1 = info[&#39;otherObs&#39;]</span>
+<span class="c1">#             rewards[self.agents[0]] = reward</span>
+<span class="c1">#             rewards[self.agents[1]] = -reward # the reward is for the learnable agent (second)</span>
+<span class="c1">#         obs[self.agents[0]] = obs0</span>
+<span class="c1">#         obs[self.agents[1]] = obs1</span>
+<span class="c1">#         dones[self.agents[0]] = done</span>
+<span class="c1">#         dones[self.agents[1]] = done</span>
+<span class="c1">#         infos[self.agents[0]] = info</span>
+<span class="c1">#         infos[self.agents[1]] = info</span>
+
+<span class="c1">#         return obs, rewards, dones, infos</span>
+
+<span class="c1">#     def close(self):</span>
+<span class="c1">#         self.env.close()</span>
+
+
+<div class="viewcode-block" id="SlimeVolleyWrapper"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.SlimeVolleyWrapper">[docs]</a><span class="k">class</span> <span class="nc">SlimeVolleyWrapper</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Wrapper to transform SlimeVolley environment (https://github.com/hardmaru/slimevolleygym) </span>
+<span class="sd">    into PettingZoo (https://github.com/PettingZoo-Team/PettingZoo) env style. </span>
+<span class="sd">    Specifically, most important changes this wrapper makes are:</span>
+
+<span class="sd">        1. to make reset() return a dictionary of obsevations: {&#39;agent1_name&#39;: obs1, &#39;agent2_name&#39;: obs2}.</span>
+<span class="sd">        </span>
+<span class="sd">        2. to make step() return dict of obs, dict of rewards, dict of dones, dict of infos, in a similar format as above.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># action transformation of SlimeVolley, the inner action is MultiBinary, which can be transformed into Discrete</span>
+    <span class="n">action_table</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="c1"># NOOP</span>
+                    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="c1"># LEFT (forward)</span>
+                    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="c1"># UPLEFT (forward jump)</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="c1"># UP (jump)</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="c1"># UPRIGHT (backward jump)</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span> <span class="c1"># RIGHT (backward)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">against_baseline</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;second_0&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">against_baseline</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;first_0&#39;</span><span class="p">,</span> <span class="s1">&#39;second_0&#39;</span><span class="p">]</span> <span class="c1"># when against baseline the learnable agent is on the right side (second)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_spaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_table</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">against_baseline</span> <span class="o">=</span> <span class="n">against_baseline</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
+
+<div class="viewcode-block" id="SlimeVolleyWrapper.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.SlimeVolleyWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Resets the environment to an initial state and returns an initial observation.</span>
+
+<span class="sd">        :return: a dictionary of observations for each agent</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="n">obs0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">against_baseline</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">obs0</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obs1</span> <span class="o">=</span> <span class="n">obs0</span> <span class="c1"># both sides always see the same initial observation.</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">obs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">obs0</span>
+            <span class="n">obs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">obs1</span>
+            <span class="k">return</span> <span class="n">obs</span></div>
+
+<div class="viewcode-block" id="SlimeVolleyWrapper.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.SlimeVolleyWrapper.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the seed for environment and numpy.</span>
+
+<span class="sd">        :param seed: seed value</span>
+<span class="sd">        :type seed: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SlimeVolleyWrapper.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.SlimeVolleyWrapper.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="sd">&quot;&quot;&quot; Render the scene.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SlimeVolleyWrapper.step"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.SlimeVolleyWrapper.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+        <span class="n">obss</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">dones</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="p">{},{},{},{}</span>
+        <span class="n">actions_</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">discreteToBox</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">actions</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>  <span class="c1"># from discrete to multibinary action</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">against_baseline</span><span class="p">:</span>
+            <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># the reward is for the learnable agent (on the right side)</span>
+            <span class="n">obss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">obs</span>
+            <span class="n">rewards</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">reward</span>
+            <span class="n">dones</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">done</span>
+            <span class="n">infos</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">info</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># normal 2-player setting</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span> 
+                <span class="c1"># for image-based env, fake the action list as one input to pass through NoopResetEnv, etc wrappers</span>
+                <span class="n">obs0</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions_</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obs0</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="o">*</span><span class="n">actions_</span><span class="p">)</span>
+            <span class="n">obs1</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;otherObs&#39;</span><span class="p">]</span>
+            <span class="n">rewards</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">reward</span>
+            <span class="n">rewards</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="n">reward</span> 
+            <span class="n">obss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">obs0</span>
+            <span class="n">obss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">obs1</span>
+            <span class="n">dones</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">done</span>
+            <span class="n">dones</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">done</span>
+            <span class="n">infos</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">info</span>
+            <span class="n">infos</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">info</span>
+
+        <span class="k">return</span> <span class="n">obss</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">dones</span><span class="p">,</span> <span class="n">infos</span></div>
+
+<div class="viewcode-block" id="SlimeVolleyWrapper.close"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.SlimeVolleyWrapper.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="Dict2TupleWrapper"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Dict2TupleWrapper">[docs]</a><span class="k">class</span> <span class="nc">Dict2TupleWrapper</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Wrap the PettingZoo envs to have a similar style as LaserFrame in NFSP &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">keep_info</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Dict2TupleWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">num_agents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_info</span> <span class="o">=</span> <span class="n">keep_info</span>  <span class="c1"># if True keep info as dict</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># image</span>
+            <span class="n">old_shape</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">old_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">old_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">old_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_type</span> <span class="o">=</span> <span class="s1">&#39;rgb_image&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">obs_type</span> <span class="o">=</span> <span class="s1">&#39;ram&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_spaces</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_spaces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_spaces</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_spaces</span>
+        <span class="k">try</span><span class="p">:</span>   <span class="c1"># both pettingzoo and slimevolley can work with this</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">agents</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agents</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">agents</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
+
+<div class="viewcode-block" id="Dict2TupleWrapper.observation_swapaxis"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Dict2TupleWrapper.observation_swapaxis">[docs]</a>    <span class="k">def</span> <span class="nf">observation_swapaxis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">observation</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">observation</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+    
+<div class="viewcode-block" id="Dict2TupleWrapper.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Dict2TupleWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">obs_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_type</span> <span class="o">==</span> <span class="s1">&#39;ram&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">obs_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_swapaxis</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">obs_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="Dict2TupleWrapper.step"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Dict2TupleWrapper.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span> 
+        <span class="n">actions</span> <span class="o">=</span> <span class="p">{</span><span class="n">agent_name</span><span class="p">:</span> <span class="n">action</span> <span class="k">for</span> <span class="n">agent_name</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">,</span> <span class="n">actions</span><span class="p">)}</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">dones</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_type</span> <span class="o">==</span> <span class="s1">&#39;ram&#39;</span><span class="p">:</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_swapaxis</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rewards</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dones</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_info</span><span class="p">:</span>  <span class="c1"># a special case for VectorEnv</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">infos</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">infos</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">del</span> <span class="n">obs</span><span class="p">,</span><span class="n">rewards</span><span class="p">,</span> <span class="n">dones</span><span class="p">,</span> <span class="n">infos</span>
+        
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zerosum_filter</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">o</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">info</span></div>
+
+    <span class="k">def</span> <span class="nf">_zerosum_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+        <span class="c1">## zero-sum filter: </span>
+        <span class="c1"># added for making non-zero sum game to be zero-sum, e.g. tennis_v2</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">nonzero_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">nonzero_idx</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">r</span><span class="p">[</span><span class="n">nonzero_idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">r</span>
+
+<div class="viewcode-block" id="Dict2TupleWrapper.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Dict2TupleWrapper.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+        <span class="c1"># np.random.seed(seed)</span>
+
+<div class="viewcode-block" id="Dict2TupleWrapper.render"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Dict2TupleWrapper.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Dict2TupleWrapper.close"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.wrappers.mars_wrappers.Dict2TupleWrapper.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Zihan Ding.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

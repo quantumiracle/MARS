@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mars.equilibrium_solver.eq_NASHPYsolver &mdash; MARS 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MARS
+          
+
+          
+            
+            <img src="../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/intro.html">Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MARS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mars.equilibrium_solver.eq_NASHPYsolver</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mars.equilibrium_solver.eq_NASHPYsolver</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">nashpy</span> <span class="k">as</span> <span class="nn">nash</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.gamegenerator</span> <span class="kn">import</span> <span class="n">getCorrelatedEquilibria</span><span class="p">,</span> <span class="n">getMixedNashEquilibria</span><span class="p">,</span> <span class="n">getPureNashEquilibria</span> 
+<span class="kn">from</span> <span class="nn">.lamke_howson_lex</span> <span class="kn">import</span> <span class="n">lemke_howson_lex</span> 
+
+<div class="viewcode-block" id="NashEquilibriaSolver"><a class="viewcode-back" href="../../../mars/equilibrium_solver/solvers.html#mars.equilibrium_solver.eq_NASHPYsolver.NashEquilibriaSolver">[docs]</a><span class="k">def</span> <span class="nf">NashEquilibriaSolver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given payoff matrix/matrices, return a list of existing Nash equilibria:</span>
+<span class="sd">    [(nash1_p1, nash1_p2), (nash2_p1, nash2_p2), ...]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">B</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rps</span> <span class="o">=</span> <span class="n">nash</span><span class="o">.</span><span class="n">Game</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rps</span> <span class="o">=</span> <span class="n">nash</span><span class="o">.</span><span class="n">Game</span><span class="p">(</span><span class="n">A</span>  <span class="p">)</span><span class="c1"># zero-sum game: unimatrix  </span>
+    <span class="c1"># eqs = rps.support_enumeration()</span>
+    <span class="n">eqs</span> <span class="o">=</span> <span class="n">rps</span><span class="o">.</span><span class="n">vertex_enumeration</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">eqs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NashEquilibriumSolver"><a class="viewcode-back" href="../../../mars/equilibrium_solver/solvers.html#mars.equilibrium_solver.eq_NASHPYsolver.NashEquilibriumSolver">[docs]</a><span class="k">def</span> <span class="nf">NashEquilibriumSolver</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Quickly solve *one* Nash equilibrium with Lemke Howson algorithm, given *degenerate* (det not equal to 0) payoff matrix.</span>
+<span class="sd">    Ref: https://nashpy.readthedocs.io/en/stable/reference/lemke-howson.html#lemke-howson</span>
+
+<span class="sd">    TODO: sometimes give nan or wrong dimensions, check here: https://github.com/drvinceknight/Nashpy/issues/35</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># print(&#39;Determinant of matrix: &#39;, np.linalg.det(A))</span>
+    <span class="k">if</span> <span class="n">B</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rps</span> <span class="o">=</span> <span class="n">nash</span><span class="o">.</span><span class="n">Game</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rps</span> <span class="o">=</span> <span class="n">nash</span><span class="o">.</span><span class="n">Game</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>  <span class="c1"># zero-sum game: unimatrix  </span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">final_eq</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># To handle the problem that sometimes Lemke-Howson implementation will give </span>
+    <span class="c1"># wrong returned NE shapes or NAN in value, use different initial_dropped_label value </span>
+    <span class="c1"># to find a valid one. </span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># Lemke Howson can not solve degenerate matrix.</span>
+        <span class="c1"># eq = rps.lemke_howson(initial_dropped_label=l) # The initial_dropped_label is an integer between 0 and sum(A.shape) - 1</span>
+
+        <span class="c1"># Lexicographic Lemke Howson can solve degenerate matrix: https://github.com/newaijj/Nashpy/blob/ffea3522706ad51f712d42023d41683c8fa740e6/tests/unit/test_lemke_howson_lex.py#L9 </span>
+        <span class="n">eq</span> <span class="o">=</span> <span class="n">lemke_howson_lex</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="o">-</span><span class="n">A</span><span class="p">,</span> <span class="n">initial_dropped_label</span><span class="o">=</span><span class="n">l</span><span class="p">)</span>  
+        <span class="k">if</span> <span class="n">eq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span>  <span class="n">dim</span> <span class="ow">and</span> <span class="n">eq</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">dim</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">eq</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">eq</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="c1"># valid shape and valid value (not nan)</span>
+            <span class="n">final_eq</span> <span class="o">=</span> <span class="n">eq</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">final_eq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No valid Nash equilibrium is found!&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_eq</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># A = np.array([[0, -1, 1], [2, 0, -1], [-1, 1, 0]])</span>
+    <span class="c1"># A=np.array([[ 0.594,  0.554,  0.552,  0.555,  0.567,  0.591],</span>
+    <span class="c1"># [ 0.575,  0.579,  0.564,  0.568,  0.574,  0.619],</span>
+    <span class="c1"># [-0.036,  0.28,   0.53,   0.571,  0.57,  -0.292],</span>
+    <span class="c1"># [ 0.079, -0.141, -0.2,    0.592,  0.525, -0.575],</span>
+    <span class="c1"># [ 0.545,  0.583,  0.585,  0.562,  0.537,  0.606],</span>
+    <span class="c1"># [ 0.548,  0.576,  0.58,   0.574,  0.563,  0.564]])</span>
+
+    <span class="c1"># A=np.array([[ 0.001,  0.001,  0.00,     0.00,     0.005,  0.01, ],</span>
+    <span class="c1"># [ 0.033,  0.166,  0.086,  0.002, -0.109,  0.3,  ],</span>
+    <span class="c1"># [ 0.001,  0.003,  0.023,  0.019, -0.061, -0.131,],</span>
+    <span class="c1"># [-0.156, -0.039,  0.051,  0.016, -0.028, -0.287,],</span>
+    <span class="c1"># [ 0.007,  0.029,  0.004,  0.005,  0.003, -0.012],</span>
+    <span class="c1"># [ 0.014,  0.018, -0.001,  0.008, -0.009,  0.007]])</span>
+
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+
+    <span class="kn">import</span> <span class="nn">time</span>
+
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">nes</span> <span class="o">=</span> <span class="n">NashEquilibriaSolver</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">nes</span><span class="p">)</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">t1</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span>
+
+    <span class="n">ne</span> <span class="o">=</span> <span class="n">NashEquilibriumSolver</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ne</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span>
+
+    <span class="c1"># cce = getCorrelatedEquilibria(A, coarse=False)</span>
+    <span class="c1"># print(cce)</span>
+
+    <span class="c1"># ne = getMixedNashEquilibria(A)</span>
+    <span class="c1"># print(ne)</span>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Zihan Ding.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -5,7 +5,7 @@ MARL
 Meta-Learner Class
 ---------------------------------
 
-.. autoclass:: mars.marl.meta_learner.MetaLearner
+.. automodule:: mars.marl.meta_learner
    :members:
    :undoc-members:
    :show-inheritance:
