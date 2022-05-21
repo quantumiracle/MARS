@@ -101,23 +101,22 @@
   from mars.env.import_env import make_env
   from mars.rl.agents import *
   from mars.rl.agents.multiagent import MultiAgent
-  from mars.utils.func import get_general_args, multiprocess_buffer_register
+  from mars.utils.func import get_general_args, multiprocess_conf
   from rolloutExperience import rolloutExperience
   from updateModel import updateModel
   
   ### Load configurations
   yaml_file = 'mars_core/confs/pettingzoo/boxing_v1/pettingzoo_boxing_v1_selfplay'
-  ori_args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
-  ori_args.multiprocess = True
+  args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+  num_envs = args.num_envs  # this will be changed to 1 later
+  multiprocess_conf(args, method)
   
   ### Create env
-  args = copy.copy(ori_args)
-  args.num_envs = 1
   env = make_env(args)
   print(env)
   
   ### Specify models for each agent
-  args = multiprocess_buffer_register(ori_args, method)
+  args = multiprocess_conf(args, method)
   model1 = eval(args.algorithm)(env, args)
   model2 = eval(args.algorithm)(env, args)
   
@@ -125,11 +124,11 @@
   env.close()  # this env is only used for creating other intantiations
   
   processes = []
-  print(ori_args)
+  print(args)
   
   ### launch multiple sample rollout processes
   info_queue = Queue()
-  for pro_id in range(ori_args.num_envs):  
+  for pro_id in range(num_envs):  
       play_process = Process(target=rolloutExperience, args = (model, info_queue, args, pro_id))
       play_process.daemon = True  # sub processes killed when main process finish
       processes.append(play_process)

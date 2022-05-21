@@ -250,18 +250,18 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c1"># A = np.array([[0, -1, 1], [1, 0, -1], [-1, 1, 0]])</span>
-    <span class="c1"># A=np.array([[ 0.001,  0.001,  0.00,     0.00,     0.005,  0.01, ],</span>
-    <span class="c1"># [ 0.033,  0.166,  0.086,  0.002, -0.109,  0.3,  ],</span>
-    <span class="c1"># [ 0.001,  0.003,  0.023,  0.019, -0.061, -0.131,],</span>
-    <span class="c1"># [-0.156, -0.039,  0.051,  0.016, -0.028, -0.287,],</span>
-    <span class="c1"># [ 0.007,  0.029,  0.004,  0.005,  0.003, -0.012],</span>
-    <span class="c1"># [ 0.014,  0.018, -0.001,  0.008, -0.009,  0.007]])</span>
+    <span class="n">A</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.001</span><span class="p">,</span>  <span class="mf">0.001</span><span class="p">,</span>  <span class="mf">0.00</span><span class="p">,</span>     <span class="mf">0.00</span><span class="p">,</span>     <span class="mf">0.005</span><span class="p">,</span>  <span class="mf">0.01</span><span class="p">,</span> <span class="p">],</span>
+    <span class="p">[</span> <span class="mf">0.033</span><span class="p">,</span>  <span class="mf">0.166</span><span class="p">,</span>  <span class="mf">0.086</span><span class="p">,</span>  <span class="mf">0.002</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.109</span><span class="p">,</span>  <span class="mf">0.3</span><span class="p">,</span>  <span class="p">],</span>
+    <span class="p">[</span> <span class="mf">0.001</span><span class="p">,</span>  <span class="mf">0.003</span><span class="p">,</span>  <span class="mf">0.023</span><span class="p">,</span>  <span class="mf">0.019</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.061</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.131</span><span class="p">,],</span>
+    <span class="p">[</span><span class="o">-</span><span class="mf">0.156</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.039</span><span class="p">,</span>  <span class="mf">0.051</span><span class="p">,</span>  <span class="mf">0.016</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.028</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.287</span><span class="p">,],</span>
+    <span class="p">[</span> <span class="mf">0.007</span><span class="p">,</span>  <span class="mf">0.029</span><span class="p">,</span>  <span class="mf">0.004</span><span class="p">,</span>  <span class="mf">0.005</span><span class="p">,</span>  <span class="mf">0.003</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.012</span><span class="p">],</span>
+    <span class="p">[</span> <span class="mf">0.014</span><span class="p">,</span>  <span class="mf">0.018</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.001</span><span class="p">,</span>  <span class="mf">0.008</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.009</span><span class="p">,</span>  <span class="mf">0.007</span><span class="p">]])</span>
     <span class="c1"># A=np.array([[ 0.08333333,  2.08333333 ,-0.91666667],</span>
     <span class="c1"># [-0.91666667,  0.08333333,  1.08333333],</span>
     <span class="c1"># [ 1.08333333, -0.91666667,  0.08333333]])</span>
-    <span class="n">A</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-    <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+    <span class="c1"># A=np.array([[0, 2, -1],</span>
+    <span class="c1"># [-1, 0, 1],</span>
+    <span class="c1"># [ 1, -1, 0]])</span>
     <span class="n">t0</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">ne</span><span class="p">,</span> <span class="n">ne_v</span> <span class="o">=</span> <span class="n">NashEquilibriumECOSSolver</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
     <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>

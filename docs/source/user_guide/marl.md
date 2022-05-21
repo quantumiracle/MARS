@@ -5,7 +5,9 @@
 **Table of contents**
 
 * [Self-Play](#self-play)
+* [Fictitious Self-Play](#fictitious-self-play)
 * [Neural Fictitious Self-Play](#neural-fictitious-self-play)
+* [Policy Space Response Oracle](#policy-space-response-oracle)
 
 ### Self-Play
 
@@ -32,7 +34,7 @@ We provide several algorithms, in either reinforcement learning (RL) or evolutio
 
   If both the above two points are satisfied in an environment, we can simply learn one model to control each agent in a game. Moreover, samples from all agents will be symmetric for the model, therefore the model can and should learn from all those samples to maximize its learning efficiency. As an example, with DQN algorithm, we should put samples from all agents into the buffer of the model for it to learn from. Due to this reason, the implementation of self-play in our repository is different from [the previous one](https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ppo_selfplay.py). Since the perspective transformation is provide with in the *SlimeVolley* environment, it can use samples from only one agent to update the model.
 
-  
+  #### Example
 
   An example to run: 
 
@@ -43,7 +45,7 @@ We provide several algorithms, in either reinforcement learning (RL) or evolutio
   from rl.algorithm import *
   
   ### Load configurations
-  yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay_dqn'
+  yaml_file = 'confs/slimevolley_slimevolleyv0_selfplay'
   
   args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
   
@@ -75,6 +77,8 @@ We provide several algorithms, in either reinforcement learning (RL) or evolutio
     Otherwise, replace the loser with a clone of the winner, and add a bit of noise to the clone.
   ```
   
+  #### Example
+  
   An example to run:
   
   ```python
@@ -103,6 +107,48 @@ We provide several algorithms, in either reinforcement learning (RL) or evolutio
 #### Reference
 
 * [*The repository and tutorials of SlimeVolley environment*](https://github.com/hardmaru/slimevolleygym/blob/master/TRAINING.md)*, Hardmaru, et. al*.
+
+* The theory of learning in games. D Fudenberg, F Drew, DK Levine - 1998 
+
+  
+
+### Fictitious Self-Play
+
+#### Description
+
+Instead of playing best response against the opponent's latest strategy as in self-play, fictitious self-play learns the best response against the opponent's historical average strategy and add to its strategy set.
+
+#### Example
+
+ An example to run:
+
+```python
+from utils.func import LoadYAML2Dict
+from env.import_env import make_env
+from rollout import rollout
+from rl.algorithm import *
+
+### Load configurations
+yaml_file = 'confs/pettingzoo_boxingv1_fsp'
+
+args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+
+### Create env
+env = make_env(args)
+
+### Specify models for each agent
+model1 = eval(args.algorithm)(env, args)
+model2 = eval(args.algorithm)(env, args)
+
+model = MultiAgent(env, [model1, model2], args)
+
+### Rollout
+rollout(env, model, args)
+```
+
+#### Reference
+
+* Iterative solution of games by fictitious play. Brown, George W 1951.
 
 ### Neural Fictitious Self-Play
 
@@ -149,6 +195,44 @@ rollout(env, model, args)
 #### Reference
 
 * *[Deep Reinforcement Learning from Self-Play in Imperfect-Information Games](https://arxiv.org/pdf/1603.01121.pdf)*, *Johannes Heinrich and David Silver.*
+
+### Policy-Space Response Oracles
+
+#### Description
+
+Policy-Space Response Oracles (PSRO) is a unified framework for learning in games.
+
+#### Example
+
+ An example to run:
+
+```python
+from utils.func import LoadYAML2Dict
+from env.import_env import make_env
+from rollout import rollout
+from rl.algorithm import *
+
+### Load configurations
+yaml_file = 'confs/pettingzoo_boxingv1_psro'
+
+args = LoadYAML2Dict(yaml_file, toAttr=True, mergeDefault=True)
+
+### Create env
+env = make_env(args)
+
+### Specify models for each agent
+model1 = eval(args.algorithm)(env, args)
+model2 = eval(args.algorithm)(env, args)
+
+model = MultiAgent(env, [model1, model2], args)
+
+### Rollout
+rollout(env, model, args)
+```
+
+#### Reference
+
+* [A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning](https://proceedings.neurips.cc/paper/2017/file/3323fe11e9595c09af38fe67567a9394-Paper.pdf) M Lanctot et. al. 2017
 
 ### Nash DQN with Exploiter
 

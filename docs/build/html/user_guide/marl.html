@@ -107,19 +107,33 @@
 <li class="toctree-l2"><a class="reference internal" href="#marl-algorithms">MARL algorithms</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#self-play">Self-Play</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Example</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#reference">Reference</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#fictitious-self-play">Fictitious Self-Play</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Reference</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#neural-fictitious-self-play">Neural Fictitious Self-Play</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id1">Description</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">Reference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#policy-space-response-oracles">Policy-Space Response Oracles</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Reference</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#nash-dqn-with-exploiter">Nash DQN with Exploiter</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id3">Description</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id4">Example</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">Reference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Reference</a></li>
 </ul>
 </li>
 </ul>
@@ -224,7 +238,9 @@
 <p><strong>Table of contents</strong></p>
 <ul class="simple">
 <li><p><a class="reference external" href="#self-play">Self-Play</a></p></li>
+<li><p><a class="reference external" href="#fictitious-self-play">Fictitious Self-Play</a></p></li>
 <li><p><a class="reference external" href="#neural-fictitious-self-play">Neural Fictitious Self-Play</a></p></li>
+<li><p><a class="reference external" href="#policy-space-response-oracle">Policy Space Response Oracle</a></p></li>
 </ul>
 <div class="section" id="self-play">
 <h3>Self-Play<a class="headerlink" href="#self-play" title="Permalink to this headline">¶</a></h3>
@@ -247,6 +263,21 @@ Once the performance exceeds some threshold, checkpoint the agent into the Champ
 </div>
 <p>There are some requirements for an environment to be conveniently learned with self-play + RL method: (1) the environment needs to be symmetric for each agent, including their state space, action space, transition dynamics, random start, etc; (2) to conveniently apply the above mechanism for learning a single model controlling the two sides of the game, the perspectives for different agents needs to be the same, which means, the same model could be applied on each side of the game without modification. The <em>first</em> point is obviously satisfied in some games like Go, <em>SlimeVolley</em>, and most of the Atari games like <em>Boxing</em> and <em>Pong</em> , etc. The <em>second</em> point is not always available for most multi-agent game although it seems rather like a trivial implementation issue. For example, in all Atari games (OpenAI Gym or PettingZoo), there is only one perspective of observation for all agents in the game, which is the full view of the game (either image or RAM) and contains all information for both the current agent and its opponent. Thus, all agents have the same observation in Atari games by default, which makes the model lack of knowledge it is currently taking charge of. An <a class="reference external" href="https://github.com/PettingZoo-Team/PettingZoo/issues/423">issue</a> for reference is provided. The direct solution for making a game to  provide same observation perspective for each agent is to transform the perspectives of observation from all agents to the same one. If this is hard or infeasible in practice (e.g. transforming and recoloring the Atari games can take considerable efforts),  an alternative to achieve a similar effect is to add an indicator of the agent to its observation, which is a one-hot vector indicating which agent the sample is collected with, and use all samples to update the model.</p>
 <p>If both the above two points are satisfied in an environment, we can simply learn one model to control each agent in a game. Moreover, samples from all agents will be symmetric for the model, therefore the model can and should learn from all those samples to maximize its learning efficiency. As an example, with DQN algorithm, we should put samples from all agents into the buffer of the model for it to learn from. Due to this reason, the implementation of self-play in our repository is different from <a class="reference external" href="https://github.com/hardmaru/slimevolleygym/blob/master/training_scripts/train_ppo_selfplay.py">the previous one</a>. Since the perspective transformation is provide with in the <em>SlimeVolley</em> environment, it can use samples from only one agent to update the model.</p>
+</li>
+<li><p>Self-Play + ES:</p>
+<p>In the category of self-play with evolutionary strategy algorithms, we implement self-play with genetic algorithm (GA).</p>
+<div class="highlight-tex notranslate"><div class="highlight"><pre><span></span>Create a population of agents with random initial parameters.
+Play a total of N games. For each game:
+  Randomly choose two agents in the population and have them play against each other.
+  If the game is tied, add a bit of noise to the second agent&#39;s parameters.
+  Otherwise, replace the loser with a clone of the winner, and add a bit of noise to the clone.
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="example">
+<h4>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
 <p>An example to run:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
 <span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
@@ -254,7 +285,7 @@ Once the performance exceeds some threshold, checkpoint the agent into the Champ
 <span class="kn">from</span> <span class="nn">rl.algorithm</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="c1">### Load configurations</span>
-<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;confs/slimevolley_slimevolleyv0_selfplay_dqn&#39;</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;confs/slimevolley_slimevolleyv0_selfplay&#39;</span>
 
 <span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -272,16 +303,9 @@ Once the performance exceeds some threshold, checkpoint the agent into the Champ
 <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
-</li>
-<li><p>Self-Play + ES:</p>
-<p>In the category of self-play with evolutionary strategy algorithms, we implement self-play with genetic algorithm (GA).</p>
-<div class="highlight-tex notranslate"><div class="highlight"><pre><span></span>Create a population of agents with random initial parameters.
-Play a total of N games. For each game:
-  Randomly choose two agents in the population and have them play against each other.
-  If the game is tied, add a bit of noise to the second agent&#39;s parameters.
-  Otherwise, replace the loser with a clone of the winner, and add a bit of noise to the clone.
-</pre></div>
 </div>
+<div class="section" id="id1">
+<h4>Example<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
 <p>An example to run:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
 <span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
@@ -303,20 +327,59 @@ Play a total of N games. For each game:
 <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
-</li>
-</ul>
 </div>
 <div class="section" id="reference">
 <h4>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/hardmaru/slimevolleygym/blob/master/TRAINING.md"><em>The repository and tutorials of SlimeVolley environment</em></a><em>, Hardmaru, et. al</em>.</p></li>
+<li><p>The theory of learning in games. D Fudenberg, F Drew, DK Levine - 1998</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="fictitious-self-play">
+<h3>Fictitious Self-Play<a class="headerlink" href="#fictitious-self-play" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h4>Description<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>Instead of playing best response against the opponent’s latest strategy as in self-play, fictitious self-play learns the best response against the opponent’s historical average strategy and add to its strategy set.</p>
+</div>
+<div class="section" id="id3">
+<h4>Example<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>An example to run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
+<span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">rl.algorithm</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">### Load configurations</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;confs/pettingzoo_boxingv1_fsp&#39;</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">### Create env</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+<span class="c1">### Specify models for each agent</span>
+<span class="n">model1</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+<span class="n">model2</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">MultiAgent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">model1</span><span class="p">,</span> <span class="n">model2</span><span class="p">],</span> <span class="n">args</span><span class="p">)</span>
+
+<span class="c1">### Rollout</span>
+<span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h4>Reference<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>Iterative solution of games by fictitious play. Brown, George W 1951.</p></li>
 </ul>
 </div>
 </div>
 <div class="section" id="neural-fictitious-self-play">
 <h3>Neural Fictitious Self-Play<a class="headerlink" href="#neural-fictitious-self-play" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id1">
-<h4>Description<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id5">
+<h4>Description<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
 <p>Neural Fictitious Self-Play (NFSP) is a generalization of fictitious self-play (which proves to solve Nash equilibrium in two-player zero-sum games and multi-player potential games) with neural networks. In NFSP, each agent is learning through a certain RL algorithm (<em>e.g.</em>, DQN, PPO, etc) as well as maintaining a policy network through supervised learning on previous samples, <em>i.e.</em>, the average strategy profile, in a sense of the average of the best responses to opponent’s historical strategies.</p>
 <p>The hyper-parameter <img alt="\eta" src="https://latex.codecogs.com/svg.latex?%5Ceta" /> in NFSP is set to choose the action either as the best response to current opponent strategy or from the average strategy that the agent applied as previous best responses.  It can be specified with:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span><span class="o">.</span><span class="n">marl_spec</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
@@ -324,8 +387,8 @@ Play a total of N games. For each game:
 </div>
 <p>In testing, the value of <img alt="\eta" src="https://latex.codecogs.com/svg.latex?%5Ceta" /> is automatically set as 0, so that all actions come from the learned average policy. However, as in original <a class="reference external" href="https://arxiv.org/pdf/1603.01121.pdf">paper</a>, there are at least three types of strategies can be derived from NFSP: (1) best response strategy (setting <img alt="\eta" src="https://latex.codecogs.com/svg.latex?%5Ceta" /> as 1, also greedy); (2) average strategy (setting <img alt="\eta" src="https://latex.codecogs.com/svg.latex?%5Ceta" /> as 0); (3) greedy-average strategy (setting <img alt="\eta" src="https://latex.codecogs.com/svg.latex?%5Ceta" /> as 0, but also taking greedy action that maximizes the action value or probability rather than sampling from a probabilistic distribution). Our default choice in implementation for testing is the second one.</p>
 </div>
-<div class="section" id="example">
-<h4>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id6">
+<h4>Example<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
 <p>An example to run:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
 <span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
@@ -351,20 +414,60 @@ Play a total of N games. For each game:
 </pre></div>
 </div>
 </div>
-<div class="section" id="id2">
-<h4>Reference<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id7">
+<h4>Reference<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><p><em><a class="reference external" href="https://arxiv.org/pdf/1603.01121.pdf">Deep Reinforcement Learning from Self-Play in Imperfect-Information Games</a></em>, <em>Johannes Heinrich and David Silver.</em></p></li>
 </ul>
 </div>
 </div>
+<div class="section" id="policy-space-response-oracles">
+<h3>Policy-Space Response Oracles<a class="headerlink" href="#policy-space-response-oracles" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h4>Description<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<p>Policy-Space Response Oracles (PSRO) is a unified framework for learning in games.</p>
+</div>
+<div class="section" id="id9">
+<h4>Example<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<p>An example to run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
+<span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
+<span class="kn">from</span> <span class="nn">rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">rl.algorithm</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">### Load configurations</span>
+<span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;confs/pettingzoo_boxingv1_psro&#39;</span>
+
+<span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">### Create env</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+<span class="c1">### Specify models for each agent</span>
+<span class="n">model1</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+<span class="n">model2</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">MultiAgent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">model1</span><span class="p">,</span> <span class="n">model2</span><span class="p">],</span> <span class="n">args</span><span class="p">)</span>
+
+<span class="c1">### Rollout</span>
+<span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h4>Reference<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://proceedings.neurips.cc/paper/2017/file/3323fe11e9595c09af38fe67567a9394-Paper.pdf">A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning</a> M Lanctot et. al. 2017</p></li>
+</ul>
+</div>
+</div>
 <div class="section" id="nash-dqn-with-exploiter">
 <h3>Nash DQN with Exploiter<a class="headerlink" href="#nash-dqn-with-exploiter" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id3">
-<h4>Description<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id11">
+<h4>Description<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
 </div>
-<div class="section" id="id4">
-<h4>Example<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id12">
+<h4>Example<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
 <p>An example to run:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils.func</span> <span class="kn">import</span> <span class="n">LoadYAML2Dict</span>
 <span class="kn">from</span> <span class="nn">env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
@@ -388,8 +491,8 @@ Play a total of N games. For each game:
 </pre></div>
 </div>
 </div>
-<div class="section" id="id5">
-<h4>Reference<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id13">
+<h4>Reference<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li></li>
 </ul>

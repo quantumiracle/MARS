@@ -205,14 +205,16 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_type</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">multiprocess</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">num_process</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">share_memory</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">share_memory</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">replay_buffer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">add_components</span><span class="p">[</span><span class="s1">&#39;replay_buffer&#39;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">ReplayBuffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;replay_buffer_size&#39;</span><span class="p">])))</span> <span class="c1"># first float then int to handle the scientific number like 1e5</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">ReplayBuffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;replay_buffer_size&#39;</span><span class="p">])),</span> \
+                <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;multi_step&#39;</span><span class="p">],</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">],</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span> <span class="c1"># first float then int to handle the scientific number like 1e5</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update_target</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
 
@@ -221,7 +223,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon_scheduler</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">multi_step</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;multi_step&#39;</span><span class="p">]</span>  <span class="c1"># TODO</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multi_step</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;multi_step&#39;</span><span class="p">]</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">target_update_interval</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;target_update_interval&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update_cnt</span> <span class="o">=</span> <span class="mi">1</span>
@@ -293,12 +295,14 @@
 
 <div class="viewcode-block" id="DQN.update"><a class="viewcode-back" href="../../../../mars/rl/dqn.html#mars.rl.agents.dqn.DQN.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="c1"># weights = torch.ones(self.batch_size)</span>
 
         <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">state</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">next_state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">next_state</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">reward</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">done</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">done</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="c1"># weights = torch.FloatTensor(weights).to(self.device)</span>
 
         <span class="c1"># reward normalization</span>
         <span class="c1"># reward =  (reward - reward.mean(dim=0)) / (reward.std(dim=0) + 1e-6)</span>
@@ -310,21 +314,22 @@
         <span class="n">q_value</span> <span class="o">=</span> <span class="n">q_values</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">action</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">next_q_value</span> <span class="o">=</span> <span class="n">target_next_q_values</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c1"># additional value normalization (this effectively prevent increasing Q/loss value)</span>
-        <span class="n">next_q_value</span> <span class="o">=</span>  <span class="p">(</span><span class="n">next_q_value</span> <span class="o">-</span> <span class="n">next_q_value</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">next_q_value</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
         <span class="n">expected_q_value</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_step</span><span class="p">)</span> <span class="o">*</span> <span class="n">next_q_value</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done</span><span class="p">)</span>
+        <span class="c1"># additional value normalization (this effectively prevent increasing Q/loss value)</span>
+        <span class="n">expected_q_value</span> <span class="o">=</span>  <span class="p">(</span><span class="n">expected_q_value</span> <span class="o">-</span> <span class="n">expected_q_value</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">expected_q_value</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
+
         <span class="c1"># Huber Loss</span>
-        <span class="c1"># loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction=&#39;none&#39;)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">q_value</span><span class="p">,</span> <span class="n">expected_q_value</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">smooth_l1_loss</span><span class="p">(</span><span class="n">q_value</span><span class="p">,</span> <span class="n">expected_q_value</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>  <span class="c1"># slimevolley env only works with this!</span>
+        <span class="c1"># loss = F.mse_loss(q_value, expected_q_value.detach())</span>
 
         <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="c1"># loss = (loss * weights).mean()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
         <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_cnt</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_update_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_target</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
-            <span class="c1"># self.update_cnt = 0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
@@ -338,13 +343,12 @@
             <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_target&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DQN.load_model"><a class="viewcode-back" href="../../../../mars/rl/dqn.html#mars.rl.agents.dqn.DQN.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_target&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_model&#39;</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_target&#39;</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="nb">eval</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span></div></div>
-
 
 <div class="viewcode-block" id="DQNBase"><a class="viewcode-back" href="../../../../mars/rl/dqn.html#mars.rl.agents.dqn.DQNBase">[docs]</a><span class="k">class</span> <span class="nc">DQNBase</span><span class="p">(</span><span class="n">NetBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Basic Q network</span>
@@ -419,57 +423,6 @@
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span> <span class="o">+</span> <span class="n">advantage</span> <span class="o">-</span> <span class="n">advantage</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
 
-<span class="c1"># class DuelingDQN(DQNBase):</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     Dueling Network Architectures for Deep Reinforcement Learning</span>
-<span class="c1">#     https://arxiv.org/abs/1511.06581</span>
-<span class="c1">#     Different from above, a self-contained version, using a shared network body for advantage and value heads.</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     def __init__(self, env, hidden_dim=64, activation=nn.Tanh(), **kwargs):</span>
-<span class="c1">#         super().__init__(env, hidden_dim, **kwargs)</span>
-<span class="c1">#         self.construct_net(hidden_dim, nn.Tanh())</span>
-        
-<span class="c1">#         self.advantage = self.fc</span>
-
-<span class="c1">#         self.value = nn.Sequential(</span>
-<span class="c1">#             nn.Linear(self._feature_size(), hidden_dim),</span>
-<span class="c1">#             activation,</span>
-<span class="c1">#             nn.Linear(hidden_dim, 1))</span>
-        
-<span class="c1">#     def construct_net(self, hidden_dim=64, activation=nn.ReLU()):</span>
-<span class="c1">#         self.flatten = Flatten()</span>
-<span class="c1">#         activation = nn.Tanh()</span>
-        
-<span class="c1">#         if len(self._observation_shape) &lt;= 1: # not image</span>
-<span class="c1">#             self.features = nn.Sequential(</span>
-<span class="c1">#                 nn.Linear(self._observation_shape[0], hidden_dim),</span>
-<span class="c1">#                 activation,</span>
-<span class="c1">#                 nn.Linear(hidden_dim, hidden_dim),</span>
-<span class="c1">#                 activation,</span>
-<span class="c1">#             )</span>
-<span class="c1">#         else:</span>
-<span class="c1">#             self.features = nn.Sequential(</span>
-<span class="c1">#                 nn.Conv2d(self._observation_shape[0], 8, kernel_size=4, stride=2),</span>
-<span class="c1">#                 activation,</span>
-<span class="c1">#                 nn.Conv2d(16, 8, kernel_size=5, stride=1),</span>
-<span class="c1">#                 activation,</span>
-<span class="c1">#                 nn.Conv2d(16, 8, kernel_size=3, stride=1),</span>
-<span class="c1">#                 activation,</span>
-<span class="c1">#             )</span>
-        
-<span class="c1">#         self.fc = nn.Sequential(</span>
-<span class="c1">#             nn.Linear(self._feature_size(), hidden_dim),</span>
-<span class="c1">#             activation,</span>
-<span class="c1">#             nn.Linear(hidden_dim, self._action_shape)</span>
-<span class="c1">#         )</span>
-
-<span class="c1">#     def net(self, x):</span>
-<span class="c1">#         x = self.features(x)</span>
-<span class="c1">#         x = self.flatten(x)</span>
-<span class="c1">#         advantage = self.advantage(x)</span>
-<span class="c1">#         value = self.value(x)</span>
-<span class="c1">#         return value + advantage - advantage.mean(1, keepdim=True)</span>
-
 <div class="viewcode-block" id="ParallelDQN"><a class="viewcode-back" href="../../../../mars/rl/dqn.html#mars.rl.agents.dqn.ParallelDQN">[docs]</a><span class="k">class</span> <span class="nc">ParallelDQN</span><span class="p">(</span><span class="n">DQNBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; DQN for parallel env sampling</span>
 
@@ -542,7 +495,7 @@
 <span class="sd">            def f(self):</span>
 <span class="sd">                self.a-=1</span>
 <span class="sd">                print(self.a)          </span>
-<span class="sd">        class C(B,A):</span>
+<span class="sd">        class C(B,A):  # the order indicates piority for overwritting</span>
 <span class="sd">            def __init__(self,):</span>
 <span class="sd">                super(C, self).__init__()   </span>
 <span class="sd">        c=C()</span>
