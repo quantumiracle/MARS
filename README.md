@@ -12,7 +12,7 @@ If you have any question (propose an ISSUE if it's general problem) or want to c
 Large-scale competitive games are generally hard, I'm still struggling with developing this repo.
 
 ## Usage Instruction
-Some tutorials (`./tutorials/`) are provided for simple MARL concepts, including building an arbitrary matrix game, solving the Nash equilibrium with different algorithms for matrix games, building arbitrary Markov game, solving Markov games, etc. 
+Some [tutorials](https://github.com/quantumiracle/MARS/tree/master/tutorial) are provided for simple MARL concepts, including building an arbitrary matrix game, solving the Nash equilibrium with different algorithms for matrix games, building arbitrary Markov game, solving Markov games, etc. 
 
 For comprehensive usage instruction document, see [here](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html). 
 
