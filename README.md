@@ -110,7 +110,7 @@ MARL Algorithms to do:
 
 MARS is distributed under the terms of Apache License (Version 2.0).
 
-See [Apache License](https://github.com/taichi-dev/taichi/blob/master/LICENSE) for details.
+See [Apache License](https://github.com/quantumiracle/MARS/blob/master/LICENSE) for details.
 
 ## Some Results
 
