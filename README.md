@@ -113,6 +113,21 @@ MARS is distributed under the terms of Apache License (Version 2.0).
 
 See [Apache License](https://github.com/quantumiracle/MARS/blob/master/LICENSE) for details.
 
+## Citation
+
+If you find MARS useful, please cite it in your publications.
+
+```
+@software{MARS,
+  author = {Zihan Ding},
+  title = {MARS},
+  year = {2022},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/quantumiracle/MARS}},
+}
+```
+
 ## Some Results
 
 <img src="https://github.com/quantumiracle/MARS/blob/master/img/slimevolley-selfplay.gif" height=400 width=1000 >
