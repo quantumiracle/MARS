@@ -41,7 +41,7 @@ python general_train.py --env pettingzoo_boxing_v1 --method nfsp --save_id train
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id exploit_0 --to_exploit second
 ```
 
-More examples are provided in `./examples/` and `./unit_test/`. Note that these files need to be put under the **root** directory (`./`) to run.
+More examples are provided in [`./examples/`](https://github.com/quantumiracle/MARS/tree/master/examples) and [`./unit_test/`](https://github.com/quantumiracle/MARS/tree/master/unit_test). Note that these files need to be put under the **root** directory (`./`) to run.
 
 ### Advanced:
 
