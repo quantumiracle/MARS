@@ -9,7 +9,6 @@ WIP. Not released yet.
 
 If you have any question (propose an ISSUE if it's general problem) or want to contribute to this repository, feel free to contact me: *zhding96@gmail.com*
 
-Large-scale competitive games are generally hard, I'm still struggling with developing this repo.
 
 ## Usage Instruction
 A comprehensive usage [document](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html) is provided.
