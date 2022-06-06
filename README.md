@@ -59,7 +59,7 @@ python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id mul
 
 **Test a trained MARL model in single-agent Atari**:
 
-This function is for limited environments (like *boxing*) since not all envs in PettingZoo Atari has single-agent counterpart.
+This function is for limited environments (like *boxing*) since not all envs in PettingZoo Atari has a single-agent counterpart in OpenAI Gym.
 
 ```
 python general_test.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id test_0
