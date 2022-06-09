@@ -84,6 +84,8 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
         keep_info = False
 
     if env_type == 'slimevolley':
+        if not args.ram:
+            env_name = 'SlimeVolleyPixel-v0'
         env = gym.make(env_name)
         if env_name in ['SlimeVolleySurvivalNoFrameskip-v0', 'SlimeVolleyNoFrameskip-v0', 'SlimeVolleyPixel-v0']:
             # For image-based envs, apply following wrappers (from gym atari) to achieve pettingzoo style env, 
