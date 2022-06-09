@@ -16,9 +16,7 @@ class DQN(Agent):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.model = self._select_type(env, args).to(self.device)
-        print(self.model)
-        self.target = copy.deepcopy(self.model).to(self.device)
+        self._init_model(env, args)
         
         if args.num_process > 1:
             self.model.share_memory()
@@ -39,6 +37,11 @@ class DQN(Agent):
         self.target_update_interval = args.algorithm_spec['target_update_interval']
 
         self.update_cnt = 1
+
+    def _init_model(self, env, args):
+        self.model = self._select_type(env, args).to(self.device)
+        print(self.model)
+        self.target = copy.deepcopy(self.model).to(self.device)
 
     def _select_type(self, env, args):
         if args.num_envs == 1:

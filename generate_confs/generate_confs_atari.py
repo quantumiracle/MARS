@@ -4,7 +4,6 @@
 import os
 import yaml, copy
 
-
 target_path = '../'  # from the root of the MARS
 
 two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', \
@@ -29,6 +28,7 @@ selfplay_based_methods = {'selfplay', 'selfplay_sym', 'fictitious_selfplay', \
 # large_nets_envs = {'tennis_v2'}
 large_nets_envs = {}
 
+ram = False
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:
@@ -137,6 +137,28 @@ large_ppo_net_architecture = {
 
 }
 
+cnn_ppo_net_architecture = {
+    'feature':{
+    'hidden_dim_list': [128, 128],
+    'channel_list': [32, 16],
+    'kernel_size_list': [4, 4],
+    'stride_list': [1, 1],
+      'hidden_activation': 'ReLU',
+      'output_activation': False,
+    },
+    'policy':{
+      'hidden_dim_list': [128, 128],
+      'hidden_activation': False,
+      'output_activation': 'Softmax',
+    },
+    'value': {
+      'hidden_dim_list': [128, 128],
+      'hidden_activation': 'ReLU',
+      'output_activation': False,
+    }
+
+}
+
 standard_net_architecture = {
     'hidden_dim_list': [128, 128, 128, 128],
     'hidden_activation': 'ReLU',
@@ -148,6 +170,17 @@ large_net_architecture = {
     'hidden_activation': 'ReLU',
     'output_activation': False,
 }
+
+cnn_net_architecture = {
+    'hidden_dim_list': [128, 128],
+    'channel_list': [32, 16],
+    'kernel_size_list': [4, 4],
+    'stride_list': [1, 1],
+    'hidden_activation': 'ReLU',
+    'output_activation': False,
+}
+
+
 
 
 # creat folders for holding confs
@@ -174,12 +207,14 @@ for game in two_player_zero_sum_games:
         conf['agent_args']['algorithm_spec']['eps_decay'] = 10*conf['train_args']['max_episodes']  # decay faster
         conf['agent_args']['algorithm_spec']['multi_step'] = 1
 
+        # image-based input
+        if not ram:
+            conf['env_args']['ram'] = False
+            conf['train_args']['net_architecture'] = copy.deepcopy(cnn_net_architecture)  # copy to make original not changed        
+
         # some game specific confs
         if game in large_nets_envs:  # it requires a larger net
-            if method == 'nash_ppo':
-                conf['train_args']['net_architecture'] = large_ppo_net_architecture
-            else:
-                conf['train_args']['net_architecture'] = large_net_architecture
+            conf['train_args']['net_architecture'] = copy.deepcopy(large_net_architecture)
 
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
@@ -202,18 +237,27 @@ for game in two_player_zero_sum_games:
             conf['train_args']['marl_spec']['global_state'] = True
             conf['agent_args']['algorithm'] = 'NashPPO'
             conf['agent_args']['algorithm_spec'] = ppo_algorithm_spec
-            conf['train_args']['net_architecture'] = ppo_net_architecture
+            if not ram:
+                conf['train_args']['net_architecture'] = cnn_ppo_net_architecture
+            else:
+                conf['train_args']['net_architecture'] = large_ppo_net_architecture if game in large_nets_envs else ppo_net_architecture
 
         elif method == 'nfsp':
             conf['agent_args']['algorithm'] = 'NFSP'
-            if game in large_nets_envs:
-                conf['train_args']['net_architecture']['policy'] = large_net_architecture
+            if not ram:
+                conf['train_args']['net_architecture']['policy'] = cnn_net_architecture
             else:
-                conf['train_args']['net_architecture']['policy'] = standard_net_architecture
-                conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
+                if game in large_nets_envs:
+                    conf['train_args']['net_architecture']['policy'] = large_net_architecture
+                else:
+                    conf['train_args']['net_architecture']['policy'] = standard_net_architecture
+            conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
             conf['train_args']['train_start_frame'] = train_start_frame[game]
 
         output_path = target_path+f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
             yaml.dump(conf, outfile, default_flow_style=False, sort_keys=False)
             print(f'Dump confs: {output_path}.')
+
+        del conf
+print(general_confs)

@@ -3,7 +3,7 @@ env_args:
   env_type: slimevolley
   num_envs: 5
   against_baseline: false
-  ram: true
+  ram: false
   seed: random
 agent_args:
   algorithm: NashPPO
@@ -31,15 +31,26 @@ train_args:
       hidden_dim_list:
       - 128
       - 128
+      channel_list:
+      - 32
+      - 16
+      kernel_size_list:
+      - 4
+      - 4
+      stride_list:
+      - 1
+      - 1
       hidden_activation: ReLU
       output_activation: false
     policy:
       hidden_dim_list:
       - 128
+      - 128
       hidden_activation: false
       output_activation: Softmax
     value:
       hidden_dim_list:
+      - 128
       - 128
       hidden_activation: ReLU
       output_activation: false

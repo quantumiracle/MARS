@@ -20,8 +20,6 @@ class NashDQN(DQN):
     def __init__(self, env, args):
         super().__init__(env, args)
         self.num_envs = args.num_envs
-        self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
-        self.target = copy.deepcopy(self.model).to(self.device)
 
         if args.num_process > 1:
             self.model.share_memory()
@@ -40,6 +38,18 @@ class NashDQN(DQN):
         if DEBUG:
             self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100_5step_1033.pkl")
 
+    def _init_model(self, env, args):
+        """Overwrite DQN's models
+
+        :param env: environment
+        :type env: object
+        :param args: arguments
+        :type args: dict
+        """
+        self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
+        print(self.model)
+        self.target = copy.deepcopy(self.model).to(self.device)
+
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
             epsilon = 0.
@@ -47,11 +57,14 @@ class NashDQN(DQN):
             epsilon = self.epsilon_scheduler.get_epsilon()
         if not isinstance(state, torch.Tensor):
             state = torch.Tensor(state).to(self.device)
-        if self.num_envs == 1: # state: (agents, state_dim)
-            state = state.unsqueeze(0).view(1, -1) # change state from (agents, state_dim) to (1, agents*state_dim)
-        else: # state: (agents, envs, state_dim)
-            state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
-            state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
+        if len(state.shape) < 3:
+            if self.num_envs == 1: # state: (agents, state_dim)
+                state = state.unsqueeze(0).view(1, -1) # change state from (agents, state_dim) to (1, agents*state_dim)
+            else: # state: (agents, envs, state_dim)
+                state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
+                state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
+        else:  # image-based input
+            pass
 
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
@@ -291,4 +304,4 @@ class NashDQNBase(DQNBase):
             if len(self._observation_shape) <= 1: # not 3d image
                 self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')
             else:
-                self.net = get_model('cnn')(input_space, output_space, net_args, model_for='discrete_q')
+                self.net = get_model('impala_cnn')(input_space, output_space, net_args, model_for='discrete_q')
