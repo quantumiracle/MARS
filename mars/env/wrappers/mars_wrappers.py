@@ -119,6 +119,43 @@ class PettingzooClassic_Iterate2Parallel():
 
         return obs_dict, reward_dict, done_dict, info_dict
 
+
+class RoboSumoWrapper():
+    """ Wrap robosumo environments """
+    def __init__(self, env):
+        super(RoboSumoWrapper, self).__init__()
+        self.env = env
+        self.agents = ['first_0', 'second_0']
+        self.num_agents = len(self.agents)
+        self.observation_space = self.env.observation_space[0]
+        self.observation_spaces = {name: self.observation_space for name in self.agents}
+        self.action_space = self.env.action_space[0]
+        self.action_spaces = {name: self.action_space for name in self.agents}
+    
+    @property
+    def spec(self):
+        return self.env.spec
+
+    def reset(self):
+        obs = self.env.reset()
+        return obs
+
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
+
+    def render(self, mode='rgb_image'):
+        self.env.render(mode)
+
+    def step(self, actions):
+        # actions = np.expand_dims(actions, -1)
+        print(actions)
+        obs, reward, done, info = self.env.step(actions)
+        return obs, reward, done, info
+
+    def close(self):
+        self.env.close()
+
 class Atari2AgentWrapper():
     """ Wrap single agent OpenAI gym atari game to be multi-agent version """
     def __init__(self, env):
