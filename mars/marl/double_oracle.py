@@ -6,18 +6,19 @@ from mars.rl.agents.dqn import DQN
 from mars.rl.agents.ppo import PPO
 
 
-class NXDOMetaLearner(MetaLearner):
+class PSROSymMetaLearner(MetaLearner):
     """
+    This is a version for symmetric agents.
     Meta learn is the  for MARL meta strategy, 
     which assigns the policy update schedule on a level higher
     than policy update itself in standard RL.
 
-    Neural Extensive-Form Double Oracle (NXDO) 
+    Policy Space Response Oracle (PSRO) based on Double Oracle 
 
-    Ref: https://arxiv.org/pdf/2103.06426.pdf
+    Ref: https://arxiv.org/abs/1711.00832
     """
     def __init__(self, logger, args, save_checkpoint=True):
-        super(NXDOMetaLearner, self).__init__()
+        super(PSROSymMetaLearner, self).__init__()
         self.model_path = logger.model_dir
 
         # get names
@@ -157,9 +158,9 @@ class NXDOMetaLearner(MetaLearner):
         return avg_epi_rewards
 
 
-class NXDO2SideMetaLearner(NXDOMetaLearner):
+class PSROMetaLearner(PSROSymMetaLearner):
     """
-    This is a two-side version, which means the
+    This is a asymmetric/two-side version, which means the
     agents on both sides of the game will maintain 
     a policy sets for each of them. The update of 
     two sides follows an iterative manner.
@@ -168,12 +169,11 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
     which assigns the policy update schedule on a level higher
     than policy update itself in standard RL.
 
-    Neural Extensive-Form Double Oracle (NXDO) 
+    Policy Space Response Oracle (PSRO) based on Double Oracle 
 
-    Ref: https://arxiv.org/pdf/2103.06426.pdf
+    Ref: https://arxiv.org/abs/1711.00832
     """
     def __init__(self, logger, args, save_checkpoint=True):
-        # super(NXDO2SideMetaLearner, self).__init__(logger, args, save_checkpoint)
         self.model_path = logger.model_dir
 
         # get names
@@ -256,7 +256,7 @@ class NXDO2SideMetaLearner(NXDOMetaLearner):
                 if len(self.saved_checkpoints[self.current_learnable_model_idx])*len(self.saved_checkpoints[self.current_fixed_opponent_idx]) >= 4: # no need for NE when (1,1), (1,2)
                     # rollout with NFSP to learn meta strategy or directly calculate the Nash from the matrix
                     # self.meta_strategies, _ = NashEquilibriumECOSSolver(self.evaluation_matrix) # present implementation cannot solve non-square matrix
-                    self.meta_strategies, _ = NashEquilibriumCVXPYSolver(self.evaluation_matrix) # cvxpy can solve non-square matrix, just a bit slower, but nxdo doesn't solve Nash often
+                    self.meta_strategies, _ = NashEquilibriumCVXPYSolver(self.evaluation_matrix) # cvxpy can solve non-square matrix, just a bit slower, but psro doesn't solve Nash often
                     # the solver returns the equilibrium strategies for both players, just take one; it should be the same due to the symmetric poicy space
                     # self.meta_strategies = self.meta_strategies[self.current_learnable_model_idx]
                     logger.extr_logs.append(f'Current episode: {self.meta_step}, utitlity matrix: {self.evaluation_matrix}, Nash stratey: {self.meta_strategies}')

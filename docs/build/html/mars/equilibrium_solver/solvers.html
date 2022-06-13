@@ -116,6 +116,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-mars.equilibrium_solver.eq_ECOSsolver">ECOS Solver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-mars.equilibrium_solver.eq_GUROBIsolver">GUROBI Solver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-mars.equilibrium_solver.eq_MWUsolver">MWU Solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mars.equilibrium_solver.eq_CVXPYsolver">CVXPY Solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mars.equilibrium_solver.eq_NASHPYsolver">NASHPY Solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mars.equilibrium_solver.eq_LPsolver">PuLP Solver</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../utils/data_struct.html">Data Structure</a></li>
@@ -237,13 +240,13 @@ of the row and column player respectively.</p>
 <a class="reference external" href="https://dl.acm.org/doi/abs/10.1145/3219166.3219235?casa_token=4Vu0L6uBun8AAAAA:X2HOzU0od-wd7BhvZMyPl-duY0EZtsWzrJOBqiuE9RS-Son-u2S_pKBWz94kzXFIzu8mtlwt7UM">https://dl.acm.org/doi/abs/10.1145/3219166.3219235?casa_token=4Vu0L6uBun8AAAAA:X2HOzU0od-wd7BhvZMyPl-duY0EZtsWzrJOBqiuE9RS-Son-u2S_pKBWz94kzXFIzu8mtlwt7UM</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mars.equilibrium_solver.eq_MWUsolver.NashEquilibriumMWUSolver">
-<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_MWUsolver.</span></span><span class="sig-name descname"><span class="pre">NashEquilibriumMWUSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_MWUsolver.html#NashEquilibriumMWUSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_MWUsolver.NashEquilibriumMWUSolver" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_MWUsolver.</span></span><span class="sig-name descname"><span class="pre">NashEquilibriumMWUSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adaptive_lr_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">0.3333333333333333</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_MWUsolver.html#NashEquilibriumMWUSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_MWUsolver.NashEquilibriumMWUSolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve Nash equilibrium with multiplicative weights udpate.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mars.equilibrium_solver.eq_MWUsolver.NashEquilibriumParallelMWUSolver">
-<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_MWUsolver.</span></span><span class="sig-name descname"><span class="pre">NashEquilibriumParallelMWUSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_MWUsolver.html#NashEquilibriumParallelMWUSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_MWUsolver.NashEquilibriumParallelMWUSolver" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_MWUsolver.</span></span><span class="sig-name descname"><span class="pre">NashEquilibriumParallelMWUSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adaptive_lr_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">0.3333333333333333</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_MWUsolver.html#NashEquilibriumParallelMWUSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_MWUsolver.NashEquilibriumParallelMWUSolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve mulitple Nash equilibrium with multiplicative weights udpate.</p>
 </dd></dl>
 
@@ -251,6 +254,71 @@ of the row and column player respectively.</p>
 <dt class="sig sig-object py" id="mars.equilibrium_solver.eq_MWUsolver.get_payoff_vector">
 <span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_MWUsolver.</span></span><span class="sig-name descname"><span class="pre">get_payoff_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payoff_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opponent_policy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_MWUsolver.html#get_payoff_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_MWUsolver.get_payoff_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</div>
+<div class="section" id="module-mars.equilibrium_solver.eq_CVXPYsolver">
+<span id="cvxpy-solver"></span><h2>CVXPY Solver<a class="headerlink" href="#module-mars.equilibrium_solver.eq_CVXPYsolver" title="Permalink to this headline">¶</a></h2>
+<p>Solve equilibrium (Nash/Correlated) with Linear Programming in zero-sum games. 
+Use CVXPY (<a class="reference external" href="https://github.com/cvxpy/cvxpy">https://github.com/cvxpy/cvxpy</a>), which can be installed with: pip install cvxpy</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.equilibrium_solver.eq_CVXPYsolver.NashEquilibriumCVXPYSolver">
+<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_CVXPYsolver.</span></span><span class="sig-name descname"><span class="pre">NashEquilibriumCVXPYSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_CVXPYsolver.html#NashEquilibriumCVXPYSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_CVXPYsolver.NashEquilibriumCVXPYSolver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-mars.equilibrium_solver.eq_NASHPYsolver">
+<span id="nashpy-solver"></span><h2>NASHPY Solver<a class="headerlink" href="#module-mars.equilibrium_solver.eq_NASHPYsolver" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.equilibrium_solver.eq_NASHPYsolver.NashEquilibriaSolver">
+<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_NASHPYsolver.</span></span><span class="sig-name descname"><span class="pre">NashEquilibriaSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_NASHPYsolver.html#NashEquilibriaSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_NASHPYsolver.NashEquilibriaSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given payoff matrix/matrices, return a list of existing Nash equilibria:
+[(nash1_p1, nash1_p2), (nash2_p1, nash2_p2), …]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.equilibrium_solver.eq_NASHPYsolver.NashEquilibriumSolver">
+<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_NASHPYsolver.</span></span><span class="sig-name descname"><span class="pre">NashEquilibriumSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_NASHPYsolver.html#NashEquilibriumSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_NASHPYsolver.NashEquilibriumSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quickly solve <em>one</em> Nash equilibrium with Lemke Howson algorithm, given <em>degenerate</em> (det not equal to 0) payoff matrix.
+Ref: <a class="reference external" href="https://nashpy.readthedocs.io/en/stable/reference/lemke-howson.html#lemke-howson">https://nashpy.readthedocs.io/en/stable/reference/lemke-howson.html#lemke-howson</a></p>
+<p>TODO: sometimes give nan or wrong dimensions, check here: <a class="reference external" href="https://github.com/drvinceknight/Nashpy/issues/35">https://github.com/drvinceknight/Nashpy/issues/35</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mars.equilibrium_solver.eq_LPsolver">
+<span id="pulp-solver"></span><h2>PuLP Solver<a class="headerlink" href="#module-mars.equilibrium_solver.eq_LPsolver" title="Permalink to this headline">¶</a></h2>
+<p>Solve equilibrium (Nash/Correlated) with Linear Programming in zero-sum games.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.equilibrium_solver.eq_LPsolver.CoarseCorrelatedEquilibriumLPSolver">
+<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_LPsolver.</span></span><span class="sig-name descname"><span class="pre">CoarseCorrelatedEquilibriumLPSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_LPsolver.html#CoarseCorrelatedEquilibriumLPSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_LPsolver.CoarseCorrelatedEquilibriumLPSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve general-sum coarse correlated equilibrium (CCE) with Linear Programming, using pulp.
+If B=None, then it degrades to a zero-sum game.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.equilibrium_solver.eq_LPsolver.NashEquilibriumLPSolver">
+<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_LPsolver.</span></span><span class="sig-name descname"><span class="pre">NashEquilibriumLPSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/mars/equilibrium_solver/eq_LPsolver.html#NashEquilibriumLPSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mars.equilibrium_solver.eq_LPsolver.NashEquilibriumLPSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve general-sum Nash equilibrium with Linear Programming, using pulp.
+If B=None, then it degrades to a zero-sum game.
+If the game is asymmetric, B should not be of the same shape as A. For example, if A is (m,n), then B is (n,m).
+One LP problem per player, solve one side, then the other side (with opposite and transpose payoff matrix).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vlim: this is the absolute value range of objective variable z, it should be of a similar magnitude of the payoff values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mars.equilibrium_solver.eq_LPsolver.maketrans">
+<span class="sig-prename descclassname"><span class="pre">mars.equilibrium_solver.eq_LPsolver.</span></span><span class="sig-name descname"><span class="pre">maketrans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">x</span></em>, <em class="sig-param"><span class="pre">y=None</span></em>, <em class="sig-param"><span class="pre">z=None</span></em>, <em class="sig-param"><span class="pre">/</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mars.equilibrium_solver.eq_LPsolver.maketrans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a translation table usable for str.translate().</p>
+<p>If there is only one argument, it must be a dictionary mapping Unicode
+ordinals (integers) or characters to Unicode ordinals, strings or None.
+Character keys will be then converted to ordinals.
+If there are two arguments, they must be strings of equal length, and
+in the resulting dictionary, each character in x will be mapped to the
+character at the same position in y. If there is a third argument, it
+must be a string, whose characters will be mapped to None in the result.</p>
+</dd></dl>
 
 </div>
 </div>

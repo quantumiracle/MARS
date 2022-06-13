@@ -311,21 +311,24 @@
     <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">SelfplayBasedMethods</span><span class="p">:</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_latest_file_in_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>  <span class="c1"># only one-side model is trained/saved</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_latest_file_in_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># load from the first agent model of the two</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_latest_file_in_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># load from the first agent model of the two; most atari games does not share agent for left and right sides</span>
     <span class="k">return</span> <span class="n">file_path</span></div>
 
 <div class="viewcode-block" id="get_exploiter"><a class="viewcode-back" href="../../../mars/utils/func.html#mars.utils.func.get_exploiter">[docs]</a><span class="k">def</span> <span class="nf">get_exploiter</span><span class="p">(</span><span class="n">exploiter_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;eps_decay&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100000</span>  <span class="c1">#100000   # fixed value for fair comparison; decay faster in exploitation than training</span>
+
     <span class="k">if</span> <span class="n">exploiter_type</span> <span class="o">==</span> <span class="s1">&#39;DQN&#39;</span><span class="p">:</span>
         <span class="c1">## This two lines are critical!</span>
         <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;episodic_update&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># nash ppo has this as true, should be false since using DQN</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;update_itr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># nash-dqn has this 0.1, has to make it 1 for fair comparison with other methods</span>
-
+        <span class="n">args</span><span class="o">.</span><span class="n">update_itr</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># nash-dqn has this 0.1, has to make it 1 for fair comparison with other methods</span>
+        <span class="k">if</span> <span class="s1">&#39;PPO&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">:</span>  <span class="c1"># in PPO conf there is not network specification for DQN</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>  <span class="c1"># make exploiter same net as the value net in PPO</span>
         <span class="n">exploiter</span> <span class="o">=</span> <span class="n">DQN</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
         <span class="n">exploiter</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
         <span class="n">exploitation_args</span> <span class="o">=</span> <span class="n">args</span>
 
     <span class="k">elif</span> <span class="n">exploiter_type</span> <span class="o">==</span> <span class="s1">&#39;PPO&#39;</span><span class="p">:</span>
-        <span class="n">ppo_args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mars/confs/</span><span class="si">{</span><span class="n">game_type</span><span class="si">}</span><span class="s1">/ppo_exploit&#39;</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeWith</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">ppo_args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mars/confs/</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">env_type</span><span class="si">}</span><span class="s1">/ppo_exploit&#39;</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeWith</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">exploitation_args</span> <span class="o">=</span>  <span class="n">AttrDict</span><span class="p">(</span><span class="n">UpdateDictAwithB</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">ppo_args</span><span class="p">,</span> <span class="n">withOverwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="n">exploiter</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">exploitation_args</span><span class="p">)</span>
         <span class="n">exploiter</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
@@ -333,7 +336,7 @@
     <span class="k">return</span> <span class="n">exploiter</span><span class="p">,</span> <span class="n">exploitation_args</span></div>
 
 
-<div class="viewcode-block" id="multiprocess_buffer_register"><a class="viewcode-back" href="../../../mars/utils/func.html#mars.utils.func.multiprocess_buffer_register">[docs]</a><span class="k">def</span> <span class="nf">multiprocess_buffer_register</span><span class="p">(</span><span class="n">ori_args</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+<div class="viewcode-block" id="multiprocess_buffer_register"><a class="viewcode-back" href="../../../mars/utils/func.html#mars.utils.func.multiprocess_buffer_register">[docs]</a><span class="k">def</span> <span class="nf">multiprocess_buffer_register</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Register shared buffer for multiprocessing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -342,12 +345,26 @@
         <span class="n">BaseManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;reservoir_buffer&#39;</span><span class="p">,</span> <span class="n">ReservoirBuffer</span><span class="p">)</span>
     <span class="n">manager</span> <span class="o">=</span> <span class="n">BaseManager</span><span class="p">()</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-    <span class="n">args</span><span class="o">.</span><span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">replay_buffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ori_args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;replay_buffer_size&#39;</span><span class="p">])))</span>  
+    <span class="n">add_components</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;replay_buffer&#39;</span><span class="p">:</span> <span class="n">manager</span><span class="o">.</span><span class="n">replay_buffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;replay_buffer_size&#39;</span><span class="p">])),</span> \
+            <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;multi_step&#39;</span><span class="p">],</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">],</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>  
+    <span class="p">}</span>
+    
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;nfsp&#39;</span><span class="p">:</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">reservoir_buffer</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">reservoir_buffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ori_args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;replay_buffer_size&#39;</span><span class="p">])))</span>  
+        <span class="n">add_components</span><span class="p">[</span><span class="s1">&#39;reservoir_buffer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">reservoir_buffer</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;replay_buffer_size&#39;</span><span class="p">])))</span>  
+    
+    <span class="n">args</span><span class="o">.</span><span class="n">add_components</span> <span class="o">=</span> <span class="n">add_components</span>
 
     <span class="k">return</span> <span class="n">args</span></div>
-        
+
+<div class="viewcode-block" id="multiprocess_conf"><a class="viewcode-back" href="../../../mars/utils/func.html#mars.utils.func.multiprocess_conf">[docs]</a><span class="k">def</span> <span class="nf">multiprocess_conf</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># this means one env per process; before buffer register</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">multiprocess_buffer_register</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">max_episodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">max_episodes</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">num_process</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">multiprocess</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># this is critical for launching multiprocess</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">num_process</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="k">return</span> <span class="n">args</span></div>
 </pre></div>
 
            </div>

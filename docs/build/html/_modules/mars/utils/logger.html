@@ -266,6 +266,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extr_log_name</span> <span class="o">=</span> <span class="n">extr_log_name</span></div>
 
+<div class="viewcode-block" id="TestLogger._nan_filter"><a class="viewcode-back" href="../../../mars/utils/logger.html#mars.utils.logger.TestLogger._nan_filter">[docs]</a>    <span class="k">def</span> <span class="nf">_nan_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Filter out np.nan in a given array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">x</span></div>
+
 <div class="viewcode-block" id="TestLogger.print_and_save"><a class="viewcode-back" href="../../../mars/utils/logger.html#mars.utils.logger.TestLogger.print_and_save">[docs]</a>    <span class="k">def</span> <span class="nf">print_and_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Print out information only since it usually does not require</span>
 <span class="sd">        to save the logging in test mode. &quot;&quot;&quot;</span>
@@ -375,7 +383,7 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="se">\</span>
 <span class="s2">                episode reward: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epi_rewards</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_window</span><span class="p">:])</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, </span><span class="se">\</span>
-<span class="s2">                loss: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epi_losses</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_window</span><span class="p">:])</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="s2">                loss: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nan_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epi_losses</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_window</span><span class="p">:]))</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_logs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">log</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_logs</span><span class="p">:</span>
@@ -459,7 +467,8 @@
 <div class="viewcode-block" id="init_logger"><a class="viewcode-back" href="../../../mars/utils/logger.html#mars.utils.logger.init_logger">[docs]</a><span class="k">def</span> <span class="nf">init_logger</span><span class="p">(</span>
         <span class="n">env</span><span class="p">,</span>
         <span class="n">save_id</span><span class="p">,</span>
-        <span class="n">args</span><span class="p">:</span> <span class="n">ConfigurationDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DummyLogger</span><span class="p">,</span> <span class="n">TestLogger</span><span class="p">,</span> <span class="n">Logger</span><span class="p">]:</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">ConfigurationDict</span><span class="p">,</span> 
+        <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DummyLogger</span><span class="p">,</span> <span class="n">TestLogger</span><span class="p">,</span> <span class="n">Logger</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;A function to initiate a proper logger.</span>
 
 <span class="sd">    :param env: environment object</span>
@@ -471,12 +480,16 @@
 <span class="sd">    :return: logger</span>
 <span class="sd">    :rtype: object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">==</span> <span class="s1">&#39;GA&#39;</span><span class="p">:</span>
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">DummyLogger</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">save_id</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">TestLogger</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">save_id</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;test&#39;</span><span class="p">:</span> 
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">TestLogger</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">save_id</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">save_id</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">==</span> <span class="s1">&#39;GA&#39;</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">DummyLogger</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">save_id</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">TestLogger</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">save_id</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">save_id</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">logger</span></div>
 </pre></div>
 

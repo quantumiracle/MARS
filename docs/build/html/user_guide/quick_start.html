@@ -293,23 +293,22 @@
 <span class="kn">from</span> <span class="nn">mars.env.import_env</span> <span class="kn">import</span> <span class="n">make_env</span>
 <span class="kn">from</span> <span class="nn">mars.rl.agents</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">mars.rl.agents.multiagent</span> <span class="kn">import</span> <span class="n">MultiAgent</span>
-<span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">get_general_args</span><span class="p">,</span> <span class="n">multiprocess_buffer_register</span>
+<span class="kn">from</span> <span class="nn">mars.utils.func</span> <span class="kn">import</span> <span class="n">get_general_args</span><span class="p">,</span> <span class="n">multiprocess_conf</span>
 <span class="kn">from</span> <span class="nn">rolloutExperience</span> <span class="kn">import</span> <span class="n">rolloutExperience</span>
 <span class="kn">from</span> <span class="nn">updateModel</span> <span class="kn">import</span> <span class="n">updateModel</span>
 
 <span class="c1">### Load configurations</span>
 <span class="n">yaml_file</span> <span class="o">=</span> <span class="s1">&#39;mars_core/confs/pettingzoo/boxing_v1/pettingzoo_boxing_v1_selfplay&#39;</span>
-<span class="n">ori_args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ori_args</span><span class="o">.</span><span class="n">multiprocess</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">LoadYAML2Dict</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">toAttr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mergeDefault</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">num_envs</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span>  <span class="c1"># this will be changed to 1 later</span>
+<span class="n">multiprocess_conf</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
 
 <span class="c1">### Create env</span>
-<span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">ori_args</span><span class="p">)</span>
-<span class="n">args</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">make_env</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
 <span class="c1">### Specify models for each agent</span>
-<span class="n">args</span> <span class="o">=</span> <span class="n">multiprocess_buffer_register</span><span class="p">(</span><span class="n">ori_args</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">multiprocess_conf</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
 <span class="n">model1</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 <span class="n">model2</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
@@ -317,11 +316,11 @@
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># this env is only used for creating other intantiations</span>
 
 <span class="n">processes</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">ori_args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
 <span class="c1">### launch multiple sample rollout processes</span>
 <span class="n">info_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">pro_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ori_args</span><span class="o">.</span><span class="n">num_envs</span><span class="p">):</span>  
+<span class="k">for</span> <span class="n">pro_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">):</span>  
     <span class="n">play_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">rolloutExperience</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">info_queue</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">pro_id</span><span class="p">))</span>
     <span class="n">play_process</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># sub processes killed when main process finish</span>
     <span class="n">processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">play_process</span><span class="p">)</span>

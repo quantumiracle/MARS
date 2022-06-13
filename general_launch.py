@@ -1,3 +1,5 @@
+### This script requires Python >= 3.7 
+
 import argparse
 import cloudpickle 
 import torch
@@ -7,8 +9,8 @@ from mars.env.import_env import make_env
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
 from mars.utils.func import get_general_args, multiprocess_conf
-from rolloutExperience import rolloutExperience
-from updateModel import updateModel
+from mars.rolloutExperience import rolloutExperience
+from mars.updateModel import updateModel
 
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
@@ -56,6 +58,6 @@ def launch_rollout(env, method, save_id):
 if __name__ == '__main__':
     parser.add_argument('--env', type=str, default=None, help='environment')
     parser.add_argument('--method', type=str, default=None, help='method name')
-    parser.add_argument('--save_id', type=str, default=None, help='identification number for each run')
+    parser.add_argument('--save_id', type=str, default='0', help='identification number for each run')
     parser_args = parser.parse_args()
     launch_rollout(parser_args.env, parser_args.method, parser_args.save_id)

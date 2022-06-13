@@ -1,0 +1,527 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mars.env.mdp.arbitrary_richobs_mdp &mdash; MARS 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> MARS
+          
+
+          
+            
+            <img src="../../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/intro.html">Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">MARS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mars.env.mdp.arbitrary_richobs_mdp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mars.env.mdp.arbitrary_richobs_mdp</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">from</span> <span class="nn">gym.spaces</span> <span class="kn">import</span> <span class="n">Box</span>
+<span class="kn">import</span> <span class="nn">scipy.linalg</span>
+
+<span class="kn">from</span> <span class="nn">.utils.nash_solver</span> <span class="kn">import</span> <span class="n">NashEquilibriumECOSSolver</span>
+<span class="c1"># from utils.nash_solver import NashEquilibriumECOSSolver</span>
+
+
+<div class="viewcode-block" id="ArbitraryRichObsMDP"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.mdp.ArbitraryRichObsMDP">[docs]</a><span class="k">class</span> <span class="nc">ArbitraryRichObsMDP</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_states</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_actions_per_player</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_trans</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">given_trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">given_rewards</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span> <span class="o">=</span> <span class="n">num_states</span>  <span class="c1"># number of states for each timestep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span> <span class="o">=</span> <span class="n">num_actions_per_player</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_actions_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="o">**</span><span class="mi">2</span>
+        <span class="c1">#self.observation_space = gym.spaces.Discrete(self.num_states*(num_trans+1))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_dim</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">num_trans</span><span class="o">+</span><span class="n">num_states</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_dim</span><span class="p">,),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_transition</span> <span class="o">=</span> <span class="n">num_trans</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_trans</span> <span class="o">=</span> <span class="n">given_trans</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_rewards</span> <span class="o">=</span> <span class="n">given_rewards</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">OneHotObs</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">hadamard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1">## rock-paper-scissor test</span>
+        <span class="c1"># self.given_rewards = [</span>
+        <span class="c1">#             [[ [0], [-1], [1],</span>
+        <span class="c1">#                 [1], [0], [-1],</span>
+        <span class="c1">#                 [-1], [1], [0],]], </span>
+        <span class="c1">#                 ]</span>
+
+        <span class="c1">## A fixed simple test, with: num_states=1, num_actions_per_player=3, num_trans=2</span>
+        <span class="c1"># self.given_trans = [</span>
+        <span class="c1">#             [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],</span>
+        <span class="c1">#                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],</span>
+        <span class="c1">#                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],],</span>
+
+        <span class="c1">#                [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5],</span>
+        <span class="c1">#                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],</span>
+        <span class="c1">#                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],]] ,</span>
+
+        <span class="c1">#              [[ [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],</span>
+        <span class="c1">#                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],</span>
+        <span class="c1">#                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],],</span>
+
+        <span class="c1">#                [[0.5, 0.5], [0.5, 0.5], [0.5, 0.5],</span>
+        <span class="c1">#                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],</span>
+        <span class="c1">#                 [0.5, 0.5], [0.5, 0.5], [0.5, 0.5],]] </span>
+        <span class="c1">#                 ]</span>
+
+                    <span class="c1"># [[ [1, 0], [1, 0], [1, 0],</span>
+                    <span class="c1">#         [1, 0], [1, 0], [1, 0],</span>
+                    <span class="c1">#         [1, 0], [1, 0], [1, 0],],</span>
+
+                    <span class="c1">#     [[1, 0], [1, 0], [1, 0],</span>
+                    <span class="c1">#         [1, 0], [1, 0], [1, 0],</span>
+                    <span class="c1">#         [1, 0], [1, 0], [1, 0],]] ,</span>
+
+                    <span class="c1">#     [[ [1, 0], [1, 0], [1, 0],</span>
+                    <span class="c1">#         [1, 0], [1, 0], [1, 0],</span>
+                    <span class="c1">#         [1, 0], [1, 0], [1, 0],],</span>
+
+                    <span class="c1">#     [[1, 0], [1, 0], [1, 0],</span>
+                    <span class="c1">#         [1, 0], [1, 0], [1, 0],</span>
+                    <span class="c1">#         [1, 0], [1, 0], [1, 0],]] </span>
+                    <span class="c1">#         ]</span>
+
+        <span class="c1"># self.given_rewards = [</span>
+        <span class="c1">#             [[ [0, 0], [2, 2], [-1, -1],</span>
+        <span class="c1">#                 [-1, -1], [0,0], [1,1],</span>
+        <span class="c1">#                 [1,1], [-1,-1], [0,0],],</span>
+
+        <span class="c1">#                [[0, 0], [2, 2], [-1, -1],</span>
+        <span class="c1">#                 [-1, -1], [0,0], [1,1],</span>
+        <span class="c1">#                 [1,1], [-1,-1], [0,0],]] ,</span>
+
+        <span class="c1">#              [[ [0, 0], [2, -2], [-1, -1],</span>
+        <span class="c1">#                 [-1, -1], [0,0], [1,1],</span>
+        <span class="c1">#                 [1,1], [-1,-1], [0,0],],</span>
+
+        <span class="c1">#                [[0, 0], [2, -2], [-1, -1],</span>
+        <span class="c1">#                 [-1, -1], [0,0], [1,1],</span>
+        <span class="c1">#                 [1,1], [-1,-1], [0,0],]] </span>
+        <span class="c1">#                 ]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># if want random game, uncomment this line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_construct_game</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NEsolver</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_construct_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="c1"># shape: [dim_transition, dim_state, dim_action (p1*p2), dim_state]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trans_prob_matrices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_matrices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_random_trans_and_rewards</span><span class="p">()</span>
+        <span class="c1"># print(self.trans_prob_matrices, self.reward_matrices)</span>
+
+<div class="viewcode-block" id="ArbitraryRichObsMDP.seed"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.mdp.ArbitraryRichObsMDP.seed">[docs]</a>    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+        <span class="c1"># this seed is actually not userfull since it&#39;s after game construction</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArbitraryRichObsMDP.generate_random_trans_and_rewards"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.mdp.ArbitraryRichObsMDP.generate_random_trans_and_rewards">[docs]</a>    <span class="k">def</span> <span class="nf">generate_random_trans_and_rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SameRewardForNextState</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate arbitrary transition matrix and reward matrix.</span>
+<span class="sd">        :param SameRewardForNextState: r(s,a) if True else r(s,a,s&#39;)</span>
+<span class="sd">        :type SameRewardForNextState: bool</span>
+<span class="sd">        :return: the list of transition matrix and the list of reward matrix, </span>
+<span class="sd">        both in shape: (dim_transition, dim_state, dim_action, dim_state)</span>
+<span class="sd">        :rtype: [type]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trans_prob_matrices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">reward_matrices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_transition</span><span class="p">):</span>
+            <span class="n">trans_prob_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">reward_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">):</span>
+                <span class="n">trans_prob_matrix_for_s</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">reward_matrix_for_s</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions_total</span><span class="p">):</span>
+                    <span class="n">rands</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>
+                    <span class="n">rand_probs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rands</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">rands</span><span class="p">))</span>
+                    <span class="n">trans_prob_matrix_for_s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rand_probs</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">SameRewardForNextState</span><span class="p">:</span>  <span class="c1"># r(s,a) this reduces stochasticity in nash value estimation thus work!</span>
+                        <span class="n">rs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">)]</span>
+                        <span class="n">reward_matrix_for_s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>  <span class="c1"># r(s,a,s&#39;)</span>
+                        <span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>
+                        <span class="n">reward_matrix_for_s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
+ 
+                <span class="n">trans_prob_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trans_prob_matrix_for_s</span><span class="p">)</span>
+                <span class="n">reward_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward_matrix_for_s</span><span class="p">)</span>
+            <span class="n">trans_prob_matrices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trans_prob_matrix</span><span class="p">)</span>
+            <span class="n">reward_matrices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward_matrix</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trans_prob_matrices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_trans</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_rewards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reward_matrices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_rewards</span>
+
+        <span class="k">return</span> <span class="n">trans_prob_matrices</span><span class="p">,</span> <span class="n">reward_matrices</span></div>
+
+<div class="viewcode-block" id="ArbitraryRichObsMDP.reset"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.mdp.ArbitraryRichObsMDP.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>  <span class="c1"># randomly pick one state as initial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_obs</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">obs</span></div>
+    <span class="c1"># def step(self, a):</span>
+    <span class="c1">#     &quot;&quot;&quot;The environment transition function.</span>
+    <span class="c1">#     For a given state and action, the transition is stochastic. </span>
+    <span class="c1">#     For representation of states, considering the num_states=3 case, the first three states are (0,1,2);</span>
+    <span class="c1">#     after one transition, the possible states are (3,4,5), etc. Such that states after different numbers of </span>
+    <span class="c1">#     transitions can be distinguished. </span>
+        
+    <span class="c1">#     :param a: action</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     trans_prob = self.trans_prob_matrices[self.trans][self.state%self.num_states][a]</span>
+    <span class="c1">#     next_state = np.random.choice([i for i in range(self.num_states)], p=trans_prob) + (self.trans+1) * self.num_states</span>
+    <span class="c1">#     reward = self.reward_matrices[self.trans][self.state%self.num_states][a][next_state%self.num_states]</span>
+
+    <span class="c1">#     self.state = next_state</span>
+    <span class="c1">#     obs = self.state</span>
+    <span class="c1">#     self.trans += 1</span>
+    <span class="c1">#     done = False if self.trans &lt; self.max_transition else True</span>
+    <span class="c1">#     if self.OneHotObs:</span>
+    <span class="c1">#         return self._to_one_hot(obs), reward, done, None</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         return obs, reward, done, None</span>
+
+<div class="viewcode-block" id="ArbitraryRichObsMDP.step"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.mdp.ArbitraryRichObsMDP.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The environment transition function.</span>
+<span class="sd">        For a given state and action, the transition is stochastic. </span>
+<span class="sd">        For representation of states, considering the num_states=3 case, the first three states are (0,1,2);</span>
+<span class="sd">        after one transition, the possible states are (3,4,5), etc. Such that states after different numbers of </span>
+<span class="sd">        transitions can be distinguished. </span>
+<span class="sd">        </span>
+<span class="sd">        :param a: action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># set a state s for debugging</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">s</span>
+            
+        <span class="n">trans_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans_prob_matrices</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">][</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">next_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)],</span> <span class="n">p</span><span class="o">=</span><span class="n">trans_prob</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_matrices</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">][</span><span class="n">a</span><span class="p">][</span><span class="n">next_state</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
+        <span class="c1">#obs = self.state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_transition</span> <span class="k">else</span> <span class="kc">True</span>
+
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_obs</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">_to_one_hot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="n">one_hot_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_transition</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">one_hot_vec</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">one_hot_vec</span>
+
+<div class="viewcode-block" id="ArbitraryRichObsMDP.make_obs"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.mdp.ArbitraryRichObsMDP.make_obs">[docs]</a>    <span class="k">def</span> <span class="nf">make_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">gaussian</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">gaussian</span><span class="p">[:(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_transition</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">,[</span><span class="bp">self</span><span class="o">.</span><span class="n">max_transition</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># self.trans can be self.max_transition+1</span>
+        <span class="n">gaussian</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># self.state%self.num_states gives the ture state index at current step</span>
+        <span class="n">gaussian</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">gaussian</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="ArbitraryRichObsMDP.NEsolver"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.mdp.ArbitraryRichObsMDP.NEsolver">[docs]</a>    <span class="k">def</span> <span class="nf">NEsolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Formulas for calculating Nash equilibrium strategies and values:</span>
+<span class="sd">        1. Nash strategies: (\pi_a^*, \pi_b^*) = \min \max Q(s,a,b), </span>
+<span class="sd">            where Q(s,a,b) = r(s,a,b) + \gamma \min \max Q(s&#39;,a&#39;,b&#39;) (this is the definition of Nash Q-value);</span>
+<span class="sd">        2. Nash value: Nash V(s) = \min \max Q(s,a,b) = \pi_a^* Q(s,a,b) \pi_b^{*T}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nash_v</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nash_q</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nash_strategies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">tm</span><span class="p">,</span> <span class="n">rm</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trans_prob_matrices</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_matrices</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span> <span class="c1"># inverse enumerate </span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Nash_v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">rm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Nash_v</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># broadcast sum on rm&#39;s last dim, last one in Nash_v is for the next state</span>
+            <span class="n">nash_q_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ijk,ijk-&gt;ij&quot;</span><span class="p">,</span> <span class="n">tm</span><span class="p">,</span> <span class="n">rm</span><span class="p">)</span>  <span class="c1"># transition prob * reward for the last dimension in (state, action, next_state)</span>
+            <span class="n">nash_q_values</span> <span class="o">=</span> <span class="n">nash_q_values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">)</span> <span class="c1"># action list to matrix</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Nash_q</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nash_q_values</span><span class="p">)</span>
+            <span class="n">ne_values</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">ne_strategies</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">nash_q_value</span> <span class="ow">in</span> <span class="n">nash_q_values</span><span class="p">:</span>
+                <span class="n">ne</span> <span class="o">=</span> <span class="n">NashEquilibriumECOSSolver</span><span class="p">(</span><span class="n">nash_q_value</span><span class="p">)</span>
+                <span class="n">ne_strategies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ne</span><span class="p">)</span>
+                <span class="n">ne_value</span> <span class="o">=</span> <span class="n">ne</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="nd">@nash_q_value@ne</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">ne_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ne_value</span><span class="p">)</span>  <span class="c1"># each value is a Nash equilibrium value on one state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Nash_v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ne_values</span><span class="p">)</span>  <span class="c1"># (trans, state)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Nash_strategies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ne_strategies</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nash_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_v</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nash_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_q</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># (dim_transition, dim_state, dim_action, dim_action)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Nash_strategies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_strategies</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># (dim_transition, dim_state, #players, dim_action)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nash values of all states (from start to end): </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_v</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nash Q-values of all states (from start to end): </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_q</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nash strategies of all states (from start to end): </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_strategies</span><span class="p">)</span>
+
+        <span class="c1">## To evaluate the correctness of the above values</span>
+        <span class="c1"># for v, q, s in zip(self.Nash_v, self.Nash_q, self.Nash_strategies):</span>
+        <span class="c1">#     for vv,qq,ss in zip(v,q,s):</span>
+        <span class="c1">#         cal_v = ss[0]@qq@ss[1].T</span>
+        <span class="c1">#         print(vv, cal_v)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nash_strategies</span></div>
+
+<div class="viewcode-block" id="ArbitraryRichObsMDP.action_map"><a class="viewcode-back" href="../../../../mars/env/env.html#mars.env.mdp.ArbitraryRichObsMDP.action_map">[docs]</a>    <span class="k">def</span> <span class="nf">action_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Action map from one player to two player.</span>
+<span class="sd">            p2 0  1</span>
+<span class="sd">        p1</span>
+<span class="sd">        0      0  1</span>
+<span class="sd">        1      2  3</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="o">+</span><span class="n">action</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">a</span></div></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">mdp_wrapper</span> <span class="kn">import</span> <span class="n">MDPWrapper</span>
+
+    <span class="c1"># single agent version</span>
+    <span class="c1"># env = ArbitraryMDP()</span>
+    <span class="c1"># obs = env.reset()</span>
+    <span class="c1"># print(obs)</span>
+    <span class="c1"># done = False</span>
+    <span class="c1"># while not done:</span>
+    <span class="c1">#     obs, r, done, _ = env.step(0)</span>
+    <span class="c1">#     print(obs, r, done)</span>
+
+    <span class="c1"># two agent version</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">MDPWrapper</span><span class="p">(</span><span class="n">RichObsArbitraryMDP</span><span class="p">())</span>
+    <span class="n">nash_v</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">nash_strategies</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">NEsolver</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">nash_strategies</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nash_strategies</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="c1"># np.save(&#39;../../../data/nash_dqn_test/oracle_nash.npy&#39;, nash_strategies)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;oracle nash v star: &#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">nash_v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># the average nash value for initial states from max-player&#39;s view</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;spaces: &#39;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
+    <span class="c1"># env.render()</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">done</span><span class="p">):</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Zihan Ding.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

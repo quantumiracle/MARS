@@ -25,17 +25,11 @@ Install from the source code on github:
    pip3 install .
    pip3 install -r requirements
 
-.. Note:: this is a note
+.. Note:: Direct installation through pip is not developed yet.
 
 
-.. Tip:: tip
+.. Tip:: Better to use Python 3.7 instead of 3.6.
 
-.. WARNING:: Strong prose may provoke extreme mental exertion.
-   Reader discretion is strongly advised.
+.. WARNING:: Be careful with the verison of package PettingZoo.
 
-:math:`X_{0:5} = (X_0, X_1, X_2, X_3, X_4)`.
 
-.. math::
-   :label: This is a label
-
-   \nabla^2 f = 2
