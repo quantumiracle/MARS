@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.distributions import Categorical, Normal
+from torch.distributions import Categorical, Normal, MultivariateNormal
 import numpy as np
 import gym
 from .agent import Agent
@@ -20,7 +20,7 @@ def PPO(env, args):
     :param args: arguments
     :type args: ConfigurationDict
     """    
-    if isinstance(env.action_space, gym.spaces.Box) or isinstance(env.action_space[0], gym.spaces.Box): # discrete TODO
+    if isinstance(env.action_space, gym.spaces.Box) or isinstance(env.action_space[0], gym.spaces.Box): # continuous
         return PPOContinuous(env, args)
     else:
         return PPODiscrete(env, args)
@@ -297,7 +297,9 @@ class PPOContinuous(PPOBase):
             a = mean.detach().cpu().numpy()
             return a
         else:
-            dist = Normal(mean, std)
+            cov = torch.diag_embed(std)
+            dist = MultivariateNormal(mean, cov)
+            # dist = Normal(mean, std)
             a = dist.sample()
             logprob = dist.log_prob(a)
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
@@ -347,11 +349,11 @@ class PPOContinuous(PPOBase):
                     logits = logits.squeeze()
                 mean = logits[:, :self.action_dim]
                 std = logits[:, self.action_dim:].exp()
-                dist = Normal(mean, std)
+                # dist = Normal(mean, std)  # this does not work with multivariate
+                cov = torch.diag_embed(std)
+                dist = MultivariateNormal(mean, cov)
                 dist_entropy = dist.entropy()
                 logprob = dist.log_prob(a)
-                # pi_a = pi.gather(1,a)
-                # ratio = torch.exp(torch.log(pi_a) - torch.log(prob_a))  # a/b == exp(log(a)-log(b))
                 ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())
                 surr1 = ratio * advantage
                 surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage

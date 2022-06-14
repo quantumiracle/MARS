@@ -148,8 +148,7 @@ class RoboSumoWrapper():
         self.env.render(mode)
 
     def step(self, actions):
-        # actions = np.expand_dims(actions, -1)
-        print(actions)
+        actions = actions.squeeze()
         obs, reward, done, info = self.env.step(actions)
         return obs, reward, done, info
 
