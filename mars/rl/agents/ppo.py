@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
 import numpy as np
+import gym
 from .agent import Agent
 from ..common.networks import MLP, CNN, get_model
 from ..common.rl_utils import choose_optimizer
@@ -19,10 +20,10 @@ def PPO(env, args):
     :param args: arguments
     :type args: ConfigurationDict
     """    
-    if True: # discrete TODO
-        return PPODiscrete(env, args)
+    if isinstance(env.action_space, gym.spaces.Box) or isinstance(env.action_space[0], gym.spaces.Box): # discrete TODO
+        return PPOContinuous(env, args)
     else:
-        return None
+        return PPODiscrete(env, args)
 
 class PPODiscrete(Agent):
     """ PPO agorithm for environments with discrete action space.
@@ -257,5 +258,9 @@ class PPODiscrete(Agent):
 
 
 
-
-
+class PPOContinuous(Agent):
+    """ PPO agorithm for environments with discrete action space.
+    """ 
+    def __init__(self, env, args):
+        super().__init__(env, args)
+        pass

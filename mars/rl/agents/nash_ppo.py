@@ -28,12 +28,19 @@ class NashPPO(Agent):
             observation_space = env.observation_space[0]
         else:
             observation_space = env.observation_space
+        if isinstance(env.action_space, gym.spaces.Box) or isinstance(env.action_space[0], gym.spaces.Box):
+            policy_type = 'gaussian_policy'
+        else:
+            policy_type = 'discrete_policy'
         self.policies, self.values, self.feature_nets = [], [], []
-        try:
-            merged_action_space_dim = env.action_space.n + env.action_space.n
-        except:
-            merged_action_space_dim = env.action_space[0].n + env.action_space[0].n
-        merged_action_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(merged_action_space_dim,))
+        # try:
+        #     merged_action_space_dim = env.action_space.n + env.action_space.n
+        #     [low, high] = [env.action_space.low, env.action_space.high]
+        # except:
+        #     merged_action_space_dim = env.action_space[0].n + env.action_space[0].n
+        #     [low, high] = [env.action_space[0].low, env.action_space[0].high]
+        # merged_action_space = gym.spaces.Box(low=low, high=high, shape=(merged_action_space_dim,))
+        # merged_action_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(merged_action_space_dim,))
 
         if len(observation_space.shape) <= 1:
             feature_space = observation_space
@@ -41,7 +48,7 @@ class NashPPO(Agent):
 
             for _ in range(2):
                 self.feature_nets.append(MLP(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
-                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
+                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=policy_type).to(self.device))
                 self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
             
             self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
@@ -52,7 +59,7 @@ class NashPPO(Agent):
 
             for _ in range(2):
                 self.feature_nets.append(CNN(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
-                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device))
+                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=policy_type).to(self.device))
                 self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
 
             self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)

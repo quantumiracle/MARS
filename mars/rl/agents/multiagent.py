@@ -115,9 +115,7 @@ class MultiAgent(Agent):
             # 2. exploit:
             # not learnable agent means model to be exploited;
             # both of the above cases should have greedy action.
-            # for i in self.not_learnable_list:
-            #     greedy_list[i] = True
-            for i in range(2):
+            for i in self.not_learnable_list:
                 greedy_list[i] = True
 
         return greedy_list
@@ -301,8 +299,11 @@ class MultiAgent(Agent):
             if self.args.exploit:
                 # in EXPLOIT mode, the exploiter is learnable, thus not loaded from anywhere
                 if i in self.not_learnable_list:
-                    agent.load_model(spec_path, eval)
-                    print(f'Agent No. [{i}] loads model from: ', spec_path)
+                    try:
+                        agent.load_model(spec_path, eval)
+                        print(f'Agent No. [{i}] loads model from: ', spec_path)
+                    except:
+                        print(f'Load model failed for the {i} agent.')
             else:
                 agent.load_model(spec_path, eval)
                 print(f'Agent No. [{i}] loads model from: ', spec_path)
