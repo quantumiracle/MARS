@@ -34,7 +34,7 @@ import supersuit
 import numpy as np
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
-     Atari2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper
+     Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 from .wrappers.lasertag_wrappers import LaserTagWrapper
 from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_mdp
@@ -163,7 +163,7 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
             print(f"Error: No such env in Openai Gym: {env_name}!") 
         # may need more wrappers here, e.g. Pong-ram-v0 need scaled observation!
         # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
-        env = Atari2AgentWrapper(env)
+        env = Gym2AgentWrapper(env)
 
     elif env_type == 'safetygym':
         import safety_gym
@@ -171,7 +171,7 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
             env = gym.make(env_name)
         except:
             print(f"Error: No such env in Safety Gym: {env_name}!")       
-        env = Atari2AgentWrapper(env) 
+        env = Gym2AgentWrapper(env) 
 
     elif env_type == 'mdp':
         if env_name == 'arbitrary_mdp':

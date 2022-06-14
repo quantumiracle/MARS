@@ -24,10 +24,31 @@ class NashPPO(Agent):
         self.K_epoch = args.algorithm_spec['K_epoch']
         self.GAE = args.algorithm_spec['GAE']
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self._init_model(env, args)
+
+        if args.num_process > 1:
+            self.policies = [policy.share_memory() for policy in self.policies]
+            self.values = [value.share_memory() for value in self.values]
+            self.common_layers.share_memory()
+
+        policy_params, value_params, common_val_params, feature_net_param = [], [], [], []
+        for p, v, z in zip(self.feature_nets, self.policies, self.values):
+            policy_params += list(p.parameters())
+            value_params += list(v.parameters())
+            common_val_params += list(z.parameters())
+
+        feature_net_param += list(self.common_layers.parameters())
+        self.optimizer = choose_optimizer(args.optimizer)(policy_params + value_params + common_val_params + feature_net_param, lr=float(args.learning_rate))
+        self.mseLoss = nn.MSELoss()
+        self._num_channel = args.num_envs * (env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0])  # env.num_agents is a list when using parallel envs
+        self.data = [[] for _ in range(self._num_channel)]
+
+    def _init_model(self, env, args):
         if isinstance(env.observation_space, list):  # when using parallel envs
             observation_space = env.observation_space[0]
         else:
             observation_space = env.observation_space
+
         if isinstance(env.action_space, gym.spaces.Box) or isinstance(env.action_space[0], gym.spaces.Box):
             policy_type = 'gaussian_policy'
         else:
@@ -46,7 +67,7 @@ class NashPPO(Agent):
             feature_space = observation_space
             double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
 
-            for _ in range(2):
+            for _ in range(env.num_agents):
                 self.feature_nets.append(MLP(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
                 self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=policy_type).to(self.device))
                 self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
@@ -57,29 +78,12 @@ class NashPPO(Agent):
             feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
             double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
 
-            for _ in range(2):
+            for _ in range(env.num_agents):
                 self.feature_nets.append(CNN(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
                 self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=policy_type).to(self.device))
                 self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
 
             self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
-
-        if args.num_process > 1:
-            self.policies = [policy.share_memory() for policy in self.policies]
-            self.values = [value.share_memory() for value in self.values]
-            self.common_layers.share_memory()
-
-        policy_params, value_params, common_val_params, feature_net_param = [], [], [], []
-        for p, v, z in zip(self.feature_nets, self.policies, self.values):
-            policy_params += list(p.parameters())
-            value_params += list(v.parameters())
-            common_val_params += list(z.parameters())
-
-        feature_net_param += list(self.common_layers.parameters())
-        self.optimizer = choose_optimizer(args.optimizer)(policy_params + value_params + common_val_params + feature_net_param, lr=float(args.learning_rate))
-        self.mseLoss = nn.MSELoss()
-        self._num_channel = args.num_envs * (env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0])  # env.num_agents is a list when using parallel envs
-        self.data = [[] for _ in range(self._num_channel)]
 
     def pi(
             self,

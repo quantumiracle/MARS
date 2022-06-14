@@ -156,10 +156,10 @@ class RoboSumoWrapper():
     def close(self):
         self.env.close()
 
-class Atari2AgentWrapper():
-    """ Wrap single agent OpenAI gym atari game to be multi-agent version """
+class Gym2AgentWrapper():
+    """ Wrap single agent OpenAI gym game to be multi-agent version """
     def __init__(self, env):
-        super(Atari2AgentWrapper, self).__init__()
+        super(Gym2AgentWrapper, self).__init__()
         self.env = env
         self.agents = ['first_0']
         self.num_agents = len(self.agents)
@@ -187,6 +187,7 @@ class Atari2AgentWrapper():
         assert len(actions) >= 1
         action = actions[0]
         obs, reward, done, info = self.env.step(action)
+        obs = obs.squeeze() # for continuous gym envs it require squeeze()
         return [obs], [reward], [done], [info]
 
     def close(self):

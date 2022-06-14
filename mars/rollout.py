@@ -120,6 +120,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 action = action_to_store
 
             obs_, reward, done, info = env.step(action)  # required action shape: (envs, agents, dim)
+
             if args.render:
                 env.render()
 

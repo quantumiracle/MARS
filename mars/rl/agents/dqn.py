@@ -40,7 +40,6 @@ class DQN(Agent):
 
     def _init_model(self, env, args):
         self.model = self._select_type(env, args).to(self.device)
-        print(self.model)
         self.target = copy.deepcopy(self.model).to(self.device)
 
     def _select_type(self, env, args):
