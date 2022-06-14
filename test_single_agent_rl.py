@@ -12,7 +12,7 @@ yaml_file = 'mars/confs/gym_mountaincarcontinuousv0_ppo' #PATH TO YAML
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 
 ### Create env
-# args.render = True
+args.render = True
 env = make_env(args)
 print(env)
 

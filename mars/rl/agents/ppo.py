@@ -291,15 +291,15 @@ class PPOContinuous(PPOBase):
         if len(logits.shape) > 2:
             logits = logits.squeeze()
         mean = logits[:, :self.action_dim]
-        std = logits[:, self.action_dim:].exp()
+        var = logits[:, self.action_dim:].exp()
 
         if Greedy:
             a = mean.detach().cpu().numpy()
             return a
         else:
-            cov = torch.diag_embed(std)
+            cov = torch.diag_embed(var)
             dist = MultivariateNormal(mean, cov)
-            # dist = Normal(mean, std)
+            # dist = Normal(mean, var**0.5)
             a = dist.sample()
             logprob = dist.log_prob(a)
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
@@ -348,9 +348,9 @@ class PPOContinuous(PPOBase):
                 if len(logits.shape) > 2:
                     logits = logits.squeeze()
                 mean = logits[:, :self.action_dim]
-                std = logits[:, self.action_dim:].exp()
-                # dist = Normal(mean, std)  # this does not work with multivariate
-                cov = torch.diag_embed(std)
+                var = logits[:, self.action_dim:].exp()
+                # dist = Normal(mean, var**0.5)  # this does not work with multivariate
+                cov = torch.diag_embed(var)
                 dist = MultivariateNormal(mean, cov)
                 dist_entropy = dist.entropy()
                 logprob = dist.log_prob(a)

@@ -395,7 +395,7 @@ class NashPPOContinuous(NashPPOBase):
                 if len(logits.shape) > 2:
                     logits = logits.squeeze()
                 mean = logits[:, :self.action_dim]
-                std = logits[:, self.action_dim:].exp()
+                var = logits[:, self.action_dim:].exp()
                 
                 # feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
                 # prob = policy(feature).squeeze()  # make sure input state shape is correct
@@ -411,10 +411,10 @@ class NashPPOContinuous(NashPPOBase):
                 if len(logits.shape) > 2:
                     logits = logits.squeeze()
                 mean = logits[:, :self.action_dim]
-                std = logits[:, self.action_dim:].exp()
-                cov = torch.diag_embed(std)
+                var = logits[:, self.action_dim:].exp()
+                cov = torch.diag_embed(var)
                 dist = MultivariateNormal(mean, cov)
-                # dist = Normal(mean, std)
+                # dist = Normal(mean, var**0.5)
                 a = dist.sample()
                 logprob = dist.log_prob(a)       
 
@@ -470,8 +470,8 @@ class NashPPOContinuous(NashPPOBase):
                     if len(logits.shape) > 2:
                         logits = logits.squeeze()
                     mean = logits[:, :self.action_dim]
-                    std = logits[:, self.action_dim:].exp()
-                    cov = torch.diag_embed(std)
+                    var = logits[:, self.action_dim:].exp()
+                    cov = torch.diag_embed(var)
                     dist = MultivariateNormal(mean, cov)
 
                     dist_entropy = dist.entropy()
@@ -528,8 +528,8 @@ class NashPPOContinuous(NashPPOBase):
                     if len(logits.shape) > 2:
                         logits = logits.squeeze()
                     mean = logits[:, :self.action_dim]
-                    std = logits[:, self.action_dim:].exp()
-                    cov = torch.diag_embed(std)
+                    var = logits[:, self.action_dim:].exp()
+                    cov = torch.diag_embed(var)
                     dist = MultivariateNormal(mean, cov)
                     dist_entropy = dist.entropy()
                     logprob = dist.log_prob(a[:, i])
@@ -548,8 +548,8 @@ class NashPPOContinuous(NashPPOBase):
                     if len(logits.shape) > 2:
                         logits = logits.squeeze()
                     mean = logits[:, :self.action_dim]
-                    std = logits[:, self.action_dim:].exp()
-                    cov = torch.diag_embed(std)
+                    var = logits[:, self.action_dim:].exp()
+                    cov = torch.diag_embed(var)
                     dist = MultivariateNormal(mean, cov)
                     dist_entropy = dist.entropy()
                     logprob = dist.log_prob(a[:, i])
