@@ -12,7 +12,7 @@ Multi-agent:
         'basketball_pong_v3', 'boxing_v2', 'combat_jet_v1', 'combat_tank_v2',
         'double_dunk_v3', 'entombed_competitive_v3', 'entombed_cooperative_v3',
         'flag_capture_v2', 'foozpong_v3', 'ice_hockey_v2', 'joust_v3',
-        'mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v2',
+        'mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v3',
         'quadrapong_v4', 'space_invaders_v2', 'space_war_v2', 'surround_v2',
         'tennis_v3', 'video_checkers_v4', 'volleyball_pong_v2', 'warlords_v3',
         'wizard_of_wor_v3'
@@ -44,7 +44,7 @@ pettingzoo_envs = {
         'basketball_pong_v3', 'boxing_v2', 'combat_jet_v1', 'combat_tank_v2',
         'double_dunk_v3', 'entombed_competitive_v3', 'entombed_cooperative_v3',
         'flag_capture_v2', 'foozpong_v3', 'ice_hockey_v2', 'joust_v3',
-        'mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v2',
+        'mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v3',
         'quadrapong_v4', 'space_invaders_v2', 'space_war_v2', 'surround_v2',
         'tennis_v3', 'video_checkers_v4', 'volleyball_pong_v2', 'warlords_v3',
         'wizard_of_wor_v3'

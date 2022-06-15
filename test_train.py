@@ -11,7 +11,7 @@ game_type = ['pettingzoo', 'slimevolley'][0]
 
 game = ['boxing_v2', 'surround_v2', 'combat_jet_v1', \
         'combat_tank_v2', 'pong_v3', 'tennis_v3', \
-        'ice_hockey_v2', 'double_dunk_v3', 'SlimeVolley-v0'][1]
+        'ice_hockey_v2', 'double_dunk_v3', 'SlimeVolley-v0'][4]
 
 method = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
             'fictitious_selfplay_sym', 'nash_dqn', 'nash_dqn_exploiter', \
