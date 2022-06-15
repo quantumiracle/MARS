@@ -7,11 +7,11 @@ import argparse
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
 ### Load configurations
-game_type = ['pettingzoo', 'slimevolley'][1]
+game_type = ['pettingzoo', 'slimevolley'][0]
 
-game = ['boxing_v1', 'surround_v1', 'combat_plane_v1', \
+game = ['boxing_v2', 'surround_v1', 'combat_plane_v1', \
         'combat_tank_v1', 'pong_v2', 'tennis_v2', \
-        'ice_hockey_v1', 'double_dunk_v2', 'SlimeVolley-v0'][-1]
+        'ice_hockey_v1', 'double_dunk_v2', 'SlimeVolley-v0'][0]
 
 method = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
             'fictitious_selfplay_sym', 'nash_dqn', 'nash_dqn_exploiter', \
@@ -19,8 +19,8 @@ method = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
 
 args = get_general_args(game_type+'_'+game, method)
 args.multiprocess = False
-args.num_envs = 1
-args.device = 'cpu'
+args.num_envs = 3
+# args.device = 'cpu'
 print(args)
 args.render=False
 

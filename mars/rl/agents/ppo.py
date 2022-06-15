@@ -20,10 +20,16 @@ def PPO(env, args):
     :param args: arguments
     :type args: ConfigurationDict
     """    
-    if isinstance(env.action_space, gym.spaces.Box) or isinstance(env.action_space[0], gym.spaces.Box): # continuous
-        return PPOContinuous(env, args)
+    if isinstance(env.action_space, list):
+        if isinstance(env.action_space[0], gym.spaces.Box):
+            return PPOContinuous(env, args)
+        else:
+            return PPODiscrete(env, args)
     else:
-        return PPODiscrete(env, args)
+        if isinstance(env.action_space, gym.spaces.Box):
+            return PPOContinuous(env, args)
+        else:
+            return PPODiscrete(env, args)
 
 class PPOBase(Agent):
     """ PPO agorithm for environments with continuous action space.

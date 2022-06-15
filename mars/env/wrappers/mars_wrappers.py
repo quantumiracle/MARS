@@ -155,6 +155,62 @@ class RoboSumoWrapper():
     def close(self):
         self.env.close()
 
+
+class SSVecWrapper():
+    """ Wrap after supersuit vector env """
+    def __init__(self, env):
+        super(SSVecWrapper, self).__init__()
+        self.env = env
+        if len(env.observation_space.shape) > 1: # image, obs space: (H, W, C) -> (C, H, W)
+            old_shape = env.observation_space.shape
+            self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(old_shape[-1], old_shape[0], old_shape[1]), dtype=np.uint8)
+            self.obs_type = 'rgb_image'
+        else:
+            self.observation_space = env.observation_space
+            self.obs_type = 'ram'
+
+        self.action_space = env.action_space
+        self.num_agents = env.num_agents
+        self.agents = env.agents
+        self.true_num_envs = self.env.num_envs//self.env.num_agents
+        self.num_envs = self.true_num_envs
+    
+    @property
+    def spec(self):
+        return self.env.spec
+
+    def reset(self):
+        obs = self.env.reset() 
+        if len(self.observation_space.shape) >= 3:
+            obs = np.moveaxis(obs, -1, 1) # (N, H, W, C) -> (N, C, H, W)
+            obs = obs.reshape(self.true_num_envs, self.env.num_agents, obs.shape[-3], obs.shape[-2], obs.shape[-1])
+        else:
+            obs = obs.reshape(self.true_num_envs, self.env.num_agents, -1)
+        return obs
+
+    def seed(self, seed):
+        self.env.seed(seed)
+
+    def render(self, mode='rgb_image'):
+        self.env.render(mode)
+
+    def step(self, actions):
+        actions = actions.reshape(-1)
+        obs, reward, done, info = self.env.step(actions)
+        if len(self.observation_space.shape) >= 3:
+            obs = np.moveaxis(obs, -1, 1) # (N, H, W, C) -> (N, C, H, W)
+            obs = obs.reshape(self.true_num_envs, self.env.num_agents, obs.shape[-3], obs.shape[-2], obs.shape[-1])
+        else:
+            obs = obs.reshape(self.true_num_envs, self.env.num_agents, -1)
+        reward = reward.reshape(self.true_num_envs, self.env.num_agents)
+        done = done.reshape(self.true_num_envs, self.env.num_agents)
+        info = [info[:self.true_num_envs], info[self.true_num_envs:]]
+        return obs, reward, done, info
+
+    def close(self):
+        self.env.close()
+
+
 class Gym2AgentWrapper():
     """ Wrap single agent OpenAI gym game to be multi-agent version """
     def __init__(self, env):
@@ -348,7 +404,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
                 # for image-based env, fake the action list as one input to pass through NoopResetEnv, etc wrappers
                 obs0, reward, done, info = self.env.step(actions_)
             else:
-                obs0, reward, done, info = self.env.step(*actions_)
+                obs0, reward, done, info = self.env.step(*actions_)  # gym!=0.18 will break this line
             obs1 = info['otherObs']
             rewards[self.agents[0]] = reward
             rewards[self.agents[1]] = -reward 
@@ -371,6 +427,7 @@ class Dict2TupleWrapper():
         self.env = env
         self.num_agents = env.num_agents
         self.keep_info = keep_info  # if True keep info as dict
+        print(env.observation_space)
         if len(env.observation_space.shape) > 1: # image
             old_shape = env.observation_space.shape
             self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(old_shape[-1], old_shape[0], old_shape[1]), dtype=np.uint8)
@@ -379,8 +436,8 @@ class Dict2TupleWrapper():
             self.observation_space = env.observation_space
             self.obs_type = 'ram'
         self.action_space = env.action_space
-        self.observation_spaces = env.observation_spaces
-        self.action_spaces = env.action_spaces
+        # self.observation_spaces = env.observation_spaces
+        # self.action_spaces = env.action_spaces
         try:   # both pettingzoo and slimevolley can work with this
             self.agents = env.agents
         except:
@@ -432,8 +489,7 @@ class Dict2TupleWrapper():
         return r
 
     def seed(self, seed):
-        self.env.seed(seed)
-        # np.random.seed(seed)
+        self.env.reset(seed=seed)
 
     def render(self,):
         self.env.render()

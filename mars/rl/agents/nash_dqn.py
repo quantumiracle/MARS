@@ -25,11 +25,8 @@ class NashDQN(DQN):
             self.model.share_memory()
             self.target.share_memory()
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
-        try:
-            self.action_dims = env.action_space[0].n
-        except:
-            self.action_dims = env.action_space.n
         self.env = env
+
         # don't forget to instantiate an optimizer although there is one in DQN
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
         # lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=50, gamma=0.95)    
@@ -64,7 +61,12 @@ class NashDQN(DQN):
                 state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
                 state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
         else:  # image-based input
-            pass
+            if self.num_envs == 1: # state: (agents, C, H, W)
+                state = state.unsqueeze(0).view(1, -1, state.shape[-2], state.shape[-1])  #   (1, agents*C, H, W)
+
+            else: # state: (agents, envs, C, H, W)
+                state = torch.transpose(state, 0, 1) # state: (envs, agents, C, H, W)
+                state = state.view(state.shape[0], -1, state.shape[-2], state.shape[-1]) # state: (envs, agents*C, H, W)
 
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
@@ -76,7 +78,7 @@ class NashDQN(DQN):
                 actions, dists, ne_vs = self.compute_nash(q_values)
             except:
                 print("Invalid nash computation.")
-                actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
+                actions = np.random.randint(self.action_dim, size=(state.shape[0], self.num_agents))
 
             if DEBUG: ## test on arbitrary MDP
                 if self.update_cnt % 111 == 0: # skip some steps, 111 is not divided by number of transitions
@@ -92,12 +94,12 @@ class NashDQN(DQN):
                     else:
                         test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
                     ne_q_vs = self.model(test_states) # Nash Q values
-                    ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
+                    ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dim, self.action_dim).detach().cpu().numpy()
 
                     self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=False)
 
         else:
-            actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))  # (envs, agents)
+            actions = np.random.randint(self.action_dim, size=(state.shape[0], self.num_agents))  # (envs, agents)
         
         if self.num_envs == 1:
             actions = actions[0]  # list of actions to its item
@@ -109,7 +111,7 @@ class NashDQN(DQN):
         """
         Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
         """
-        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
+        q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
         all_actions = []
         all_dists = []
         all_ne_values = []
@@ -154,7 +156,7 @@ class NashDQN(DQN):
             return np.array(all_actions), all_dists, all_ne_values
 
     def compute_nash(self, q_values, update=False):
-        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
+        q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
         all_actions = []
         all_dists = []
         all_ne_values = []
@@ -191,7 +193,7 @@ class NashDQN(DQN):
         """
         Return actions as coarse correlated equilibrium of given payoff matrix, shape: [env, agent]
         """
-        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
+        q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
         all_actions = []
         all_dists = []
         for qs in q_tables:  # iterate over envs
@@ -208,7 +210,7 @@ class NashDQN(DQN):
                 print('Not a valid distribution from Nash equilibrium solution.')
                 print(sum(jnt_probs), sum(abs(jnt_probs)))
                 print(qs, jnt_probs)
-            sample_hist = sample_hist.reshape(self.action_dims,  self.action_dims)
+            sample_hist = sample_hist.reshape(self.action_dim,  self.action_dim)
             a = np.where(sample_hist>0)  # the actions for two players
             all_actions.append(np.array(a).reshape(-1))
             all_dists.append(jnt_probs)
@@ -232,7 +234,7 @@ class NashDQN(DQN):
         target_next_q_values_ = self.model(next_state) if DoubleTrick else self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
-        action_ = torch.LongTensor([a[0]*self.action_dims+a[1] for a in action]).to(self.device)
+        action_ = torch.LongTensor([a[0]*self.action_dim+a[1] for a in action]).to(self.device)
         q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
 
         # compute CCE or NE
@@ -251,7 +253,7 @@ class NashDQN(DQN):
 
         if DoubleTrick: # calculate next_q_value using double DQN trick
             next_dist = np.array(next_dist)  # shape: (#batch, #agent, #action)
-            target_next_q_values = target_next_q_values.reshape((-1, self.action_dims, self.action_dims))
+            target_next_q_values = target_next_q_values.reshape((-1, self.action_dim, self.action_dim))
             left_multi = np.einsum('na,nab->nb', next_dist[:, 0], target_next_q_values) # shape: (#batch, #action)
             next_q_value = np.einsum('nb,nb->n', left_multi, next_dist[:, 1]) 
 

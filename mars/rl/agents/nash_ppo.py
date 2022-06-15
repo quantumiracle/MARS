@@ -22,11 +22,17 @@ def NashPPO(env, args):
     :param args: arguments
     :type args: ConfigurationDict
     """    
-    if isinstance(env.action_space, gym.spaces.Box) or isinstance(env.action_space[0], gym.spaces.Box): # continuous
-        return NashPPOContinuous(env, args)
+    if isinstance(env.action_space, list):
+        if isinstance(env.action_space[0], gym.spaces.Box):
+            return NashPPOContinuous(env, args)
+        else:
+            return NashPPODiscrete(env, args)
     else:
-        return NashPPODiscrete(env, args)
-
+        if isinstance(env.action_space, gym.spaces.Box):
+            return NashPPOContinuous(env, args)
+        else:
+            return NashPPODiscrete(env, args)
+            
 class NashPPOBase(Agent):
     """ Nash-PPO agorithm base agent.
     """

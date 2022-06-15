@@ -9,7 +9,7 @@ Multi-agent:
     * PettingZoo: https://github.com/PettingZoo-Team/PettingZoo
         type: 'pettingzoo'
         envs: [         
-        'basketball_pong_v2', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
+        'basketball_pong_v2', 'boxing_v2', 'combat_plane_v1', 'combat_tank_v1',
         'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
         'flag_capture_v1', 'foozpong_v2', 'ice_hockey_v1', 'joust_v2',
         'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v2',
@@ -34,7 +34,7 @@ import supersuit
 import numpy as np
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
-     Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper
+     Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 from .wrappers.lasertag_wrappers import LaserTagWrapper
 from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_mdp
@@ -42,7 +42,7 @@ from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_md
 # PettingZoo envs
 pettingzoo_envs = {
     'atari': [
-        'basketball_pong_v2', 'boxing_v1', 'combat_plane_v1', 'combat_tank_v1',
+        'basketball_pong_v2', 'boxing_v2', 'combat_plane_v1', 'combat_tank_v1',
         'double_dunk_v2', 'entombed_competitive_v2', 'entombed_cooperative_v2',
         'flag_capture_v1', 'foozpong_v2', 'ice_hockey_v1', 'joust_v2',
         'mario_bros_v2', 'maze_craze_v2', 'othello_v2', 'pong_v2',
@@ -65,7 +65,7 @@ for env_type, envs in pettingzoo_envs.items():
         except:
             print("Cannot import pettingzoo env: ", env_name)
 
-def _create_single_env(env_name: str, env_type: str, args: Dict):
+def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
     """A function create a single environment object given the name and type of 
     environment, as well as necessary arguments.
 
@@ -82,6 +82,8 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
         keep_info = True  # keep_info True to maintain dict type for parallel envs (otherwise cannot pass VectorEnv wrapper)
     else:
         keep_info = False
+
+    print('type: ', env_type)
 
     if env_type == 'slimevolley':
         if not args.ram:
@@ -119,8 +121,9 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
             if obs_type == 'rgb_image':
                 env = supersuit.max_observation_v0(env, 2)  # as per openai baseline's MaxAndSKip wrapper, maxes over the last 2 frames to deal with frame flickering
                 env = supersuit.sticky_actions_v0(env, repeat_action_probability=0.25) # repeat_action_probability is set to 0.25 to introduce non-determinism to the system
+                env = supersuit.color_reduction_v0(env, mode="B")
                 env = supersuit.frame_skip_v0(env, 4) # skip frames for faster processing and less control to be compatable with gym, use frame_skip(env, (2,5))
-                env = supersuit.resize_v0(env, 84, 84) # downscale observation for faster processing
+                env = supersuit.resize_v1(env, 84, 84) # downscale observation for faster processing
                 env = supersuit.frame_stack_v1(env, 4) # allow agent to see everything on the screen despite Atari's flickering screen problem
             else:
                 env = supersuit.frame_skip_v0(env, 4)  # RAM version also need frame skip, essential for boxing-v1, etc
@@ -130,10 +133,16 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
             env = supersuit.normalize_obs_v0(env, env_min=0, env_max=1) # normalize the observation to (0,1)
 
             # assign observation and action spaces
-            env.observation_space = list(env.observation_spaces.values())[0]
-            env.action_space = list(env.action_spaces.values())[0]
-            env.agents = env_agents
-            env = Dict2TupleWrapper(env, keep_info=keep_info) 
+            if not ss_vec:
+                env.observation_space = list(env.observation_spaces.values())[0]
+                env.action_space = list(env.action_spaces.values())[0]
+                env.agents = env_agents
+                env = Dict2TupleWrapper(env, keep_info=keep_info) 
+            else:
+                env.agents = env_agents
+            
+            print(env)
+
 
         elif env_name in pettingzoo_envs['classic']:
             if env_name in ['rps_v2', 'rpsls_v1']:
@@ -142,7 +151,7 @@ def _create_single_env(env_name: str, env_type: str, args: Dict):
             else: # only rps_v1 can use parallel_env at present
                 env = eval(env_name).env()
                 env = PettingzooClassic_Iterate2Parallel(env, observation_mask=None)  # since Classic games do not support Parallel API yet
-                
+               
             env = Dict2TupleWrapper(env, keep_info=keep_info)
 
     elif env_type == 'lasertag':
@@ -206,10 +215,21 @@ def make_env(args):
     print(env_name, env_type)
 
     if args.num_process > 1 or args.num_envs == 1: # if multiprocess, each process can only work with one env separately
-        env = _create_single_env(env_name, env_type, args)  
+        env = _create_single_env(env_name, env_type, False, args)  
     else:
-        VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
-        env = VectorEnv([lambda: _create_single_env(env_name, env_type, args) for _ in range(args.num_envs)])
+        if env_type == 'pettingzoo':
+            single_env = _create_single_env(env_name, env_type, True, args)
+            vec_env = supersuit.pettingzoo_env_to_vec_env_v1(single_env)
+            env = supersuit.concat_vec_envs_v1(vec_env, args.num_envs, num_cpus=0, base_class="gym")  # true number of envs will be args.num_envs
+            # print(args.num_envs, env.num_envs)
+            env.num_agents = single_env.num_agents
+            env.agents = single_env.agents
+            env = SSVecWrapper(env)
+
+        else:
+            VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
+            env = VectorEnv([lambda: _create_single_env(env_name, env_type, False, args) for _ in range(args.num_envs)])
+        print(env)
     if isinstance(args.seed, (int, list)):
         env.seed(args.seed)  # seed can be either int or list of int
     elif args.seed == 'random':

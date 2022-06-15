@@ -7,7 +7,7 @@ import yaml, copy
 target_path = '../'  # from the root of the MARS
 
 two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', \
-                            'space_war_v1', 'pong_v2', 'basketball_pong_v2', 'boxing_v1', \
+                            'space_war_v1', 'pong_v2', 'basketball_pong_v2', 'boxing_v2', \
                             'tennis_v2', 'ice_hockey_v1', 'double_dunk_v2']
 
 methods = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
@@ -50,7 +50,7 @@ def get_method_env_marl_spec(method, env):
 # for full episode length
 # selfplay_score_deltas = { # specific for each environment
 #     'surround_v1': 16,
-#     'boxing_v1': 80,
+#     'boxing_v2': 80,
 #     'combat_plane_v1': 10, # this need to be tuned
 #     'combat_tank_v1': 10,  # this need to be tuned
 #     'space_war_v1': 10,
@@ -64,7 +64,7 @@ def get_method_env_marl_spec(method, env):
 # for truncated games with 300 episode length
 selfplay_score_deltas = { # specific for each environment
     'surround_v1': 3,
-    'boxing_v1': 80,
+    'boxing_v2': 80,
     'combat_plane_v1': 5, # this need to be tuned
     'combat_tank_v1': 5,  # this need to be tuned
     'space_war_v1': 3,
@@ -77,7 +77,7 @@ selfplay_score_deltas = { # specific for each environment
 
 train_start_frame = {  # for NFSP method only
     'slimevolley': 1000,
-    'boxing_v1': 10000,
+    'boxing_v2': 10000,
     'surround_v1': 10000,
     'combat_plane_v1': 10000,
     'combat_tank_v1': 10000,
