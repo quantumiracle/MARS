@@ -1,0 +1,47 @@
+env_args:
+  env_name: combat_jet_v1
+  env_type: pettingzoo
+  num_envs: 5
+  ram: false
+  seed: random
+agent_args:
+  algorithm: NashDQN
+  algorithm_spec:
+    dueling: false
+    replay_buffer_size: 1e5
+    gamma: 0.99
+    multi_step: 1
+    target_update_interval: 1000
+    eps_start: 1.0
+    eps_final: 0.001
+    eps_decay: 5000000
+train_args:
+  batch_size: 128
+  max_episodes: 50000
+  max_steps_per_episode: 300
+  train_start_frame: 0
+  optimizer: adam
+  learning_rate: 1e-4
+  device: gpu
+  update_itr: 1
+  log_avg_window: 20
+  log_interval: 20
+  multiprocess: false
+  net_architecture:
+    hidden_dim_list:
+    - 128
+    - 128
+    channel_list:
+    - 32
+    - 16
+    kernel_size_list:
+    - 4
+    - 4
+    stride_list:
+    - 1
+    - 1
+    hidden_activation: ReLU
+    output_activation: Softmax
+  marl_method: nash_dqn
+  marl_spec:
+    global_state: false

@@ -6,9 +6,9 @@ import yaml, copy
 
 target_path = '../'  # from the root of the MARS
 
-two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', \
-                            'space_war_v1', 'pong_v2', 'basketball_pong_v2', 'boxing_v2', \
-                            'tennis_v2', 'ice_hockey_v1', 'double_dunk_v2']
+two_player_zero_sum_games = ['combat_jet_v1', 'combat_tank_v2', 'surround_v2', \
+                            'space_war_v2', 'pong_v3', 'basketball_pong_v3', 'boxing_v2', \
+                            'tennis_v3', 'ice_hockey_v2', 'double_dunk_v3']
 
 methods = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
             'fictitious_selfplay_sym', 'nfsp', 'nash_dqn', \
@@ -49,44 +49,44 @@ def get_method_env_marl_spec(method, env):
 
 # for full episode length
 # selfplay_score_deltas = { # specific for each environment
-#     'surround_v1': 16,
+#     'surround_v2': 16,
 #     'boxing_v2': 80,
-#     'combat_plane_v1': 10, # this need to be tuned
-#     'combat_tank_v1': 10,  # this need to be tuned
-#     'space_war_v1': 10,
-#     'pong_v2': 30,
-#     'basketball_pong_v2': 30,
-#     'tennis_v2': 50,
-#     'ice_hockey_v1': 10,
-#     'double_dunk_v2': 50,
+#     'combat_jet_v1': 10, # this need to be tuned
+#     'combat_tank_v2': 10,  # this need to be tuned
+#     'space_war_v2': 10,
+#     'pong_v3': 30,
+#     'basketball_pong_v3': 30,
+#     'tennis_v3': 50,
+#     'ice_hockey_v2': 10,
+#     'double_dunk_v3': 50,
 # }
 
 # for truncated games with 300 episode length
 selfplay_score_deltas = { # specific for each environment
-    'surround_v1': 3,
+    'surround_v2': 3,
     'boxing_v2': 80,
-    'combat_plane_v1': 5, # this need to be tuned
-    'combat_tank_v1': 5,  # this need to be tuned
-    'space_war_v1': 3,
-    'pong_v2': 10,
-    'basketball_pong_v2': 5,
-    'tennis_v2': 7,
-    'ice_hockey_v1': 2,
-    'double_dunk_v2': 15,
+    'combat_jet_v1': 5, # this need to be tuned
+    'combat_tank_v2': 5,  # this need to be tuned
+    'space_war_v2': 3,
+    'pong_v3': 10,
+    'basketball_pong_v3': 5,
+    'tennis_v3': 7,
+    'ice_hockey_v2': 2,
+    'double_dunk_v3': 15,
 }
 
 train_start_frame = {  # for NFSP method only
     'slimevolley': 1000,
     'boxing_v2': 10000,
-    'surround_v1': 10000,
-    'combat_plane_v1': 10000,
-    'combat_tank_v1': 10000,
-    'space_war_v1': 10000,
-    'pong_v2': 10000,
-    'basketball_pong_v2': 10000,
-    'tennis_v2': 10000,
-    'ice_hockey_v1': 10000,
-    'double_dunk_v2': 10000,
+    'surround_v2': 10000,
+    'combat_jet_v1': 10000,
+    'combat_tank_v2': 10000,
+    'space_war_v2': 10000,
+    'pong_v3': 10000,
+    'basketball_pong_v3': 10000,
+    'tennis_v3': 10000,
+    'ice_hockey_v2': 10000,
+    'double_dunk_v3': 10000,
 }
 
 
@@ -218,7 +218,7 @@ for game in two_player_zero_sum_games:
 
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
-            conf['env_args']['num_envs'] = 1
+            # conf['env_args']['num_envs'] = 1
             conf['train_args']['max_episodes'] = 50000
             conf['agent_args']['algorithm_spec']['eps_decay'] = 100*conf['train_args']['max_episodes'] # 1000000  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1
