@@ -20,10 +20,16 @@ MARS is still under-development and not prepared to release yet. You may find it
 
 
 ## Installation
-Use Python 3.7
+Use Python 3.7 (Python 3.6 is not supported after Pettingzoo 1.12)
 ```
 pip install -r requirements.txt
 ```
+
+Run the following for installing [Atari ROM](https://github.com/Farama-Foundation/AutoROM) as a dependency of PettingZoo:
+```
+https://github.com/Farama-Foundation/AutoROM
+```
+
 
 ## Quick Usage
 
