@@ -222,14 +222,18 @@ class MultiAgent(Agent):
             [states, actions, rewards, next_states, logprobs, dones] = samples
             if self.args.num_envs > 1:  # Used when num_envs > 1. 
                 assert self.args.marl_spec['global_state']  # this has to be true for Nash PPO
-                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[:, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
-                
-            else:  # when num_envs = 1 
-                if self.args.marl_spec['global_state']: 
-                    samples = [[np.array(states).reshape(-1), actions, rewards, np.array(next_states).reshape(-1), np.array(logprobs).reshape(-1), np.all(dones)]]
-                else:
-                    samples = [[np.array(states[0]), actions, rewards, np.array(next_states[0]), logprobs, np.all(dones)]]
+                if self.args.ram: # shape of state: (agents, envs, obs_dim)
+                    samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[:, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
+                else: # shape of state: (agents, envs, C, H, W)
+                    samples = [[np.array(states)[:, j], actions[:, j], rewards[:, j], np.array(next_states)[:, j], np.array(logprobs[:, j]), np.any(d)] for j, d in enumerate(np.array(dones).T)]
 
+            else:  # when num_envs = 1 
+                assert self.args.marl_spec['global_state']  # this has to be true for Nash PPO
+                if self.args.ram:
+                        samples = [[np.array(states).reshape(-1), actions, rewards, np.array(next_states).reshape(-1), np.array(logprobs).reshape(-1), np.all(dones)]]
+                else:  # TODO
+                    samples = [[np.array(states), actions, rewards, np.array(next_states), np.array(logprobs), np.all(dones)]]
+ 
             # one model for all agents, the model is the first one
             # of self.agents, it directly stores the sample constaining all
             for agent in self.agents[:1]: # actually only one agent in list

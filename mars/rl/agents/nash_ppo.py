@@ -50,6 +50,7 @@ class NashPPOBase(Agent):
         self.vf_coeff = float(args.algorithm_spec['vf_coeff'])
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self._init_model(env, args)
+        self.args = args
 
         if args.num_process > 1:
             self.policies = [policy.share_memory() for policy in self.policies]
@@ -235,7 +236,10 @@ class NashPPODiscrete(NashPPOBase):
         logprobs = []
         if Greedy:
             for policy, feature_net, state_per_agent in zip(self.policies, self.feature_nets, s):
-                feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
+                if self.args.ram:
+                    feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
+                else:
+                    feature = feature_net(torch.from_numpy(np.array(state_per_agent)).float().to(self.device))
                 prob = policy(feature).squeeze()  # make sure input state shape is correct
                 a = torch.argmax(prob, dim=-1)
                 # dist = Categorical(prob)
@@ -246,7 +250,10 @@ class NashPPODiscrete(NashPPOBase):
             return actions
         else:
             for policy, feature_net, state_per_agent in zip(self.policies, self.feature_nets, s):
-                feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
+                if self.args.ram:
+                    feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
+                else:
+                    feature = feature_net(torch.from_numpy(np.array(state_per_agent)).float().to(self.device))
                 prob = policy(feature).squeeze()  # make sure input state shape is correct
                 dist = Categorical(prob)
                 a = dist.sample()
@@ -264,8 +271,12 @@ class NashPPODiscrete(NashPPOBase):
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
 
             # need to prcess the samples, separate for agents
-            s_ = s.view(s.shape[0], 2, -1)
-            s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)
+            if self.args.ram:
+                s_ = s.view(s.shape[0], 2, -1)
+                s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)
+            else:
+                s_ = s  # shape: (batch, agents, envs, C, H, W)
+                s_prime_ = s_prime
 
             for _ in range(self.K_epoch):
                 loss = 0.0
@@ -276,8 +287,12 @@ class NashPPODiscrete(NashPPOBase):
                 # standard PPO
                 for i in range(2):  # for each agent
                     # shared feature extraction
-                    feature_x = self.feature_nets[i](s_[:, i, :])
-                    feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
+                    if self.args.ram:
+                        feature_x = self.feature_nets[i](s_[:, i, :])
+                        feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
+                    else:
+                        feature_x = self.feature_nets[i](s_[:, i])
+                        feature_x_prime = self.feature_nets[i](s_prime_[:, i])
 
                     vs = self.v(feature_x, i)  # take the state for the specific agent
                     vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
@@ -443,8 +458,12 @@ class NashPPOContinuous(NashPPOBase):
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
 
             # need to prcess the samples, separate for agents
-            s_ = s.view(s.shape[0], 2, -1)
-            s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)
+            if self.args.ram:
+                s_ = s.view(s.shape[0], 2, -1)
+                s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)
+            else:
+                s_ = s  # shape: (batch, agents, envs, C, H, W)
+                s_prime_ = s_prime                
 
             for _ in range(self.K_epoch):
                 loss = 0.0
@@ -455,8 +474,12 @@ class NashPPOContinuous(NashPPOBase):
                 # standard PPO
                 for i in range(2):  # for each agent
                     # shared feature extraction
-                    feature_x = self.feature_nets[i](s_[:, i, :])
-                    feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
+                    if self.args.ram:
+                        feature_x = self.feature_nets[i](s_[:, i, :])
+                        feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
+                    else:
+                        feature_x = self.feature_nets[i](s_[:, i])
+                        feature_x_prime = self.feature_nets[i](s_prime_[:, i])                        
 
                     vs = self.v(feature_x, i)  # take the state for the specific agent
                     vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)

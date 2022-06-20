@@ -26,6 +26,7 @@ class NashDQN(DQN):
             self.target.share_memory()
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
         self.env = env
+        self.args = args
 
         # don't forget to instantiate an optimizer although there is one in DQN
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
@@ -54,7 +55,7 @@ class NashDQN(DQN):
             epsilon = self.epsilon_scheduler.get_epsilon()
         if not isinstance(state, torch.Tensor):
             state = torch.Tensor(state).to(self.device)
-        if len(state.shape) < 3:
+        if self.args.ram:
             if self.num_envs == 1: # state: (agents, state_dim)
                 state = state.unsqueeze(0).view(1, -1) # change state from (agents, state_dim) to (1, agents*state_dim)
             else: # state: (agents, envs, state_dim)
