@@ -42,11 +42,14 @@ class PPOBase(Agent):
         self.eps_clip = float(args.algorithm_spec['eps_clip'])
         self.K_epoch = args.algorithm_spec['K_epoch']
         self.GAE = args.algorithm_spec['GAE']
+        self.max_grad_norm = float(args.algorithm_spec['max_grad_norm'])
+        self.entropy_coeff = float(args.algorithm_spec['entropy_coeff'])
+        self.vf_coeff = float(args.algorithm_spec['vf_coeff'])
+
         self._init_model(env, args)
 
         if args.num_process > 1:
             self.policy.share_memory()
-            self.policy_old.share_memory()
             self.value.share_memory()  
 
         self.optimizer = choose_optimizer(args.optimizer)(list(self.value.parameters())+list(self.policy.parameters()), lr=float(args.learning_rate))
@@ -58,14 +61,10 @@ class PPOBase(Agent):
 
         if len(self.observation_space.shape) <= 1:
             self.policy = MLP(env.observation_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
-            self.policy_old = copy.deepcopy(self.policy).to(self.device)
-            # self.policy_old.load_state_dict(self.policy.state_dict())
             self.value = MLP(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         else:
             self.policy = CNN(env.observation_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
-            self.policy_old = copy.deepcopy(self.policy).to(self.device)
-            # self.policy_old.load_state_dict(self.policy.state_dict())
             self.value = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
     def pi(
@@ -96,7 +95,6 @@ class PPOBase(Agent):
     
     def reinit(self,):
         self.policy.reinit()
-        self.policy_old.reinit()
         self.value.reinit()
 
     def store(self, transitions: SampleType) -> None:
@@ -105,9 +103,6 @@ class PPOBase(Agent):
         :param transitions: a list of samples from different environments (if using parallel env)
         :type transitions: SampleType
         """        
-        # self.data.append(transition)
-        # self.data.extend(transitions)
-
         # If several transitions are pushed at the same time,
         # they are not from the same trajectory, therefore they need
         # to be stored separately since PPO is on-policy.
@@ -166,10 +161,7 @@ class PPOBase(Agent):
 
     def load_model(self, path=None):
         self.policy.load_state_dict(torch.load(path+'_policy'))
-        self.policy_old.load_state_dict(self.policy.state_dict())  # important
-
         self.value.load_state_dict(torch.load(path+'_value'))
-
 
 
 class PPODiscrete(PPOBase):
@@ -216,8 +208,9 @@ class PPODiscrete(PPOBase):
                     discounted_r = reward + self.gamma * discounted_r
                     rewards.insert(0, discounted_r)  # insert in front, cannot use append
 
-                rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
-                rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
+                ## reward normalization is not common: by Costa Huang
+                # rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
+                # rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
             
             for _ in range(self.K_epoch):
                 vs = self.v(s)
@@ -246,14 +239,13 @@ class PPODiscrete(PPOBase):
                 dist = Categorical(pi)
                 dist_entropy = dist.entropy()
                 logprob = dist.log_prob(a)
-                # pi_a = pi.gather(1,a)
-                # ratio = torch.exp(torch.log(pi_a) - torch.log(prob_a))  # a/b == exp(log(a)-log(b))
                 ratio = torch.exp(logprob - oldlogprob)
                 surr1 = ratio * advantage
                 surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-                loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
-                # loss = -torch.min(surr1, surr2) + 0.5*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
-                
+                # loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
+                loss = -torch.min(surr1, surr2) + self.vf_coeff*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - self.entropy_coeff*dist_entropy
+
+                ## for debug
                 # print('vs: ', vs.shape, vs)
                 # print('logprob', logprob.shape, logprob)
                 # print('oldlogprob', oldlogprob.shape, oldlogprob)
@@ -263,14 +255,13 @@ class PPODiscrete(PPOBase):
                 self.optimizer.zero_grad()
                 mean_loss = loss.mean()
                 mean_loss.backward()
+                nn.utils.clip_grad_norm_(list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
                 self.optimizer.step()
 
                 total_loss += mean_loss.item()
 
         self.data = [[] for _ in range(self._num_channel)]
 
-        # Copy new weights into old policy:
-        self.policy_old.load_state_dict(self.policy.state_dict())
         return total_loss
 
 class PPOContinuous(PPOBase):
@@ -363,8 +354,8 @@ class PPOContinuous(PPOBase):
                 ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())
                 surr1 = ratio * advantage
                 surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-                loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
-                # loss = -torch.min(surr1, surr2) + 0.5*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
+                # loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - self.entropy_coeff*dist_entropy
+                loss = -torch.min(surr1, surr2) + self.vf_coeff*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - self.entropy_coeff*dist_entropy
                 
                 # print('vs: ', vs.squeeze(dim=-1).shape, vs_target.shape)
                 # print('logprob', logprob.shape, ratio.shape, surr1.shape, surr2.shape)
@@ -375,12 +366,11 @@ class PPOContinuous(PPOBase):
                 self.optimizer.zero_grad()
                 mean_loss = loss.mean()
                 mean_loss.backward()
+                nn.utils.clip_grad_norm_(list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
                 self.optimizer.step()
 
                 total_loss += mean_loss.item()
 
         self.data = [[] for _ in range(self._num_channel)]
 
-        # Copy new weights into old policy:
-        self.policy_old.load_state_dict(self.policy.state_dict())
         return total_loss

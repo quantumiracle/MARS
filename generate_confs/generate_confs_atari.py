@@ -97,6 +97,11 @@ ppo_algorithm_spec = { # specs for PPO alg.
     'eps_clip': 0.2,
     'K_epoch': 4,
     'GAE': True,
+    'max_grad_norm': 0.5,
+    'entropy_coeff': 0.01,
+    'vf_coeff': 0.5,
+    'policy_loss_coeff': 0.08,
+
 }
 
 ppo_net_architecture = {

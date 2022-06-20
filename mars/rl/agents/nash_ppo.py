@@ -44,6 +44,10 @@ class NashPPOBase(Agent):
         self.eps_clip = float(args.algorithm_spec['eps_clip'])
         self.K_epoch = args.algorithm_spec['K_epoch']
         self.GAE = args.algorithm_spec['GAE']
+        self.policy_loss_coeff = args.algorithm_spec['policy_loss_coeff']
+        self.max_grad_norm = float(args.algorithm_spec['max_grad_norm'])
+        self.entropy_coeff = float(args.algorithm_spec['entropy_coeff'])
+        self.vf_coeff = float(args.algorithm_spec['vf_coeff'])
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self._init_model(env, args)
 
@@ -59,7 +63,8 @@ class NashPPOBase(Agent):
             common_val_params += list(z.parameters())
 
         feature_net_param += list(self.common_layers.parameters())
-        self.optimizer = choose_optimizer(args.optimizer)(policy_params + value_params + common_val_params + feature_net_param, lr=float(args.learning_rate))
+        self.all_params = policy_params + value_params + common_val_params + feature_net_param
+        self.optimizer = choose_optimizer(args.optimizer)(self.all_params, lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
         self._num_channel = args.num_envs * (env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0])  # env.num_agents is a list when using parallel envs
         self.data = [[] for _ in range(self._num_channel)]
@@ -298,14 +303,14 @@ class NashPPODiscrete(NashPPOBase):
                     ratio = torch.exp(logprob - oldlogprob[:, i])
                     surr1 = ratio * advantage
                     surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
-                    ppo_loss = -torch.min(surr1, surr2) + F.mse_loss(vs.squeeze(dim=-1),
-                                                                     vs_target.detach()) - 0.01 * dist_entropy  # TODO vec + scalar + vec, is this valid?
+                    ppo_loss = -torch.min(surr1, surr2) + self.vf_coeff * F.mse_loss(vs.squeeze(dim=-1),
+                                                                     vs_target.detach()) - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
                     ppo_loss = ppo_loss.mean()
                     ppo_loss_total += ppo_loss
                     self.optimizer.zero_grad()
                     ppo_loss.backward()
+                    nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
-                    # loss += ppo_loss
                     total_loss += ppo_loss.item()
 
                 # loss for common layers (value function)
@@ -360,10 +365,11 @@ class NashPPODiscrete(NashPPOBase):
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss2 = torch.min(surr1, surr2).mean()
 
-                loss = 0.08 * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
+                loss = self.policy_loss_coeff * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
 
                 self.optimizer.zero_grad()
                 loss.backward()
+                nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
                 total_loss += loss.item()
         self.data = [[] for _ in range(self._num_channel)]
@@ -487,12 +493,13 @@ class NashPPOContinuous(NashPPOBase):
                     surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
                     # print(surr1.shape, surr2.shape, vs.squeeze(dim=-1).shape, vs_target.shape, ratio.shape, advantage.shape, dist_entropy.shape)
 
-                    ppo_loss = -torch.min(surr1, surr2) + F.mse_loss(vs.squeeze(dim=-1),
-                                                                     vs_target.detach()) - 0.01 * dist_entropy  # TODO vec + scalar + vec, is this valid?
+                    ppo_loss = -torch.min(surr1, surr2) + self.vf_coeff * F.mse_loss(vs.squeeze(dim=-1),
+                                                                     vs_target.detach()) - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
                     ppo_loss = ppo_loss.mean()
                     ppo_loss_total += ppo_loss
                     self.optimizer.zero_grad()
                     ppo_loss.backward()
+                    nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
                     # loss += ppo_loss
                     total_loss += ppo_loss.item()
@@ -565,10 +572,11 @@ class NashPPOContinuous(NashPPOBase):
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss2 = torch.min(surr1, surr2).mean()
 
-                loss = 0.08 * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
+                loss = self.policy_loss_coeff * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
 
                 self.optimizer.zero_grad()
                 loss.backward()
+                nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
                 total_loss += loss.item()
         self.data = [[] for _ in range(self._num_channel)]

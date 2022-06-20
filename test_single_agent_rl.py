@@ -5,8 +5,8 @@ from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
 
 
-# yaml_file = 'mars/confs/gym_cartpolev1_ppo' #PATH TO YAML
-yaml_file = 'mars/confs/gym_mountaincarcontinuousv0_ppo' #PATH TO YAML
+yaml_file = 'mars/confs/gym_cartpolev1_ppo' #PATH TO YAML
+# yaml_file = 'mars/confs/gym_mountaincarcontinuousv0_ppo' #PATH TO YAML
 # yaml_file = 'mars/confs/gym_carracingv1_ppo' #PATH TO YAML
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
