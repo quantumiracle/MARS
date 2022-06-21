@@ -12,7 +12,7 @@ If you have any question (propose an ISSUE if it's general problem) or want to c
 
 ## Usage Instruction
 
-MARS is mainly built for solving mult-agent Atari games in [PettingZoo](https://www.pettingzoo.ml/atari).
+MARS is mainly built for solving **mult-agent Atari games** in [PettingZoo](https://www.pettingzoo.ml/atari).
 
 A comprehensive usage [document](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html) is provided.
 
