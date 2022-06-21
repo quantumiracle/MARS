@@ -42,7 +42,17 @@ https://github.com/Farama-Foundation/AutoROM
 **Train with MARL algorithm**:
 
 ```bash
+# PettingZoo Boxing_v1, neural fictitious self-play
 python general_train.py --env pettingzoo_boxing_v1 --method nfsp --save_id train_0
+
+# PettingZoo Pong_v2, fictitious self-play
+python general_train.py --env pettingzoo_pong_v2 --method fictitious_selfplay --save_id train_1
+
+# PettingZoo Surround_v1, policy space response oracle
+python general_train.py --env pettingzoo_surround_v1 --method prso --save_id train_3
+
+# SlimeVolley SlimeVolley-v0, self-play
+python general_train.py --env slimevolley_SlimeVolley-v0 --method selfplay --save_id train_4
 ```
 
 **Exploit a trained model**:
