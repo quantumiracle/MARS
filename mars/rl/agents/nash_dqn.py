@@ -307,4 +307,4 @@ class NashDQNBase(DQNBase):
             if len(self._observation_shape) <= 1: # not 3d image
                 self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')
             else:
-                self.net = get_model('impala_cnn')(input_space, output_space, net_args, model_for='discrete_q')
+                self.net = get_model('cnn')(input_space, output_space, net_args, model_for='discrete_q')

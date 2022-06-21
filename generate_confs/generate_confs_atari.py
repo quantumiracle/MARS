@@ -147,7 +147,7 @@ cnn_ppo_net_architecture = {
     'hidden_dim_list': [128, 128],
     'channel_list': [32, 16],
     'kernel_size_list': [4, 4],
-    'stride_list': [1, 1],
+    'stride_list': [4, 2],
       'hidden_activation': 'ReLU',
       'output_activation': False,
     },
@@ -180,7 +180,7 @@ cnn_net_architecture = {
     'hidden_dim_list': [128, 128],
     'channel_list': [32, 16],
     'kernel_size_list': [4, 4],
-    'stride_list': [1, 1],
+    'stride_list': [4, 2],
     'hidden_activation': 'ReLU',
     'output_activation': False,
 }

@@ -15,11 +15,11 @@ game = ['boxing_v2', 'surround_v2', 'combat_jet_v1', \
 
 method = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
             'fictitious_selfplay_sym', 'nash_dqn', 'nash_dqn_exploiter', \
-            'nash_dqn_factorized', 'nfsp', 'psro', 'psro_sym', 'nash_ppo'][-1] 
+            'nash_dqn_factorized', 'nfsp', 'psro', 'psro_sym', 'nash_ppo'][4] 
 
 args = get_general_args(game_type+'_'+game, method)
 args.multiprocess = False
-args.num_envs = 2
+args.num_envs = 5
 # args.device = 'cpu'
 print(args)
 args.render=False
