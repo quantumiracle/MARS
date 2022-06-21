@@ -11,12 +11,16 @@ If you have any question (propose an ISSUE if it's general problem) or want to c
 
 
 ## Usage Instruction
+
+MARS is mainly built for solving mult-agent Atari games in [PettingZoo](https://www.pettingzoo.ml/atari).
+
 A comprehensive usage [document](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html) is provided.
 
 Some [tutorials](https://github.com/quantumiracle/MARS/tree/master/tutorial) are provided for simple MARL concepts, including building an arbitrary matrix game, solving the Nash equilibrium with different algorithms for matrix games, building arbitrary Markov game, solving Markov games, etc. 
 
 
 MARS is still under-development and not prepared to release yet. You may find it hard to clone b.c. the author is testing algorithms with some models hosted on Git.
+
 
 
 ## Installation
@@ -96,7 +100,7 @@ MARL Algorithms to do:
 - [x] Self-Play
 - [x] [Fictitious Self-Play](http://proceedings.mlr.press/v37/heinrich15.pdf)
 - [x] [Neural Fictitious Self-Play](https://arxiv.org/abs/1603.01121)
-- [x] Policy Space Responce Oracle
+- [x] [Policy Space Responce Oracle](https://proceedings.neurips.cc/paper/2017/file/3323fe11e9595c09af38fe67567a9394-Paper.pdf)
 - [ ] [Joint Policy Space Responce Oracle](http://proceedings.mlr.press/v139/marris21a.html)
 - [ ] [MADDPG](https://arxiv.org/abs/1706.02275)
 - [ ] QMIX
@@ -106,10 +110,10 @@ MARL Algorithms to do:
 - [x] Nash-DQN-Exploiter
  -->
   Supported environments:
-- [x] Openai Gym
-- [x] PettingZoo
-- [x] LaserTag
-- [x] SlimeVolley
+- [x] [Openai Gym](https://github.com/openai/gym)
+- [x] [PettingZoo]((https://www.pettingzoo.ml/atari))
+- [x] [LaserTag](https://github.com/younggyoseo/lasertag-v0)
+- [x] [SlimeVolley](https://github.com/hardmaru/slimevolleygym)
 - [ ] SMAC
 
 ## License
