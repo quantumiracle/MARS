@@ -253,7 +253,10 @@ class NashPPODiscrete(NashPPOBase):
                 if self.args.ram:
                     feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
                 else:
-                    feature = feature_net(torch.from_numpy(np.array(state_per_agent)).float().to(self.device))
+                    if len(state_per_agent.shape) <= 3:
+                        feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
+                    else:
+                        feature = feature_net(torch.from_numpy(np.array(state_per_agent)).float().to(self.device))
                 prob = policy(feature).squeeze()  # make sure input state shape is correct
                 dist = Categorical(prob)
                 a = dist.sample()
