@@ -219,7 +219,7 @@ def make_env(args):
         if env_type == 'pettingzoo':
             single_env = _create_single_env(env_name, env_type, True, args)
             vec_env = supersuit.pettingzoo_env_to_vec_env_v1(single_env)
-            env = supersuit.concat_vec_envs_v1(vec_env, args.num_envs, num_cpus=3, base_class="gym")  # true number of envs will be args.num_envs
+            env = supersuit.concat_vec_envs_v1(vec_env, args.num_envs, num_cpus=0, base_class="gym")  # true number of envs will be args.num_envs
             # print(args.num_envs, env.num_envs)
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents

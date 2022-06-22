@@ -97,7 +97,7 @@ class TestLogger():
         print(
             f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
                 avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
-                last time consumption/overall training time: {time_taken}s / {current_time-self.init_time} s'
+                last time consumption/overall training time: {time_taken:.2f}s / {current_time-self.init_time:.2f} s'
         )
 
         for k in self.keys:
@@ -189,7 +189,7 @@ class Logger(TestLogger):
         print(
             f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
                 avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
-                last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
+                last time consumption/overall running time: {time_taken:.2f}s / {current_time-self.init_time:.2f} s'
         )
 
         for k in self.keys:
@@ -259,7 +259,7 @@ class DummyLogger(Logger):
             f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
                 avg. reward: {np.mean(self.epi_rewards[-self.avg_window:]):.4f}, \
                 avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
-                last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
+                last time consumption/overall running time: {time_taken:.2f}s / {current_time-self.init_time:.2f} s'
         )
 
 

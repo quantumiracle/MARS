@@ -51,6 +51,7 @@ class NashPPOBase(Agent):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self._init_model(env, args)
         self.args = args
+        print(self.feature_nets, self.policies, self.values, self.common_layers,)
 
         if args.num_process > 1:
             self.policies = [policy.share_memory() for policy in self.policies]
@@ -289,29 +290,30 @@ class NashPPODiscrete(NashPPOBase):
 
                 # standard PPO
                 for i in range(2):  # for each agent
-                    # shared feature extraction
-                    if self.args.ram:
-                        feature_x = self.feature_nets[i](s_[:, i, :])
-                        feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
-                    else:
-                        feature_x = self.feature_nets[i](s_[:, i])
-                        feature_x_prime = self.feature_nets[i](s_prime_[:, i])
+                    with torch.no_grad():
+                        # shared feature extraction
+                        if self.args.ram:
+                            feature_x = self.feature_nets[i](s_[:, i, :])
+                            feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
+                        else:
+                            feature_x = self.feature_nets[i](s_[:, i])
+                            feature_x_prime = self.feature_nets[i](s_prime_[:, i])
 
-                    vs = self.v(feature_x, i)  # take the state for the specific agent
-                    vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
-                    assert vs_prime.shape == done_mask.shape
-                    r = r.detach()
-                    vs_target = r[:, i] + self.gamma * vs_prime * done_mask
-                    delta = vs_target - vs.squeeze(dim=-1)
-                    advantage_lst = []
-                    advantage = 0.0
-                    for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                        advantage = self.gamma * self.lmbda * advantage + delta_t
-                        advantage_lst.append(advantage)
-                    advantage_lst.reverse()
-                    advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
-                    advantage = advantage.detach()
+                        vs = self.v(feature_x, i)  # take the state for the specific agent
+                        vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
+                        assert vs_prime.shape == done_mask.shape
+                        r = r.detach()
+                        vs_target = r[:, i] + self.gamma * vs_prime * done_mask
+                        delta = vs_target - vs.squeeze(dim=-1)
+                        advantage_lst = []
+                        advantage = 0.0
+                        for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
+                            advantage = self.gamma * self.lmbda * advantage + delta_t
+                            advantage_lst.append(advantage)
+                        advantage_lst.reverse()
+                        advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                        advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+                        advantage = advantage.detach()
 
                     # value and policy loss for one agent
                     pi = self.pi(feature_x, i)
@@ -347,17 +349,18 @@ class NashPPODiscrete(NashPPOBase):
                 common_layer_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach()).mean()
 
                 # calculate generalized advantage with common layer value
-                delta = vs_target - vs.squeeze(dim=-1)
-                delta = delta.detach()
-                advantage_lst = []
-                advantage = 0.0
-                for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                    advantage = self.gamma * self.lmbda * advantage + delta_t
-                    advantage_lst.append(advantage)
-                advantage_lst.reverse()
-                advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
-                advantage = advantage.detach()
+                with torch.no_grad():
+                    delta = vs_target - vs.squeeze(dim=-1)
+                    delta = delta.detach()
+                    advantage_lst = []
+                    advantage = 0.0
+                    for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
+                        advantage = self.gamma * self.lmbda * advantage + delta_t
+                        advantage_lst.append(advantage)
+                    advantage_lst.reverse()
+                    advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+                    advantage = advantage.detach()
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both

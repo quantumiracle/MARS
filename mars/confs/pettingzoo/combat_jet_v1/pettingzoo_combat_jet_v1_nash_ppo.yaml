@@ -32,29 +32,29 @@ train_args:
   net_architecture:
     feature:
       hidden_dim_list:
-      - 128
-      - 128
+      - 512
       channel_list:
       - 32
-      - 16
+      - 64
+      - 64
       kernel_size_list:
+      - 8
       - 4
-      - 4
+      - 3
       stride_list:
       - 4
       - 2
+      - 1
       hidden_activation: ReLU
       output_activation: false
     policy:
       hidden_dim_list:
-      - 128
-      - 128
+      - 512
       hidden_activation: false
       output_activation: Softmax
     value:
       hidden_dim_list:
-      - 128
-      - 128
+      - 512
       hidden_activation: ReLU
       output_activation: false
   marl_method: nash_ppo

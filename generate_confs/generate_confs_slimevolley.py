@@ -86,20 +86,20 @@ ppo_net_architecture = {
 
 cnn_ppo_net_architecture = {
     'feature':{
-    'hidden_dim_list': [128, 128],
-    'channel_list': [32, 16],
-    'kernel_size_list': [4, 4],
-    'stride_list': [4, 2],
+    'hidden_dim_list': [512,],
+    'channel_list': [32, 64, 64],
+    'kernel_size_list': [8, 4, 3],
+    'stride_list': [4, 2, 1],
       'hidden_activation': 'ReLU',
       'output_activation': False,
     },
     'policy':{
-      'hidden_dim_list': [128, 128],
+      'hidden_dim_list': [512,],
       'hidden_activation': False,
       'output_activation': 'Softmax',
     },
     'value': {
-      'hidden_dim_list': [128, 128],
+      'hidden_dim_list': [512,],
       'hidden_activation': 'ReLU',
       'output_activation': False,
     }
@@ -113,10 +113,10 @@ standard_net_architecture = {
 }
 
 cnn_net_architecture = {
-    'hidden_dim_list': [128, 128],
-    'channel_list': [32, 16],
-    'kernel_size_list': [4, 4],
-    'stride_list': [4, 2],
+    'hidden_dim_list': [512, 512],
+    'channel_list': [32, 64, 64],
+    'kernel_size_list': [8, 4, 3],
+    'stride_list': [4, 2, 1],
     'hidden_activation': 'ReLU',
     'output_activation': False,
 }
