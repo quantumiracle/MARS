@@ -82,8 +82,6 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
     else:
         keep_info = False
 
-    print('type: ', env_type)
-
     if env_type == 'slimevolley':
         if not args.ram:
             env_name = 'SlimeVolleyPixel-v0'
@@ -119,7 +117,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             # assign necessary wrappers
             if obs_type == 'rgb_image':
                 env = supersuit.max_observation_v0(env, 2)  # as per openai baseline's MaxAndSKip wrapper, maxes over the last 2 frames to deal with frame flickering
-                env = supersuit.sticky_actions_v0(env, repeat_action_probability=0.25) # repeat_action_probability is set to 0.25 to introduce non-determinism to the system
+                # env = supersuit.sticky_actions_v0(env, repeat_action_probability=0.25) # repeat_action_probability is set to 0.25 to introduce non-determinism to the system
                 env = supersuit.color_reduction_v0(env, mode="B")
                 env = supersuit.frame_skip_v0(env, 4) # skip frames for faster processing and less control to be compatable with gym, use frame_skip(env, (2,5))
                 env = supersuit.resize_v1(env, 84, 84) # downscale observation for faster processing
@@ -139,9 +137,6 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
                 env = Dict2TupleWrapper(env, keep_info=keep_info) 
             else:
                 env.agents = env_agents
-            
-            print(env)
-
 
         elif env_name in pettingzoo_envs['classic']:
             if env_name in ['rps_v2', 'rpsls_v1']:
@@ -228,7 +223,7 @@ def make_env(args):
         else:
             VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
             env = VectorEnv([lambda: _create_single_env(env_name, env_type, False, args) for _ in range(args.num_envs)])
-        print(env)
+
     if isinstance(args.seed, (int, list)):
         env.seed(args.seed)  # seed can be either int or list of int
     elif args.seed == 'random':

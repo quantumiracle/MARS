@@ -9,7 +9,7 @@ declare -a envs=('pettingzoo_pong_v3')
 
 # declare -a methods=('selfplay' 'fictitious_selfplay' 'psro' 'nfsp' 'nash_ppo')
 
-declare -a methods=('nash_dqn')
+declare -a methods=('nash_ppo')
 
 mkdir -p log/$DATE
 

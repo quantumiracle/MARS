@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.lib.arraysetops import isin
 import torch
+import time
 from .utils.logger import init_logger
 from .utils.typing import Tuple, List, ConfigurationDict
 from .marl import init_meta_learner
@@ -24,12 +25,14 @@ def eval(env, model, eval_logger, at_epi, args):
     obs = env.reset()
     greedy_list = model.number_of_agents * [True]  # greedy evaluation for all agents
     episode_reward = {a: 0 for a in env.agents}
+    
+    ## Rollout
     for step in range(args.max_steps_per_episode):
         obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
         action_ = model.choose_action(
             obs_to_store, greedy_list)  # action: (agent, env, action_dim)
 
-        # action processing
+        ## Action processing
         if isinstance(action_, tuple): # Nash PPO
             (a, info) = action_  # shape: (agents, envs, dim)
             action_to_store = a
@@ -52,15 +55,15 @@ def eval(env, model, eval_logger, at_epi, args):
         else:
             action = action_to_store
 
+        ## Environment step
         obs_, reward, done, info = env.step(action)  # required action shape: (envs, agents, dim)
         obs = obs_
-
         for k, v in zip(env.agents, reward):
             episode_reward[k] += v
-
         if np.any(done):  # if any player in a game is done, the game episode done; may not be correct for some envs
             break
 
+    ## Logging
     eval_logger.extr_logs['episode'].append(at_epi)
     for k, v in zip(env.agents, reward):
         eval_logger.extr_logs['episode_reward'][k].append(episode_reward[k])
@@ -76,6 +79,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     :param args: arguments
     :type args: ConfigurationDict
     """
+    ## Initialization
     print("Arguments: ", args)
     overall_steps = 0
     logger = init_logger(env, save_id, args)
@@ -85,6 +89,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         logger.extr_logs['episode'] = []
         logger.extr_logs['episode_reward'] = {a: [] for a in env.agents}
     meta_learner = init_meta_learner(logger, args) if not args.test and not args.exploit else None
+
+    ## Rollout
     for epi in range(args.max_episodes):
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
@@ -95,8 +101,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     obs_to_store)  # action: (agent, env, action_dim)
             if overall_steps % 100 == 0: # do not need to do this for every step
                 model.scheduler_step(overall_steps)
-
-            # action processing
+            
+            ## Action processing
             if isinstance(action_, tuple): # Nash PPO: action item contains additional information like log probability
                 (a, info) = action_  # shape: (agents, envs, dim)
                 action_to_store = a
@@ -118,11 +124,13 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 action = np.array(action_to_store).swapaxes(0, 1)  # transform from (agents, envs, dim) to (envs, agents, dim)
             else:
                 action = action_to_store
+
             obs_, reward, done, info = env.step(action)  # required action shape: (envs, agents, dim)
+            
             if args.render:
                 env.render()
 
-            # storage information processing
+            ## Storage information processing
             if args.num_envs > 1:  # transform from (envs, agents, dim) to (agents, envs, dim)
                 obs__to_store = obs_.swapaxes(0, 1)
                 reward_to_store = reward.swapaxes(0, 1)
@@ -151,7 +159,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             logger.log_reward(np.array(reward).reshape(-1))
             loss = None
 
-            # non-epsodic update of the model
+            # Non-epsodic update of the model
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.update_itr >= 1:
@@ -166,13 +174,13 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 if loss is not None:
                     logger.log_loss(loss)
 
-            # done break: needs to go after everything else， including the update
+            ## done break: needs to go after everything else， including the update
             if np.any(
                     done
             ):  # if any player in a game is done, the game episode done; may not be correct for some envs
                 break
-
-        # epsodic update of the model
+        
+        ## Epsodic update of the model
         if model.ready_to_update:
             if args.algorithm_spec['episodic_update']:
                 loss = model.update()
@@ -183,34 +191,36 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     model, logger, env, args
                 )  # metalearner for selfplay need just one step per episode
         
+        ## Meta-learner step (episodic)
         if args.marl_method in MetaStrategyMethods and (args.test or args.exploit):
             # only methods in MetaStrategyMethods (subset of MetaStepMethods) during exploitation
             # requires step()
             model.meta_learner.step()  # meta_learner as the agent to be tested/exploited
         logger.log_episode_reward(step)
 
+        ## Evaluation during exploiter training
         if epi % args.log_interval == 0:
             if args.exploit:
                 eval(env, model, logger, epi, args)
 
             logger.print_and_save()
 
+        ## Model saving and logging
+        if epi % args.save_interval == 0 \
+            and logger.model_dir is not None:
+            model.save_model(logger.model_dir+f'{epi}')
+
         # if epi % args.save_interval == 0 \
         #     and not args.marl_method in MetaStepMethods \
         #     and logger.model_dir is not None:
         #     model.save_model(logger.model_dir+f'{epi}')
 
-        if epi % args.save_interval == 0 \
-            and logger.model_dir is not None:
-            model.save_model(logger.model_dir+f'{epi}')
-
         if meta_learner is not None \
             and epi % args.save_interval == 0 \
             and args.marl_method in MetaStrategyMethods:
             meta_learner.save_model()
-        
             # meta_learner.save_model(logger.model_dir+f'{epi}_')
-
+        
 ### Genetic algorithm uses a different way of rollout. ###
 
 def run_agent_single_episode(env, args: ConfigurationDict, model,

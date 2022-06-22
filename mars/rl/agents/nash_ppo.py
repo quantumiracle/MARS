@@ -1,6 +1,7 @@
 import copy
 from math import log
 import gym
+import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -135,7 +136,7 @@ class NashPPOBase(Agent):
         self.policy.reinit()
         self.value.reinit()
 
-    def store(self, transitions: SampleType) -> None:
+    def store(self, transitions: SampleType, max_capacity = 1e4) -> None:
         """ Store samples in batch.
         :param transitions: a list of samples from different environments (if using parallel env)
         :type transitions: SampleType
@@ -145,6 +146,8 @@ class NashPPOBase(Agent):
         # to be stored separately since PPO is on-policy.
         for i, transition in enumerate(transitions):  # iterate over the list
             self.data[i].append(transition)
+            if len(self.data[1]) > max_capacity:  # clear the buffer
+                self.data[i] = []
 
     def choose_action(
             self,
@@ -393,6 +396,7 @@ class NashPPODiscrete(NashPPOBase):
                 nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
                 total_loss += loss.item()
+
         self.data = [[] for _ in range(self._num_channel)]
 
         return total_loss

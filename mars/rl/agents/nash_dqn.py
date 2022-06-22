@@ -4,6 +4,7 @@ import torch.nn.functional as F
 
 import numpy as np
 import gym
+import time
 import operator
 import random, copy
 from ..common.rl_utils import choose_optimizer, EpsilonScheduler
@@ -224,9 +225,9 @@ class NashDQN(DQN):
         DoubleTrick = False
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
 
-        state = torch.FloatTensor(np.float32(state)).to(self.device)
-        next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
-        action = torch.LongTensor(action).to(self.device)
+        state = torch.FloatTensor(state).to(self.device)
+        next_state = torch.FloatTensor(next_state).to(self.device)
+        action = torch.IntTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
 
