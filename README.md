@@ -50,7 +50,7 @@ Some [tutorials](https://github.com/quantumiracle/MARS/tree/master/tutorial) are
 MARS is still under-development and not prepared to release yet. You may find it hard to clone b.c. the author is testing algorithms with some models hosted on Git.
 
 ### Support
-The `Environment Specification = Environment type + '_' + Environment Name` as a tradition in MARS.
+The `Environment Specification = Environment type + '_' + Environment Name` as a convention in MARS.
 
 Supported environments are as following:
 
