@@ -50,7 +50,7 @@ Some [tutorials](https://github.com/quantumiracle/MARS/tree/master/tutorial) are
 MARS is still under-development and not prepared to release yet. You may find it hard to clone b.c. the author is testing algorithms with some models hosted on Git.
 
 ### Support
-The `Environment Specification = Environment type + '_' + Environment Name` as a convention in MARS.
+The `EnvSpec = Environment type + '_' + Environment Name` as a convention in MARS.
 
 Supported environments are as following:
 
@@ -79,7 +79,7 @@ Supported algorithms are as following:
 
 **Train with MARL algorithm**:
 
-`python general_train.py --env **Environment Specification** --method **Method** --save_id **Where to Save**`
+`python general_train.py --env **EnvSpec** --method **Method** --save_id **WheretoSave**`
 
 ```bash
 # PettingZoo Boxing_v1, neural fictitious self-play
@@ -97,7 +97,7 @@ python general_train.py --env slimevolley_SlimeVolley-v0 --method selfplay --sav
 
 **Exploit a trained model**:
 
-`python general_exploit.py --env **Environment Specification** --method **Method** --load_id **Trained Model ID** --save_id **Where to Save** --to_exploit **Exploit Which Player**`
+`python general_exploit.py --env **EnvSpec** --method **Method** --load_id **TrainedModelID** --save_id **WheretoSave** --to_exploit **ExploitWhichPlayer**`
 
 ```
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id exploit_0 --to_exploit second
@@ -109,7 +109,7 @@ More examples are provided in [`./examples/`](https://github.com/quantumiracle/M
 
 **Train with MARL algorithm with multiprocess sampling and update**:
 
-`python general_launch.py --env **Environment Specification** --method **Method** --save_id **Where to Save**`
+`python general_launch.py --env **EnvSpec** --method **Method** --save_id **WheretoSave**`
 
 ```
 python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0
