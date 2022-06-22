@@ -11,6 +11,7 @@ def launch_rollout(env, method, save_id):
     args = get_general_args(env, method)
 
     ### Create env
+    args.num_envs = 16
     env = make_env(args)
     print(env)
 
