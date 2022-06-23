@@ -184,7 +184,7 @@ If you find MARS useful, please cite it in your publications.
 
 ```
 @software{MARS,
-  author = {Zihan Ding},
+  author = {Zihan Ding, Andy Su, Qinghua Liu, Chi Jin},
   title = {MARS},
   year = {2022},
   publisher = {GitHub},
