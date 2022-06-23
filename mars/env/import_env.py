@@ -29,11 +29,10 @@ Multi-agent:
 from typing import Dict
 import gym
 import slimevolleygym
-import supersuit
 import numpy as np
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
-     Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper
+     Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper, ZeroSumWrapper
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 from .wrappers.lasertag_wrappers import LaserTagWrapper
 from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_mdp
@@ -101,8 +100,10 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
 
         env = SlimeVolleyWrapper(env, args.against_baseline)  # slimevolley to pettingzoo style
         env = Dict2TupleWrapper(env, keep_info=keep_info)  # pettingzoo to nfsp style, keep_info True to maintain dict type for parallel envs
+        env = ZeroSumWrapper(env)
 
     elif env_type == 'pettingzoo':
+        import supersuit
         if env_name in pettingzoo_envs['atari']:
             if args.ram:
                 obs_type = 'ram'
@@ -138,6 +139,8 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             else:
                 env.agents = env_agents
 
+            env = ZeroSumWrapper(env)
+
         elif env_name in pettingzoo_envs['classic']:
             if env_name in ['rps_v2', 'rpsls_v1']:
                 env = eval(env_name).parallel_env()
@@ -147,6 +150,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
                 env = PettingzooClassic_Iterate2Parallel(env, observation_mask=None)  # since Classic games do not support Parallel API yet
                
             env = Dict2TupleWrapper(env, keep_info=keep_info)
+            env = ZeroSumWrapper(env)
 
     elif env_type == 'lasertag':
         import lasertag  # this is essential
@@ -155,9 +159,11 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         env = LaserTagWrapper(env)
 
     elif env_type == 'robosumo':
+        ## robosumo requires gym==0.16
         import robosumo.envs
         env = gym.make(env_name)
         env = RoboSumoWrapper(env)
+        env = ZeroSumWrapper(env)
 
     elif env_type == 'gym':
         try:
@@ -212,6 +218,7 @@ def make_env(args):
         env = _create_single_env(env_name, env_type, False, args)  
     else:
         if env_type == 'pettingzoo':
+            import supersuit
             single_env = _create_single_env(env_name, env_type, True, args)
             vec_env = supersuit.pettingzoo_env_to_vec_env_v1(single_env)
             env = supersuit.concat_vec_envs_v1(vec_env, args.num_envs, num_cpus=0, base_class="gym")  # true number of envs will be args.num_envs

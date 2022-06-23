@@ -240,7 +240,7 @@ class NashPPODiscrete(NashPPOBase):
         logprobs = []
         if Greedy:
             for policy, feature_net, state_per_agent in zip(self.policies, self.feature_nets, s):
-                if self.args.ram:
+                if self.args.ram or self.args.num_envs == 1:
                     feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
                 else:
                     feature = feature_net(torch.from_numpy(np.array(state_per_agent)).float().to(self.device))

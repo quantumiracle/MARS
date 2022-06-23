@@ -20,7 +20,6 @@ class NashDQN(DQN):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.num_envs = args.num_envs
 
         if args.num_process > 1:
             self.model.share_memory()
@@ -57,13 +56,13 @@ class NashDQN(DQN):
         if not isinstance(state, torch.Tensor):
             state = torch.Tensor(state).to(self.device)
         if self.args.ram:
-            if self.num_envs == 1: # state: (agents, state_dim)
+            if self.args.num_envs == 1: # state: (agents, state_dim)
                 state = state.unsqueeze(0).view(1, -1) # change state from (agents, state_dim) to (1, agents*state_dim)
             else: # state: (agents, envs, state_dim)
                 state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
                 state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
         else:  # image-based input
-            if self.num_envs == 1: # state: (agents, C, H, W)
+            if self.args.num_envs == 1: # state: (agents, C, H, W)
                 state = state.unsqueeze(0).view(1, -1, state.shape[-2], state.shape[-1])  #   (1, agents*C, H, W)
 
             else: # state: (agents, envs, C, H, W)
@@ -103,7 +102,7 @@ class NashDQN(DQN):
         else:
             actions = np.random.randint(self.action_dim, size=(state.shape[0], self.num_agents))  # (envs, agents)
         
-        if self.num_envs == 1:
+        if self.args.num_envs == 1:
             actions = actions[0]  # list of actions to its item
         else:
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)

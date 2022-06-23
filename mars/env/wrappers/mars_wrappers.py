@@ -148,9 +148,51 @@ class RoboSumoWrapper():
         self.env.render(mode)
 
     def step(self, actions):
-        actions = actions.squeeze()
+        actions = np.array(actions).squeeze()
         obs, reward, done, info = self.env.step(actions)
         return obs, reward, done, info
+
+    def close(self):
+        self.env.close()
+
+class ZeroSumWrapper():
+    """ Filter non-zero-sum rewards to be zero-sum """
+    def __init__(self, env):
+        super(ZeroSumWrapper, self).__init__()
+        self.env = env
+        self.agents = env.agents
+        self.num_agents = env.num_agents
+        self.observation_space = self.env.observation_space
+        self.observation_spaces = self.env.observation_spaces
+        self.action_space = self.env.action_space
+        self.action_spaces = self.env.action_spaces
+    
+    @property
+    def spec(self):
+        return self.env.spec
+
+    def _zerosum_filter(self, r):
+        ## zero-sum filter: 
+        # added for making non-zero sum game to be zero-sum, e.g. tennis_v2, pong_v3
+        r = np.array(r)
+        if np.sum(r) != 0:
+            nonzero_idx = np.nonzero(r)[0][0]
+            r[1-nonzero_idx] = -r[nonzero_idx]
+        return r
+
+    def reset(self):
+        obs = self.env.reset()
+        return obs
+
+    def seed(self, seed):
+        self.env.seed(seed)
+
+    def render(self, mode='rgb_image'):
+        self.env.render(mode)
+
+    def step(self, actions):
+        obs, reward, done, info = self.env.step(actions)
+        return obs, self._zerosum_filter(reward), done, info
 
     def close(self):
         self.env.close()
@@ -475,18 +517,17 @@ class Dict2TupleWrapper():
         else:
             info = list(infos.values())
         del obs,rewards, dones, infos
-        
-        r = self._zerosum_filter(r)
+        # r = self._zerosum_filter(r)
 
         return o, r, d, info
 
-    def _zerosum_filter(self, r):
-        ## zero-sum filter: 
-        # added for making non-zero sum game to be zero-sum, e.g. tennis_v2
-        if np.sum(r) != 0:
-            nonzero_idx = np.nonzero(r)[0][0]
-            r[1-nonzero_idx] = -r[nonzero_idx]
-        return r
+    # def _zerosum_filter(self, r):
+    #     ## zero-sum filter: 
+    #     # added for making non-zero sum game to be zero-sum, e.g. tennis_v2
+    #     if np.sum(r) != 0:
+    #         nonzero_idx = np.nonzero(r)[0][0]
+    #         r[1-nonzero_idx] = -r[nonzero_idx]
+    #     return r
 
     def seed(self, seed):
         self.env.reset(seed=seed)
