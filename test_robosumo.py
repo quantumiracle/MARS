@@ -10,8 +10,8 @@ game_type = ['robosumo'][0]
 
 game = ['RoboSumo-Ant-vs-Ant-v0'][0]
 
-game_name = game.lower().split('-')[1:]
-game = '_'.join(game_name)
+# game_name = game.lower().split('-')[1:]
+# game = '_'.join(game_name)
 
 yaml_file = f'mars/confs/{game_type}/{game}/{game_type}_{game}_nash_ppo' #PATH TO YAML
 
