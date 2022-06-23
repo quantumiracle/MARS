@@ -168,7 +168,7 @@ MARL algorithms to do:
 - [x] [PettingZoo](https://www.pettingzoo.ml)
 - [x] [LaserTag](https://github.com/younggyoseo/lasertag-v0)
 - [x] [SlimeVolley](https://github.com/hardmaru/slimevolleygym)
-- [x] [Robosumo](https://github.com/openai/robosumo)
+- [x] [Robosumo](https://github.com/openai/robosumo) (requiring gym==0.16)
 - [x] [Matrix Markov Game](https://github.com/quantumiracle/MARS/tree/master/mars/env/mdp)
 - [ ] SMAC
 
