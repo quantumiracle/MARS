@@ -172,6 +172,18 @@ MARL algorithms to do:
 - [x] [Matrix Markov Game](https://github.com/quantumiracle/MARS/tree/master/mars/env/mdp)
 - [ ] SMAC
 
+## Primary Results
+
+<img src="https://github.com/quantumiracle/MARS/blob/master/img/slimevolley-selfplay.gif" height=400 width=1000 >
+
+Two agents in *SlimeVolley-v0* trained with self-play. 
+
+<img src="https://github.com/quantumiracle/MARS/blob/master/img/boxing-selfplay.gif" height=500 width=400 >
+
+Two agents in *Boxing-v1 PettingZoo* trained with self-play. 
+
+[Exploitability](exploit.md) tests are also conducted.
+
 ## License
 
 MARS is distributed under the terms of Apache License (Version 2.0).
@@ -192,15 +204,3 @@ If you find MARS useful, please cite it in your publications.
   howpublished = {\url{https://github.com/quantumiracle/MARS}},
 }
 ```
-
-## Primary Results
-
-<img src="https://github.com/quantumiracle/MARS/blob/master/img/slimevolley-selfplay.gif" height=400 width=1000 >
-
-Two agents in *SlimeVolley-v0* trained with self-play. 
-
-<img src="https://github.com/quantumiracle/MARS/blob/master/img/boxing-selfplay.gif" height=500 width=400 >
-
-Two agents in *Boxing-v1 PettingZoo* trained with self-play. 
-
-[Exploitability](exploit.md) tests are also conducted.
