@@ -60,7 +60,7 @@ Supported environments are as following:
 |[`pettingzoo`](https://www.pettingzoo.ml) | 'basketball_pong_v3', 'boxing_v2', 'combat_jet_v1', 'combat_tank_v2', 'double_dunk_v3', 'entombed_competitive_v3', 'entombed_cooperative_v3', 'flag_capture_v2', 'foozpong_v3', 'ice_hockey_v2', 'joust_v3','mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v3', 'quadrapong_v4', 'space_invaders_v2', 'space_war_v2', 'surround_v2', 'tennis_v3', 'video_checkers_v4', 'volleyball_pong_v2', 'warlords_v3', 'wizard_of_wor_v3';  'dou_dizhu_v4', 'go_v5', 'leduc_holdem_v4', 'rps_v2', 'texas_holdem_no_limit_v6', 'texas_holdem_v4', 'tictactoe_v3', 'uno_v4' |
 |[`lasertag`](https://github.com/younggyoseo/lasertag-v0) | 'LaserTag-small2-v0', 'LaserTag-small3-v0', 'LaserTag-small4-v0' |
 |[`slimevolley`](https://github.com/hardmaru/slimevolleygym) | 'SlimeVolley-v0', 'SlimeVolleySurvivalNoFrameskip-v0', 'SlimeVolleyNoFrameskip-v0', 'SlimeVolleyPixel-v0' | 
-|[`robosumo`](https://github.com/openai/robosumo) | 'ant_vs_ant_v0', etc |
+|[`robosumo`](https://github.com/openai/robosumo) | 'RoboSumo-Ant-vs-Ant-v0', 'RoboSumo-Ant-vs-Bug-v0', 'RoboSumo-Ant-vs-Spider-v0', 'RoboSumo-Bug-vs-Ant-v0', 'RoboSumo-Bug-vs-Bug-v0', 'RoboSumo-Bug-vs-Spider-v0', 'RoboSumo-Spider-vs-Ant-v0', 'RoboSumo-Spider-vs-Bug-v0','RoboSumo-Spider-vs-Spider-v0' |
 |[`mdp`](https://github.com/quantumiracle/MARS/tree/master/mars/env/mdp)| 'arbitrary_mdp', 'arbitrary_richobs_mdp', 'attack', 'combinatorial_lock' |
 
 Supported algorithms are as following:
