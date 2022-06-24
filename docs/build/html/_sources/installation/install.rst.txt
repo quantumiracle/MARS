@@ -1,7 +1,7 @@
 Installation
 =================================
 
-MARS requires PyTorch.
+MARS requires PyTorch for the machine learning (reinforcement learning) functionalities.
 
 To use all supported environments in MARS, you need to install those environments, including `OpenAI Gym <https://gym.openai.com/>`_, `PettingZoo <https://github.com/PettingZoo-Team/PettingZoo>`_,
 `SlimeVolley <https://github.com/hardmaru/slimevolleygym>`_, `LaserTag <https://github.com/younggyoseo/lasertag-v0>`_, etc.

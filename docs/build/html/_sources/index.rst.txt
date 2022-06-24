@@ -15,13 +15,14 @@ MARS is a multi-agent reinforcement learning research library for multi-agent ga
 We also provide novices friendly `DRL Tutorials <https://github.com/tensorlayer/tensorlayer/tree/master/examples/reinforcement_learning>`_ for algorithms implementation, where each algorithm is implemented in an individual script. The tutorials serve as code examples for our Springer textbook `Deep Reinforcement Learning: Fundamentals, Research and Applications <https://deepreinforcementlearningbook.org/>`_ , you can get the free PDF if your institute has Springer license.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
    :caption: Introduction
 
    /introduction/intro
+   /introduction/marl_background
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
    :caption: Install MARS
 
    installation/install

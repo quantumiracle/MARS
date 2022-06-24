@@ -103,3 +103,21 @@ if __name__ == "__main__":
     As = 3*[A]
     nes, ne_vs = NashEquilibriumECOSParallelSolver(As)
     print(nes, ne_vs)
+
+
+    ## comparison test
+    # n = 100   # number of matrices
+    # size = 10  # matrix dimension
+    # A = np.random.random((n, size, size))
+
+    # t0 = time.time()
+    # for a in A:
+    #     ne, ne_v = NashEquilibriumECOSSolver(a)
+    # t1 = time.time()
+    # print('t1', t1 - t0)
+
+    # print('-'*100)
+    # t0 = time.time()
+    # nes, ne_vs = NashEquilibriumECOSParallelSolver(A)
+    # t1 = time.time()
+    # print('t2', t1 - t0)
