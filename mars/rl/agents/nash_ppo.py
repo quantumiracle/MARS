@@ -86,7 +86,7 @@ class NashPPOBase(Agent):
         if len(self.observation_space.shape) <= 1:
             feature_space = self.observation_space
             double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
-
+            print(env.num_agents)
             for _ in range(env.num_agents):
                 self.feature_nets.append(MLP(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
                 self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device))
@@ -240,7 +240,7 @@ class NashPPODiscrete(NashPPOBase):
         logprobs = []
         if Greedy:
             for policy, feature_net, state_per_agent in zip(self.policies, self.feature_nets, s):
-                if self.args.ram:
+                if self.args.ram or self.args.num_envs == 1:
                     feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
                 else:
                     feature = feature_net(torch.from_numpy(np.array(state_per_agent)).float().to(self.device))
@@ -473,7 +473,8 @@ class NashPPOContinuous(NashPPOBase):
                 s_prime_ = s_prime.view(s_prime.shape[0], 2, -1)
             else:
                 s_ = s  # shape: (batch, agents, envs, C, H, W)
-                s_prime_ = s_prime                
+                s_prime_ = s_prime   
+            a = a.view(a.shape[0], 2, -1)
 
             for _ in range(self.K_epoch):
                 loss = 0.0
@@ -534,7 +535,6 @@ class NashPPOContinuous(NashPPOBase):
                     ppo_loss.backward()
                     nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
-                    # loss += ppo_loss
                     total_loss += ppo_loss.item()
 
                 # loss for common layers (value function)

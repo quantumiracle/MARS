@@ -1,7 +1,8 @@
 env_args:
-  env_name: RoboSumo-Ant-vs-Ant-v0
+  env_name: RoboSumo-Spider-vs-Ant-v0
   env_type: robosumo
-  num_envs: 1
+  num_envs: 5
+  against_baseline: false
   ram: true
   seed: random
 agent_args:
@@ -13,6 +14,10 @@ agent_args:
     eps_clip: 0.2
     K_epoch: 4
     GAE: true
+    max_grad_norm: 0.5
+    entropy_coeff: 0.01
+    vf_coeff: 0.5
+    policy_loss_coeff: 0.08
 train_args:
   batch_size: 128
   max_episodes: 10000
@@ -28,22 +33,20 @@ train_args:
   net_architecture:
     feature:
       hidden_dim_list:
-      - 2
-      - 2
+      - 128
+      - 128
       hidden_activation: ReLU
       output_activation: false
     policy:
       hidden_dim_list:
-      - 2
-      - 2
-      hidden_activation: ReLU
-      output_activation: Tanh  # for continuous env, action range -1, 1
+      - 128
+      hidden_activation: false
+      output_activation: Tanh
     value:
       hidden_dim_list:
-      - 2
-      - 2
+      - 128
       hidden_activation: ReLU
       output_activation: false
-  marl_method: nash_ppo
   marl_spec:
     global_state: true
+  marl_method: nash_ppo

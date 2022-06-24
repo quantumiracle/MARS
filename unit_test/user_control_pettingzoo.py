@@ -1,6 +1,7 @@
 # ### 
-# Test user input control for Openai Gym enviroments 
-# Not work yet.
+# Test user input control for PettingZoo enviroments 
+# Not work yet by directly borrowing user input function for Gym.
+# See this issue: https://github.com/Farama-Foundation/PettingZoo/issues/547
 # ###
 
 #!/usr/bin/env python
@@ -18,13 +19,14 @@ from mars.utils.data_struct import AttrDict
 EnvArgs = {
     'name': None,
     'type': None,
-    'num_envs': 1, 
+    'num_envs': 1,
+    'num_process': 1, 
     'ram': True, 
     'against_baseline': False,
     'seed': 1223,
     }
 EnvArgs['env_type'] = 'pettingzoo'
-EnvArgs['env_name'] = 'boxing_v1'
+EnvArgs['env_name'] = 'boxing_v2'
 env_args = AttrDict(EnvArgs)
 
 env = make_env(env_args)

@@ -11,7 +11,7 @@ from ..common.rl_utils import choose_optimizer, EpsilonScheduler
 from ..common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .debug import Debugger, to_one_hot
-from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
+from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumECOSParallelSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 
 DEBUG = False
 class NashDQN(DQN):
@@ -20,7 +20,6 @@ class NashDQN(DQN):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.num_envs = args.num_envs
 
         if args.num_process > 1:
             self.model.share_memory()
@@ -57,13 +56,13 @@ class NashDQN(DQN):
         if not isinstance(state, torch.Tensor):
             state = torch.Tensor(state).to(self.device)
         if self.args.ram:
-            if self.num_envs == 1: # state: (agents, state_dim)
+            if self.args.num_envs == 1: # state: (agents, state_dim)
                 state = state.unsqueeze(0).view(1, -1) # change state from (agents, state_dim) to (1, agents*state_dim)
             else: # state: (agents, envs, state_dim)
                 state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
                 state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
         else:  # image-based input
-            if self.num_envs == 1: # state: (agents, C, H, W)
+            if self.args.num_envs == 1: # state: (agents, C, H, W)
                 state = state.unsqueeze(0).view(1, -1, state.shape[-2], state.shape[-1])  #   (1, agents*C, H, W)
 
             else: # state: (agents, envs, C, H, W)
@@ -103,7 +102,7 @@ class NashDQN(DQN):
         else:
             actions = np.random.randint(self.action_dim, size=(state.shape[0], self.num_agents))  # (envs, agents)
         
-        if self.num_envs == 1:
+        if self.args.num_envs == 1:
             actions = actions[0]  # list of actions to its item
         else:
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
@@ -166,6 +165,7 @@ class NashDQN(DQN):
         # time.sleep(0.01)
 
         # all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+        # all_dists, all_ne_values = NashEquilibriumECOSParallelSolver(q_tables)
         for q_table in q_tables:
             dist, value = NashEquilibriumECOSSolver(q_table)
             all_dists.append(dist)
@@ -246,13 +246,15 @@ class NashDQN(DQN):
         #     cce_dists_  = torch.FloatTensor(cce_dists).to(self.device)
         #     next_q_value = torch.einsum('bij,bij->b', cce_dists_, target_next_q_values_)
 
+        t0 =  time.time()
         # else: # Nash Equilibrium
         try: # nash computation may encounter error and terminate the process
             next_dist, next_q_value = self.compute_nash(target_next_q_values, update=True)
         except: 
             print("Invalid nash computation.")
             next_q_value = np.zeros_like(reward)
-
+        t1 =  time.time()
+        print('nash time: ', t1-t0)
         if DoubleTrick: # calculate next_q_value using double DQN trick
             next_dist = np.array(next_dist)  # shape: (#batch, #agent, #action)
             target_next_q_values = target_next_q_values.reshape((-1, self.action_dim, self.action_dim))
