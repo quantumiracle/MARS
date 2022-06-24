@@ -91,7 +91,6 @@ class NashDQN(DQN):
                         for s in states:
                             one_hot_states.append(to_one_hot(s, range))
                         test_states = torch.FloatTensor(np.repeat(one_hot_states, 2, axis=0).reshape(-1, 2*range)).to(self.device)
-                        # print(test_states)
                     else:
                         test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
                     ne_q_vs = self.model(test_states) # Nash Q values
@@ -108,61 +107,59 @@ class NashDQN(DQN):
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
         return actions
 
-    def compute_nash_deprecated(self, q_values, update=False):
-        """
-        Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
-        """
-        q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
-        all_actions = []
-        all_dists = []
-        all_ne_values = []
-        for qs in q_tables:  # iterate over envs
-            # Solve Nash equilibrium with solver
-            try:
-                # ne = NashEquilibriaSolver(qs)
-                # ne = ne[0]  # take the first Nash equilibria found
-                # print(np.linalg.det(qs))
-                # ne = NashEquilibriumSolver(qs)
-                # ne = NashEquilibriumLPSolver(qs)
-                # ne = NashEquilibriumCVXPYSolver(qs)
-                # ne = NashEquilibriumGUROBISolver(qs)
-                ne, ne_v = NashEquilibriumECOSSolver(qs)
-                ne_v = ne[0]@qs@ne[1].T
-                # ne, ne_v = NashEquilibriumMWUSolver(qs)
-            except:  # some cases NE cannot be solved
-                print('No Nash solution for: ', np.linalg.det(qs), qs)
-                ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
-                ne_v = 0
+    # def compute_nash_deprecated(self, q_values, update=False):
+    #     """
+    #     Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
+    #     """
+    #     q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
+    #     all_actions = []
+    #     all_dists = []
+    #     all_ne_values = []
+    #     for qs in q_tables:  # iterate over envs
+    #         # Solve Nash equilibrium with solver
+    #         try:
+    #             # ne = NashEquilibriaSolver(qs)
+    #             # ne = ne[0]  # take the first Nash equilibria found
+    #             # print(np.linalg.det(qs))
+    #             # ne = NashEquilibriumSolver(qs)
+    #             # ne = NashEquilibriumLPSolver(qs)
+    #             # ne = NashEquilibriumCVXPYSolver(qs)
+    #             # ne = NashEquilibriumGUROBISolver(qs)
+    #             ne, ne_v = NashEquilibriumECOSSolver(qs)
+    #             ne_v = ne[0]@qs@ne[1].T
+    #             # ne, ne_v = NashEquilibriumMWUSolver(qs)
+    #         except:  # some cases NE cannot be solved
+    #             print('No Nash solution for: ', np.linalg.det(qs), qs)
+    #             ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
+    #             ne_v = 0
                 
-            all_dists.append(ne)
-            all_ne_values.append(ne_v)
+    #         all_dists.append(ne)
+    #         all_ne_values.append(ne_v)
 
-            # Sample actions from Nash strategies
-            actions = []
-            for dist in ne:  # iterate over agents
-                try:
-                    sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
-                except:
-                    print('Not a valid distribution from Nash equilibrium solution.')
-                    print(sum(ne[0]), sum(ne[1]))
-                    print(qs, ne)
-                    print(dist)
-                a = np.where(sample_hist>0)
-                actions.append(a)
-            all_actions.append(np.array(actions).reshape(-1))
+    #         # Sample actions from Nash strategies
+    #         actions = []
+    #         for dist in ne:  # iterate over agents
+    #             try:
+    #                 sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
+    #             except:
+    #                 print('Not a valid distribution from Nash equilibrium solution.')
+    #                 print(sum(ne[0]), sum(ne[1]))
+    #                 print(qs, ne)
+    #                 print(dist)
+    #             a = np.where(sample_hist>0)
+    #             actions.append(a)
+    #         all_actions.append(np.array(actions).reshape(-1))
 
-        if update:
-            return all_dists, all_ne_values
-        else: # return samples actions, nash strategies, nash values
-            return np.array(all_actions), all_dists, all_ne_values
+    #     if update:
+    #         return all_dists, all_ne_values
+    #     else: # return samples actions, nash strategies, nash values
+    #         return np.array(all_actions), all_dists, all_ne_values
 
     def compute_nash(self, q_values, update=False):
         q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
         all_actions = []
         all_dists = []
         all_ne_values = []
-        # import time
-        # time.sleep(0.01)
 
         # all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
         # all_dists, all_ne_values = NashEquilibriumECOSParallelSolver(q_tables)
@@ -246,15 +243,13 @@ class NashDQN(DQN):
         #     cce_dists_  = torch.FloatTensor(cce_dists).to(self.device)
         #     next_q_value = torch.einsum('bij,bij->b', cce_dists_, target_next_q_values_)
 
-        t0 =  time.time()
         # else: # Nash Equilibrium
         try: # nash computation may encounter error and terminate the process
             next_dist, next_q_value = self.compute_nash(target_next_q_values, update=True)
         except: 
             print("Invalid nash computation.")
             next_q_value = np.zeros_like(reward)
-        t1 =  time.time()
-        print('nash time: ', t1-t0)
+
         if DoubleTrick: # calculate next_q_value using double DQN trick
             next_dist = np.array(next_dist)  # shape: (#batch, #agent, #action)
             target_next_q_values = target_next_q_values.reshape((-1, self.action_dim, self.action_dim))
