@@ -165,11 +165,11 @@ class NashDQN(DQN):
         # time.sleep(0.01)
 
         # all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
-        all_dists, all_ne_values = NashEquilibriumECOSParallelSolver(q_tables)
-        # for q_table in q_tables:
-        #     dist, value = NashEquilibriumECOSSolver(q_table)
-        #     all_dists.append(dist)
-        #     all_ne_values.append(value)
+        # all_dists, all_ne_values = NashEquilibriumECOSParallelSolver(q_tables)
+        for q_table in q_tables:
+            dist, value = NashEquilibriumECOSSolver(q_table)
+            all_dists.append(dist)
+            all_ne_values.append(value)
 
         if update:
             return all_dists, all_ne_values
@@ -246,13 +246,15 @@ class NashDQN(DQN):
         #     cce_dists_  = torch.FloatTensor(cce_dists).to(self.device)
         #     next_q_value = torch.einsum('bij,bij->b', cce_dists_, target_next_q_values_)
 
+        t0 =  time.time()
         # else: # Nash Equilibrium
         try: # nash computation may encounter error and terminate the process
             next_dist, next_q_value = self.compute_nash(target_next_q_values, update=True)
         except: 
             print("Invalid nash computation.")
             next_q_value = np.zeros_like(reward)
-
+        t1 =  time.time()
+        print('nash time: ', t1-t0)
         if DoubleTrick: # calculate next_q_value using double DQN trick
             next_dist = np.array(next_dist)  # shape: (#batch, #agent, #action)
             target_next_q_values = target_next_q_values.reshape((-1, self.action_dim, self.action_dim))

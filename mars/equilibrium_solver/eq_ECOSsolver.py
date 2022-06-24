@@ -64,14 +64,19 @@ def NashEquilibriumECOSSolver(M):
 
 
 def NashEquilibriumECOSParallelSolver(Ms):
+    # this is found to be not faster than iterate over non-parallel version
     # ref: https://github.com/embotech/ecos-python/pull/20
-    pool = ThreadPool(8)
+    # t0 = time.time()
+    pool = ThreadPool(2)
     results = pool.map(NashEquilibriumECOSSolver, Ms)
+    # t1 = time.time()
     policies = []
     values = []
     for re in results:
         policies += re[0]
         values += [re[1]]
+    # t2 = time.time()
+    # print('compute time: ', t1-t0, t2-t1)
     return policies, values
 
 if __name__ == "__main__":
