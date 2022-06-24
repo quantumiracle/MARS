@@ -9,12 +9,12 @@ WIP. Not released yet.
 
 If you have any question (propose an ISSUE if it's general problem) or want to contribute to this repository, feel free to contact me: *zhding96@gmail.com*
 
-Large-scale competitive games are generally hard, I'm still struggling with developing this repo.
 
 ## Usage Instruction
+A comprehensive usage [document](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html) is provided.
+
 Some [tutorials](https://github.com/quantumiracle/MARS/tree/master/tutorial) are provided for simple MARL concepts, including building an arbitrary matrix game, solving the Nash equilibrium with different algorithms for matrix games, building arbitrary Markov game, solving Markov games, etc. 
 
-For comprehensive usage instruction document, see [here](http://htmlpreview.github.io/?https://github.com/quantumiracle/MARS/blob/master/docs/build/html/index.html). 
 
 MARS is still under-development and not prepared to release yet. You may find it hard to clone b.c. the author is testing algorithms with some models hosted on Git.
 
@@ -41,7 +41,7 @@ python general_train.py --env pettingzoo_boxing_v1 --method nfsp --save_id train
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id exploit_0 --to_exploit second
 ```
 
-More examples are provided in `./examples/` and `./unit_test/`. Note that these files need to be put under the **root** directory (`./`) to run.
+More examples are provided in [`./examples/`](https://github.com/quantumiracle/MARS/tree/master/examples) and [`./unit_test/`](https://github.com/quantumiracle/MARS/tree/master/unit_test). Note that these files need to be put under the **root** directory (`./`) to run.
 
 ### Advanced:
 
@@ -59,7 +59,7 @@ python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id mul
 
 **Test a trained MARL model in single-agent Atari**:
 
-This function is for limited environments (like *boxing*) since not all envs in PettingZoo Atari has single-agent counterpart.
+This function is for limited environments (like *boxing*) since not all envs in PettingZoo Atari has a single-agent counterpart in OpenAI Gym.
 
 ```
 python general_test.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id test_0
@@ -111,6 +111,21 @@ MARL Algorithms to do:
 MARS is distributed under the terms of Apache License (Version 2.0).
 
 See [Apache License](https://github.com/quantumiracle/MARS/blob/master/LICENSE) for details.
+
+## Citation
+
+If you find MARS useful, please cite it in your publications.
+
+```
+@software{MARS,
+  author = {Zihan Ding},
+  title = {MARS},
+  year = {2022},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/quantumiracle/MARS}},
+}
+```
 
 ## Some Results
 
