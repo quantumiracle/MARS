@@ -11,7 +11,7 @@ from ..common.rl_utils import choose_optimizer, EpsilonScheduler
 from ..common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .debug import Debugger, to_one_hot
-from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
+from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumECOSParallelSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 
 DEBUG = False
 class NashDQN(DQN):
@@ -165,10 +165,11 @@ class NashDQN(DQN):
         # time.sleep(0.01)
 
         # all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
-        for q_table in q_tables:
-            dist, value = NashEquilibriumECOSSolver(q_table)
-            all_dists.append(dist)
-            all_ne_values.append(value)
+        all_dists, all_ne_values = NashEquilibriumECOSParallelSolver(q_tables)
+        # for q_table in q_tables:
+        #     dist, value = NashEquilibriumECOSSolver(q_table)
+        #     all_dists.append(dist)
+        #     all_ne_values.append(value)
 
         if update:
             return all_dists, all_ne_values

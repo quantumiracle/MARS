@@ -535,7 +535,6 @@ class NashPPOContinuous(NashPPOBase):
                     ppo_loss.backward()
                     nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
-                    # loss += ppo_loss
                     total_loss += ppo_loss.item()
 
                 # loss for common layers (value function)

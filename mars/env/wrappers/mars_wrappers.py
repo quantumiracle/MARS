@@ -166,7 +166,11 @@ class ZeroSumWrapper():
         self.observation_spaces = self.env.observation_spaces
         self.action_space = self.env.action_space
         self.action_spaces = self.env.action_spaces
-    
+
+    @property
+    def unwrapped(self,):
+        return self.env
+
     @property
     def spec(self):
         return self.env.spec
@@ -196,6 +200,16 @@ class ZeroSumWrapper():
 
     def close(self):
         self.env.close()
+
+def zero_sum_reward_filer(r):
+    ## zero-sum filter: 
+    # added for making non-zero sum game to be zero-sum, e.g. tennis_v2, pong_v3
+    r = np.array(r)
+    if np.sum(r) != 0:
+        nonzero_idx = np.nonzero(r)[0][0]
+        r[1-nonzero_idx] = -r[nonzero_idx]
+    return r    
+
 
 
 class SSVecWrapper():

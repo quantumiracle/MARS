@@ -5,7 +5,6 @@ from scipy.sparse import csr_matrix
 import time
 from multiprocessing.pool import ThreadPool
 
-
 def NashEquilibriumECOSSolver(M):
     """
     https://github.com/embotech/ecos-python
@@ -62,17 +61,13 @@ def NashEquilibriumECOSSolver(M):
 
     return (normalized_p1_dist, normalized_p2_dist), nash_value
 
-
-def NashEquilibriumECOSParallelSolver(Ms):
-    # ref: https://github.com/embotech/ecos-python/pull/20
+def NashEquilibriumECOSSolverParallel(Ms):
     pool = ThreadPool(8)
     results = pool.map(NashEquilibriumECOSSolver, Ms)
-    policies = []
-    values = []
-    for re in results:
-        policies += re[0]
-        values += [re[1]]
-    return policies, values
+    print(results)
+    return results
+
+
 
 if __name__ == "__main__":
     # A = np.array([[0, -1, 1], [1, 0, -1], [-1, 1, 0]])
@@ -82,6 +77,8 @@ if __name__ == "__main__":
     [-0.156, -0.039,  0.051,  0.016, -0.028, -0.287,],
     [ 0.007,  0.029,  0.004,  0.005,  0.003, -0.012],
     [ 0.014,  0.018, -0.001,  0.008, -0.009,  0.007]])
+
+    As = 3*[A]
     # A=np.array([[ 0.08333333,  2.08333333 ,-0.91666667],
     # [-0.91666667,  0.08333333,  1.08333333],
     # [ 1.08333333, -0.91666667,  0.08333333]])
@@ -90,11 +87,9 @@ if __name__ == "__main__":
     # [ 1, -1, 0]])
     t0=time.time()
     ne, ne_v = NashEquilibriumECOSSolver(A)
+    results = NashEquilibriumECOSSolverParallel(As)
+
     t1 = time.time()
     print(t1-t0)
     print(ne)
     print(ne_v)
-
-    As = 3*[A]
-    nes, ne_vs = NashEquilibriumECOSParallelSolver(As)
-    print(nes, ne_vs)
