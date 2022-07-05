@@ -247,7 +247,7 @@ class SSVecWrapper():
     def seed(self, seed):
         self.env.seed(seed)
 
-    def render(self, mode='rgb_image'):
+    def render(self, mode='rgb_array'):
         self.env.render(mode)
 
     def step(self, actions):

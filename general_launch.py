@@ -14,7 +14,7 @@ from mars.updateModel import updateModel
 
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
-def launch_rollout(env, method, save_id):
+def launch(env, method, save_id):
     args = get_general_args(env, method)
     multiprocess_conf(args, method)
 
@@ -60,4 +60,4 @@ if __name__ == '__main__':
     parser.add_argument('--method', type=str, default=None, help='method name')
     parser.add_argument('--save_id', type=str, default='0', help='identification number for each run')
     parser_args = parser.parse_args()
-    launch_rollout(parser_args.env, parser_args.method, parser_args.save_id)
+    launch(parser_args.env, parser_args.method, parser_args.save_id)

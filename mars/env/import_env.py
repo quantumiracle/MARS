@@ -199,10 +199,11 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             raise NotImplementedError
     else:
         print(f"Error: {env_name} environment in type {env_type} not found!")
-        raise NotImplementedError 
+        raise NotImplementedError
 
     print(f'Load {env_name} environment in type {env_type}.')  
     print(f'Env observation space: {env.observation_space} action space: {env.action_space}')  
+
     return env
 
 def make_env(args):
@@ -225,6 +226,10 @@ def make_env(args):
             single_env = _create_single_env(env_name, env_type, True, args)
             vec_env = supersuit.pettingzoo_env_to_vec_env_v1(single_env)
             env = supersuit.concat_vec_envs_v1(vec_env, args.num_envs, num_cpus=0, base_class="gym")  # true number of envs will be args.num_envs
+            # env = gym.wrappers.RecordEpisodeStatistics(env)
+            if args.record_video:
+                env.is_vector_env = True
+                env = gym.wrappers.RecordVideo(env, f"videos/{args.env_type}_{args.env_name}_{args.algorithm}") 
             # print(args.num_envs, env.num_envs)
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents
@@ -234,6 +239,9 @@ def make_env(args):
             VectorEnv = [DummyVectorEnv, SubprocVectorEnv][1]  
             single_env = _create_single_env(env_name, env_type, False, args)
             env = VectorEnv([lambda: single_env for _ in range(args.num_envs)])
+            if args.record_video:
+                env.is_vector_env = True
+                env = gym.wrappers.RecordVideo(env, f"videos/{args.env_type}_{args.env_name}_{args.algorithm}") 
             # avoid duplicating
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents

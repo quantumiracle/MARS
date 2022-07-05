@@ -24,7 +24,7 @@ def map_pettingzoo_to_gym(EnvNamePettingzoo):
     print(f'From Pettingzoo env {EnvNamePettingzoo} to Gym env {EnvNameGym}.')
     return EnvNameGym
 
-def launch_rollout(env, method, load_id, save_id):
+def launch(env, method, load_id, save_id):
     args = get_general_args(env, method)
     print(args)
 
@@ -63,4 +63,4 @@ if __name__ == '__main__':
     parser.add_argument('--load_id', type=str, default=None, help='identification number for loading models')
     parser.add_argument('--save_id', type=str, default='0', help='identification number for saving models')
     parser_args = parser.parse_args()
-    launch_rollout(parser_args.env, parser_args.method, parser_args.load_id, parser_args.save_id)
+    launch(parser_args.env, parser_args.method, parser_args.load_id, parser_args.save_id)

@@ -101,6 +101,15 @@ def get_general_args(env, method):
     args = LoadYAML2Dict(path+yaml_file, toAttr=True, mergeWith='mars/confs/default.yaml')
     return args
 
+def get_general_args_from_parser(parser_args):
+    env = parser_args['env']
+    method = parser_args['marl_method']
+    [env_type, env_name] = env.split('_', 1) # only split at the first '_'
+    path = f'mars/confs/{env_type}/{env_name}/'
+    yaml_file = f'{env_type}_{env_name}_{method}'
+    args = LoadYAML2Dict(path+yaml_file, toAttr=True, mergeWith='mars/confs/default.yaml')
+    return args
+
 def parse_args():
     """
     TODO: Parse user input arguments.
