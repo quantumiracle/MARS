@@ -229,7 +229,9 @@ def make_env(args):
             # env = gym.wrappers.RecordEpisodeStatistics(env)
             if args.record_video:
                 env.is_vector_env = True
-                env = gym.wrappers.RecordVideo(env, f"videos/{args.env_type}_{args.env_name}_{args.algorithm}") 
+                env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}",\
+                        step_trigger=lambda step: step % 10000 == 0, # record the videos every 10000 steps
+	                    video_length=100)  # for each video record up to 100 steps) 
             # print(args.num_envs, env.num_envs)
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents
@@ -241,7 +243,9 @@ def make_env(args):
             env = VectorEnv([lambda: single_env for _ in range(args.num_envs)])
             if args.record_video:
                 env.is_vector_env = True
-                env = gym.wrappers.RecordVideo(env, f"videos/{args.env_type}_{args.env_name}_{args.algorithm}") 
+                env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}",\
+                        step_trigger=lambda step: step % 10000 == 0, # record the videos every 10000 steps
+	                    video_length=100)  # for each video record up to 100 steps)  
             # avoid duplicating
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents

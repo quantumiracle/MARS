@@ -8,10 +8,8 @@ from mars.env.import_env import make_env
 from mars.rollout import rollout
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
-from mars.utils.func import get_general_args, get_model_path, get_exploiter
-import argparse
-import os
-parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
+from mars.utils.func import get_model_path
+from mars.utils.args_parser import get_args
 
 def map_pettingzoo_to_gym(EnvNamePettingzoo):
     map_dict = {
@@ -24,9 +22,11 @@ def map_pettingzoo_to_gym(EnvNamePettingzoo):
     print(f'From Pettingzoo env {EnvNamePettingzoo} to Gym env {EnvNameGym}.')
     return EnvNameGym
 
-def launch(env, method, load_id, save_id):
-    args = get_general_args(env, method)
+def launch():
+    args = get_args()
     print(args)
+    env = args.env
+    method = args.marl_method
 
     ## Change/specify some arguments if necessary
     args.max_episodes = 1000
@@ -35,7 +35,7 @@ def launch(env, method, load_id, save_id):
     args.test = True
     args.exploit = False
     # args.render = True
-    folder = f'./data/model/{load_id}/{env}_{method}/'
+    folder = f'./data/model/{args.load_id}/{env}_{method}/'
 
     args.load_model_full_path = get_model_path(method, folder)
 
@@ -53,14 +53,9 @@ def launch(env, method, load_id, save_id):
 
     model = MultiAgent(env, [model1], args)  
 
-    if save_id is not None:
-        rollout(env, model, args, save_id = load_id+'_test') # last arg is save path
+    if args.save_id is not None:
+        rollout(env, model, args, save_id = args.load_id+'_test') # last arg is save path
 
 
 if __name__ == '__main__':
-    parser.add_argument('--env', type=str, default=None, help='environment')
-    parser.add_argument('--method', type=str, default=None, help='method name')
-    parser.add_argument('--load_id', type=str, default=None, help='identification number for loading models')
-    parser.add_argument('--save_id', type=str, default='0', help='identification number for saving models')
-    parser_args = parser.parse_args()
-    launch(parser_args.env, parser_args.method, parser_args.load_id, parser_args.save_id)
+    launch()

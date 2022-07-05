@@ -2,7 +2,7 @@ from mars.env.import_env import make_env
 from mars.rollout import rollout
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
-from mars.utils.func import get_general_args
+from mars.utils.args_parser import get_default_args
 import argparse
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
@@ -17,7 +17,7 @@ method = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
             'fictitious_selfplay_sym', 'nash_dqn', 'nash_dqn_exploiter', \
             'nash_dqn_factorized', 'nfsp', 'psro', 'psro_sym', 'nash_ppo'][4] 
 
-args = get_general_args(game_type+'_'+game, method)
+args = get_default_args(game_type+'_'+game, method)
 #args.multiprocess = False
 args.num_envs = 3
 # args.device = 'cpu'
