@@ -1,0 +1,64 @@
+2022-07-06 22:37:58,205 INFO    MainThread:438964 [internal.py:wandb_internal():93] W&B internal server running at pid: 438964, started at: 2022-07-06 22:37:58.205726
+2022-07-06 22:37:58,207 INFO    WriterThread:438964 [datastore.py:open_for_write():75] open: /home/quantumiracle/research/MARS/wandb/run-20220706_223757-4byiykro/run-4byiykro.wandb
+2022-07-06 22:37:58,208 DEBUG   SenderThread:438964 [sender.py:send():235] send: header
+2022-07-06 22:37:58,208 DEBUG   SenderThread:438964 [sender.py:send():235] send: run
+2022-07-06 22:37:58,332 ERROR   SenderThread:438964 [internal_api.py:execute():143] 404 response executing GraphQL.
+2022-07-06 22:37:58,332 ERROR   SenderThread:438964 [internal_api.py:execute():144] {"errors":[{"message":"entity  not found during upsertBucket","path":["upsertBucket"]}],"data":{"upsertBucket":null}}
+2022-07-06 22:37:59,208 INFO    WriterThread:438964 [datastore.py:close():279] close: /home/quantumiracle/research/MARS/wandb/run-20220706_223757-4byiykro/run-4byiykro.wandb
+2022-07-06 22:37:59,208 INFO    HandlerThread:438964 [handler.py:finish():806] shutting down handler
+2022-07-06 22:37:59,208 ERROR   MainThread:438964 [internal.py:wandb_internal():165] Thread SenderThread:
+Traceback (most recent call last):
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/lib/retry.py", line 102, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 140, in execute
+    return self.client.execute(*args, **kwargs)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/transport/requests.py", line 39, in execute
+    request.raise_for_status()
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/requests/models.py", line 960, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://api.wandb.ai/graphql
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 22, in wrapper
+    return func(*args, **kwargs)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1319, in upsert_run
+    response = self.gql(mutation, variable_values=variable_values, **kwargs)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/lib/retry.py", line 118, in __call__
+    if not check_retry_fn(e):
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/util.py", line 887, in no_retry_auth
+    raise CommError("Permission denied, ask the project owner to grant you access")
+wandb.errors.CommError: Permission denied, ask the project owner to grant you access
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 102, in _run
+    self._process(record)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 310, in _process
+    self._sm.send(record)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 237, in send
+    send_handler(record)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 695, in send_run
+    self._init_run(run, config_value_dict)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 733, in _init_run
+    commit=run.git.last_commit or None,
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 58, in wrapper
+    raise CommError(message, err).with_traceback(sys.exc_info()[2])
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 22, in wrapper
+    return func(*args, **kwargs)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1319, in upsert_run
+    response = self.gql(mutation, variable_values=variable_values, **kwargs)
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/lib/retry.py", line 118, in __call__
+    if not check_retry_fn(e):
+  File "/home/quantumiracle/anaconda3/envs/x/lib/python3.7/site-packages/wandb/util.py", line 887, in no_retry_auth
+    raise CommError("Permission denied, ask the project owner to grant you access")
+wandb.errors.CommError: Permission denied, ask the project owner to grant you access
+2022-07-06 22:38:01,228 INFO    MainThread:438964 [internal.py:handle_exit():80] Internal process exited

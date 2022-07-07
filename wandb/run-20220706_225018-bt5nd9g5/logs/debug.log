@@ -1,0 +1,67 @@
+2022-07-06 22:50:18,976 INFO    MainThread:441445 [wandb_setup.py:_flush():76] Loading settings from /home/quantumiracle/.config/wandb/settings
+2022-07-06 22:50:18,976 INFO    MainThread:441445 [wandb_setup.py:_flush():76] Loading settings from /home/quantumiracle/research/MARS/wandb/settings
+2022-07-06 22:50:18,976 INFO    MainThread:441445 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2022-07-06 22:50:18,976 INFO    MainThread:441445 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'general_train.py', 'program': 'general_train.py'}
+2022-07-06 22:50:18,976 INFO    MainThread:441445 [wandb_init.py:_log_setup():428] Logging user logs to /home/quantumiracle/research/MARS/wandb/run-20220706_225018-bt5nd9g5/logs/debug.log
+2022-07-06 22:50:18,976 INFO    MainThread:441445 [wandb_init.py:_log_setup():429] Logging internal logs to /home/quantumiracle/research/MARS/wandb/run-20220706_225018-bt5nd9g5/logs/debug-internal.log
+2022-07-06 22:50:18,976 INFO    MainThread:441445 [wandb_init.py:init():462] calling init triggers
+2022-07-06 22:50:18,976 INFO    MainThread:441445 [wandb_init.py:init():466] wandb.init called with sweep_config: {}
+config: {'env_name': 'boxing_v2', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': False, 'seed': 'random', 'record_video': False, 'algorithm': 'NashPPO', 'algorithm_spec': {'episodic_update': True, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 30000, 'lambda': 0.95, 'eps_clip': 0.2, 'K_epoch': 4, 'GAE': True, 'max_grad_norm': 0.5, 'entropy_coeff': 0.01, 'vf_coeff': 0.5, 'policy_loss_coeff': 0.08}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': 'pettingzoo_boxing_v2_nash_ppo', 'wandb_group': '', 'wandb_name': '0', 'net_architecture': {'hidden_dim_list': [128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False, 'feature': {'hidden_dim_list': [512], 'channel_list': [32, 64, 64], 'kernel_size_list': [8, 4, 3], 'stride_list': [4, 2, 1], 'hidden_activation': 'ReLU', 'output_activation': False}, 'policy': {'hidden_dim_list': [512], 'hidden_activation': False, 'output_activation': 'Softmax'}, 'value': {'hidden_dim_list': [512], 'hidden_activation': 'ReLU', 'output_activation': False}}, 'marl_method': 'nash_ppo', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': True}}
+2022-07-06 22:50:18,977 INFO    MainThread:441445 [wandb_init.py:init():515] starting backend
+2022-07-06 22:50:18,977 INFO    MainThread:441445 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2022-07-06 22:50:18,988 INFO    MainThread:441445 [backend.py:ensure_launched():217] starting backend process...
+2022-07-06 22:50:18,994 INFO    MainThread:441445 [backend.py:ensure_launched():222] started backend process with pid: 441469
+2022-07-06 22:50:18,995 INFO    MainThread:441445 [wandb_init.py:init():525] backend started and connected
+2022-07-06 22:50:19,001 INFO    MainThread:441445 [wandb_init.py:init():596] updated telemetry
+2022-07-06 22:50:19,018 INFO    MainThread:441445 [wandb_init.py:init():628] communicating run to backend with 30 second timeout
+2022-07-06 22:50:19,684 INFO    MainThread:441445 [wandb_run.py:_on_init():1924] communicating current version
+2022-07-06 22:50:19,753 INFO    MainThread:441445 [wandb_run.py:_on_init():1928] got version response upgrade_message: "wandb version 0.12.21 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2022-07-06 22:50:19,753 INFO    MainThread:441445 [wandb_init.py:init():662] starting run threads in backend
+2022-07-06 22:50:24,757 INFO    MainThread:441445 [wandb_run.py:_console_start():1898] atexit reg
+2022-07-06 22:50:24,757 INFO    MainThread:441445 [wandb_run.py:_redirect():1771] redirect: SettingsConsole.REDIRECT
+2022-07-06 22:50:24,758 INFO    MainThread:441445 [wandb_run.py:_redirect():1776] Redirecting console.
+2022-07-06 22:50:24,759 INFO    MainThread:441445 [wandb_run.py:_redirect():1832] Redirects installed.
+2022-07-06 22:50:24,759 INFO    MainThread:441445 [wandb_init.py:init():688] run started, returning control to user process
+2022-07-06 22:50:29,983 INFO    MainThread:441445 [wandb_run.py:_atexit_cleanup():1867] got exitcode: 1
+2022-07-06 22:50:29,988 INFO    MainThread:441445 [wandb_run.py:_restore():1839] restore
+2022-07-06 22:50:32,947 INFO    MainThread:441445 [wandb_run.py:_on_finish():1996] got exit ret: file_counts {
+  wandb_count: 2
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 9059
+  total_bytes: 9059
+  deduped_bytes: 736
+}
+
+2022-07-06 22:50:33,088 INFO    MainThread:441445 [wandb_run.py:_on_finish():1996] got exit ret: file_counts {
+  wandb_count: 2
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 9059
+  total_bytes: 9059
+  deduped_bytes: 736
+}
+
+2022-07-06 22:50:38,202 INFO    MainThread:441445 [wandb_run.py:_on_finish():1996] got exit ret: file_counts {
+  wandb_count: 2
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 9059
+  total_bytes: 9059
+  deduped_bytes: 736
+}
+
+2022-07-06 22:50:40,661 INFO    MainThread:441445 [wandb_run.py:_on_finish():1996] got exit ret: file_counts {
+  wandb_count: 7
+  other_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 9059
+  total_bytes: 30902
+  deduped_bytes: 736
+}
+

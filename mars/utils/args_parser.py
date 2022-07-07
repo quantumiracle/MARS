@@ -1,6 +1,7 @@
 import argparse
 import sys
 from mars.utils.func import LoadYAML2Dict
+from mars.utils.wandb import init_wandb
 
 def get_parser_args():
     ''' deprecated '''
@@ -107,6 +108,11 @@ def get_args():
     * '--eval_models', type=bool, default=False, help='evalutation models during training (only for specific methods)'
     * '--save_path', type=str, default='/', help='path to save models and logs'
     * '--save_interval', type=int, default=2000, help='episode interval to save models'
+    * '--wandb_activate', type=bool, default=False, help='activate wandb for logging'
+    * '--wandb_entity', type=str, default='', help='wandb entity'
+    * '--wandb_project', type=str, default='', help='wandb project'
+    * '--wandb_group', type=str, default='', help='wandb project'
+    * '--wandb_name', type=str, default='', help='wandb name'
     * '--net_architecture.hidden_dim_list', type=str, default='[128, 128, 128]', help='list of hidden dimensions for model'
     * '--net_architecture.hidden_activation', type=str, default='ReLU', help='hidden activation function'
     * '--net_architecture.output_activation', type=str, default=False, help='output activation function'
@@ -133,7 +139,7 @@ def get_args():
 
     # get default args
     default_args = get_default_args(arg_env, arg_method)
-    # print('default: ', default_args)
+    print('default: ', default_args)
 
     # overwrite default with user input args
     for i, arg in enumerate(sys.argv[1:]):
@@ -147,7 +153,21 @@ def get_args():
                 ind = default_args
                 for p in mapping_path[:-1]:
                     ind = ind[p]
-                ind[mapping_path[-1]] = eval(arg)
+                try:
+                    ind[mapping_path[-1]] = eval(arg)
+                except:
+                    ind[mapping_path[-1]] = arg
 
-    # print(default_args)  # args after overwriting
+    print(default_args)  # args after overwriting
+
+    # initialize wandb if necessary
+    if default_args.wandb_activate:
+        if len(default_args.wandb_project) == 0:
+            default_args.wandb_project = '_'.join((default_args.env_type, default_args.env_name, default_args.marl_method))
+        if len(default_args.wandb_group) == 0:
+            default_args.wandb_group = ''
+        if len(default_args.wandb_name) == 0:
+            default_args.wandb_name = str(default_args.save_id)
+        init_wandb(default_args)
+        
     return default_args
