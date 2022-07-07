@@ -77,9 +77,13 @@ Supported algorithms are as following:
 
 ### Quick Start:
 
-**Train with MARL algorithm**:
+**1. Train with MARL algorithm**:
+
+Format:
 
 `python general_train.py --env **EnvSpec** --method **Method** --save_id **WheretoSave**`
+
+Example:
 
 ```bash
 # PettingZoo Boxing_v1, neural fictitious self-play
@@ -95,9 +99,13 @@ python general_train.py --env pettingzoo_surround_v1 --method prso --save_id tra
 python general_train.py --env slimevolley_SlimeVolley-v0 --method selfplay --save_id train_4
 ```
 
-**Exploit a trained model**:
+**2. Exploit a trained model**:
+
+Format:
 
 `python general_exploit.py --env **EnvSpec** --method **Method** --load_id **TrainedModelID** --save_id **WheretoSave** --to_exploit **ExploitWhichPlayer**`
+
+Example:
 
 ```
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id exploit_0 --to_exploit second
@@ -107,31 +115,52 @@ More examples are provided in [`./examples/`](https://github.com/quantumiracle/M
 
 ### Advanced Usage:
 
-**Train with MARL algorithm with multiprocess sampling and update**:
+**1. Use [Wandb](https://wandb.ai) for logging training results**:
+
+Format: 
+`python general_train.py --env **EnvSpec** --method **Method** --save_id **WheretoSave --wandb_activate True --wandb_entity **YourWandbAccountName** --wandb_project **ProjectName**`
+
+Example:
+
+```
+python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0 --wandb_activate True --wandb_entity name --wandb_project pettingzoo_boxing_v1_nfsp
+```
+
+**2. Train with MARL algorithm with multiprocess sampling and update**:
+
+Format: 
 
 `python general_launch.py --env **EnvSpec** --method **Method** --save_id **WheretoSave**`
+
+Example:
 
 ```
 python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0
 ```
 
-**Exploit a trained model (same as above)**:
+**3. Exploit a trained model (same as above)**:
+
+Example:
 
 ```
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id multiprocess_train_0 --save_id exploit_0 --to_exploit second
 ```
 
-**Test a trained MARL model in single-agent Atari**:
+**4. Test a trained MARL model in single-agent Atari**:
 
 This function is for limited environments (like *boxing*) since not all envs in PettingZoo Atari has a single-agent counterpart in OpenAI Gym.
+
+Example:
 
 ```
 python general_test.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id test_0
 ```
 
-**Bash script for server**:
+**5. Bash script for server**:
 
 Those bash scripts to run multiple tasks on servers are provided in `./server_bash_scripts`. For example, to run a training bash script (put it in the **root** directory):
+
+Example:
 
 ```bash
 ./general_train.sh
