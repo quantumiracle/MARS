@@ -9,7 +9,7 @@ Multi-agent:
     * PettingZoo: https://github.com/PettingZoo-Team/PettingZoo
         type: 'pettingzoo'
         envs: [         
-        'basketball_pong_v3', 'boxing_v2', 'combat_jet_v1', 'combat_tank_v2',
+        'basketball_pong_v3', 'boxing_v2', 'combat_plane_v1', 'combat_tank_v2',
         'double_dunk_v3', 'entombed_competitive_v3', 'entombed_cooperative_v3',
         'flag_capture_v2', 'foozpong_v3', 'ice_hockey_v2', 'joust_v3',
         'mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v3',
@@ -40,7 +40,7 @@ from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_md
 # PettingZoo envs
 pettingzoo_envs = {
     'atari': [
-        'basketball_pong_v3', 'boxing_v2', 'combat_jet_v1', 'combat_tank_v2',
+        'basketball_pong_v3', 'boxing_v2', 'combat_plane_v1', 'combat_tank_v2',
         'double_dunk_v3', 'entombed_competitive_v3', 'entombed_cooperative_v3',
         'flag_capture_v2', 'foozpong_v3', 'ice_hockey_v2', 'joust_v3',
         'mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v3',
