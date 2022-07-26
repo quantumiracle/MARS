@@ -23,6 +23,7 @@ WIP. Not released yet.
 
 If you have any question (propose an ISSUE if it's general problem) or want to contribute to this repository, feel free to contact me: *zhding96@gmail.com*
 
+**MARS** is a comprehensive library for benchmarking multi-player zero-sum Markov games, including our proposed **Nash-DQN** algorithm, as well as other baselines methods like **Self-play, Fictitious Self-play, Neural Fictitious Self-play, Policy Space Response Oracle**, etc. An independent implementation of **Nash-DQN** algorithm is provided in [another repo](https://github.com/quantumiracle/nash-dqn) if you wanna have a quick understanding.
 
 ## Installation
 Use Python 3.7 (Python 3.6 is not supported after Pettingzoo 1.12)
