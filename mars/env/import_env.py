@@ -245,7 +245,7 @@ def make_env(args):
                 env.is_vector_env = True
                 env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}",\
                         step_trigger=lambda step: step % 10000 == 0, # record the videos every 10000 steps
-	                    video_length=100)  # for each video record up to 100 steps)  
+                        video_length=100)  # for each video record up to 100 steps)  
             # avoid duplicating
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents

@@ -16,7 +16,7 @@ class aec_reward_lambda(PettingzooWrap):
             change_reward_fn
         ), "change_reward_fn needs to be a function. It is {}".format(change_reward_fn)
         self._change_reward_fn = change_reward_fn
-
+        self.env = env
         super().__init__(env)
 
     def _check_wrapper_params(self):
@@ -48,6 +48,10 @@ class aec_reward_lambda(PettingzooWrap):
         self._cumulative_rewards = self.__cumulative_rewards
         self._accumulate_rewards()
 
+    def render(self, mode):
+        self.env.render(mode)
+
+
 
 class gym_reward_lambda(gym.Wrapper):
     def __init__(self, env, change_reward_fn):
@@ -55,12 +59,15 @@ class gym_reward_lambda(gym.Wrapper):
             change_reward_fn
         ), "change_reward_fn needs to be a function. It is {}".format(change_reward_fn)
         self._change_reward_fn = change_reward_fn
-
+        self.env = env
         super().__init__(env)
 
     def step(self, action):
         obs, rew, done, info = super().step(action)
         return obs, self._change_reward_fn(rew), done, info
+
+    def render(self, mode):
+        self.env.render(mode)
 
 
 reward_lambda_v1 = WrapperChooser(

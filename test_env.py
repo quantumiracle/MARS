@@ -1,6 +1,7 @@
 ### Test environment loading ###
 
 import sys
+import numpy as np
 sys.path.append("..")
 from mars.env.import_env import make_env
 from mars.utils.data_struct import AttrDict
@@ -47,5 +48,8 @@ if __name__ == "__main__":
                 fail_cnt += 1
                 print(f'Failed to load env {env_name} in type {env_type}.')
             test_env.reset()
+            # for _ in range(100):
+            #     test_env.step(np.array(18*[0, 0]))
+            #     test_env.render()
             test_env.render()
             print(f"{cnt-fail_cnt}/{cnt} succeed.")
