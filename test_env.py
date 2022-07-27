@@ -9,7 +9,7 @@ from mars.utils.data_struct import AttrDict
 EnvArgs = {
     'name': None,
     'type': None,
-    'num_envs': 2, 
+    'num_envs': 1, 
     'ram': True, 
     'against_baseline': False,
     'seed': 1223,

@@ -133,6 +133,8 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             env = supersuit.dtype_v0(env, 'float32') # need to transform uint8 to float first for normalizing observation: https://github.com/PettingZoo-Team/SuperSuit
             env = supersuit.normalize_obs_v0(env, env_min=0, env_max=1) # normalize the observation to (0,1)
 
+            env = reward_lambda_v1(env, zero_sum_reward_filer)
+
             # assign observation and action spaces
             if not ss_vec:
                 env.observation_space = list(env.observation_spaces.values())[0]
@@ -140,7 +142,6 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
                 env.agents = env_agents
                 env = Dict2TupleWrapper(env, keep_info=keep_info) 
 
-            env = reward_lambda_v1(env, zero_sum_reward_filer)
             env.agents = env_agents
             
         elif env_name in pettingzoo_envs['classic']:
@@ -245,7 +246,7 @@ def make_env(args):
                 env.is_vector_env = True
                 env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}",\
                         step_trigger=lambda step: step % 10000 == 0, # record the videos every 10000 steps
-                        video_length=100)  # for each video record up to 100 steps)  
+	                    video_length=100)  # for each video record up to 100 steps)  
             # avoid duplicating
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents

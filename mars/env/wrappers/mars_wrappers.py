@@ -483,7 +483,7 @@ class Dict2TupleWrapper():
         self.env = env
         self.num_agents = env.num_agents
         self.keep_info = keep_info  # if True keep info as dict
-        print(env.observation_space)
+
         if len(env.observation_space.shape) > 1: # image
             old_shape = env.observation_space.shape
             self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(old_shape[-1], old_shape[0], old_shape[1]), dtype=np.uint8)
