@@ -45,6 +45,8 @@ if __name__ == "__main__":
             cnt += 1
             EnvArgs['env_name'] = env_name
             EnvArgs['env_type'] = env_type
+            EnvArgs['num_process'] = 1
+            EnvArgs['record_video'] = False
             env_args = AttrDict(EnvArgs)
             test_env = make_env(env_args)
             try:
