@@ -29,7 +29,7 @@ class NashDQN(DQN):
         self.args = args
 
         # don't forget to instantiate an optimizer although there is one in DQN
-        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
+        self._init_optimizer(args)
         # lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=50, gamma=0.95)    
         # self.schedulers.append(lr_scheduler)
 

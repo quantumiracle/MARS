@@ -27,8 +27,7 @@ class DQN(Agent):
                 args.algorithm_spec['multi_step'], args.algorithm_spec['gamma'], args.num_envs, args.batch_size) # first float then int to handle the scientific number like 1e5
 
         self.update_target(self.model, self.target)
-
-        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
+        self._init_optimizer(args)
         self.epsilon_scheduler = EpsilonScheduler(args.algorithm_spec['eps_start'], args.algorithm_spec['eps_final'], args.algorithm_spec['eps_decay'])
         self.schedulers.append(self.epsilon_scheduler)
 
@@ -41,6 +40,9 @@ class DQN(Agent):
     def _init_model(self, env, args):
         self.model = self._select_type(env, args).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
+
+    def _init_optimizer(self, args):
+        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
 
     def _select_type(self, env, args):
         if args.num_envs == 1:

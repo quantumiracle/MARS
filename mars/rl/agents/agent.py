@@ -76,7 +76,11 @@ class Agent(object):
         """
         Update the target model when necessary.
         """
-        target_model.load_state_dict(current_model.state_dict())
+        if isinstance(current_model, list) and isinstance(target_model, list):
+            for cur_m, tar_m in zip(current_model, target_model):
+                tar_m.load_state_dict(cur_m.state_dict())
+        else:
+            target_model.load_state_dict(current_model.state_dict())
 
     def save_model(self, path: str = None, *args, **kwargs):
         pass
