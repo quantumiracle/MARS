@@ -18,8 +18,9 @@ method = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
             'nash_dqn_factorized', 'nfsp', 'psro', 'psro_sym', 'nash_ppo'][4] 
 
 args = get_default_args(game_type+'_'+game, method)
+args.ram = True
 #args.multiprocess = False
-args.num_envs = 3
+args.num_envs = 2
 # args.device = 'cpu'
 print(args)
 args.render=False
