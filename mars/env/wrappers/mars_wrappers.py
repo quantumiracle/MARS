@@ -39,7 +39,10 @@ class PettingzooClassicWrapper():
             return obs
 
     def seed(self, seed):
-        self.env.seed(seed)
+        try:
+            self.env.seed(seed)
+        except:
+            self.env.reset(seed=seed) # gym update for seeding
         np.random.seed(seed)
 
     def render(self,):
@@ -90,7 +93,10 @@ class PettingzooClassic_Iterate2Parallel():
                 return {a: obs[a]['observation'] for a in self.agents}
 
     def seed(self, seed):
-        self.env.seed(seed)
+        try:
+            self.env.seed(seed)
+        except:
+            self.env.reset(seed=seed) # gym update for seeding
         np.random.seed(seed)
 
     def render(self,):
@@ -544,7 +550,10 @@ class Dict2TupleWrapper():
     #     return r
 
     def seed(self, seed):
-        self.env.reset(seed=seed)
+        try:
+            self.env.seed(seed)
+        except:
+            self.env.reset(seed=seed)
 
     def render(self,):
         self.env.render()
