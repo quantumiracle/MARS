@@ -65,16 +65,16 @@ Supported environments are as following:
 |[`mdp`](https://github.com/quantumiracle/MARS/tree/master/mars/env/mdp)| 'arbitrary_mdp', 'arbitrary_richobs_mdp', 'attack', 'combinatorial_lock' |
 
 Supported algorithms are as following:
-| Method      |
-| --------------- |
-| Self-play |
-| [Fictitious Self-Play](http://proceedings.mlr.press/v37/heinrich15.pdf) |
-| [Neural Fictitious Self-Play](https://arxiv.org/abs/1603.01121) |
-| [Policy Space Responce Oracle](https://proceedings.neurips.cc/paper/2017/file/3323fe11e9595c09af38fe67567a9394-Paper.pdf) |
-| [Nash Q-learning](https://www.jmlr.org/papers/volume4/temp/hu03a.pdf) |
-| [Nash Value Iteration](http://proceedings.mlr.press/v139/liu21z.html) |
-| [Nash DQN](https://arxiv.org/pdf/2207.08894.pdf) |
-| [Nash DQN with Exploiter](https://arxiv.org/pdf/2207.08894.pdf) |
+| Method      |  Descriptions |
+| --------------- | --------------- |
+| Self-play | iterative best response |
+| [Fictitious Self-Play](http://proceedings.mlr.press/v37/heinrich15.pdf) | iterative best response to the opponent's historical average strategy |
+| [Neural Fictitious Self-Play](https://arxiv.org/abs/1603.01121) | a neural approximation version of FSP |
+| [Policy Space Responce Oracle](https://proceedings.neurips.cc/paper/2017/file/3323fe11e9595c09af38fe67567a9394-Paper.pdf) | neural version of Double Oracle, which is iterative best response of opponent's meta Nash strategy |
+| [Nash Q-learning](https://www.jmlr.org/papers/volume4/temp/hu03a.pdf) | model free, provable convergence under unique Nash assumption at each stage game |
+| [Nash Value Iteration](http://proceedings.mlr.press/v139/liu21z.html) | model based, provable efficient convergence with optimistic value estimation (exploration bonus) |
+| [Nash DQN](https://arxiv.org/pdf/2207.08894.pdf) | neural version of Nash Q-learning or Nash Value Iteration |
+| [Nash DQN with Exploiter](https://arxiv.org/pdf/2207.08894.pdf) | Nash DQN with asymmetric learning scheme, opponent as an exploiter |
 
 ### Quick Start:
 
