@@ -9,12 +9,12 @@ Multi-agent:
     * PettingZoo: https://github.com/PettingZoo-Team/PettingZoo
         type: 'pettingzoo'
         envs: [         
-        'basketball_pong_v3', 'boxing_v2', 'combat_plane_v1', 'combat_tank_v2',
+        'basketball_pong_v3', 'boxing_v2', 'combat_plane_v2', 'combat_tank_v2',
         'double_dunk_v3', 'entombed_competitive_v3', 'entombed_cooperative_v3',
         'flag_capture_v2', 'foozpong_v3', 'ice_hockey_v2', 'joust_v3',
         'mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v3',
         'quadrapong_v4', 'space_invaders_v2', 'space_war_v2', 'surround_v2',
-        'tennis_v3', 'video_checkers_v4', 'volleyball_pong_v2', 'warlords_v3',
+        'tennis_v3', 'video_checkers_v4', 'volleyball_pong_v3', 'warlords_v3',
         'wizard_of_wor_v3'
         'dou_dizhu_v4', 'go_v5', 'leduc_holdem_v4', 'rps_v2',
         'texas_holdem_no_limit_v6', 'texas_holdem_v4', 'tictactoe_v3', 'uno_v4']
@@ -40,12 +40,12 @@ from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_md
 # PettingZoo envs
 pettingzoo_envs = {
     'atari': [
-        'basketball_pong_v3', 'boxing_v2', 'combat_plane_v1', 'combat_tank_v2',
+        'basketball_pong_v3', 'boxing_v2', 'combat_plane_v2', 'combat_tank_v2',
         'double_dunk_v3', 'entombed_competitive_v3', 'entombed_cooperative_v3',
         'flag_capture_v2', 'foozpong_v3', 'ice_hockey_v2', 'joust_v3',
         'mario_bros_v3', 'maze_craze_v3', 'othello_v3', 'pong_v3',
         'quadrapong_v4', 'space_invaders_v2', 'space_war_v2', 'surround_v2',
-        'tennis_v3', 'video_checkers_v4', 'volleyball_pong_v2', 'warlords_v3',
+        'tennis_v3', 'video_checkers_v4', 'volleyball_pong_v3', 'warlords_v3',
         'wizard_of_wor_v3'
     ],
 
@@ -103,7 +103,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
 
         env = SlimeVolleyWrapper(env, args.against_baseline)  # slimevolley to pettingzoo style
         env = Dict2TupleWrapper(env, keep_info=keep_info)  # pettingzoo to nfsp style, keep_info True to maintain dict type for parallel envs
-        env = reward_lambda_v1(env, zero_sum_reward_filer)
+        # env = reward_lambda_v1(env, zero_sum_reward_filer)
 
     elif env_type == 'pettingzoo':
         import supersuit
@@ -153,7 +153,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
                 env = PettingzooClassic_Iterate2Parallel(env, observation_mask=None)  # since Classic games do not support Parallel API yet
                
             env = Dict2TupleWrapper(env, keep_info=keep_info)
-            env = reward_lambda_v1(env, zero_sum_reward_filer)
+            # env = reward_lambda_v1(env, zero_sum_reward_filer)
 
     elif env_type == 'lasertag':
         import lasertag  # this is essential
@@ -207,7 +207,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
 
     return env
 
-def make_env(args):
+def make_env(args, ss_vec=True):
     """A function for creating all environments, could be multiple if using parallel settings.
 
     :param args: necessary arguments for specifying the environment
@@ -222,7 +222,7 @@ def make_env(args):
     if args.num_process > 1 or args.num_envs == 1: # if multiprocess, each process can only work with one env separately
         env = _create_single_env(env_name, env_type, False, args)  
     else:
-        if env_type == 'pettingzoo':
+        if env_type == 'pettingzoo' and ss_vec:
             import supersuit
             single_env = _create_single_env(env_name, env_type, True, args)
             vec_env = supersuit.pettingzoo_env_to_vec_env_v1(single_env)
