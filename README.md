@@ -68,23 +68,23 @@ Supported algorithms are as following:
 | Method      |
 | --------------- |
 | Self-play |
-| Fictitious Self-play |
-| Neural Fictitious Self-play |
-| Policy Space Response Oracle |
-| Nash Q-learning |
-| Nash Value Iteration |
-| Nash DQN |
-| Nash DQN with Exploiter |
+| [Fictitious Self-Play](http://proceedings.mlr.press/v37/heinrich15.pdf) |
+| [Neural Fictitious Self-Play](https://arxiv.org/abs/1603.01121) |
+| [Policy Space Responce Oracle](https://proceedings.neurips.cc/paper/2017/file/3323fe11e9595c09af38fe67567a9394-Paper.pdf) |
+| [Nash Q-learning](https://www.jmlr.org/papers/volume4/temp/hu03a.pdf) |
+| [Nash Value Iteration](http://proceedings.mlr.press/v139/liu21z.html) |
+| [Nash DQN](https://arxiv.org/pdf/2207.08894.pdf) |
+| [Nash DQN with Exploiter](https://arxiv.org/pdf/2207.08894.pdf) |
 
 ### Quick Start:
 
 **1. Train with MARL algorithm**:
 
-Format:
+*Format*:
 
 `python general_train.py --env **EnvSpec** --method **Method** --save_id **WheretoSave**`
 
-Example:
+*Example*:
 
 ```bash
 # PettingZoo Boxing_v1, neural fictitious self-play
@@ -102,11 +102,11 @@ python general_train.py --env slimevolley_SlimeVolley-v0 --method selfplay --sav
 
 **2. Exploit a trained model**:
 
-Format:
+*Format*:
 
 `python general_exploit.py --env **EnvSpec** --method **Method** --load_id **TrainedModelID** --save_id **WheretoSave** --to_exploit **ExploitWhichPlayer**`
 
-Example:
+*Example*:
 
 ```
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id exploit_0 --to_exploit second
@@ -118,10 +118,10 @@ More examples are provided in [`./examples/`](https://github.com/quantumiracle/M
 
 **1. Use [Wandb](https://wandb.ai) for logging training results**:
 
-Format: 
+*Format*: 
 `python general_train.py --env **EnvSpec** --method **Method** --save_id **WheretoSave --wandb_activate True --wandb_entity **YourWandbAccountName** --wandb_project **ProjectName**`
 
-Example:
+*Example*:
 
 ```
 python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0 --wandb_activate True --wandb_entity name --wandb_project pettingzoo_boxing_v1_nfsp
@@ -129,11 +129,11 @@ python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id mult
 
 **2. Train with MARL algorithm with multiprocess sampling and update**:
 
-Format: 
+*Format*: 
 
 `python general_launch.py --env **EnvSpec** --method **Method** --save_id **WheretoSave**`
 
-Example:
+*Example*:
 
 ```
 python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0
@@ -141,7 +141,7 @@ python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id mult
 
 **3. Exploit a trained model (same as above)**:
 
-Example:
+*Example*:
 
 ```
 python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id multiprocess_train_0 --save_id exploit_0 --to_exploit second
@@ -151,7 +151,7 @@ python general_exploit.py --env pettingzoo_boxing_v1 --method nfsp --load_id mul
 
 This function is for limited environments (like *boxing*) since not all envs in PettingZoo Atari has a single-agent counterpart in OpenAI Gym.
 
-Example:
+*Example*:
 
 ```
 python general_test.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_0 --save_id test_0
@@ -161,7 +161,7 @@ python general_test.py --env pettingzoo_boxing_v1 --method nfsp --load_id train_
 
 Those bash scripts to run multiple tasks on servers are provided in `./server_bash_scripts`. For example, to run a training bash script (put it in the **root** directory):
 
-Example:
+*Example*:
 
 ```bash
 ./general_train.sh
