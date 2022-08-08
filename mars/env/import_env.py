@@ -167,7 +167,6 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         env = gym.make(env_name)
         env = RoboSumoWrapper(env)
         env = ZeroSumWrapper(env)
-        # env = reward_lambda_v1(env, zero_sum_reward_filer)
 
     elif env_type == 'gym':
         try:

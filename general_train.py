@@ -10,7 +10,6 @@ from mars.utils.data_struct import AttrDict
 def launch():
     args = get_args()
     print('args: ', args)
-    # return 0
 
     ### Create env
     env = make_env(args)
