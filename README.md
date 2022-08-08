@@ -124,7 +124,7 @@ More examples are provided in [`./examples/`](https://github.com/quantumiracle/M
 *Example*:
 
 ```
-python general_launch.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0 --wandb_activate True --wandb_entity name --wandb_project pettingzoo_boxing_v1_nfsp
+python general_train.py --env pettingzoo_boxing_v1 --method nfsp --save_id multiprocess_train_0 --wandb_activate True --wandb_entity name --wandb_project pettingzoo_boxing_v1_nfsp
 ```
 
 **2. Train with MARL algorithm with multiprocess sampling and update**:
