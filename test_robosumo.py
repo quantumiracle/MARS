@@ -23,15 +23,15 @@ env = make_env(args)
 print(env)
 
 ### Test env
-# obser = env.reset()
-# skip = 0
-# for t in range(100):
-#     actions = [a_space.sample() for a_space in env.action_spaces.values()]
-#     print(t, actions)
-#     obser, r, done, info = env.step(actions)
-#     env.render(mode='rgb_array')
-#     # env.render()
-#     if np.any(done): break
+obser = env.reset()
+skip = 0
+for t in range(1000):
+    actions = [a_space.sample() for a_space in env.action_spaces.values()]
+    print(t, actions)
+    obser, r, done, info = env.step(actions)
+    env.render(mode='rgb_array')
+    # env.render()
+    if np.any(done): break
 
 ### Specify models for each agent
 model1 = eval(args.algorithm)(env, args)
