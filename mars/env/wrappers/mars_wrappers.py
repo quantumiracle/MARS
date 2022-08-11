@@ -150,7 +150,7 @@ class RoboSumoWrapper():
         self.env.seed(seed)
         np.random.seed(seed)
 
-    def render(self, mode='rgb_image'):
+    def render(self, mode='human'):
         self.env.render(mode)
 
     def step(self, actions):
