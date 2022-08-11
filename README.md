@@ -100,6 +100,11 @@ python general_train.py --env pettingzoo_surround_v1 --method prso --save_id tra
 python general_train.py --env slimevolley_SlimeVolley-v0 --method selfplay --save_id train_4
 ```
 
+To see all user input arguments:
+```bash
+python general_train.py --help
+```
+
 **2. Exploit a trained model**:
 
 *Format*:
