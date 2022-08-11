@@ -150,7 +150,8 @@ class RoboSumoWrapper():
         self.env.seed(seed)
         np.random.seed(seed)
 
-    def render(self, mode='human'):
+    def render(self, mode):
+        mode = 'human' # force 'human' mode to render
         self.env.render(mode)
 
     def step(self, actions):
@@ -197,8 +198,8 @@ class ZeroSumWrapper():
     def seed(self, seed):
         self.env.seed(seed)
 
-    def render(self, mode='rgb_image'):
-        self.env.render(mode)
+    def render(self, *args):
+        self.env.render(args)
 
     def step(self, actions):
         obs, reward, done, info = self.env.step(actions)
