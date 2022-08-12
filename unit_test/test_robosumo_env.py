@@ -12,7 +12,7 @@ env = gym.make(env_name)
 print(env.observation_space, env.action_space)
 observation = env.reset()
 print(observation)
-for i in range(10):
+for i in range(1000):
     env.render(mode='human')  # only 'human' mode will successfully render this; 'rgb_image' or 'rgb_array' will not
     action = np.random.uniform(0,1,(2, 8))
     print(action)

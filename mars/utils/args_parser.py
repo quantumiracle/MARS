@@ -67,62 +67,62 @@ def get_args():
     Descriptions of configurations:
     --------------------------------------------------------------------------------
     Environment args:
-    * '--env', type=str, default=None, help='environment type and name'
-    * '--num_envs', type=int, default=1, help='number of environments for parallel sampling'
-    * '--ram', type=bool, default=False, help='use RAM observation'
-    * '--render', type=bool, default=False, help='render the scene'
-    * '--seed', type=str, default='random', help='random seed'
-    * '--record_video', type=bool, default=False, help='whether recording the video'
+    * '--env', type=str, default=None, description='environment type and name'
+    * '--num_envs', type=int, default=1, description='number of environments for parallel sampling'
+    * '--ram', type=bool, default=False, description='use RAM observation'
+    * '--render', type=bool, default=False, description='render the scene'
+    * '--seed', type=str, default='random', description='random seed'
+    * '--record_video', type=bool, default=False, description='whether recording the video'
 
     Agent args:
-    * '--algorithm', type=str, default=None, help='algorithm name'
-    * '--algorithm_spec.dueling', type=bool, default=False, help='DQN: dueling trick'
-    * '--algorithm_spec.replay_buffer_size', type=int, default=1e5, help='DQN: replay buffer size'
-    * '--algorithm_spec.gamma', type=float, default=0.99, help='DQN: discount factor'
-    * '--algorithm_spec.multi_step', type=int, default=1, help='DQN: multi-step return'
-    * '--algorithm_spec.target_update_interval', type=bool, default=False, help='DQN: steps skipped for target network update'
-    * '--algorithm_spec.eps_start', type=float, default=1, help='DQN: epsilon-greedy starting value'
-    * '--algorithm_spec.eps_final', type=float, default=0.001, help='DQN: epsilon-greedy ending value'
-    * '--algorithm_spec.eps_decay', type=float, default=5000000, help='DQN: epsilon-greedy decay interval'
+    * '--algorithm', type=str, default=None, description='algorithm name'
+    * '--algorithm_spec.dueling', type=bool, default=False, description='DQN: dueling trick'
+    * '--algorithm_spec.replay_buffer_size', type=int, default=1e5, description='DQN: replay buffer size'
+    * '--algorithm_spec.gamma', type=float, default=0.99, description='DQN: discount factor'
+    * '--algorithm_spec.multi_step', type=int, default=1, description='DQN: multi-step return'
+    * '--algorithm_spec.target_update_interval', type=bool, default=False, description='DQN: steps skipped for target network update'
+    * '--algorithm_spec.eps_start', type=float, default=1, description='DQN: epsilon-greedy starting value'
+    * '--algorithm_spec.eps_final', type=float, default=0.001, description='DQN: epsilon-greedy ending value'
+    * '--algorithm_spec.eps_decay', type=float, default=5000000, description='DQN: epsilon-greedy decay interval'
 
     Training args:
-    * '--num_process', type=int, default=1, help='use multiprocessing for both sampling and update'
-    * '--batch_size', type=int, default=128, help='batch size for update'
-    * '--max_episodes', type=int, default=50000, help='maximum episodes for rollout'
-    * '--max_steps_per_episode', type=int, default=300, help='maximum steps per episode'
-    * '--train_start_frame', type=int, default=0, help='start frame for training (not update when warmup)'
-    * '--method', dest='marl_method', type=str, default=None, help='method name'
-    * '--save_id', type=str, default='0', help='identification number for each run'
-    * '--optimizer', type=str, default='adam', help='choose optimizer'
-    * '--batch_size', type=int, default=128, help='batch size for update'
-    * '--learning_rate', type=float, default=1e-4, help='learning rate'
-    * '--device', type=str, default='gpu', help='computation device for model optimization'
-    * '--update_itr', type=int, default=1, help='number of updates per step'
-    * '--log_avg_window', type=int, default=20, help='window length for averaging the logged results'
-    * '--log_interval', type=int, default=20, help='interval for logging'
-    * '--test', type=bool, default=False, help='whether in test mode'
-    * '--exploit', type=bool, default=False, help='whether in exploitation mode'
-    * '--load_model_idx', type=str, default='0', help='index of the model to load'
-    * '--load_model_full_path', type=str, default='/', help='full path of the model to load'
-    * '--multiprocess', type=bool, default=False, help='whether using multiprocess or not'
-    * '--eval_models', type=bool, default=False, help='evalutation models during training (only for specific methods)'
-    * '--save_path', type=str, default='/', help='path to save models and logs'
-    * '--save_interval', type=int, default=2000, help='episode interval to save models'
-    * '--wandb_activate', type=bool, default=False, help='activate wandb for logging'
-    * '--wandb_entity', type=str, default='', help='wandb entity'
-    * '--wandb_project', type=str, default='', help='wandb project'
-    * '--wandb_group', type=str, default='', help='wandb project'
-    * '--wandb_name', type=str, default='', help='wandb name'
-    * '--net_architecture.hidden_dim_list', type=str, default='[128, 128, 128]', help='list of hidden dimensions for model'
-    * '--net_architecture.hidden_activation', type=str, default='ReLU', help='hidden activation function'
-    * '--net_architecture.output_activation', type=str, default=False, help='output activation function'
-    * '--net_architecture.hidden_activation', type=str, default='ReLU', help='hidden activation function'
-    * '--net_architecture.channel_list', type=str, default='[8, 8, 16]', help='list of channels for CNN'
-    * '--net_architecture.kernel_size_list', type=str, default='[4, 4, 4]', help='list of kernel sizes for CNN'
-    * '--net_architecture.stride_list', type=str, default='[2, 1, 1]', help='list of strides for CNN'
-    * '--marl_spec.min_update_interval', type=int, default=20, help='mininal opponent update interval in unit of episodes'
-    * '--marl_spec.score_avg_window', type=int, default=10, help='the length of window for averaging the score values'
-    * '--marl_spec.global_state', type=bool, default=False, help='whether using global observation'
+    * '--num_process', type=int, default=1, description='use multiprocessing for both sampling and update'
+    * '--batch_size', type=int, default=128, description='batch size for update'
+    * '--max_episodes', type=int, default=50000, description='maximum episodes for rollout'
+    * '--max_steps_per_episode', type=int, default=300, description='maximum steps per episode'
+    * '--train_start_frame', type=int, default=0, description='start frame for training (not update when warmup)'
+    * '--method', dest='marl_method', type=str, default=None, description='method name'
+    * '--save_id', type=str, default='0', description='identification number for each run'
+    * '--optimizer', type=str, default='adam', description='choose optimizer'
+    * '--batch_size', type=int, default=128, description='batch size for update'
+    * '--learning_rate', type=float, default=1e-4, description='learning rate'
+    * '--device', type=str, default='gpu', description='computation device for model optimization'
+    * '--update_itr', type=int, default=1, description='number of updates per step'
+    * '--log_avg_window', type=int, default=20, description='window length for averaging the logged results'
+    * '--log_interval', type=int, default=20, description='interval for logging'
+    * '--test', type=bool, default=False, description='whether in test mode'
+    * '--exploit', type=bool, default=False, description='whether in exploitation mode'
+    * '--load_model_idx', type=str, default='0', description='index of the model to load'
+    * '--load_model_full_path', type=str, default='/', description='full path of the model to load'
+    * '--multiprocess', type=bool, default=False, description='whether using multiprocess or not'
+    * '--eval_models', type=bool, default=False, description='evalutation models during training (only for specific methods)'
+    * '--save_path', type=str, default='/', description='path to save models and logs'
+    * '--save_interval', type=int, default=2000, description='episode interval to save models'
+    * '--wandb_activate', type=bool, default=False, description='activate wandb for logging'
+    * '--wandb_entity', type=str, default='', description='wandb entity'
+    * '--wandb_project', type=str, default='', description='wandb project'
+    * '--wandb_group', type=str, default='', description='wandb project'
+    * '--wandb_name', type=str, default='', description='wandb name'
+    * '--net_architecture.hidden_dim_list', type=str, default='[128, 128, 128]', description='list of hidden dimensions for model'
+    * '--net_architecture.hidden_activation', type=str, default='ReLU', description='hidden activation function'
+    * '--net_architecture.output_activation', type=str, default=False, description='output activation function'
+    * '--net_architecture.hidden_activation', type=str, default='ReLU', description='hidden activation function'
+    * '--net_architecture.channel_list', type=str, default='[8, 8, 16]', description='list of channels for CNN'
+    * '--net_architecture.kernel_size_list', type=str, default='[4, 4, 4]', description='list of kernel sizes for CNN'
+    * '--net_architecture.stride_list', type=str, default='[2, 1, 1]', description='list of strides for CNN'
+    * '--marl_spec.min_update_interval', type=int, default=20, description='mininal opponent update interval in unit of episodes'
+    * '--marl_spec.score_avg_window', type=int, default=10, description='the length of window for averaging the score values'
+    * '--marl_spec.global_state', type=bool, default=False, description='whether using global observation'
 
     """
     mapping_path = []
@@ -133,13 +133,14 @@ def get_args():
         if arg == '--env':
             arg_env = sys.argv[1:][i+1]
             parsed_ids.extend([i, i+1])
+        else:
+            arg_env = None
         if arg == '--method':
             arg_method = sys.argv[1:][i+1]
             parsed_ids.extend([i, i+1])
+        else:
+            arg_method = None
 
-    # get default args
-    default_args = get_default_args(arg_env, arg_method)
-    print('default: ', default_args)
 
     # overwrite default with user input args
     for i, arg in enumerate(sys.argv[1:]):
@@ -147,16 +148,21 @@ def get_args():
             if arg == '--help' or arg == '-h':
                 print(config_doc)
                 exit()
-            if arg.startswith('--'):
-                mapping_path = arg[2:].split('.')
             else:
-                ind = default_args
-                for p in mapping_path[:-1]:
-                    ind = ind[p]
-                try:
-                    ind[mapping_path[-1]] = eval(arg)
-                except:
-                    ind[mapping_path[-1]] = arg
+                # get default args
+                default_args = get_default_args(arg_env, arg_method)
+                print('default: ', default_args)
+
+                if arg.startswith('--'):
+                    mapping_path = arg[2:].split('.')
+                else:
+                    ind = default_args
+                    for p in mapping_path[:-1]:
+                        ind = ind[p]
+                    try:
+                        ind[mapping_path[-1]] = eval(arg)
+                    except:
+                        ind[mapping_path[-1]] = arg
 
     print(default_args)  # args after overwriting
 

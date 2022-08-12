@@ -19,6 +19,7 @@ args = LoadYAML2Dict(yaml_file, toAttr=True)
 
 ### Create env
 # args.render = True
+args.record_video = True
 env = make_env(args)
 print(env)
 
