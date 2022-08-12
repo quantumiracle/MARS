@@ -128,7 +128,7 @@ class PettingzooClassic_Iterate2Parallel():
 
 class RoboSumoWrapper():
     """ Wrap robosumo environments """
-    def __init__(self, env):
+    def __init__(self, env, mode):
         super(RoboSumoWrapper, self).__init__()
         self.env = env
         self.agents = ['first_0', 'second_0']
@@ -137,7 +137,9 @@ class RoboSumoWrapper():
         self.observation_spaces = {name: self.observation_space for name in self.agents}
         self.action_space = self.env.action_space[0]
         self.action_spaces = {name: self.action_space for name in self.agents}
-    
+        self.metadata = env.metadata
+        self.render_mode = mode
+
     @property
     def spec(self):
         return self.env.spec
@@ -151,7 +153,7 @@ class RoboSumoWrapper():
         np.random.seed(seed)
 
     def render(self, mode):
-        mode = 'human' # force 'human' mode to render
+        mode = self.render_mode  # force the mode here
         return self.env.render(mode)
 
     def step(self, actions):
@@ -173,6 +175,7 @@ class ZeroSumWrapper():
         self.observation_spaces = self.env.observation_spaces
         self.action_space = self.env.action_space
         self.action_spaces = self.env.action_spaces
+        self.metadata = env.metadata
 
     @property
     def unwrapped(self,):
@@ -198,8 +201,8 @@ class ZeroSumWrapper():
     def seed(self, seed):
         self.env.seed(seed)
 
-    def render(self, *args):
-        return self.env.render(args)
+    def render(self, mode='rgb_array'):
+        return self.env.render(mode)
 
     def step(self, actions):
         obs, reward, done, info = self.env.step(actions)

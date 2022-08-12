@@ -165,7 +165,12 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         ## robosumo requires gym==0.16
         import robosumo.envs
         env = gym.make(env_name)
-        env = RoboSumoWrapper(env)
+
+        if args.record_video:
+            mode = 'rgb_array' # this willl return image from render() thus recording, but not render scene
+        elif args.render:
+            mode = 'human'  # requies: export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so; this will render scene but not return image
+        env = RoboSumoWrapper(env, mode)
         env = ZeroSumWrapper(env)
 
     elif env_type == 'gym':
@@ -218,7 +223,7 @@ def make_env(args, ss_vec=True):
     env_type = args.env_type
     print(env_name, env_type)
     # video recorder: https://github.com/openai/gym/blob/master/gym/wrappers/record_video.py
-    video_record_interval = int(1e5)  # steps
+    video_record_interval = int(1e4)  # steps
     video_record_length = 100 # by default 0 record entire episode, otherwise >0 specify the steps
 
     if args.num_process > 1 or args.num_envs == 1: # if multiprocess, each process can only work with one env separately
