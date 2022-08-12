@@ -18,8 +18,8 @@ for i in ${!envs[@]}; do
     for j in ${!methods[@]}; do
         # echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_train.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE --wandb_activate True --wandb_entity quantumiracle output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
         # CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_train.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE --wandb_activate True --wandb_entity quantumiracle  >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
-        echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_exploit.py --env ${envs[$i]} --method ${methods[$j]} --load_id $LoadFrom --save_id $DATE --to_exploit 'first' --wandb_activate True --wandb_entity quantumiracle output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
-        CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_exploit.py --env ${envs[$i]} --method ${methods[$j]} --load_id $LoadFrom --save_id $DATE --to_exploit 'first' --wandb_activate True --wandb_entity quantumiracle  >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_exploit.py --env ${envs[$i]} --method ${methods[$j]} --record_video True --load_id $LoadFrom --save_id $DATE --to_exploit 'first' --wandb_activate True --wandb_entity quantumiracle output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_exploit.py --env ${envs[$i]} --method ${methods[$j]} --record_video True --load_id $LoadFrom --save_id $DATE --to_exploit 'first' --wandb_activate True --wandb_entity quantumiracle  >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
     
     done
 done
