@@ -49,7 +49,7 @@ class aec_reward_lambda(PettingzooWrap):
         self._accumulate_rewards()
 
     def render(self, mode):
-        self.env.render(mode)
+        return self.env.render(mode)
 
 
 
@@ -67,7 +67,7 @@ class gym_reward_lambda(gym.Wrapper):
         return obs, self._change_reward_fn(rew), done, info
 
     def render(self, mode):
-        self.env.render(mode)
+        return self.env.render(mode)
 
 
 reward_lambda_v1 = WrapperChooser(

@@ -19,12 +19,11 @@ method = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
 
 args = get_default_args(game_type+'_'+game, method)
 args.ram = True
-# args.record_video = True
-#args.multiprocess = False
+args.record_video = True
 args.num_envs = 2
 # args.device = 'cpu'
 print(args)
-args.render=False
+# args.render=True
 
 ### Create env
 env = make_env(args)

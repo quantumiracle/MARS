@@ -46,7 +46,7 @@ class PettingzooClassicWrapper():
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def close(self):
         self.env.close()
@@ -100,7 +100,7 @@ class PettingzooClassic_Iterate2Parallel():
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def close(self):
         self.env.close()
@@ -150,8 +150,9 @@ class RoboSumoWrapper():
         self.env.seed(seed)
         np.random.seed(seed)
 
-    def render(self, mode='human'):
-        self.env.render(mode)
+    def render(self, mode):
+        mode = 'human' # force 'human' mode to render
+        return self.env.render(mode)
 
     def step(self, actions):
         actions = np.array(actions).squeeze()
@@ -197,8 +198,8 @@ class ZeroSumWrapper():
     def seed(self, seed):
         self.env.seed(seed)
 
-    def render(self, mode='rgb_image'):
-        self.env.render(mode)
+    def render(self, *args):
+        return self.env.render(args)
 
     def step(self, actions):
         obs, reward, done, info = self.env.step(actions)
@@ -254,7 +255,7 @@ class SSVecWrapper():
         self.env.seed(seed)
 
     def render(self, mode='rgb_array'):
-        self.env.render(mode)
+        return self.env.render(mode)
 
     def step(self, actions):
         actions = actions.reshape(-1)
@@ -298,7 +299,7 @@ class Gym2AgentWrapper():
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def step(self, actions):
         assert len(actions) >= 1
@@ -449,7 +450,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
     def render(self,):
         """ Render the scene.
         """        
-        self.env.render()
+        return self.env.render()
 
     def step(self, actions):
         obss, rewards, dones, infos = {},{},{},{}
@@ -489,6 +490,7 @@ class Dict2TupleWrapper():
         self.env = env
         self.num_agents = env.num_agents
         self.keep_info = keep_info  # if True keep info as dict
+        self.metadata = env.metadata
 
         if len(env.observation_space.shape) > 1: # image
             old_shape = env.observation_space.shape
@@ -555,8 +557,10 @@ class Dict2TupleWrapper():
         except:
             self.env.reset(seed=seed)
 
-    def render(self,):
-        self.env.render()
+    def render(self, mode='rgb_array'):
+        frame = self.env.render(mode)
+        print(frame)
+        return frame
 
     def close(self):
         self.env.close()
