@@ -46,6 +46,7 @@ def get_parser_args():
     return parser_args
 
 def get_default_args(env, method):
+    print(env)
     [env_type, env_name] = env.split('_', 1) # only split at the first '_'
     path = f'mars/confs/{env_type}/{env_name}/'
     yaml_file = f'{env_type}_{env_name}_{method}'
@@ -103,7 +104,7 @@ def get_args():
     * '--log_interval',                  type=int,   default=20,     description='interval for logging'
     * '--test',                          type=bool,  default=False,  description='whether in test mode'
     * '--exploit',                       type=bool,  default=False,  description='whether in exploitation mode'
-    * '--load_model_idx',                type=str,   default='0',    description='index of the model to load'
+    * '--load_id',                       type=str,   default='0',    description='index of the model to load'
     * '--load_model_full_path',          type=str,   default='/',    description='full path of the model to load'
     * '--multiprocess',                  type=bool,  default=False,  description='whether using multiprocess or not'
     * '--eval_models',                   type=bool,  default=False,  description='evalutation models during training (only for specific methods)'
@@ -135,26 +136,22 @@ def get_args():
         if arg == '--env':
             arg_env = sys.argv[1:][i+1]
             parsed_ids.extend([i, i+1])
-        else:
-            arg_env = None
         if arg == '--method':
             arg_method = sys.argv[1:][i+1]
             parsed_ids.extend([i, i+1])
-        else:
-            arg_method = None
 
+    first_arg = sys.argv[1:][0]
+    if first_arg == '--help' or first_arg == '-h':
+        print(config_doc)
+        exit()
+    else:
+        # get default args
+        default_args = get_default_args(arg_env, arg_method)
+        print('default: ', default_args)
 
-    # overwrite default with user input args
-    for i, arg in enumerate(sys.argv[1:]):
-        if i not in parsed_ids:
-            if arg == '--help' or arg == '-h':
-                print(config_doc)
-                exit()
-            else:
-                # get default args
-                default_args = get_default_args(arg_env, arg_method)
-                print('default: ', default_args)
-
+        # overwrite default with user input args
+        for i, arg in enumerate(sys.argv[1:]):
+            if i not in parsed_ids:
                 if arg.startswith('--'):
                     mapping_path = arg[2:].split('.')
                 else:
