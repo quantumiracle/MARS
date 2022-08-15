@@ -223,11 +223,11 @@ def make_env(args, ss_vec=True):
     env_type = args.env_type
     print(env_name, env_type)
     # video recorder: https://github.com/openai/gym/blob/master/gym/wrappers/record_video.py
-    if not args.record_video_interval:
+    if not 'record_video_interval' in args.keys():
         record_video_interval = int(1e5)  # steps
     else:
         record_video_interval =  int(args.record_video_interval)
-    if not args.record_video_length:
+    if not 'record_video_length' in args.keys():
         record_video_length = 100 # by default 0 record entire episode, otherwise >0 specify the steps
     else:
         record_video_length = int(args.record_video_length)
