@@ -69,12 +69,14 @@ def get_args():
     Descriptions of configurations:
     ---------------------------------------------------------------------------------------
     Environment args:
-    * '--env',          type=str,  default=None,     description='environment type and name'
-    * '--num_envs',     type=int,  default=1,        description='number of environments for parallel sampling'
-    * '--ram',          type=bool, default=False,    description='use RAM observation'
-    * '--render',       type=bool, default=False,    description='render the scene'
-    * '--seed',         type=str,  default='random', description='random seed'
-    * '--record_video', type=bool, default=False,    description='whether recording the video'
+    * '--env',                   type=str,  default=None,     description='environment type and name'
+    * '--num_envs',              type=int,  default=1,        description='number of environments for parallel sampling'
+    * '--ram',                   type=bool, default=False,    description='use RAM observation'
+    * '--render',                type=bool, default=False,    description='render the scene'
+    * '--seed',                  type=str,  default='random', description='random seed'
+    * '--record_video',          type=bool, default=False,    description='whether recording the video'
+    * '--record_video_interval', type=int,  default=False,    description='how often (skipped steps) to record the video'
+    * '--record_video_length',   type=int,  default=False,    description='how long (steps) to record the video'
 
     Agent args:
     * '--algorithm',                             type=str,   default=None,    description='algorithm name'
