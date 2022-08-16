@@ -273,6 +273,7 @@ class NashPPODiscrete(NashPPOBase):
 
     def update(self):
         total_loss = 0.
+        infos = {}
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data:  # iterate over data from different environments
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
@@ -326,8 +327,9 @@ class NashPPODiscrete(NashPPOBase):
                     ratio = torch.exp(logprob - oldlogprob[:, i])
                     surr1 = ratio * advantage
                     surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
-                    ppo_loss = -torch.min(surr1, surr2) + self.vf_coeff * F.mse_loss(vs.squeeze(dim=-1),
-                                                                     vs_target.detach()) - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
+                    policy_loss = -torch.min(surr1, surr2)
+                    v_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach())
+                    ppo_loss = policy_loss + self.vf_coeff * v_loss - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
                     ppo_loss = ppo_loss.mean()
                     ppo_loss_total += ppo_loss
                     self.optimizer.zero_grad()
@@ -335,6 +337,10 @@ class NashPPODiscrete(NashPPOBase):
                     nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
                     total_loss += ppo_loss.item()
+                    infos[f'PPO policy loss player {i}'] = policy_loss
+                    infos[f'PPO value loss player {i}'] = v_loss
+                    infos[f'PPO total loss player {i}'] = ppo_loss
+                    infos[f'policy entropy player {i}'] = dist_entropy
 
                 # loss for common layers (value function)
                 feature_x_list = []
@@ -350,6 +356,7 @@ class NashPPODiscrete(NashPPOBase):
                 assert vs_prime.shape == done_mask.shape
                 vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
                 common_layer_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach()).mean()
+                infos[f'Nash value loss'] = common_layer_loss
 
                 # calculate generalized advantage with common layer value
                 with torch.no_grad():
@@ -376,6 +383,7 @@ class NashPPODiscrete(NashPPOBase):
                 surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
                 surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss1 = -torch.min(surr1, surr2).mean()
+                infos[f'Nash policy loss player 1'] = policy_loss1
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
@@ -388,6 +396,7 @@ class NashPPODiscrete(NashPPOBase):
                 surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss2 = torch.min(surr1, surr2).mean()
+                infos[f'Nash policy loss player 2'] = policy_loss2
 
                 loss = self.policy_loss_coeff * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
 
@@ -399,7 +408,7 @@ class NashPPODiscrete(NashPPOBase):
 
         self.data = [[] for _ in range(self._num_channel)]
 
-        return total_loss
+        return total_loss, infos
 
 
 class NashPPOContinuous(NashPPOBase):
@@ -462,6 +471,7 @@ class NashPPOContinuous(NashPPOBase):
             return actions, logprobs
 
     def update(self):
+        infos = {}
         total_loss = 0.
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data:  # iterate over data from different environments
@@ -526,9 +536,9 @@ class NashPPOContinuous(NashPPOBase):
                     surr1 = ratio * advantage
                     surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
                     # print(surr1.shape, surr2.shape, vs.squeeze(dim=-1).shape, vs_target.shape, ratio.shape, advantage.shape, dist_entropy.shape)
-
-                    ppo_loss = -torch.min(surr1, surr2) + self.vf_coeff * F.mse_loss(vs.squeeze(dim=-1),
-                                                                     vs_target.detach()) - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
+                    policy_loss = -torch.min(surr1, surr2)
+                    v_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach())
+                    ppo_loss = policy_loss + self.vf_coeff * v_loss - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
                     ppo_loss = ppo_loss.mean()
                     ppo_loss_total += ppo_loss
                     self.optimizer.zero_grad()
@@ -536,6 +546,10 @@ class NashPPOContinuous(NashPPOBase):
                     nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
                     total_loss += ppo_loss.item()
+                    infos[f'PPO policy loss player {i}'] = policy_loss
+                    infos[f'PPO value loss player {i}'] = v_loss
+                    infos[f'PPO total loss player {i}'] = ppo_loss
+                    infos[f'policy entropy player {i}'] = dist_entropy
 
                 # loss for common layers (value function)
                 feature_x_list = []
@@ -551,6 +565,7 @@ class NashPPOContinuous(NashPPOBase):
                 assert vs_prime.shape == done_mask.shape
                 vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
                 common_layer_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach()).mean()
+                infos[f'Nash value loss'] = common_layer_loss
 
                 # calculate generalized advantage with common layer value
                 delta = vs_target - vs.squeeze(dim=-1)
@@ -584,6 +599,7 @@ class NashPPOContinuous(NashPPOBase):
                 surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
                 surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss1 = -torch.min(surr1, surr2).mean()
+                infos[f'Nash policy loss player 1'] = policy_loss1
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
@@ -604,6 +620,7 @@ class NashPPOContinuous(NashPPOBase):
                 surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss2 = torch.min(surr1, surr2).mean()
+                infos[f'Nash policy loss player 2'] = policy_loss2
 
                 loss = self.policy_loss_coeff * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
 
@@ -614,4 +631,4 @@ class NashPPOContinuous(NashPPOBase):
                 total_loss += loss.item()
         self.data = [[] for _ in range(self._num_channel)]
 
-        return total_loss
+        return total_loss, infos

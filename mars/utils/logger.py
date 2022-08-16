@@ -72,6 +72,9 @@ class TestLogger():
     def log_loss(self, *args):
         pass
 
+    def log_info(self, *args):
+        pass
+
     def add_extr_log(self, extr_log_name: str):
         """ Create extra directionary for logging.
         
@@ -179,6 +182,10 @@ class Logger(TestLogger):
             self.losses[k].append(l)
             # self.writer.add_scalar(f"RL Loss/{k}", self.losses[k][-1],
             #                        self.current_episode)
+
+    def log_info(self, infos: dict) -> None:
+        for k, v in infos.keys():
+            self.writer.add_scalar(f"Metric/{k}", v, self.current_episode)
 
     def print_and_save(self):
         """ Print out information and save the logging data. """
