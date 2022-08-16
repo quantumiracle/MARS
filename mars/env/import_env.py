@@ -165,9 +165,13 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         ## robosumo requires gym==0.16
         import robosumo.envs
         env = gym.make(env_name)
-        env = RoboSumoWrapper(env)
+
+        if args.record_video:
+            mode = 'rgb_array' # this willl return image from render() thus recording, but not render scene
+        elif args.render:
+            mode = 'human'  # requies: export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so; this will render scene but not return image
+        env = RoboSumoWrapper(env, mode)
         env = ZeroSumWrapper(env)
-        # env = reward_lambda_v1(env, zero_sum_reward_filer)
 
     elif env_type == 'gym':
         try:
@@ -218,21 +222,37 @@ def make_env(args, ss_vec=True):
     env_name = args.env_name
     env_type = args.env_type
     print(env_name, env_type)
+    # video recorder: https://github.com/openai/gym/blob/master/gym/wrappers/record_video.py
+    if not 'record_video_interval' in args.keys():
+        record_video_interval = int(1e5)  # steps
+    else:
+        record_video_interval =  int(args.record_video_interval)
+    if not 'record_video_length' in args.keys():
+        record_video_length = 100 # by default 0 record entire episode, otherwise >0 specify the steps
+    else:
+        record_video_length = int(args.record_video_length)
+    print('record video: ',record_video_interval, record_video_length )
 
     if args.num_process > 1 or args.num_envs == 1: # if multiprocess, each process can only work with one env separately
         env = _create_single_env(env_name, env_type, False, args)  
+        if args.record_video: # Ref: https://github.com/openai/gym/pull/2300
+            env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
+                    step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
+                    video_length=record_video_length, 
+                    )
     else:
         if env_type == 'pettingzoo' and ss_vec:
             import supersuit
             single_env = _create_single_env(env_name, env_type, True, args)
             vec_env = supersuit.pettingzoo_env_to_vec_env_v1(single_env)
             env = supersuit.concat_vec_envs_v1(vec_env, args.num_envs, num_cpus=0, base_class="gym")  # true number of envs will be args.num_envs
-            # env = gym.wrappers.RecordEpisodeStatistics(env)
+            env = gym.wrappers.RecordEpisodeStatistics(env)
+
             if args.record_video:
                 env.is_vector_env = True
-                env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}",\
-                        step_trigger=lambda step: step % 10000 == 0, # record the videos every 10000 steps
-	                    video_length=100)  # for each video record up to 100 steps) 
+                env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
+                        step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
+	                    video_length=record_video_length)  
             # print(args.num_envs, env.num_envs)
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents
@@ -244,9 +264,9 @@ def make_env(args, ss_vec=True):
             env = VectorEnv([lambda: single_env for _ in range(args.num_envs)])
             if args.record_video:
                 env.is_vector_env = True
-                env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}",\
-                        step_trigger=lambda step: step % 10000 == 0, # record the videos every 10000 steps
-	                    video_length=100)  # for each video record up to 100 steps)  
+                env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
+                        step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
+	                    video_length=record_video_length) 
             # avoid duplicating
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents

@@ -25,7 +25,7 @@ def map_pettingzoo_to_gym(EnvNamePettingzoo):
 def launch():
     args = get_args()
     print(args)
-    env = args.env
+    env = '_'.join([args.env_type, args.env_name])
     method = args.marl_method
 
     ## Change/specify some arguments if necessary
@@ -54,7 +54,7 @@ def launch():
     model = MultiAgent(env, [model1], args)  
 
     if args.save_id is not None:
-        rollout(env, model, args, save_id = args.load_id+'_test') # last arg is save path
+        rollout(env, model, args, save_id = str(args.load_id)+'_test') # last arg is save path
 
 
 if __name__ == '__main__':

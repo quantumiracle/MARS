@@ -220,17 +220,16 @@ class MultiAgent(Agent):
 
         elif self.args.marl_method == 'nash_ppo' and not self.args.exploit:
             [states, actions, rewards, next_states, logprobs, dones] = samples
+            assert self.args.marl_spec['global_state'],  'Error: Nash PPO should use global state'# this has to be true for Nash PPO
             if self.args.num_envs > 1:  # Used when num_envs > 1. 
-                assert self.args.marl_spec['global_state']  # this has to be true for Nash PPO
                 if self.args.ram: # shape of state: (agents, envs, obs_dim)
                     samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[:, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
                 else: # shape of state: (agents, envs, C, H, W)
                     samples = [[np.array(states)[:, j], actions[:, j], rewards[:, j], np.array(next_states)[:, j], np.array(logprobs[:, j]), np.any(d)] for j, d in enumerate(np.array(dones).T)]
 
             else:  # when num_envs = 1 
-                assert self.args.marl_spec['global_state']  # this has to be true for Nash PPO
                 if self.args.ram:
-                        samples = [[np.array(states).reshape(-1), actions, rewards, np.array(next_states).reshape(-1), np.array(logprobs).reshape(-1), np.all(dones)]]
+                    samples = [[np.array(states).reshape(-1), actions, rewards, np.array(next_states).reshape(-1), np.array(logprobs).reshape(-1), np.all(dones)]]
                 else:  # TODO
                     samples = [[np.array(states), actions, rewards, np.array(next_states), np.array(logprobs), np.all(dones)]]
  

@@ -46,7 +46,7 @@ class PettingzooClassicWrapper():
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def close(self):
         self.env.close()
@@ -100,7 +100,7 @@ class PettingzooClassic_Iterate2Parallel():
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def close(self):
         self.env.close()
@@ -128,7 +128,7 @@ class PettingzooClassic_Iterate2Parallel():
 
 class RoboSumoWrapper():
     """ Wrap robosumo environments """
-    def __init__(self, env):
+    def __init__(self, env, mode):
         super(RoboSumoWrapper, self).__init__()
         self.env = env
         self.agents = ['first_0', 'second_0']
@@ -137,7 +137,9 @@ class RoboSumoWrapper():
         self.observation_spaces = {name: self.observation_space for name in self.agents}
         self.action_space = self.env.action_space[0]
         self.action_spaces = {name: self.action_space for name in self.agents}
-    
+        self.metadata = env.metadata
+        self.render_mode = mode
+
     @property
     def spec(self):
         return self.env.spec
@@ -150,8 +152,9 @@ class RoboSumoWrapper():
         self.env.seed(seed)
         np.random.seed(seed)
 
-    def render(self, mode='rgb_image'):
-        self.env.render(mode)
+    def render(self, mode):
+        mode = self.render_mode  # force the mode here
+        return self.env.render(mode)
 
     def step(self, actions):
         actions = np.array(actions).squeeze()
@@ -172,6 +175,7 @@ class ZeroSumWrapper():
         self.observation_spaces = self.env.observation_spaces
         self.action_space = self.env.action_space
         self.action_spaces = self.env.action_spaces
+        self.metadata = env.metadata
 
     @property
     def unwrapped(self,):
@@ -197,8 +201,8 @@ class ZeroSumWrapper():
     def seed(self, seed):
         self.env.seed(seed)
 
-    def render(self, mode='rgb_image'):
-        self.env.render(mode)
+    def render(self, mode='rgb_array'):
+        return self.env.render(mode)
 
     def step(self, actions):
         obs, reward, done, info = self.env.step(actions)
@@ -254,7 +258,7 @@ class SSVecWrapper():
         self.env.seed(seed)
 
     def render(self, mode='rgb_array'):
-        self.env.render(mode)
+        return self.env.render(mode)
 
     def step(self, actions):
         actions = actions.reshape(-1)
@@ -298,7 +302,7 @@ class Gym2AgentWrapper():
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def step(self, actions):
         assert len(actions) >= 1
@@ -449,7 +453,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
     def render(self,):
         """ Render the scene.
         """        
-        self.env.render()
+        return self.env.render()
 
     def step(self, actions):
         obss, rewards, dones, infos = {},{},{},{}
@@ -489,6 +493,7 @@ class Dict2TupleWrapper():
         self.env = env
         self.num_agents = env.num_agents
         self.keep_info = keep_info  # if True keep info as dict
+        self.metadata = env.metadata
 
         if len(env.observation_space.shape) > 1: # image
             old_shape = env.observation_space.shape
@@ -555,8 +560,10 @@ class Dict2TupleWrapper():
         except:
             self.env.reset(seed=seed)
 
-    def render(self,):
-        self.env.render()
+    def render(self, mode='rgb_array'):
+        frame = self.env.render(mode)
+        print(frame)
+        return frame
 
     def close(self):
         self.env.close()

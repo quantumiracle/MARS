@@ -206,6 +206,7 @@ class DQNBase(NetBase):
                 q_value = self.net(state)
                 action  = q_value.max(1)[1].item()
         else:
+            print(self._action_shape)
             action = random.randrange(self._action_shape)
         return action
 
