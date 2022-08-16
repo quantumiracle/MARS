@@ -184,9 +184,11 @@ class Logger(TestLogger):
             # self.writer.add_scalar(f"RL Loss/{k}", self.losses[k][-1],
             #                        self.current_episode)
 
-    def log_info(self, infos: dict) -> None:
-        for k, v in infos.items():
-            self.writer.add_scalar(f"Metric/{k}", torch.mean(v), self.current_episode)
+    def log_info(self, infos: List[dict]) -> None:
+        for i, info in enumerate(infos):
+            if len(info)>0: # valid learner
+                for k, v in info.items():
+                    self.writer.add_scalar(f"Metric_{i}/{k}", torch.mean(v), self.current_episode)
 
     def print_and_save(self):
         """ Print out information and save the logging data. """

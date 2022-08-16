@@ -279,13 +279,16 @@ class MultiAgent(Agent):
 
     def update(self) -> List[float]:
         losses = []
+        infos = []
         for i, agent in enumerate(self.agents):
             if i not in self.not_learnable_list:
-                loss = agent.update()
+                loss, info = agent.update()
                 losses.append(loss)
+                infos.append(info)
             else:
                 losses.append(np.nan)
-        return losses
+                infos.append({})
+        return losses, infos
 
     def save_model(self, path: str = None) -> None:
         for idx, agent in enumerate(self.agents):
