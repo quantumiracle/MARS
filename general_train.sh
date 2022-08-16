@@ -9,13 +9,13 @@ declare -a envs=('pettingzoo_boxing_v2' 'pettingzoo_tennis_v3' 'pettingzoo_pong_
 
 # declare -a methods=('selfplay' 'fictitious_selfplay' 'psro' 'nfsp' 'nash_ppo')
 
-declare -a methods=('nash_ppo')
+declare -a methods=('nash_dqn')
 
 mkdir -p log/$DATE
 
 for i in ${!envs[@]}; do
     for j in ${!methods[@]}; do
-        echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_train.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
-        CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_train.py --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_train.py --env ${envs[$i]} --method ${methods[$j]} --wandb_activate True --wandb_entity quantumiracle --save_id $DATE output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_train.py --env ${envs[$i]} --method ${methods[$j]} --wandb_activate True --wandb_entity quantumiracle --save_id $DATE >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
     done
 done
