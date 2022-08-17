@@ -383,7 +383,7 @@ class NashPPODiscrete(NashPPOBase):
                 surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
                 surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss1 = -torch.min(surr1, surr2).mean()
-                infos[f'Nash policy loss player 1'] = policy_loss1
+                infos[f'Nash policy loss player 0'] = policy_loss1
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
@@ -396,7 +396,7 @@ class NashPPODiscrete(NashPPOBase):
                 surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss2 = torch.min(surr1, surr2).mean()
-                infos[f'Nash policy loss player 2'] = policy_loss2
+                infos[f'Nash policy loss player 1'] = policy_loss2
 
                 loss = self.policy_loss_coeff * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
 
