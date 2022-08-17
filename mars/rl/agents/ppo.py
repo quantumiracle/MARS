@@ -195,6 +195,7 @@ class PPODiscrete(PPOBase):
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
         
     def update(self):
+        infos = {}
         total_loss = 0.
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data: # iterate over data from different environments
@@ -242,15 +243,9 @@ class PPODiscrete(PPOBase):
                 ratio = torch.exp(logprob - oldlogprob)
                 surr1 = ratio * advantage
                 surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-                # loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy
-                loss = -torch.min(surr1, surr2) + self.vf_coeff*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - self.entropy_coeff*dist_entropy
-
-                ## for debug
-                # print('vs: ', vs.shape, vs)
-                # print('logprob', logprob.shape, logprob)
-                # print('oldlogprob', oldlogprob.shape, oldlogprob)
-                # print('advantage: ', advantage.shape, advantage)
-                # print('loss', loss)
+                policy_loss = -torch.min(surr1, surr2)
+                v_loss = self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach())
+                loss = policy_loss + self.vf_coeff*v_loss - self.entropy_coeff*dist_entropy
 
                 self.optimizer.zero_grad()
                 mean_loss = loss.mean()
@@ -260,9 +255,14 @@ class PPODiscrete(PPOBase):
 
                 total_loss += mean_loss.item()
 
+        infos[f'PPO policy loss'] = policy_loss
+        infos[f'PPO value loss'] = v_loss
+        infos[f'PPO total loss'] = loss
+        infos[f'policy entropy'] = dist_entropy
+
         self.data = [[] for _ in range(self._num_channel)]
 
-        return total_loss, _
+        return total_loss, infos
 
 class PPOContinuous(PPOBase):
     """ PPO agorithm for environments with continuous action space.
@@ -302,6 +302,7 @@ class PPOContinuous(PPOBase):
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
 
     def update(self):
+        infos = {}
         total_loss = 0.
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data: # iterate over data from different environments
@@ -354,14 +355,9 @@ class PPOContinuous(PPOBase):
                 ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())
                 surr1 = ratio * advantage
                 surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-                # loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - self.entropy_coeff*dist_entropy
-                loss = -torch.min(surr1, surr2) + self.vf_coeff*self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach()) - self.entropy_coeff*dist_entropy
-                
-                # print('vs: ', vs.squeeze(dim=-1).shape, vs_target.shape)
-                # print('logprob', logprob.shape, ratio.shape, surr1.shape, surr2.shape)
-                # print('oldlogprob', oldlogprob.shape)
-                # print('advantage: ', advantage.shape)
-                # print('loss', loss)
+                policy_loss = -torch.min(surr1, surr2)
+                v_loss = self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach())
+                loss = policy_loss + self.vf_coeff*v_loss - self.entropy_coeff*dist_entropy
 
                 self.optimizer.zero_grad()
                 mean_loss = loss.mean()
@@ -371,6 +367,10 @@ class PPOContinuous(PPOBase):
 
                 total_loss += mean_loss.item()
 
+        infos[f'PPO policy loss'] = policy_loss
+        infos[f'PPO value loss'] = v_loss
+        infos[f'PPO total loss'] = loss
+        infos[f'policy entropy'] = dist_entropy
         self.data = [[] for _ in range(self._num_channel)]
 
-        return total_loss, _
+        return total_loss, infos

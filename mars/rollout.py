@@ -165,14 +165,15 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 if args.update_itr >= 1:
                     avg_loss = []
                     for _ in range(args.update_itr):
-                        loss = model.update(
+                        loss, infos = model.update(
                         )
                         avg_loss.append(loss)
                     loss = np.mean(avg_loss, axis=0)
                 elif overall_steps * args.update_itr % 1 == 0:
-                    loss = model.update()
+                    loss, infos = model.update()
                 if loss is not None:
                     logger.log_loss(loss)
+                    logger.log_info(infos)
 
             ## done break: needs to go after everything else， including the update
             if np.any(

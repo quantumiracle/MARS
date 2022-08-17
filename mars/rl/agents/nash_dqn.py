@@ -219,6 +219,7 @@ class NashDQN(DQN):
             return np.array(all_actions)
 
     def update(self):
+        infos = {}
         DoubleTrick = False
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
 
@@ -272,6 +273,8 @@ class NashDQN(DQN):
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.model, self.target)
         self.update_cnt += 1
+        infos[f'Q value'] = q_value
+
         return loss.item(), infos
 
 class NashDQNBase(DQNBase):

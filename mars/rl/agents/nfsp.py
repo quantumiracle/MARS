@@ -78,6 +78,7 @@ class NFSP(Agent):
             return False
 
     def update(self):
+        infos = {}
         ### reinforcement learning (RL) update ###
         rl_loss = self.rl_agent.update()
 
@@ -96,8 +97,10 @@ class NFSP(Agent):
         self.sl_optimizer.zero_grad()
         sl_loss.backward()
         self.sl_optimizer.step()
+        infos[f'RL loss'] = rl_loss
+        infos[f'SL loss'] = sl_loss
 
-        return rl_loss + sl_loss.item(), _
+        return rl_loss + sl_loss.item(), infos
 
     def save_model(self, path):
         self.rl_agent.save_model(path)

@@ -337,10 +337,6 @@ class NashPPODiscrete(NashPPOBase):
                     nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
                     total_loss += ppo_loss.item()
-                    infos[f'PPO policy loss player {i}'] = policy_loss
-                    infos[f'PPO value loss player {i}'] = v_loss
-                    infos[f'PPO total loss player {i}'] = ppo_loss
-                    infos[f'policy entropy player {i}'] = dist_entropy
 
                 # loss for common layers (value function)
                 feature_x_list = []
@@ -356,7 +352,6 @@ class NashPPODiscrete(NashPPOBase):
                 assert vs_prime.shape == done_mask.shape
                 vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
                 common_layer_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach()).mean()
-                infos[f'Nash value loss'] = common_layer_loss
 
                 # calculate generalized advantage with common layer value
                 with torch.no_grad():
@@ -383,7 +378,6 @@ class NashPPODiscrete(NashPPOBase):
                 surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
                 surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss1 = -torch.min(surr1, surr2).mean()
-                infos[f'Nash policy loss player 0'] = policy_loss1
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
@@ -396,7 +390,6 @@ class NashPPODiscrete(NashPPOBase):
                 surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
                 policy_loss2 = torch.min(surr1, surr2).mean()
-                infos[f'Nash policy loss player 1'] = policy_loss2
 
                 loss = self.policy_loss_coeff * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
 
@@ -405,6 +398,14 @@ class NashPPODiscrete(NashPPOBase):
                 nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
                 total_loss += loss.item()
+
+        infos[f'PPO policy loss player {i}'] = policy_loss
+        infos[f'PPO value loss player {i}'] = v_loss
+        infos[f'PPO total loss player {i}'] = ppo_loss
+        infos[f'policy entropy player {i}'] = dist_entropy
+        infos[f'Nash value loss'] = common_layer_loss
+        infos[f'Nash policy loss player 0'] = policy_loss1
+        infos[f'Nash policy loss player 1'] = policy_loss2
 
         self.data = [[] for _ in range(self._num_channel)]
 

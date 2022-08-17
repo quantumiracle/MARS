@@ -101,24 +101,21 @@ class DQN(Agent):
         :param sample: a list of samples from different environments (if using parallel env)
         :type sample: SampleType
         """ 
-        # self.buffer.push(*sample)
         self.buffer.push(sample)
 
     @property
     def ready_to_update(self):
-        # return True if len(self.buffer) > self.batch_size else False
         return True if self.buffer.get_len() > self.batch_size else False
 
     def update(self):
+        infos = {}
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
-        # weights = torch.ones(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
         action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
-        # weights = torch.FloatTensor(weights).to(self.device)
 
         # reward normalization
         # reward =  (reward - reward.mean(dim=0)) / (reward.std(dim=0) + 1e-6)
@@ -133,13 +130,10 @@ class DQN(Agent):
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
         # additional value normalization (this effectively prevent increasing Q/loss value)
         expected_q_value =  (expected_q_value - expected_q_value.mean(dim=0)) / (expected_q_value.std(dim=0) + 1e-6)
-
-        # Huber Loss
-        loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')  # slimevolley env only works with this!
-        # loss = F.mse_loss(q_value, expected_q_value.detach())
+        
+        loss = F.mse_loss(q_value, expected_q_value.detach())
 
         loss = loss.mean()
-        # loss = (loss * weights).mean()
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
@@ -148,7 +142,9 @@ class DQN(Agent):
             self.update_target(self.model, self.target)
         self.update_cnt += 1
 
-        return loss.detach().item(), _
+        infos[f'Q value'] = q_value
+
+        return loss.detach().item(), infos
 
     def save_model(self, path):
         try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
