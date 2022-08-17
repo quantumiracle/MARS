@@ -228,10 +228,10 @@ def make_env(args, ss_vec=True):
     else:
         record_video_interval =  int(args.record_video_interval)
     if not 'record_video_length' in args.keys():
-        record_video_length = 100 # by default 0 record entire episode, otherwise >0 specify the steps
+        record_video_length = 300 # by default 0 record entire episode, otherwise >0 specify the steps
     else:
         record_video_length = int(args.record_video_length)
-    print('record video: ',record_video_interval, record_video_length )
+    print(f'record video: interval {record_video_interval}, length {record_video_length}')
 
     if args.num_process > 1 or args.num_envs == 1: # if multiprocess, each process can only work with one env separately
         env = _create_single_env(env_name, env_type, False, args)  
