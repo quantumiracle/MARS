@@ -264,7 +264,7 @@ class NashDQNFactorized(DQN):
             self.update_target(self.q_net_2, self.target_q_net_2)
             self.update_target(self.nash_q, self.target_nash_q)
         self.update_cnt += 1
-        return q1_loss.item() + q2_loss.item() + nash_loss.item()
+        return q1_loss.item() + q2_loss.item() + nash_loss.item(), _
 
     def save_model(self, path):
         try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version

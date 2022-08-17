@@ -148,7 +148,7 @@ class DQN(Agent):
             self.update_target(self.model, self.target)
         self.update_cnt += 1
 
-        return loss.detach().item()
+        return loss.detach().item(), _
 
     def save_model(self, path):
         try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version

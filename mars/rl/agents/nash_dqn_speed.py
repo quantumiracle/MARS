@@ -313,7 +313,7 @@ class NashDQNSpeed(DQN):
             # self.update_cnt = 0
         self.update_cnt += 1
 
-        return loss.item()
+        return loss.item(), _
 
 class NashDQNBase(DQNBase):
     """

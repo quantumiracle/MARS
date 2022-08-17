@@ -9,13 +9,13 @@ declare -a envs=('pettingzoo_boxing_v2' 'pettingzoo_tennis_v3' 'pettingzoo_pong_
 
 # declare -a methods=('selfplay' 'fictitious_selfplay' 'psro' 'nfsp' 'nash_ppo')
 
-declare -a methods=('nash_dqn')
+declare -a methods=('nash_dqn' 'nash_dqn_exploiter')
 
 mkdir -p log/$DATE
 
 for i in ${!envs[@]}; do
     for j in ${!methods[@]}; do
-        echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_train.py --record_video True --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE --wandb_activate True --wandb_entity quantumiracle output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
-        CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_train.py --record_video True --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE --wandb_activate True --wandb_entity quantumiracle >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_train.py --record_video True --record_video_length 300 --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE --wandb_activate True --wandb_entity quantumiracle output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_train.py --record_video True --record_video_length 300 --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE --wandb_activate True --wandb_entity quantumiracle >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
     done
 done

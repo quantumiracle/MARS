@@ -97,7 +97,7 @@ class NFSP(Agent):
         sl_loss.backward()
         self.sl_optimizer.step()
 
-        return rl_loss + sl_loss.item()
+        return rl_loss + sl_loss.item(), _
 
     def save_model(self, path):
         self.rl_agent.save_model(path)

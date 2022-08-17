@@ -272,7 +272,7 @@ class NashDQN(DQN):
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.model, self.target)
         self.update_cnt += 1
-        return loss.item()
+        return loss.item(), infos
 
 class NashDQNBase(DQNBase):
     """

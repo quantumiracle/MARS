@@ -262,7 +262,7 @@ class PPODiscrete(PPOBase):
 
         self.data = [[] for _ in range(self._num_channel)]
 
-        return total_loss
+        return total_loss, _
 
 class PPOContinuous(PPOBase):
     """ PPO agorithm for environments with continuous action space.
@@ -373,4 +373,4 @@ class PPOContinuous(PPOBase):
 
         self.data = [[] for _ in range(self._num_channel)]
 
-        return total_loss
+        return total_loss, _
