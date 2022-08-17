@@ -3,6 +3,7 @@ from datetime import datetime
 import time
 import os
 import json
+import torch
 from torch.utils.tensorboard import SummaryWriter
 from .typing import Union, Dict, Any, List, ConfigurationDict
 
@@ -70,6 +71,9 @@ class TestLogger():
         self.current_episode += 1
 
     def log_loss(self, *args):
+        pass
+
+    def log_info(self, *args):
         pass
 
     def add_extr_log(self, extr_log_name: str):
@@ -179,6 +183,12 @@ class Logger(TestLogger):
             self.losses[k].append(l)
             # self.writer.add_scalar(f"RL Loss/{k}", self.losses[k][-1],
             #                        self.current_episode)
+
+    def log_info(self, infos: List[dict]) -> None:
+        for i, info in enumerate(infos):
+            if len(info)>0: # valid learner
+                for k, v in info.items():
+                    self.writer.add_scalar(f"Metric_{i}/{k}", torch.mean(v), self.current_episode)
 
     def print_and_save(self):
         """ Print out information and save the logging data. """

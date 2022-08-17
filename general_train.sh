@@ -15,7 +15,7 @@ mkdir -p log/$DATE
 
 for i in ${!envs[@]}; do
     for j in ${!methods[@]}; do
-        echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_train.py --env ${envs[$i]} --method ${methods[$j]} --wandb_activate True --wandb_entity quantumiracle --save_id $DATE output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
-        CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_train.py --env ${envs[$i]} --method ${methods[$j]} --wandb_activate True --wandb_entity quantumiracle --save_id $DATE >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        echo CUDA_VISIBLE_DEVICES=$((i + 0)) python general_train.py --record_video True --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE --wandb_activate True --wandb_entity quantumiracle output log to: log/$DATE/${envs[$i]}_${methods[$j]}.log &
+        CUDA_VISIBLE_DEVICES=$((i + 0)) nohup python general_train.py --record_video True --env ${envs[$i]} --method ${methods[$j]} --save_id $DATE --wandb_activate True --wandb_entity quantumiracle >> log/$DATE/${envs[$i]}_${methods[$j]}.log &
     done
 done

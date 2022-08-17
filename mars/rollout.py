@@ -183,8 +183,9 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         ## Epsodic update of the model
         if model.ready_to_update:
             if args.algorithm_spec['episodic_update']:
-                loss = model.update()
+                loss, infos = model.update()
                 logger.log_loss(loss)
+                logger.log_info(infos)
             
             if meta_learner is not None and args.marl_method in MetaStepMethods:
                 meta_learner.step(
