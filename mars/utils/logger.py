@@ -169,10 +169,10 @@ class Logger(TestLogger):
             self.epi_rewards[k].append(v)
             self.writer.add_scalar(f"Episode Reward/{k}",
                                    self.epi_rewards[k][-1],
-                                   self.current_episode)
+                                   np.sum(self.epi_length))  # track based on steps instead of episodes
             self.epi_losses[k].append(np.mean(self.losses[k])) # record the episodic mean of loss
             self.writer.add_scalar(f"RL Loss/{k}", self.epi_losses[k][-1],
-                                   self.current_episode)
+                                   np.sum(self.epi_length))
         self.rewards = self._clear_dict(self.keys)
         self.losses = self._clear_dict_as_list(self.keys)
         self.epi_length.append(step)
@@ -182,13 +182,13 @@ class Logger(TestLogger):
         for k, l in zip(self.losses.keys(), loss):
             self.losses[k].append(l)
             # self.writer.add_scalar(f"RL Loss/{k}", self.losses[k][-1],
-            #                        self.current_episode)
+            #                        np.sum(self.epi_length))
 
     def log_info(self, infos: List[dict]) -> None:
         for i, info in enumerate(infos):
             if len(info)>0: # valid learner
                 for k, v in info.items():
-                    self.writer.add_scalar(f"Metric_{i}/{k}", torch.mean(v), self.current_episode)
+                    self.writer.add_scalar(f"Metric_{i}/{k}", torch.mean(v), np.sum(self.epi_length))
 
     def print_and_save(self):
         """ Print out information and save the logging data. """
