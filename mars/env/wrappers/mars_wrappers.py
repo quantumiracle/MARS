@@ -562,7 +562,6 @@ class Dict2TupleWrapper():
 
     def render(self, mode='rgb_array'):
         frame = self.env.render(mode)
-        print(frame)
         return frame
 
     def close(self):
