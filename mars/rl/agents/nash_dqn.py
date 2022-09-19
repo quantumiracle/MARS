@@ -20,10 +20,6 @@ class NashDQN(DQN):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-
-        if args.num_process > 1:
-            self.model.share_memory()
-            self.target.share_memory()
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
         self.env = env
         self.args = args
@@ -45,8 +41,10 @@ class NashDQN(DQN):
         :type args: dict
         """
         self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
-        print(self.model)
         self.target = copy.deepcopy(self.model).to(self.device)
+        if args.num_process > 1:
+            self.model.share_memory()
+            self.target.share_memory()
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:

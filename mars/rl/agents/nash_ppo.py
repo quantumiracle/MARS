@@ -54,11 +54,6 @@ class NashPPOBase(Agent):
         self.args = args
         print(self.feature_nets, self.policies, self.values, self.common_layers,)
 
-        if args.num_process > 1:
-            self.policies = [policy.share_memory() for policy in self.policies]
-            self.values = [value.share_memory() for value in self.values]
-            self.common_layers.share_memory()
-
         policy_params, value_params, common_val_params, feature_net_param = [], [], [], []
         for p, v, z in zip(self.feature_nets, self.policies, self.values):
             policy_params += list(p.parameters())
@@ -104,6 +99,12 @@ class NashPPOBase(Agent):
                 self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
 
             self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+        
+        if args.num_process > 1:
+            self.policies = [policy.share_memory() for policy in self.policies]
+            self.values = [value.share_memory() for value in self.values]
+            self.common_layers.share_memory()
+
 
     def pi(
             self,

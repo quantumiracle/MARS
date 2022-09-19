@@ -17,15 +17,6 @@ class DQN(Agent):
     def __init__(self, env, args):
         super().__init__(env, args)
         self._init_model(env, args)
-        
-        if args.num_process > 1:
-            self.model.share_memory()
-            self.target.share_memory()
-            self.buffer = args.add_components['replay_buffer']
-        else:
-            self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size'])), \
-                args.algorithm_spec['multi_step'], args.algorithm_spec['gamma'], args.num_envs, args.batch_size) # first float then int to handle the scientific number like 1e5
-
         self.update_target(self.model, self.target)
         self._init_optimizer(args)
         self.epsilon_scheduler = EpsilonScheduler(args.algorithm_spec['eps_start'], args.algorithm_spec['eps_final'], args.algorithm_spec['eps_decay'])
@@ -40,6 +31,13 @@ class DQN(Agent):
     def _init_model(self, env, args):
         self.model = self._select_type(env, args).to(self.device)
         self.target = copy.deepcopy(self.model).to(self.device)
+        if args.num_process > 1:
+            self.model.share_memory()
+            self.target.share_memory()
+            self.buffer = args.add_components['replay_buffer']
+        else:
+            self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size'])), \
+                args.algorithm_spec['multi_step'], args.algorithm_spec['gamma'], args.num_envs, args.batch_size) # first float then int to handle the scientific number like 1e5
 
     def _init_optimizer(self, args):
         self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))

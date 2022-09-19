@@ -48,10 +48,6 @@ class PPOBase(Agent):
 
         self._init_model(env, args)
 
-        if args.num_process > 1:
-            self.policy.share_memory()
-            self.value.share_memory()  
-
         self.optimizer = choose_optimizer(args.optimizer)(list(self.value.parameters())+list(self.policy.parameters()), lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
         self._num_channel = args.num_envs*(env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0]) # env.num_agents is a list when using parallel envs 
@@ -66,6 +62,10 @@ class PPOBase(Agent):
         else:
             self.policy = CNN(env.observation_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
             self.value = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+        if args.num_process > 1:
+            self.policy.share_memory()
+            self.value.share_memory()  
+
 
     def pi(
         self, 
