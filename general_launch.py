@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser(description='Arguments of the general launching
 
 def launch():
     args = get_args()
-    env = args.env
+    env = args.env_name
     method = args.marl_method
     multiprocess_conf(args, method)
 
