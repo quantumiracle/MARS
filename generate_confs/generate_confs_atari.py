@@ -224,7 +224,8 @@ for game in two_player_zero_sum_games:
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
             # conf['env_args']['num_envs'] = 1
-            conf['train_args']['max_episodes'] = 50000
+            # conf['train_args']['max_episodes'] = 50000
+            conf['train_args']['max_episodes'] = 10000
             conf['agent_args']['algorithm_spec']['eps_decay'] = 100*conf['train_args']['max_episodes'] # 1000000  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = False
