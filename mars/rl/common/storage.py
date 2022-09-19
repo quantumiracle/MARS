@@ -39,6 +39,9 @@ class SimpleReplayBuffer(object):
     def get_len(self):
         return len(self.buffer)
 
+    def __len__(self):
+        return self.get_len()
+
 class MultiStepReplayBuffer(object):
     """Replay Buffer class for multi-step return.
 
