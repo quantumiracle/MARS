@@ -239,7 +239,7 @@ def make_env(args, ss_vec=True):
             env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
                     # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
                     episode_trigger=lambda episode: episode % record_video_interval == 0, # record the videos every * episodes
-                    # video_length=record_video_length,  # record full episode if commented
+                    video_length=record_video_length,  # record full episode if commented
                     )
     else:
         if env_type == 'pettingzoo' and ss_vec:
@@ -254,8 +254,9 @@ def make_env(args, ss_vec=True):
             if args.record_video:
                 env.is_vector_env = True
                 env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
-                        step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
-	                    video_length=record_video_length)  
+                        # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
+                        episode_trigger=lambda episode: episode % record_video_interval == 0, # record the videos every * episodes
+                        video_length=record_video_length)  
             # print(args.num_envs, env.num_envs)
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents
@@ -268,11 +269,15 @@ def make_env(args, ss_vec=True):
             if args.record_video:
                 env.is_vector_env = True
                 env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
-                        step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
-	                    video_length=record_video_length) 
+                        # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
+                        episode_trigger=lambda episode: episode % record_video_interval == 0, # record the videos every * episodes
+                        video_length=record_video_length) 
             # avoid duplicating
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents
+    
+        # print('metadata: ', env.metadata)
+        # print(env[0].metadata)
 
     if isinstance(args.seed, (int, list)):
         env.seed(args.seed)  # seed can be either int or list of int

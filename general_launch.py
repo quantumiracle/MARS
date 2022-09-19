@@ -5,6 +5,7 @@ import cloudpickle
 import torch
 torch.multiprocessing.set_start_method('forkserver', force=True)
 from multiprocessing import Process, Queue
+import dill as pickle
 from mars.env.import_env import make_env
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
