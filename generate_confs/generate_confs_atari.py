@@ -28,7 +28,7 @@ selfplay_based_methods = {'selfplay', 'selfplay_sym', 'fictitious_selfplay', \
 # large_nets_envs = {'tennis_v2'}
 large_nets_envs = {}
 
-ram = False
+ram = True
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:

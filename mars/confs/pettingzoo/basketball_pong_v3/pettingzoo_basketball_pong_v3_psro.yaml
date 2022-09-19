@@ -2,7 +2,7 @@ env_args:
   env_name: basketball_pong_v3
   env_type: pettingzoo
   num_envs: 5
-  ram: false
+  ram: true
   seed: random
 agent_args:
   algorithm: DQN
@@ -29,22 +29,12 @@ train_args:
   multiprocess: false
   net_architecture:
     hidden_dim_list:
-    - 512
-    - 512
-    channel_list:
-    - 32
-    - 64
-    - 64
-    kernel_size_list:
-    - 8
-    - 4
-    - 3
-    stride_list:
-    - 4
-    - 2
-    - 1
+    - 128
+    - 128
+    - 128
+    - 128
     hidden_activation: ReLU
-    output_activation: Softmax
+    output_activation: false
   marl_method: psro
   marl_spec:
     selfplay_score_delta: 5

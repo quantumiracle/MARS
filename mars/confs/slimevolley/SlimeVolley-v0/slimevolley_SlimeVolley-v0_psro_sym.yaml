@@ -3,7 +3,7 @@ env_args:
   env_type: slimevolley
   num_envs: 5
   against_baseline: false
-  ram: false
+  ram: true
   seed: random
 agent_args:
   algorithm: DQN
@@ -30,22 +30,11 @@ train_args:
   multiprocess: false
   net_architecture:
     hidden_dim_list:
-    - 512
-    - 512
-    channel_list:
-    - 32
-    - 64
-    - 64
-    kernel_size_list:
-    - 8
-    - 4
-    - 3
-    stride_list:
-    - 4
-    - 2
-    - 1
+    - 128
+    - 128
+    - 128
     hidden_activation: ReLU
-    output_activation: Softmax
+    output_activation: false
   marl_spec:
     selfplay_score_delta: 3
     trainable_agent_idx: 0

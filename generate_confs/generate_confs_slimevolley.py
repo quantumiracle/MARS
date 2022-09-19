@@ -23,7 +23,7 @@ self_play_method_marl_specs = {
 selfplay_based_methods = {'selfplay', 'selfplay_sym', 'fictitious_selfplay', \
                             'fictitious_selfplay_sym', 'psro_sym', 'psro'}
 
-ram = False
+ram = True
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:

@@ -224,11 +224,11 @@ def make_env(args, ss_vec=True):
     print(env_name, env_type)
     # video recorder: https://github.com/openai/gym/blob/master/gym/wrappers/record_video.py
     if not 'record_video_interval' in args.keys():
-        record_video_interval = int(1e5)  # steps
+        record_video_interval = int(1e2) 
     else:
         record_video_interval =  int(args.record_video_interval)
     if not 'record_video_length' in args.keys():
-        record_video_length = 300 # by default 0 record entire episode, otherwise >0 specify the steps
+        record_video_length = 300 # by default 0 it records entire episode, otherwise >0 specify the steps
     else:
         record_video_length = int(args.record_video_length)
     print(f'record video: interval {record_video_interval}, length {record_video_length}')
@@ -237,8 +237,9 @@ def make_env(args, ss_vec=True):
         env = _create_single_env(env_name, env_type, False, args)  
         if args.record_video: # Ref: https://github.com/openai/gym/pull/2300
             env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
-                    step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
-                    video_length=record_video_length, 
+                    # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
+                    episode_trigger=lambda episode: episode % record_video_interval == 0, # record the videos every * episodes
+                    # video_length=record_video_length,  # record full episode if commented
                     )
     else:
         if env_type == 'pettingzoo' and ss_vec:
