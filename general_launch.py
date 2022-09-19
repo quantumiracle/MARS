@@ -41,13 +41,13 @@ def launch():
     # launch multiple sample rollout processes
     info_queue = Queue()
     for pro_id in range(1):  
-        play_process = Process(target=rolloutExperience, args = (model, info_queue, args, args.save_id+'-'+str(pro_id)))
+        play_process = Process(target=rolloutExperience, args = (model, info_queue, args, str(args.save_id)+'-'+str(pro_id)))
         play_process.daemon = True  # sub processes killed when main process finish
         processes.append(play_process)
 
     # launch update process (single or multiple)
     for pro_id in range(args.num_process):  
-        update_process = Process(target=updateModel, args= (model, info_queue, args, args.save_id+'-'+str(pro_id)))
+        update_process = Process(target=updateModel, args= (model, info_queue, args, str(args.save_id)+'-'+str(pro_id)))
         update_process.daemon = True
         processes.append(update_process)
 
