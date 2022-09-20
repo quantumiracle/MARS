@@ -392,7 +392,8 @@ class Gym2AgentWrapper():
 #         self.env.close()
 
 
-class SlimeVolleyWrapper(gym.Wrapper):
+# class SlimeVolleyWrapper(gym.Wrapper):
+class SlimeVolleyWrapper():
     """ 
     Wrapper to transform SlimeVolley environment (https://github.com/hardmaru/slimevolleygym) 
     into PettingZoo (https://github.com/PettingZoo-Team/PettingZoo) env style. 
@@ -411,7 +412,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
                     [0, 1, 0]] # RIGHT (backward)
 
     def __init__(self, env, against_baseline=False):
-        super().__init__(env)
+        # super().__init__(env)
         self.env = env
         self.agents = ['second_0'] if against_baseline else ['first_0', 'second_0'] # when against baseline the learnable agent is on the right side (second)
         self.num_agents = len(self.agents)
@@ -420,6 +421,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
         self.action_space = gym.spaces.Discrete(len(self.action_table))
         self.action_spaces = {name: self.action_space for name in self.agents}
         self.against_baseline = against_baseline
+        self.metadata = env.metadata
 
     @property
     def spec(self):

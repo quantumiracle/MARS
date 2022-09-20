@@ -188,7 +188,11 @@ class Logger(TestLogger):
         for i, info in enumerate(infos):
             if len(info)>0: # valid learner
                 for k, v in info.items():
-                    self.writer.add_scalar(f"Metric_{i}/{k}", torch.mean(v), np.sum(self.epi_length))
+                    if isinstance(v, torch.Tensor):
+                        mean_v = torch.mean(v)
+                    else:
+                        mean_v = np.mean(v)
+                    self.writer.add_scalar(f"Metric_{i}/{k}", mean_v, np.sum(self.epi_length))
 
     def print_and_save(self):
         """ Print out information and save the logging data. """

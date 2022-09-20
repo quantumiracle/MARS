@@ -30,12 +30,32 @@ from typing import Dict
 import gym
 import slimevolleygym
 import numpy as np
+
+
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
      Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper, ZeroSumWrapper, zero_sum_reward_filer
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 from .wrappers.lasertag_wrappers import LaserTagWrapper
 from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_mdp
+
+# gym verison change cannot be done on the fly (in runtime)
+# def install_package(package):
+#     import importlib
+#     try:
+#         importlib.import_module(package)
+#     except ImportError:
+#         import pip
+#         pip.main(['install', package])
+#     finally:
+#         import gym
+#         print(f'gym version: {gym.__version__}')
+#         # if '==' in package:
+#         #     name = package.split('=')[0]
+#         # else:
+#         #     name = package
+#         # globals()[name] = importlib.import_module(name)
+
 
 # PettingZoo envs
 pettingzoo_envs = {
@@ -76,7 +96,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
     :return: the instantiation of an environment
     :rtype: object
     """
-    if env_type != 'robosumo': # robosumo uses a different version of gym (0.16) conflicting with supersuit (gym==0.22)
+    if env_type not in ['robosumo', 'slimevolley']: # robosumo uses a different version of gym (0.16), slimevolley requires gym<=0.19 (0.18), conflicting with supersuit (gym==0.22)
         from .wrappers.pettingzoo_parallel_reward_lambda import reward_lambda_v1
 
     if args.num_envs > 1:
@@ -222,6 +242,15 @@ def make_env(args, ss_vec=True):
     env_name = args.env_name
     env_type = args.env_type
     print(env_name, env_type)
+
+    # different gym dependency, this will not work on the fly
+    # if env_type == 'pettingzoo':
+    #     install_package('gym==0.23')
+    # elif env_type == 'slimevolley':
+    #     install_package('gym==0.18')
+    # elif env_type == 'robosumo':
+    #     install_package('gym==0.16')
+
     # video recorder: https://github.com/openai/gym/blob/master/gym/wrappers/record_video.py
     if not 'record_video_interval' in args.keys():
         record_video_interval = int(1e2) 

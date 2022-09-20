@@ -78,9 +78,8 @@ class NFSP(Agent):
             return False
 
     def update(self):
-        infos = {}
         ### reinforcement learning (RL) update ###
-        rl_loss = self.rl_agent.update()
+        rl_loss, infos = self.rl_agent.update()
 
         ### supervised learning (SL) update ###
         state, action, _, _, _ = self.reservoir_buffer.sample(self.batch_size)
@@ -99,7 +98,6 @@ class NFSP(Agent):
         self.sl_optimizer.step()
         infos[f'RL loss'] = rl_loss
         infos[f'SL loss'] = sl_loss
-
         return rl_loss + sl_loss.item(), infos
 
     def save_model(self, path):

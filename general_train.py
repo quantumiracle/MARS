@@ -6,7 +6,6 @@ from mars.rl.agents.multiagent import MultiAgent
 from mars.utils.args_parser import get_args
 from mars.utils.data_struct import AttrDict
 
-
 def launch():
     args = get_args()
     print('args: ', args)
