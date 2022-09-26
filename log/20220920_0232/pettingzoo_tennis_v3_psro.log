@@ -1,0 +1,1374 @@
+wandb: W&B API key is configured. Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.13.3 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.13.0
+wandb: Run data is saved locally in /home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run pettingzoo_tennis_v3_psro_202209200232
+wandb: ⭐️ View project at https://wandb.ai/quantumiracle/Pettingzoo_MARS
+wandb: 🚀 View run at https://wandb.ai/quantumiracle/Pettingzoo_MARS/runs/2etdnl6z
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.376499617629609 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.596860889555464 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.907310448646456 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 19.447935765431872 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1567737413756487 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.508201629952383 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3827899142936513 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.425833226488907 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4647843609466125 seconds), retrying request
+pettingzoo_tennis_v3
+default:  {'env_name': 'tennis_v3', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': True, 'seed': 'random', 'record_video': False, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': False, 'wandb_entity': '', 'wandb_project': '', 'wandb_group': '', 'wandb_name': '', 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'psro', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 7, 'trainable_agent_idx': 0, 'opponent_idx': 1}}
+{'env_name': 'tennis_v3', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': True, 'seed': 'random', 'record_video': True, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202209200232, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': '', 'wandb_group': '', 'wandb_name': '', 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'psro', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 7, 'trainable_agent_idx': 0, 'opponent_idx': 1}, 'record_video_interval': 1000}
+args:  {'env_name': 'tennis_v3', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': True, 'seed': 'random', 'record_video': True, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202209200232, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': 'Pettingzoo_MARS', 'wandb_group': '202209200232', 'wandb_name': 'pettingzoo_tennis_v3_psro_202209200232', 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'psro', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 7, 'trainable_agent_idx': 0, 'opponent_idx': 1}, 'record_video_interval': 1000}
+tennis_v3 pettingzoo
+record video: interval 1000, length 300
+Load tennis_v3 environment in type pettingzoo.
+Env observation space: <bound method aec_to_parallel_wrapper.observation_space of <pettingzoo.utils.conversions.aec_to_parallel_wrapper object at 0x7fe98ac3d438>> action space: <bound method aec_to_parallel_wrapper.action_space of <pettingzoo.utils.conversions.aec_to_parallel_wrapper object at 0x7fe98ac3d438>>
+random seed: [637, 72, 556, 680, 815]
+<mars.env.wrappers.mars_wrappers.SSVecWrapper object at 0x7fe98ad34898>
+discrete_policy 18 Discrete(18)
+discrete_policy 18 Discrete(18)
+discrete_policy 18 Discrete(18)
+Agents No. [1] (index starting from 0) are not learnable.
+Arguments:  {'env_name': 'tennis_v3', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': True, 'seed': 'random', 'record_video': True, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202209200232, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': 'Pettingzoo_MARS', 'wandb_group': '202209200232', 'wandb_name': 'pettingzoo_tennis_v3_psro_202209200232', 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'psro', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 7, 'trainable_agent_idx': 0, 'opponent_idx': 1}, 'record_video_interval': 1000}
+Save models to : /home/zihan/research/MARS/data/model/202209200232/pettingzoo_tennis_v3_psro. 
+ Save logs to: /home/zihan/research/MARS/data/log/202209200232/pettingzoo_tennis_v3_psro.
+tennis_v3 pettingzoo
+record video: interval 1000, length 300
+Load tennis_v3 environment in type pettingzoo.
+Env observation space: Box(0.0, 1.0, (128,), float32) action space: Discrete(18)
+random seed: 822
+discrete_policy 18 Discrete(18)
+discrete_policy 18 Discrete(18)
+Episode: 1/10000 (0.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 9.81s / 9.81 s
+first_0:                 episode reward: 4.0000,                 loss: 0.9591
+second_0:                 episode reward: -4.0000,                 loss: nan
+Episode: 21/10000 (0.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 126.80s / 136.61 s
+first_0:                 episode reward: 3.1000,                 loss: 0.2852
+second_0:                 episode reward: -3.1000,                 loss: nan
+Episode: 41/10000 (0.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 131.53s / 268.14 s
+first_0:                 episode reward: 3.2500,                 loss: 0.0410
+second_0:                 episode reward: -3.2500,                 loss: 0.5681
+Score delta: 7.2, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/32_0.
+Episode: 61/10000 (0.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 133.28s / 401.41 s
+first_0:                 episode reward: 1.1000,                 loss: nan
+second_0:                 episode reward: -1.1000,                 loss: 0.0996
+Episode: 81/10000 (0.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 134.95s / 536.36 s
+first_0:                 episode reward: -0.3500,                 loss: nan
+second_0:                 episode reward: 0.3500,                 loss: 0.0798
+Episode: 101/10000 (1.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.43s / 674.79 s
+first_0:                 episode reward: 0.7000,                 loss: nan
+second_0:                 episode reward: -0.7000,                 loss: 0.0899
+Episode: 121/10000 (1.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.11s / 813.89 swandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0499212358693972 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.003193199183753 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4607472997505155 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.007553702724036 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3603152453588714 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.323434553808853 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0278632801299485 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.106733348594604 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0472811967460958 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.075908809456774 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.917424527266649 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.151022624511838 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.58685762945918 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.018661329076993 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.29057946239548 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4548795567089727 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.336336082919802 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.383020027059067 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3502216477735667 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2753286669138966 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.040485891615921 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.127624138449708 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2582426128521162 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.056316955646211 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0681763843194494 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4854531078662436 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.364748931034259 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.022674929686418 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.71312058894819 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1961263174401187 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.1647371949654195 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.366288526246218 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0106798069644256 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.192826152046131 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.558389826966569 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.144866299413494 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.238851147457738 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.333697914802534 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.203853071030707 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.634092432815024 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.803611568707915 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.232040341690411 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.594668285651767 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.707638304312294 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.261132923274463 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.813402838161096 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1181941024801345 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.481210052147302 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1008039887050325 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.624271220260743 seconds), retrying request
+
+first_0:                 episode reward: -0.5000,                 loss: nan
+second_0:                 episode reward: 0.5000,                 loss: 0.0596
+Episode: 141/10000 (1.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 136.61s / 950.50 s
+first_0:                 episode reward: -0.3500,                 loss: nan
+second_0:                 episode reward: 0.3500,                 loss: 0.0634
+Episode: 161/10000 (1.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.46s / 1091.96 s
+first_0:                 episode reward: -0.5000,                 loss: nan
+second_0:                 episode reward: 0.5000,                 loss: 0.0729
+Episode: 181/10000 (1.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.93s / 1233.89 s
+first_0:                 episode reward: -1.0500,                 loss: nan
+second_0:                 episode reward: 1.0500,                 loss: 0.0631
+Episode: 201/10000 (2.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.88s / 1375.77 s
+first_0:                 episode reward: -2.2000,                 loss: nan
+second_0:                 episode reward: 2.2000,                 loss: 0.0590
+Episode: 221/10000 (2.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.03s / 1516.80 s
+first_0:                 episode reward: -2.1000,                 loss: nan
+second_0:                 episode reward: 2.1000,                 loss: 0.0554
+Episode: 241/10000 (2.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.04s / 1658.84 s
+first_0:                 episode reward: -1.3500,                 loss: nan
+second_0:                 episode reward: 1.3500,                 loss: 0.0492
+Episode: 261/10000 (2.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.16s / 1799.99 s
+first_0:                 episode reward: -1.1500,                 loss: nan
+second_0:                 episode reward: 1.1500,                 loss: 0.0457
+Episode: 281/10000 (2.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.73s / 1942.72 s
+first_0:                 episode reward: -1.3500,                 loss: nan
+second_0:                 episode reward: 1.3500,                 loss: 0.0396
+Episode: 301/10000 (3.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.72s / 2085.44 s
+first_0:                 episode reward: -1.1500,                 loss: nan
+second_0:                 episode reward: 1.1500,                 loss: 0.0425
+Episode: 321/10000 (3.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.05s / 2228.49 s
+first_0:                 episode reward: -0.8000,                 loss: nan
+second_0:                 episode reward: 0.8000,                 loss: 0.0821
+Episode: 341/10000 (3.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.99s / 2370.48 s
+first_0:                 episode reward: 0.4000,                 loss: nan
+second_0:                 episode reward: -0.4000,                 loss: 0.1000
+Episode: 361/10000 (3.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.80s / 2513.29 s
+first_0:                 episode reward: 3.5000,                 loss: nan
+second_0:                 episode reward: -3.5000,                 loss: 0.0851
+Episode: 381/10000 (3.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.77s / 2654.06 s
+first_0:                 episode reward: 2.3500,                 loss: nan
+second_0:                 episode reward: -2.3500,                 loss: 0.0636
+Episode: 401/10000 (4.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.95s / 2796.01 s
+first_0:                 episode reward: 2.4500,                 loss: nan
+second_0:                 episode reward: -2.4500,                 loss: 0.0368
+Episode: 421/10000 (4.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.42s / 2937.43 s
+first_0:                 episode reward: 2.0500,                 loss: nan
+second_0:                 episode reward: -2.0500,                 loss: 0.0216
+Episode: 441/10000 (4.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 144.98s / 3082.41 s
+first_0:                 episode reward: 0.6000,                 loss: nan
+second_0:                 episode reward: -0.6000,                 loss: 0.0283
+Episode: 461/10000 (4.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.39s / 3224.81 s
+first_0:                 episode reward: -1.3000,                 loss: nan
+second_0:                 episode reward: 1.3000,                 loss: 0.0491
+Episode: 481/10000 (4.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.22s / 3367.02 s
+first_0:                 episode reward: -2.0000,                 loss: nan
+second_0:                 episode reward: 2.0000,                 loss: 0.0612
+Episode: 501/10000 (5.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.91s / 3507.94 s
+first_0:                 episode reward: -1.3000,                 loss: nan
+second_0:                 episode reward: 1.3000,                 loss: 0.0495
+Episode: 521/10000 (5.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.98s / 3649.92 s
+first_0:                 episode reward: -1.2000,                 loss: nan
+second_0:                 episode reward: 1.2000,                 loss: 0.0575
+Episode: 541/10000 (5.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.47s / 3790.39 s
+first_0:                 episode reward: -0.3000,                 loss: nan
+second_0:                 episode reward: 0.3000,                 loss: 0.0650
+Episode: 561/10000 (5.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.29s / 3931.68 s
+first_0:                 episode reward: 0.3500,                 loss: nan
+second_0:                 episode reward: -0.3500,                 loss: 0.0880
+Episode: 581/10000 (5.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.02s / 4072.70 s
+first_0:                 episode reward: -0.7500,                 loss: nan
+second_0:                 episode reward: 0.7500,                 loss: 0.1026
+Episode: 601/10000 (6.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.60s / 4215.30 s
+first_0:                 episode reward: -1.8000,                 loss: nan
+second_0:                 episode reward: 1.8000,                 loss: 0.0710
+Episode: 621/10000 (6.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.67s / 4356.98 s
+first_0:                 episode reward: -1.2500,                 loss: nan
+second_0:                 episode reward: 1.2500,                 loss: 0.0955
+Episode: 641/10000 (6.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.20s / 4498.18 s
+first_0:                 episode reward: -0.7000,                 loss: nan
+second_0:                 episode reward: 0.7000,                 loss: 0.0628
+Episode: 661/10000 (6.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.19s / 4640.37 s
+first_0:                 episode reward: 0.0000,                 loss: nan
+second_0:                 episode reward: 0.0000,                 loss: 0.0422wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.219004628055203 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4323260158426896 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.22855930351468 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.183868697848333 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4671149075555965 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.308871064532214 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4708616834719357 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3639205670267986 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.4295148987904165 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.48415163861878 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.072467370740454 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.963237535802746 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.277031396798491 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.394755376556689 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.192163463550811 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.4507975734585035 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.412877166081046 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.242862832645282 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.484856737577575 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.410548746023913 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3605737420955673 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.499118804074783 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0240767603726972 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3077258320779217 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0314732593510767 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.345370903879332 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2395692998515915 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1623254647192125 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.417215445791472 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.70894763155934 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.499488906712061 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0127189089700326 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0188299484245973 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.028943811775585 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.81421057668619 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.036295942033027 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.429199870627009 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2604429381634086 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.7275869085171 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.113644430027195 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.129833262991132 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2482381536140545 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.202810348321859 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.119311069098992 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.386909847387912 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.035906530769963 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.121315350699734 seconds), retrying request
+
+Episode: 681/10000 (6.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.89s / 4782.25 s
+first_0:                 episode reward: -1.7000,                 loss: nan
+second_0:                 episode reward: 1.7000,                 loss: 0.0477
+Episode: 701/10000 (7.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.06s / 4924.31 s
+first_0:                 episode reward: -1.4500,                 loss: nan
+second_0:                 episode reward: 1.4500,                 loss: 0.0442
+Episode: 721/10000 (7.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.60s / 5065.92 s
+first_0:                 episode reward: -0.1000,                 loss: nan
+second_0:                 episode reward: 0.1000,                 loss: 0.0372
+Episode: 741/10000 (7.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.41s / 5207.32 s
+first_0:                 episode reward: -0.9500,                 loss: nan
+second_0:                 episode reward: 0.9500,                 loss: 0.0362
+Episode: 761/10000 (7.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.52s / 5347.84 s
+first_0:                 episode reward: -0.7500,                 loss: nan
+second_0:                 episode reward: 0.7500,                 loss: 0.0569
+Episode: 781/10000 (7.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.53s / 5490.38 s
+first_0:                 episode reward: -1.4000,                 loss: nan
+second_0:                 episode reward: 1.4000,                 loss: 0.0649
+Episode: 801/10000 (8.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.30s / 5632.68 s
+first_0:                 episode reward: -1.1500,                 loss: nan
+second_0:                 episode reward: 1.1500,                 loss: 0.0611
+Episode: 821/10000 (8.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.86s / 5775.54 s
+first_0:                 episode reward: -2.0000,                 loss: nan
+second_0:                 episode reward: 2.0000,                 loss: 0.0632
+Episode: 841/10000 (8.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 145.44s / 5920.99 s
+first_0:                 episode reward: -2.5000,                 loss: 0.0400
+second_0:                 episode reward: 2.5000,                 loss: 0.0633
+Score delta: 7.4, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/839_1.
+Episode: 861/10000 (8.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.24s / 6061.23 s
+first_0:                 episode reward: 2.4000,                 loss: 0.0717
+second_0:                 episode reward: -2.4000,                 loss: nan
+Episode: 881/10000 (8.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.29s / 6208.51 s
+first_0:                 episode reward: 2.6000,                 loss: 0.1214
+second_0:                 episode reward: -2.6000,                 loss: 0.0552
+Score delta: 7.2, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/865_0.
+Episode: 901/10000 (9.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.37s / 6348.89 s
+first_0:                 episode reward: 1.7000,                 loss: nan
+second_0:                 episode reward: -1.7000,                 loss: 0.0551
+Episode: 921/10000 (9.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.73s / 6492.62 s
+first_0:                 episode reward: 0.6000,                 loss: nan
+second_0:                 episode reward: -0.6000,                 loss: 0.0568
+Episode: 941/10000 (9.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.07s / 6634.70 s
+first_0:                 episode reward: -0.6000,                 loss: nan
+second_0:                 episode reward: 0.6000,                 loss: 0.0554
+Episode: 961/10000 (9.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 152.60s / 6787.30 s
+first_0:                 episode reward: -0.4000,                 loss: 0.1320
+second_0:                 episode reward: 0.4000,                 loss: 0.0561
+Score delta: 7.6, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/953_1.
+Episode: 981/10000 (9.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 157.59s / 6944.88 s
+first_0:                 episode reward: 2.7000,                 loss: 0.1376
+second_0:                 episode reward: -2.7000,                 loss: 0.0766
+Score delta: 7.4, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/974_0.
+Episode: 1001/10000 (10.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 144.06s / 7088.94 s
+first_0:                 episode reward: 1.9500,                 loss: nan
+second_0:                 episode reward: -1.9500,                 loss: 0.0591
+Episode: 1021/10000 (10.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.98s / 7232.92 s
+first_0:                 episode reward: -2.3000,                 loss: nan
+second_0:                 episode reward: 2.3000,                 loss: 0.0486
+Episode: 1041/10000 (10.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 154.93s / 7387.85 s
+first_0:                 episode reward: -1.3000,                 loss: 0.1335
+second_0:                 episode reward: 1.3000,                 loss: 0.0434
+Score delta: 7.6, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/1036_1.
+Episode: 1061/10000 (10.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 156.09s / 7543.94 s
+first_0:                 episode reward: 4.9500,                 loss: 0.1485
+second_0:                 episode reward: -4.9500,                 loss: 0.0815
+Score delta: 9.8, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/1057_0.
+Episode: 1081/10000 (10.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.10s / 7687.04 s
+first_0:                 episode reward: 1.6000,                 loss: nan
+second_0:                 episode reward: -1.6000,                 loss: 0.0546
+Episode: 1101/10000 (11.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.53s / 7829.57 s
+first_0:                 episode reward: -2.5500,                 loss: nan
+second_0:                 episode reward: 2.5500,                 loss: 0.0433
+Episode: 1121/10000 (11.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.15s / 7971.72 s
+first_0:                 episode reward: -2.7500,                 loss: nan
+second_0:                 episode reward: 2.7500,                 loss: 0.0393
+Episode: 1141/10000 (11.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.81s / 8115.53 s
+first_0:                 episode reward: -2.6000,                 loss: nan
+second_0:                 episode reward: 2.6000,                 loss: 0.0381
+Episode: 1161/10000 (11.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 160.55s / 8276.07 s
+first_0:                 episode reward: -3.7000,                 loss: 0.1433
+second_0:                 episode reward: 3.7000,                 loss: 0.0384
+Score delta: 7.2, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/1147_1.wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0411118250739806 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.555552189794711 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.403066932082605 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.064355588675216 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.89239462112346 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2619767235586337 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.354540175115882 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.024095646194525 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.269755502762976 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4908714379146786 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.50232485543214 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.273092730865926 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.13552533972446 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.194942164676779 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.651670913231968 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3954775778452104 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.685537965210977 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3392375717104383 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.258803835296769 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.448868664794405 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.844137415696109 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.272484535243779 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.83766615768228 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.256246019596883 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.348050001506735 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2404396977084367 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.268002719778384 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1581308880798633 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3410479917851754 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.412245289288278 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.506356845498008 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.069379749846142 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.413584450355591 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.102324312048554 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 18.037705869475893 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 34.12652342661802 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.111686875905009 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.458709503652689 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.180649723574505 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2172750101294985 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1451637750635086 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.156676059808736 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0105466805755077 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.638991345786332 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1852760950497467 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.053420655255545 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.284465747440324 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.131959710736491 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.815797865975797 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1932491166165122 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.424696570627832 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3400664084259497 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.234830187688276 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.957213512042168 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.901995075024796 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 19.138002346327557 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0550481278928228 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.138995271950883 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0106633539839516 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1699739908943974 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1014810903658696 seconds), retrying request
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:516: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint8 = np.dtype([("qint8", np.int8, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:517: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:518: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint16 = np.dtype([("qint16", np.int16, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:519: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:520: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint32 = np.dtype([("qint32", np.int32, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:525: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np_resource = np.dtype([("resource", np.ubyte, 1)])
+wandb: Network error (TransientError), entering retry loop.
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.130412553341713 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.788273990255209 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2002547327575304 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.388380697069387 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4048896297792064 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.086690082807221 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0090727143549647 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.652117938271343 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3183852633613142 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.742772405107023 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.243693286597173 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1668512945152996 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.276130288947096 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.407623272409129 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4117891177870634 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.539315637788426 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2227339221886195 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0756674593313895 seconds), retrying request
+
+Episode: 1181/10000 (11.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.28s / 8418.35 s
+first_0:                 episode reward: -3.5500,                 loss: 0.1122
+second_0:                 episode reward: 3.5500,                 loss: nan
+Episode: 1201/10000 (12.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.51s / 8559.87 s
+first_0:                 episode reward: -5.3000,                 loss: 0.0363
+second_0:                 episode reward: 5.3000,                 loss: nan
+Episode: 1221/10000 (12.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.76s / 8702.63 s
+first_0:                 episode reward: -5.2000,                 loss: 0.0372
+second_0:                 episode reward: 5.2000,                 loss: nan
+Episode: 1241/10000 (12.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.82s / 8844.45 s
+first_0:                 episode reward: -5.3500,                 loss: 0.0691
+second_0:                 episode reward: 5.3500,                 loss: nan
+Episode: 1261/10000 (12.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.98s / 8984.43 s
+first_0:                 episode reward: -6.0000,                 loss: 0.1117
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 1281/10000 (12.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.41s / 9127.84 s
+first_0:                 episode reward: -6.0000,                 loss: 0.1408
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 1301/10000 (13.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.41s / 9270.25 s
+first_0:                 episode reward: -5.8000,                 loss: 0.2033
+second_0:                 episode reward: 5.8000,                 loss: nan
+Episode: 1321/10000 (13.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.95s / 9413.20 s
+first_0:                 episode reward: -6.0000,                 loss: 0.1598
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 1341/10000 (13.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.17s / 9554.37 s
+first_0:                 episode reward: -6.0000,                 loss: 0.1071
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 1361/10000 (13.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.28s / 9694.65 s
+first_0:                 episode reward: -4.5500,                 loss: 0.0624
+second_0:                 episode reward: 4.5500,                 loss: nan
+Episode: 1381/10000 (13.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.88s / 9834.52 s
+first_0:                 episode reward: -4.1500,                 loss: 0.0542
+second_0:                 episode reward: 4.1500,                 loss: nan
+Episode: 1401/10000 (14.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.64s / 9975.16 s
+first_0:                 episode reward: -4.0500,                 loss: 0.0447
+second_0:                 episode reward: 4.0500,                 loss: nan
+Episode: 1421/10000 (14.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.25s / 10116.41 s
+first_0:                 episode reward: -4.2500,                 loss: 0.0437
+second_0:                 episode reward: 4.2500,                 loss: nan
+Episode: 1441/10000 (14.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.84s / 10258.25 s
+first_0:                 episode reward: 0.8000,                 loss: 0.0475
+second_0:                 episode reward: -0.8000,                 loss: nan
+Episode: 1461/10000 (14.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.69s / 10399.94 s
+first_0:                 episode reward: 2.2000,                 loss: 0.0581
+second_0:                 episode reward: -2.2000,                 loss: nan
+Episode: 1481/10000 (14.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.59s / 10541.53 s
+first_0:                 episode reward: 2.2500,                 loss: 0.0680
+second_0:                 episode reward: -2.2500,                 loss: nan
+Episode: 1501/10000 (15.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 156.90s / 10698.42 s
+first_0:                 episode reward: 1.8500,                 loss: 0.0624
+second_0:                 episode reward: -1.8500,                 loss: 0.0363
+Score delta: 7.6, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/1496_0.
+Episode: 1521/10000 (15.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.60s / 10840.02 s
+first_0:                 episode reward: -3.0500,                 loss: nan
+second_0:                 episode reward: 3.0500,                 loss: 0.0355
+Episode: 1541/10000 (15.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.24s / 10982.26 s
+first_0:                 episode reward: -2.7500,                 loss: nan
+second_0:                 episode reward: 2.7500,                 loss: 0.0359
+Episode: 1561/10000 (15.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.75s / 11122.02 s
+first_0:                 episode reward: -2.6000,                 loss: nan
+second_0:                 episode reward: 2.6000,                 loss: 0.0344
+Episode: 1581/10000 (15.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.18s / 11264.19 s
+first_0:                 episode reward: -2.2500,                 loss: nan
+second_0:                 episode reward: 2.2500,                 loss: 0.0393
+Episode: 1601/10000 (16.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.15s / 11406.34 s
+first_0:                 episode reward: -1.2000,                 loss: nan
+second_0:                 episode reward: 1.2000,                 loss: 0.0451
+Episode: 1621/10000 (16.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 163.10s / 11569.44 s
+first_0:                 episode reward: -3.5000,                 loss: 0.1306
+second_0:                 episode reward: 3.5000,                 loss: 0.0516
+Score delta: 7.6, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/1613_1.
+Episode: 1641/10000 (16.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.30s / 11711.74 s
+first_0:                 episode reward: -3.3500,                 loss: 0.1114
+second_0:                 episode reward: 3.3500,                 loss: nan
+Episode: 1661/10000 (16.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.58s / 11852.33 s
+first_0:                 episode reward: -5.2500,                 loss: 0.0443
+second_0:                 episode reward: 5.2500,                 loss: nan
+Episode: 1681/10000 (16.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.42s / 11993.74 s
+first_0:                 episode reward: -5.1500,                 loss: 0.0420
+second_0:                 episode reward: 5.1500,                 loss: nan
+Episode: 1701/10000 (17.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.22s / 12134.97 swandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.566732793530122 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 16.99011956778291 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.045323581901009 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.145492943164017 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.16610158498375 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.356623675553538 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1815705963580503 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.543707656309009 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2196457939542324 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.335816029673782 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.368678450186348 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2339374318643284 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.832640557912797 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.363230520641396 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 16.426626028001063 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 35.18809917792958 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.342336714761635 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.087575570149895 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.3601863423729785 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1472631043506505 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.908640761939944 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2460250877511942 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4726739917404403 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.126139549826555 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2651059869954993 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.225845219075337 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.58999240903884 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 16.881957417719132 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.38924595521912 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.703080757812505 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2884372777363238 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.416179615948999 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0517649622839116 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.332620158536636 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.262523292774802 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1973381405833456 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3562689051550807 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.18641771098936 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.46086688522344 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4296548653972243 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.096448080668509 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.218213929221953 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.452712278074952 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.104078495111635 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.421803246867129 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.391455487866105 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.106852518742794 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.347590492040139 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1125563178494153 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.289717927157958 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.181810460580829 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.455825310261774 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.613192842914995 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0201206673523373 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.274585650234361 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2172085905804897 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.088075167254826 seconds), retrying request
+
+first_0:                 episode reward: -5.7000,                 loss: 0.0605
+second_0:                 episode reward: 5.7000,                 loss: nan
+Episode: 1721/10000 (17.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.04s / 12276.01 s
+first_0:                 episode reward: -6.0000,                 loss: 0.0636
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 1741/10000 (17.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.95s / 12414.96 s
+first_0:                 episode reward: -5.9000,                 loss: 0.0613
+second_0:                 episode reward: 5.9000,                 loss: nan
+Episode: 1761/10000 (17.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.61s / 12556.57 s
+first_0:                 episode reward: -5.5500,                 loss: 0.0790
+second_0:                 episode reward: 5.5500,                 loss: nan
+Episode: 1781/10000 (17.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.03s / 12696.60 s
+first_0:                 episode reward: -6.0000,                 loss: 0.0713
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 1801/10000 (18.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.80s / 12836.40 s
+first_0:                 episode reward: -6.0000,                 loss: 0.0630
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 1821/10000 (18.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.07s / 12976.47 s
+first_0:                 episode reward: -6.1000,                 loss: 0.0541
+second_0:                 episode reward: 6.1000,                 loss: nan
+Episode: 1841/10000 (18.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.41s / 13117.88 s
+first_0:                 episode reward: -5.7500,                 loss: 0.0500
+second_0:                 episode reward: 5.7500,                 loss: nan
+Episode: 1861/10000 (18.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.11s / 13257.99 s
+first_0:                 episode reward: -5.9500,                 loss: 0.0470
+second_0:                 episode reward: 5.9500,                 loss: nan
+Episode: 1881/10000 (18.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.61s / 13398.59 s
+first_0:                 episode reward: -5.9500,                 loss: 0.0469
+second_0:                 episode reward: 5.9500,                 loss: nan
+Episode: 1901/10000 (19.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.32s / 13537.91 s
+first_0:                 episode reward: -5.7500,                 loss: 0.0452
+second_0:                 episode reward: 5.7500,                 loss: nan
+Episode: 1921/10000 (19.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.30s / 13677.21 s
+first_0:                 episode reward: -6.0000,                 loss: 0.0420
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 1941/10000 (19.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.57s / 13817.78 s
+first_0:                 episode reward: -5.9000,                 loss: 0.0405
+second_0:                 episode reward: 5.9000,                 loss: nan
+Episode: 1961/10000 (19.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.01s / 13956.79 s
+first_0:                 episode reward: -5.7000,                 loss: 0.0375
+second_0:                 episode reward: 5.7000,                 loss: nan
+Episode: 1981/10000 (19.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.04s / 14096.83 s
+first_0:                 episode reward: -5.6500,                 loss: 0.0342
+second_0:                 episode reward: 5.6500,                 loss: nan
+Episode: 2001/10000 (20.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.80s / 14237.63 s
+first_0:                 episode reward: -5.8000,                 loss: 0.0333
+second_0:                 episode reward: 5.8000,                 loss: nan
+Episode: 2021/10000 (20.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.20s / 14376.83 s
+first_0:                 episode reward: -6.0500,                 loss: 0.0339
+second_0:                 episode reward: 6.0500,                 loss: nan
+Episode: 2041/10000 (20.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.87s / 14516.70 s
+first_0:                 episode reward: -5.2500,                 loss: 0.0316
+second_0:                 episode reward: 5.2500,                 loss: nan
+Episode: 2061/10000 (20.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.47s / 14657.17 s
+first_0:                 episode reward: -5.8500,                 loss: 0.0297
+second_0:                 episode reward: 5.8500,                 loss: nan
+Episode: 2081/10000 (20.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.33s / 14796.50 s
+first_0:                 episode reward: -5.0000,                 loss: 0.0280
+second_0:                 episode reward: 5.0000,                 loss: nan
+Episode: 2101/10000 (21.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.69s / 14936.19 s
+first_0:                 episode reward: -5.6500,                 loss: 0.0268
+second_0:                 episode reward: 5.6500,                 loss: nan
+Episode: 2121/10000 (21.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.07s / 15075.26 s
+first_0:                 episode reward: -4.4500,                 loss: 0.0258
+second_0:                 episode reward: 4.4500,                 loss: nan
+Episode: 2141/10000 (21.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.81s / 15214.07 s
+first_0:                 episode reward: -5.0500,                 loss: 0.0241
+second_0:                 episode reward: 5.0500,                 loss: nan
+Episode: 2161/10000 (21.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.23s / 15353.30 s
+first_0:                 episode reward: -3.4500,                 loss: 0.0225
+second_0:                 episode reward: 3.4500,                 loss: nan
+Episode: 2181/10000 (21.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.00s / 15493.29 s
+first_0:                 episode reward: -5.2000,                 loss: 0.0231
+second_0:                 episode reward: 5.2000,                 loss: nan
+Episode: 2201/10000 (22.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.63s / 15632.93 s
+first_0:                 episode reward: -4.2500,                 loss: 0.0218
+second_0:                 episode reward: 4.2500,                 loss: nan
+Episode: 2221/10000 (22.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.22s / 15773.14 s
+first_0:                 episode reward: -4.7500,                 loss: 0.0225
+second_0:                 episode reward: 4.7500,                 loss: nan
+Episode: 2241/10000 (22.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.79s / 15911.93 s
+first_0:                 episode reward: -3.5500,                 loss: 0.0226wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4592526142632183 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.455131662830794 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4957458452995698 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0071467725414047 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.722561034920628 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.197142615779457 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1939778303138624 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.124376873785688 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.490250688526412 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4259630724327175 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.270358383235934 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.276093439313211 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.19343531340501 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.8137200779742 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1769250741549397 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.942311973963293 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3509953086043645 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.0155519931141725 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0384712961685816 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.105399086086548 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.432476766514635 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.051742967558084 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.064435722025519 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.244569759183635 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.862343239634002 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.309611608777508 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.944473688246805 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1340483533406536 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.6282097943340705 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3029987520824973 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.816722506098965 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1232287138221464 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.732844756000134 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2296577394204995 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1686684557781213 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.14191590714225 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.362214284383175 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.253908617423922 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.543502449326554 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.321938220813902 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.894987182651079 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.02180554685494 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.2658587410005735 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1852071595573355 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.5028294143621865 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2264318026740613 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.512462270704137 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4986742754307674 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.272589474391175 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1070938786404536 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.489384486065909 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0267437456159674 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.411968633916657 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.448421369428402 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3665184183480537 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.349492282038482 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.223595394347288 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1929717381924467 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.48007140295062 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0902850754141644 seconds), retrying request
+
+second_0:                 episode reward: 3.5500,                 loss: nan
+Episode: 2261/10000 (22.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.79s / 16053.73 s
+first_0:                 episode reward: -0.7500,                 loss: 0.0236
+second_0:                 episode reward: 0.7500,                 loss: nan
+Episode: 2281/10000 (22.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.10s / 16193.83 s
+first_0:                 episode reward: -0.3500,                 loss: 0.0225
+second_0:                 episode reward: 0.3500,                 loss: nan
+Episode: 2301/10000 (23.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.66s / 16334.49 s
+first_0:                 episode reward: -0.0500,                 loss: 0.0262
+second_0:                 episode reward: 0.0500,                 loss: nan
+Episode: 2321/10000 (23.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.09s / 16474.57 s
+first_0:                 episode reward: -0.4000,                 loss: 0.0307
+second_0:                 episode reward: 0.4000,                 loss: nan
+Episode: 2341/10000 (23.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.62s / 16617.19 s
+first_0:                 episode reward: -0.6500,                 loss: 0.0276
+second_0:                 episode reward: 0.6500,                 loss: nan
+Episode: 2361/10000 (23.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.05s / 16756.24 s
+first_0:                 episode reward: -2.7000,                 loss: 0.0253
+second_0:                 episode reward: 2.7000,                 loss: nan
+Episode: 2381/10000 (23.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.29s / 16896.52 s
+first_0:                 episode reward: -4.4500,                 loss: 0.0229
+second_0:                 episode reward: 4.4500,                 loss: nan
+Episode: 2401/10000 (24.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 137.40s / 17033.93 s
+first_0:                 episode reward: -6.0000,                 loss: 0.0239
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 2421/10000 (24.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.86s / 17174.79 s
+first_0:                 episode reward: -3.7500,                 loss: 0.0286
+second_0:                 episode reward: 3.7500,                 loss: nan
+Episode: 2441/10000 (24.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.34s / 17316.12 s
+first_0:                 episode reward: 0.4500,                 loss: 0.0243
+second_0:                 episode reward: -0.4500,                 loss: nan
+Episode: 2461/10000 (24.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.78s / 17454.91 s
+first_0:                 episode reward: -1.7500,                 loss: 0.0242
+second_0:                 episode reward: 1.7500,                 loss: nan
+Episode: 2481/10000 (24.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.67s / 17595.58 s
+first_0:                 episode reward: -1.4000,                 loss: 0.0238
+second_0:                 episode reward: 1.4000,                 loss: nan
+Episode: 2501/10000 (25.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.59s / 17737.16 s
+first_0:                 episode reward: 1.5000,                 loss: 0.0252
+second_0:                 episode reward: -1.5000,                 loss: nan
+Episode: 2521/10000 (25.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.89s / 17876.05 s
+first_0:                 episode reward: -1.0000,                 loss: 0.0251
+second_0:                 episode reward: 1.0000,                 loss: nan
+Episode: 2541/10000 (25.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.91s / 18014.96 s
+first_0:                 episode reward: 1.0500,                 loss: 0.0259
+second_0:                 episode reward: -1.0500,                 loss: nan
+Episode: 2561/10000 (25.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.35s / 18154.31 s
+first_0:                 episode reward: 1.8000,                 loss: 0.0241
+second_0:                 episode reward: -1.8000,                 loss: nan
+Episode: 2581/10000 (25.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 137.98s / 18292.29 s
+first_0:                 episode reward: 1.0500,                 loss: 0.0251
+second_0:                 episode reward: -1.0500,                 loss: nan
+Episode: 2601/10000 (26.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.56s / 18432.86 s
+first_0:                 episode reward: 2.1000,                 loss: 0.0272
+second_0:                 episode reward: -2.1000,                 loss: nan
+Episode: 2621/10000 (26.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 164.37s / 18597.23 s
+first_0:                 episode reward: 0.7000,                 loss: 0.0277
+second_0:                 episode reward: -0.7000,                 loss: 0.0522
+Score delta: 7.4, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/2612_0.
+Episode: 2641/10000 (26.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 166.68s / 18763.91 s
+first_0:                 episode reward: -3.9000,                 loss: 0.1097
+second_0:                 episode reward: 3.9000,                 loss: 0.0505
+Score delta: 8.4, save the model to .//data/model/202209200232/pettingzoo_tennis_v3_psro/2633_1.
+Episode: 2661/10000 (26.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.47s / 18904.38 s
+first_0:                 episode reward: -3.4500,                 loss: 0.0925
+second_0:                 episode reward: 3.4500,                 loss: nan
+Episode: 2681/10000 (26.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.69s / 19045.07 s
+first_0:                 episode reward: -6.0000,                 loss: 0.0424
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 2701/10000 (27.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.22s / 19184.29 s
+first_0:                 episode reward: -5.7000,                 loss: 0.0396
+second_0:                 episode reward: 5.7000,                 loss: nan
+Episode: 2721/10000 (27.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.57s / 19323.85 s
+first_0:                 episode reward: -4.7500,                 loss: 0.0712
+second_0:                 episode reward: 4.7500,                 loss: nan
+Episode: 2741/10000 (27.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.89s / 19465.74 s
+first_0:                 episode reward: -5.8000,                 loss: 0.0879
+second_0:                 episode reward: 5.8000,                 loss: nan
+Episode: 2761/10000 (27.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.15s / 19605.89 s
+first_0:                 episode reward: -5.7500,                 loss: 0.0745
+second_0:                 episode reward: 5.7500,                 loss: nan
+Episode: 2781/10000 (27.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.58s / 19746.47 swandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1187817785203853 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.292892233425383 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.033308861173634 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.217458355928025 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2647574992800825 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.985880458719158 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.005116917929488 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.606203975362176 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2075728488196322 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.245044988827109 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.331846104561082 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.020688086422305 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.010207426083291 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.815752659649537 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4125187035993365 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.9100851789775 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0982555247152783 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.399905688839716 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0954103752793602 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4791240103409744 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.225065338377304 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3013084691665733 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.0847647323781455 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1108467752620066 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.070958045685664 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.140977744602892 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.575424970224809 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2793196658310535 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.543450424742673 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4946882130662003 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.165893210161688 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.058691005983233 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.120327958906337 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.546941190461672 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1443820085135474 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.952377355608866 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4572280342110715 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3289503815213544 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1141239355527217 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.411601736133761 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.343814812050875 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.460073671986362 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.534238949542715 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.154198538526768 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.502281874215861 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.189839842326559 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0458186840097383 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.253972477009799 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0347190368752557 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.257427286020539 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.458631536453134 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.294070357411678 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.969811310897871 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.011668064941104 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.230447475523125 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.142066594945398 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.196720602151196 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.287218291304175 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4399477375914946 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.116389445126993 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.126025964836809 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.890652539695079 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3513042507530852 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.724655524732162 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2139171071962283 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.432009827115508 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.005968443250139 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.5195273489187935 seconds), retrying request
+
+first_0:                 episode reward: -6.0000,                 loss: 0.0921
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 2801/10000 (28.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.22s / 19886.69 s
+first_0:                 episode reward: -6.0000,                 loss: 0.1248
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 2821/10000 (28.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.20s / 20027.89 s
+first_0:                 episode reward: -5.7000,                 loss: 0.0907
+second_0:                 episode reward: 5.7000,                 loss: nan
+Episode: 2841/10000 (28.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.04s / 20166.93 s
+first_0:                 episode reward: -6.0000,                 loss: 0.0505
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 2861/10000 (28.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.22s / 20306.15 s
+first_0:                 episode reward: -6.0000,                 loss: 0.0424
+second_0:                 episode reward: 6.0000,                 loss: nan
+Episode: 2881/10000 (28.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.16s / 20446.31 s
+first_0:                 episode reward: -4.6500,                 loss: 0.0384
+second_0:                 episode reward: 4.6500,                 loss: nan
+Episode: 2901/10000 (29.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.65s / 20587.97 s
+first_0:                 episode reward: -5.3500,                 loss: 0.0314
+second_0:                 episode reward: 5.3500,                 loss: nan
+Episode: 2921/10000 (29.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 144.33s / 20732.29 s
+first_0:                 episode reward: -3.6000,                 loss: 0.0278
+second_0:                 episode reward: 3.6000,                 loss: nan
+Episode: 2941/10000 (29.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.80s / 20873.09 s
+first_0:                 episode reward: -3.5000,                 loss: 0.0264
+second_0:                 episode reward: 3.5000,                 loss: nan
+Episode: 2961/10000 (29.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.84s / 21014.93 s
+first_0:                 episode reward: -4.2000,                 loss: 0.0248
+second_0:                 episode reward: 4.2000,                 loss: nan
+Episode: 2981/10000 (29.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.49s / 21156.42 s
+first_0:                 episode reward: -2.3500,                 loss: 0.0253
+second_0:                 episode reward: 2.3500,                 loss: nan
+Episode: 3001/10000 (30.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.86s / 21298.28 s
+first_0:                 episode reward: -3.4000,                 loss: 0.0283
+second_0:                 episode reward: 3.4000,                 loss: nan
+Episode: 3021/10000 (30.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.20s / 21439.47 s
+first_0:                 episode reward: -3.3500,                 loss: 0.0343
+second_0:                 episode reward: 3.3500,                 loss: nan
+Episode: 3041/10000 (30.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.78s / 21580.25 s
+first_0:                 episode reward: -3.4500,                 loss: 0.0426
+second_0:                 episode reward: 3.4500,                 loss: nan
+Episode: 3061/10000 (30.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.07s / 21723.32 s
+first_0:                 episode reward: -3.5500,                 loss: 0.0446
+second_0:                 episode reward: 3.5500,                 loss: nan
+Episode: 3081/10000 (30.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.69s / 21866.02 s
+first_0:                 episode reward: -5.0000,                 loss: 0.0367
+second_0:                 episode reward: 5.0000,                 loss: nan
+Episode: 3101/10000 (31.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.39s / 22006.40 s
+first_0:                 episode reward: -5.8500,                 loss: 0.0293
+second_0:                 episode reward: 5.8500,                 loss: nan
+Episode: 3121/10000 (31.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.98s / 22146.38 s
+first_0:                 episode reward: -5.9000,                 loss: 0.0252
+second_0:                 episode reward: 5.9000,                 loss: nan
+Episode: 3141/10000 (31.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 139.56s / 22285.94 s
+first_0:                 episode reward: -4.9000,                 loss: 0.0229
+second_0:                 episode reward: 4.9000,                 loss: nan
+Episode: 3161/10000 (31.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.00s / 22426.94 s
+first_0:                 episode reward: -1.6000,                 loss: 0.0209
+second_0:                 episode reward: 1.6000,                 loss: nan
+Episode: 3181/10000 (31.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.76s / 22567.71 s
+first_0:                 episode reward: -3.1000,                 loss: 0.0206
+second_0:                 episode reward: 3.1000,                 loss: nan
+Episode: 3201/10000 (32.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.00s / 22709.71 s
+first_0:                 episode reward: -3.6500,                 loss: 0.0214
+second_0:                 episode reward: 3.6500,                 loss: nan
+Episode: 3221/10000 (32.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 144.53s / 22854.24 s
+first_0:                 episode reward: -3.3500,                 loss: 0.0238
+second_0:                 episode reward: 3.3500,                 loss: nan
+Episode: 3241/10000 (32.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.08s / 22997.33 s
+first_0:                 episode reward: -4.0500,                 loss: 0.0250
+second_0:                 episode reward: 4.0500,                 loss: nan
+Episode: 3261/10000 (32.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.40s / 23137.72 s
+first_0:                 episode reward: -3.6500,                 loss: 0.0254
+second_0:                 episode reward: 3.6500,                 loss: nan
+Episode: 3281/10000 (32.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 140.59s / 23278.31 s
+first_0:                 episode reward: -4.7000,                 loss: 0.0261
+second_0:                 episode reward: 4.7000,                 loss: nan
+Episode: 3301/10000 (33.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.80s / 23421.11 s
+first_0:                 episode reward: -5.6000,                 loss: 0.0271
+second_0:                 episode reward: 5.6000,                 loss: nan
+Episode: 3321/10000 (33.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.58s / 23562.68 s
+first_0:                 episode reward: -5.8500,                 loss: 0.0275wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1616891660297624 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.422180908868094 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.006897024138622 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.173374142562079 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0509174246617525 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.606738414070548 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1824088477871957 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.142760031887928 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.08958055300788 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 18.27964570946078 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 39.05171658499233 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 77.08345369370537 seconds), retrying request
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 865, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/tb_watcher.py", line 278, in _thread_except_body
+    self._thread_body()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/tb_watcher.py", line 287, in _thread_body
+    self._process_events()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/tb_watcher.py", line 263, in _process_events
+    for event in self._generator.Load():
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorboard/backend/event_processing/directory_watcher.py", line 89, in Load
+    for event in self._LoadInternal():
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorboard/backend/event_processing/directory_watcher.py", line 118, in _LoadInternal
+    logger.info('No path found after %s', self._path)
+Message: 'No path found after %s'
+Arguments: ('.//data/tensorboard/202209200232/pettingzoo_tennis_v3_psro/events.out.tfevents.1663641603.princeton-rbtg.3808634.0',)
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+Exception in thread Thread-10:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 865, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/step_checksum.py", line 79, in _thread_body
+    wandb.util.mkdir_exists_ok(os.path.dirname(path))
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/util.py", line 861, in mkdir_exists_ok
+    os.makedirs(path)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/os.py", line 211, in makedirs
+    makedirs(head, exist_ok=exist_ok)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/os.py", line --- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_1782_dd428ffe59b8d5b45e36.mp4', 'media/videos/videos_1782_dd428ffe59b8d5b45e36.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_2071_e79028fddca14b6df8e4.mp4', 'media/videos/videos_2071_e79028fddca14b6df8e4.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_397_962de482f5b5633ce23f.mp4', 'media/videos/videos_397_962de482f5b5633ce23f.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_1857_de144d1762ba6a779cf5.mp4', 'media/videos/videos_1857_de144d1762ba6a779cf5.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_2746_c7bfee726794cbdb6758.mp4', 'media/videos/videos_2746_c7bfee726794cbdb6758.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_3237_121fd7ab0b95c366e416.mp4', 'media/videos/videos_3237_121fd7ab0b95c366e416.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_2759_ea567a89d381dc5e987b.mp4', 'media/videos/videos_2759_ea567a89d381dc5e987b.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_3066_cc520e259896772e8452.mp4', 'media/videos/videos_3066_cc520e259896772e8452.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emi--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_2767_68305014047ea449f4ab.mp4', 'media/videos/videos_2767_68305014047ea449f4ab.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_2048_a89b87db933706f0080c.mp4', 'media/videos/videos_2048_a89b87db933706f0080c.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_2828_37be3c279d3f2c766fe1.mp4', 'media/videos/videos_2828_37be3c279d3f2c766fe1.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_2793_713dd115731ed50e25e1.mp4', 'media/videos/videos_2793_713dd115731ed50e25e1.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_2649_20ae3fbbbe13840923f7.mp4', 'media/videos/videos_2649_20ae3fbbbe13840923f7.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_1004_5190cb4a334ed2aa6d15.mp4', 'media/videos/videos_1004_5190cb4a334ed2aa6d15.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_724_9cc2bd7b74147053d551.mp4', 'media/videos/videos_724_9cc2bd7b74147053d551.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 51, in run
+    self._run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_util.py", line 103, in _run
+    self._finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal.py", line 313, in _finish
+    self._sm.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1317, in finish
+    self._dir_watcher.finish()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/dir_watcher.py", line 406, in finish
+    logger.info("scan save: %s %s", file_path, save_name)
+Message: 'scan save: %s %s'
+Arguments: ('/home/zihan/research/MARS/wandb/run-20220920_023241-2etdnl6z/files/media/videos/videos_1843_fc7096124dbe86388c5f.mp4', 'media/videos/videos_1843_fc7096124dbe86388c5f.mp4')
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emi

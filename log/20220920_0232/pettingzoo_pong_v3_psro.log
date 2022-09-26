@@ -1,0 +1,936 @@
+wandb: W&B API key is configured. Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.13.3 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.13.0
+wandb: Run data is saved locally in /home/zihan/research/MARS/wandb/run-20220920_023241-26m9uxeg
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run pettingzoo_pong_v3_psro_202209200232
+wandb: ⭐️ View project at https://wandb.ai/quantumiracle/Pettingzoo_MARS
+wandb: 🚀 View run at https://wandb.ai/quantumiracle/Pettingzoo_MARS/runs/26m9uxeg
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.100146862057339 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.9470194408312995 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1738891272860537 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.431012665410806 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2313793369219277 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.087338026708542 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.8585309831196035 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.425301943704373 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2500787216165627 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2150650782514707 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.32040625159611 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2356620670762557 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.368797927155558 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.454685668720689 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 18.869170513289166 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.222250693420261 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.860156820699865 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.698696357692791 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1766886966300105 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.608634077365303 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3897578703735167 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.780069016253882 seconds), retrying request
+pettingzoo_pong_v3
+default:  {'env_name': 'pong_v3', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': True, 'seed': 'random', 'record_video': False, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 0, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': False, 'wandb_entity': '', 'wandb_project': '', 'wandb_group': '', 'wandb_name': '', 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'psro', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 10, 'trainable_agent_idx': 0, 'opponent_idx': 1}}
+{'env_name': 'pong_v3', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': True, 'seed': 'random', 'record_video': True, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202209200232, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': '', 'wandb_group': '', 'wandb_name': '', 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'psro', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 10, 'trainable_agent_idx': 0, 'opponent_idx': 1}, 'record_video_interval': 1000}
+args:  {'env_name': 'pong_v3', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': True, 'seed': 'random', 'record_video': True, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202209200232, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': 'Pettingzoo_MARS', 'wandb_group': '202209200232', 'wandb_name': 'pettingzoo_pong_v3_psro_202209200232', 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'psro', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 10, 'trainable_agent_idx': 0, 'opponent_idx': 1}, 'record_video_interval': 1000}
+pong_v3 pettingzoo
+record video: interval 1000, length 300
+Load pong_v3 environment in type pettingzoo.
+Env observation space: <bound method aec_to_parallel_wrapper.observation_space of <pettingzoo.utils.conversions.aec_to_parallel_wrapper object at 0x7f2133c2f4e0>> action space: <bound method aec_to_parallel_wrapper.action_space of <pettingzoo.utils.conversions.aec_to_parallel_wrapper object at 0x7f2133c2f4e0>>
+random seed: [473, 965, 940, 463, 999]
+<mars.env.wrappers.mars_wrappers.SSVecWrapper object at 0x7f2133c2f898>
+discrete_policy 6 Discrete(6)
+discrete_policy 6 Discrete(6)
+discrete_policy 6 Discrete(6)
+Agents No. [1] (index starting from 0) are not learnable.
+Arguments:  {'env_name': 'pong_v3', 'env_type': 'pettingzoo', 'num_envs': 5, 'ram': True, 'seed': 'random', 'record_video': True, 'algorithm': 'DQN', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 100000}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202209200232, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': 'Pettingzoo_MARS', 'wandb_group': '202209200232', 'wandb_name': 'pettingzoo_pong_v3_psro_202209200232', 'net_architecture': {'hidden_dim_list': [128, 128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'marl_method': 'psro', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': False, 'selfplay_score_delta': 10, 'trainable_agent_idx': 0, 'opponent_idx': 1}, 'record_video_interval': 1000}
+Save models to : /home/zihan/research/MARS/data/model/202209200232/pettingzoo_pong_v3_psro. 
+ Save logs to: /home/zihan/research/MARS/data/log/202209200232/pettingzoo_pong_v3_psro.
+pong_v3 pettingzoo
+record video: interval 1000, length 300
+Load pong_v3 environment in type pettingzoo.
+Env observation space: Box(0.0, 1.0, (128,), float32) action space: Discrete(6)
+random seed: 817
+discrete_policy 6 Discrete(6)
+discrete_policy 6 Discrete(6)
+Episode: 1/10000 (0.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 9.49s / 9.49 s
+first_0:                 episode reward: 8.0000,                 loss: 0.9848
+second_0:                 episode reward: -8.0000,                 loss: nan
+Episode: 21/10000 (0.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 126.50s / 135.99 s
+first_0:                 episode reward: 8.0000,                 loss: 0.2093
+second_0:                 episode reward: -8.0000,                 loss: nan
+Score delta: 16.0, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/21_0.
+Episode: 41/10000 (0.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 129.31s / 265.30 s
+first_0:                 episode reward: -4.9000,                 loss: nan
+second_0:                 episode reward: 4.9000,                 loss: 0.3405
+Episode: 61/10000 (0.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.94s / 404.24 s
+first_0:                 episode reward: 2.0500,                 loss: 0.0555
+second_0:                 episode reward: -2.0500,                 loss: 0.0632
+Score delta: 10.4, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/49_1.
+Episode: 81/10000 (0.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.92s / 543.16 s
+first_0:                 episode reward: 4.3000,                 loss: 0.0405
+second_0:                 episode reward: -4.3000,                 loss: 0.0513
+Score delta: 13.0, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/70_0.
+Episode: 101/10000 (1.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 138.04s / 681.20 s
+first_0:                 episode reward: 2.7000,                 loss: nanwandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0814064108336194 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.155402126132224 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.70447550751825 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2097313659575915 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.79040822395721 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4683236191900395 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.139887712195179 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3944768579787983 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.606433603450196 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4574524371319013 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.484681200796223 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.412035744466681 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.31376792589937 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3606476185905905 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0876184054197062 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.380690037042644 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.760732431350112 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2177712411022914 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.074560330306247 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.391942850558227 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3872310312646277 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.254863214260448 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.145091353510274 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.371901508747497 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.674587062042816 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.44268114255367 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.382439564545849 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.388636914591609 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4029018534550524 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.381715867514073 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.629862076204276 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3802338476731166 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.264866962645061 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0501046404414467 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.2281567080929054 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.476850637636041 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.811640345404471 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.806272191164549 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.056913072328039 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.641592510274212 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.270974317397077 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.145568600241279 seconds), retrying request
+
+second_0:                 episode reward: -2.7000,                 loss: 0.0390
+Episode: 121/10000 (1.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 142.06s / 823.26 s
+first_0:                 episode reward: 3.1500,                 loss: nan
+second_0:                 episode reward: -3.1500,                 loss: 0.0328
+Episode: 141/10000 (1.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 141.50s / 964.76 s
+first_0:                 episode reward: 4.2000,                 loss: nan
+second_0:                 episode reward: -4.2000,                 loss: 0.0279
+Episode: 161/10000 (1.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 143.36s / 1108.12 s
+first_0:                 episode reward: 4.4000,                 loss: nan
+second_0:                 episode reward: -4.4000,                 loss: 0.0264
+Episode: 181/10000 (1.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 144.93s / 1253.06 s
+first_0:                 episode reward: 1.4500,                 loss: nan
+second_0:                 episode reward: -1.4500,                 loss: 0.0249
+Episode: 201/10000 (2.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 146.03s / 1399.08 s
+first_0:                 episode reward: 4.0500,                 loss: nan
+second_0:                 episode reward: -4.0500,                 loss: 0.0248
+Episode: 221/10000 (2.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 146.20s / 1545.28 s
+first_0:                 episode reward: 2.3500,                 loss: nan
+second_0:                 episode reward: -2.3500,                 loss: 0.0235
+Episode: 241/10000 (2.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 145.09s / 1690.37 s
+first_0:                 episode reward: 0.9000,                 loss: nan
+second_0:                 episode reward: -0.9000,                 loss: 0.0224
+Episode: 261/10000 (2.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 146.73s / 1837.10 s
+first_0:                 episode reward: 1.1000,                 loss: nan
+second_0:                 episode reward: -1.1000,                 loss: 0.0208
+Episode: 281/10000 (2.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.33s / 1984.43 s
+first_0:                 episode reward: -0.6000,                 loss: nan
+second_0:                 episode reward: 0.6000,                 loss: 0.0224
+Episode: 301/10000 (3.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 146.84s / 2131.27 s
+first_0:                 episode reward: -3.1500,                 loss: nan
+second_0:                 episode reward: 3.1500,                 loss: 0.0225
+Episode: 321/10000 (3.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 146.30s / 2277.57 s
+first_0:                 episode reward: -3.0500,                 loss: nan
+second_0:                 episode reward: 3.0500,                 loss: 0.0222
+Episode: 341/10000 (3.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 156.01s / 2433.58 s
+first_0:                 episode reward: -0.6000,                 loss: 0.0346
+second_0:                 episode reward: 0.6000,                 loss: 0.0224
+Score delta: 10.2, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/323_1.
+Episode: 361/10000 (3.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.59s / 2581.17 s
+first_0:                 episode reward: 1.9500,                 loss: 0.0275
+second_0:                 episode reward: -1.9500,                 loss: nan
+Episode: 381/10000 (3.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.80s / 2729.97 s
+first_0:                 episode reward: 1.7000,                 loss: 0.0274
+second_0:                 episode reward: -1.7000,                 loss: nan
+Episode: 401/10000 (4.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 156.46s / 2886.42 s
+first_0:                 episode reward: 3.0500,                 loss: 0.0256
+second_0:                 episode reward: -3.0500,                 loss: nan
+Score delta: 11.8, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/401_0.
+Episode: 421/10000 (4.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.03s / 3033.46 s
+first_0:                 episode reward: -3.0000,                 loss: nan
+second_0:                 episode reward: 3.0000,                 loss: 0.0228
+Episode: 441/10000 (4.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.38s / 3181.83 s
+first_0:                 episode reward: -4.2000,                 loss: nan
+second_0:                 episode reward: 4.2000,                 loss: 0.0267
+Episode: 461/10000 (4.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 161.62s / 3343.45 s
+first_0:                 episode reward: 1.5500,                 loss: 0.0280
+second_0:                 episode reward: -1.5500,                 loss: 0.0314
+Score delta: 10.4, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/446_1.
+Episode: 481/10000 (4.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 163.72s / 3507.18 s
+first_0:                 episode reward: 1.6500,                 loss: 0.0293
+second_0:                 episode reward: -1.6500,                 loss: 0.0337
+Score delta: 12.0, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/467_0.
+Episode: 501/10000 (5.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.60s / 3656.77 s
+first_0:                 episode reward: -3.0500,                 loss: nan
+second_0:                 episode reward: 3.0500,                 loss: 0.0317
+Episode: 521/10000 (5.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.93s / 3806.70 s
+first_0:                 episode reward: -4.5500,                 loss: nan
+second_0:                 episode reward: 4.5500,                 loss: 0.0291
+Episode: 541/10000 (5.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 168.97s / 3975.67 s
+first_0:                 episode reward: 3.5500,                 loss: 0.0305
+second_0:                 episode reward: -3.5500,                 loss: 0.0311
+Score delta: 10.2, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/523_1.
+Episode: 561/10000 (5.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 168.63s / 4144.30 s
+first_0:                 episode reward: 2.1000,                 loss: 0.0327
+second_0:                 episode reward: -2.1000,                 loss: 0.0325
+Score delta: 11.2, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/550_0.
+Episode: 581/10000 (5.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.49s / 4294.79 s
+first_0:                 episode reward: -3.3500,                 loss: nan
+second_0:                 episode reward: 3.3500,                 loss: 0.0352
+Episode: 601/10000 (6.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 172.42s / 4467.21 s
+first_0:                 episode reward: -3.5000,                 loss: 0.0339
+second_0:                 episode reward: 3.5000,                 loss: 0.0358
+Score delta: 10.2, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/598_1.wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1342818588691435 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0365923870030724 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.240441051318693 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.411493680741407 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.5134099544167805 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2777433588419713 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3028105582404184 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.067462754766723 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1556522803895812 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.066929976316701 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3131448594086157 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.006112271369407 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.3951916745918425 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0179791714502078 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.481389469052431 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.177558430140718 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.392372983086007 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.3418585879088285 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.292877848853528 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.066083347320259 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1107812847710505 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.377381112595862 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.271513309321547 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2919847846391628 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.215175881442959 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.438295299055076 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.16652857059438 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.620829058982508 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0871854792471183 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.006306992102866 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.790911955314255 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2437297415297603 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.306206010747887 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2639118587400184 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.9401371633091955 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.80205575097099 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2166083595912727 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.069064733194667 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2812679492912884 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.107170977807702 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0183116087194986 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1968026170765746 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4124026157830585 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2141322581126937 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.558531131647218 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.101462712807366 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0508973278486367 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.827800956468725 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.01611808402472 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.860596822324842 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.179194439003503 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.360836347331748 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.348897634978606 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.158587673472229 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.105315329154672 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2665813005750417 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4484422167973787 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.034334648747777 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2316569236209034 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.837234818622598 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2844124868153126 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.561106152711364 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.049630445922702 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.677279162128343 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.088140288523948 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.457155658437247 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.469763004005907 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.162046086994412 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.012181262260244 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.493366597731403 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.27184497872838 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.860283105066151 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4703478178046825 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.168703816802425 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.337056189865393 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.82618982034917 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1037480300881515 seconds), retrying request
+
+Episode: 621/10000 (6.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 172.03s / 4639.24 s
+first_0:                 episode reward: 5.4000,                 loss: 0.0341
+second_0:                 episode reward: -5.4000,                 loss: 0.0429
+Score delta: 12.8, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/619_0.
+Episode: 641/10000 (6.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.10s / 4788.34 s
+first_0:                 episode reward: -2.1000,                 loss: nan
+second_0:                 episode reward: 2.1000,                 loss: 0.0374
+Episode: 661/10000 (6.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 178.30s / 4966.64 s
+first_0:                 episode reward: -1.9500,                 loss: 0.0337
+second_0:                 episode reward: 1.9500,                 loss: 0.0401
+Score delta: 10.8, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/657_1.
+Episode: 681/10000 (6.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.96s / 5115.60 s
+first_0:                 episode reward: 2.3500,                 loss: 0.0322
+second_0:                 episode reward: -2.3500,                 loss: nan
+Episode: 701/10000 (7.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.62s / 5265.22 s
+first_0:                 episode reward: 0.8500,                 loss: 0.0318
+second_0:                 episode reward: -0.8500,                 loss: nan
+Episode: 721/10000 (7.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.56s / 5414.78 s
+first_0:                 episode reward: -3.2500,                 loss: 0.0321
+second_0:                 episode reward: 3.2500,                 loss: nan
+Episode: 741/10000 (7.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.22s / 5563.00 s
+first_0:                 episode reward: 1.6500,                 loss: 0.0330
+second_0:                 episode reward: -1.6500,                 loss: nan
+Episode: 761/10000 (7.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.05s / 5712.04 s
+first_0:                 episode reward: -0.2000,                 loss: 0.0310
+second_0:                 episode reward: 0.2000,                 loss: nan
+Episode: 781/10000 (7.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 179.22s / 5891.27 s
+first_0:                 episode reward: 3.7000,                 loss: 0.0277
+second_0:                 episode reward: -3.7000,                 loss: 0.0456
+Score delta: 10.2, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/779_0.
+Episode: 801/10000 (8.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.32s / 6041.59 s
+first_0:                 episode reward: -0.2500,                 loss: nan
+second_0:                 episode reward: 0.2500,                 loss: 0.0341
+Episode: 821/10000 (8.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 183.14s / 6224.73 s
+first_0:                 episode reward: -3.2500,                 loss: nan
+second_0:                 episode reward: 3.2500,                 loss: 0.0305
+Score delta: 10.8, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/821_1.
+Episode: 841/10000 (8.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.34s / 6374.07 s
+first_0:                 episode reward: -0.6500,                 loss: 0.0285
+second_0:                 episode reward: 0.6500,                 loss: nan
+Episode: 861/10000 (8.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 182.91s / 6556.98 s
+first_0:                 episode reward: 2.0000,                 loss: 0.0292
+second_0:                 episode reward: -2.0000,                 loss: 0.0339
+Score delta: 10.6, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/854_0.
+Episode: 881/10000 (8.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.32s / 6706.30 s
+first_0:                 episode reward: -1.6500,                 loss: nan
+second_0:                 episode reward: 1.6500,                 loss: 0.0304
+Episode: 901/10000 (9.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.90s / 6856.20 s
+first_0:                 episode reward: -2.5500,                 loss: nan
+second_0:                 episode reward: 2.5500,                 loss: 0.0304
+Episode: 921/10000 (9.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 187.48s / 7043.68 s
+first_0:                 episode reward: -4.7000,                 loss: 0.0298
+second_0:                 episode reward: 4.7000,                 loss: 0.0335
+Score delta: 10.6, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/920_1.
+Episode: 941/10000 (9.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.44s / 7192.12 s
+first_0:                 episode reward: -4.2500,                 loss: 0.0290
+second_0:                 episode reward: 4.2500,                 loss: nan
+Episode: 961/10000 (9.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.63s / 7340.74 s
+first_0:                 episode reward: -5.1000,                 loss: 0.0281
+second_0:                 episode reward: 5.1000,                 loss: nan
+Episode: 981/10000 (9.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.65s / 7489.39 s
+first_0:                 episode reward: -4.6000,                 loss: 0.0275
+second_0:                 episode reward: 4.6000,                 loss: nan
+Episode: 1001/10000 (10.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.05s / 7639.44 s
+first_0:                 episode reward: -1.6000,                 loss: 0.0258
+second_0:                 episode reward: 1.6000,                 loss: nan
+Episode: 1021/10000 (10.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.04s / 7789.48 s
+first_0:                 episode reward: -5.5000,                 loss: 0.0252
+second_0:                 episode reward: 5.5000,                 loss: nan
+Episode: 1041/10000 (10.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.20s / 7937.68 s
+first_0:                 episode reward: -5.3500,                 loss: 0.0270
+second_0:                 episode reward: 5.3500,                 loss: nan
+Episode: 1061/10000 (10.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.73s / 8087.41 s
+first_0:                 episode reward: -5.4000,                 loss: 0.0299
+second_0:                 episode reward: 5.4000,                 loss: nan
+Episode: 1081/10000 (10.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.50s / 8234.92 s
+first_0:                 episode reward: -4.1500,                 loss: 0.0373
+second_0:                 episode reward: 4.1500,                 loss: nan
+Episode: 1101/10000 (11.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.64s / 8384.56 s
+first_0:                 episode reward: -1.9500,                 loss: 0.0375
+second_0:                 episode reward: 1.9500,                 loss: nan
+Episode: 1121/10000 (11.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.06s / 8532.62 swandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3973270369483446 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.2638540481749585 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1695670229462727 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.646695539964095 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3116278039995786 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.396224820390835 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.120271522860445 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3268861070567417 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.267743411501475 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0943949935025183 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.470323141063119 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.32691195383171 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.25562509965215 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4366162171329533 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.006592115357312 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.478096823602048 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.186583619049789 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1840863033217888 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.515123524455468 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0606919568054973 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0618853730729674 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.103902246089502 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.61979207694977 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 16.936649590201963 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4513004510689482 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.9662570186906985 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0977977701024817 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.67080198327522 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1587842035543496 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.01391345133303 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.857945898729103 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.140621392752181 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.890774833098042 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1915824313898393 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.599937622658512 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4168970497864435 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.050420117469269 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0279077438110997 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0356574636523606 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.151052071141271 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.251140957418471 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0888324759800625 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.295987905601029 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.45763245663034 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1075164574709784 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.0797650806154575 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.106756815169541 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 16.185736539058283 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 36.579669734312255 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.9552969497550565 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0730898948755803 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.105886269902765 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.892148245355811 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0243991351835398 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0555219807119456 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.601294649600296 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.252373665264804 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.351317916257492 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3644696927213382 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.476170825816372 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2774566467682296 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1070391895471023 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.4482371526550875 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4590284620814407 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.300736498832781 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1181434971346382 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.88979510942605 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0385169133957777 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1748515532280033 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.965009965476808 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 19.3127984702793 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.263689282223956 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.826948724205942 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.12969118307974 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0602361450284032 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.546272936577023 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.238017918297171 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.16061942452815 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1832312240781713 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.493308899686283 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4812332973239766 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.232293111452597 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.267151797981028 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.367217765224388 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.6209869855892585 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3729297327123686 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.452944961870911 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.043430987863151 seconds), retrying request
+
+first_0:                 episode reward: -1.6000,                 loss: 0.0404
+second_0:                 episode reward: 1.6000,                 loss: nan
+Episode: 1141/10000 (11.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.37s / 8680.99 s
+first_0:                 episode reward: -2.2500,                 loss: 0.0447
+second_0:                 episode reward: 2.2500,                 loss: nan
+Episode: 1161/10000 (11.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.16s / 8830.16 s
+first_0:                 episode reward: -2.3000,                 loss: 0.0427
+second_0:                 episode reward: 2.3000,                 loss: nan
+Episode: 1181/10000 (11.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.27s / 8979.43 s
+first_0:                 episode reward: -0.3500,                 loss: 0.0464
+second_0:                 episode reward: 0.3500,                 loss: nan
+Episode: 1201/10000 (12.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.50s / 9127.93 s
+first_0:                 episode reward: 1.2000,                 loss: 0.0478
+second_0:                 episode reward: -1.2000,                 loss: nan
+Episode: 1221/10000 (12.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.00s / 9276.94 s
+first_0:                 episode reward: 2.8500,                 loss: 0.0550
+second_0:                 episode reward: -2.8500,                 loss: nan
+Episode: 1241/10000 (12.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.38s / 9425.32 s
+first_0:                 episode reward: 1.4500,                 loss: 0.0575
+second_0:                 episode reward: -1.4500,                 loss: nan
+Episode: 1261/10000 (12.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.07s / 9574.39 s
+first_0:                 episode reward: 3.0500,                 loss: 0.0548
+second_0:                 episode reward: -3.0500,                 loss: nan
+Episode: 1281/10000 (12.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.76s / 9724.15 s
+first_0:                 episode reward: 2.7500,                 loss: 0.0507
+second_0:                 episode reward: -2.7500,                 loss: nan
+Episode: 1301/10000 (13.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.14s / 9873.29 s
+first_0:                 episode reward: 1.8500,                 loss: 0.0480
+second_0:                 episode reward: -1.8500,                 loss: nan
+Episode: 1321/10000 (13.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.51s / 10022.80 s
+first_0:                 episode reward: 1.8500,                 loss: 0.0463
+second_0:                 episode reward: -1.8500,                 loss: nan
+Episode: 1341/10000 (13.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.75s / 10172.54 s
+first_0:                 episode reward: 3.2000,                 loss: 0.0460
+second_0:                 episode reward: -3.2000,                 loss: nan
+Episode: 1361/10000 (13.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.96s / 10320.50 s
+first_0:                 episode reward: 2.9000,                 loss: 0.0490
+second_0:                 episode reward: -2.9000,                 loss: nan
+Episode: 1381/10000 (13.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.99s / 10470.49 s
+first_0:                 episode reward: 2.7500,                 loss: 0.0471
+second_0:                 episode reward: -2.7500,                 loss: nan
+Episode: 1401/10000 (14.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.82s / 10618.31 s
+first_0:                 episode reward: 3.1500,                 loss: 0.0483
+second_0:                 episode reward: -3.1500,                 loss: nan
+Episode: 1421/10000 (14.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.77s / 10767.08 s
+first_0:                 episode reward: 0.7500,                 loss: 0.0428
+second_0:                 episode reward: -0.7500,                 loss: nan
+Episode: 1441/10000 (14.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.15s / 10916.22 s
+first_0:                 episode reward: 3.0000,                 loss: 0.0429
+second_0:                 episode reward: -3.0000,                 loss: nan
+Episode: 1461/10000 (14.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.22s / 11065.44 s
+first_0:                 episode reward: 2.9500,                 loss: 0.0489
+second_0:                 episode reward: -2.9500,                 loss: nan
+Episode: 1481/10000 (14.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.58s / 11215.02 s
+first_0:                 episode reward: 2.5000,                 loss: 0.0486
+second_0:                 episode reward: -2.5000,                 loss: nan
+Episode: 1501/10000 (15.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.45s / 11365.47 s
+first_0:                 episode reward: -0.3000,                 loss: 0.0533
+second_0:                 episode reward: 0.3000,                 loss: nan
+Episode: 1521/10000 (15.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 187.82s / 11553.29 s
+first_0:                 episode reward: 2.6000,                 loss: 0.0548
+second_0:                 episode reward: -2.6000,                 loss: 0.0341
+Score delta: 10.6, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/1514_0.
+Episode: 1541/10000 (15.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.92s / 11702.21 s
+first_0:                 episode reward: -1.6000,                 loss: nan
+second_0:                 episode reward: 1.6000,                 loss: 0.0422
+Episode: 1561/10000 (15.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.57s / 11850.78 s
+first_0:                 episode reward: -2.8000,                 loss: nan
+second_0:                 episode reward: 2.8000,                 loss: 0.0488
+Episode: 1581/10000 (15.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.38s / 12000.16 s
+first_0:                 episode reward: -1.6000,                 loss: nan
+second_0:                 episode reward: 1.6000,                 loss: 0.0537
+Episode: 1601/10000 (16.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.81s / 12148.96 s
+first_0:                 episode reward: -3.0500,                 loss: nan
+second_0:                 episode reward: 3.0500,                 loss: 0.0509
+Episode: 1621/10000 (16.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.81s / 12297.78 s
+first_0:                 episode reward: -3.8000,                 loss: nan
+second_0:                 episode reward: 3.8000,                 loss: 0.0589
+Episode: 1641/10000 (16.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.92s / 12446.70 s
+first_0:                 episode reward: -2.7000,                 loss: nan
+second_0:                 episode reward: 2.7000,                 loss: 0.0543
+Episode: 1661/10000 (16.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.79s / 12596.49 swandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4020052318378395 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.048371091436538 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0407340047135847 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.198869859793683 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4965702210235223 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.949937731188377 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.246221972154548 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1214331707661076 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.600959924625245 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.347232064408474 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.491808395194887 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1961015535039157 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.468083614819635 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 8.34365872922805 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 18.295739560127224 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 35.82163897921397 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2474340036112004 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.135848690465776 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0331635824616767 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.169234714796325 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.4575347275856565 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.133075728636404 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 33.20682921400744 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4721612606450125 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.065317898384784 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.077652295093896 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.490553115669298 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.028200605263606 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2740570256347783 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0934607678094888 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.065271271642574 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1196473036136476 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4500211698085748 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2915560075534738 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2669609347734596 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4491991955861825 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1077812768159006 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.2868204394853215 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.692255000876374 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 17.113534848953257 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 38.54113748099512 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3161376542102277 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.540707574010112 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0499716452897703 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.010022472628629 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.009215038185443 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.638958776595146 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0792965995476944 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1583798255770885 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1044379951765166 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.255872990361034 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.212427094800159 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.69505477622445 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3729121407315446 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.036722814446452 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1282842704537193 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.9145071827971885 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.490711410352513 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.326536074659616 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.422954384105189 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.235089365326769 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3986118414216517 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.059350771560231 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.621413625004102 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.480975891494895 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.287046823308965 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.342281682563747 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.204101824693113 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.728681686647895 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0598566100838607 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4213586589106946 seconds), retrying request
+
+first_0:                 episode reward: -3.2000,                 loss: nan
+second_0:                 episode reward: 3.2000,                 loss: 0.0571
+Episode: 1681/10000 (16.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 190.57s / 12787.06 s
+first_0:                 episode reward: 0.1500,                 loss: 0.0485
+second_0:                 episode reward: -0.1500,                 loss: 0.0544
+Score delta: 10.2, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/1665_1.
+Episode: 1701/10000 (17.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.26s / 12935.31 s
+first_0:                 episode reward: 1.3000,                 loss: 0.0466
+second_0:                 episode reward: -1.3000,                 loss: nan
+Episode: 1721/10000 (17.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 146.86s / 13082.17 s
+first_0:                 episode reward: 4.0000,                 loss: 0.0420
+second_0:                 episode reward: -4.0000,                 loss: nan
+Episode: 1741/10000 (17.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.48s / 13229.65 s
+first_0:                 episode reward: 3.6000,                 loss: 0.0405
+second_0:                 episode reward: -3.6000,                 loss: nan
+Episode: 1761/10000 (17.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 192.16s / 13421.80 s
+first_0:                 episode reward: 0.3500,                 loss: 0.0386
+second_0:                 episode reward: -0.3500,                 loss: 0.0573
+Score delta: 10.4, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/1742_0.
+Episode: 1781/10000 (17.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.43s / 13572.23 s
+first_0:                 episode reward: -0.8500,                 loss: nan
+second_0:                 episode reward: 0.8500,                 loss: 0.0492
+Episode: 1801/10000 (18.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.07s / 13721.30 s
+first_0:                 episode reward: -1.1500,                 loss: nan
+second_0:                 episode reward: 1.1500,                 loss: 0.0467
+Episode: 1821/10000 (18.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.60s / 13870.90 s
+first_0:                 episode reward: -0.9000,                 loss: nan
+second_0:                 episode reward: 0.9000,                 loss: 0.0607
+Episode: 1841/10000 (18.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.60s / 14019.50 s
+first_0:                 episode reward: -1.5000,                 loss: nan
+second_0:                 episode reward: 1.5000,                 loss: 0.0638
+Episode: 1861/10000 (18.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.40s / 14168.90 s
+first_0:                 episode reward: -1.5500,                 loss: nan
+second_0:                 episode reward: 1.5500,                 loss: 0.0643
+Episode: 1881/10000 (18.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.15s / 14318.05 s
+first_0:                 episode reward: -2.6500,                 loss: nan
+second_0:                 episode reward: 2.6500,                 loss: 0.0617
+Episode: 1901/10000 (19.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 195.76s / 14513.81 s
+first_0:                 episode reward: -0.4000,                 loss: 0.0426
+second_0:                 episode reward: 0.4000,                 loss: 0.0526
+Score delta: 10.2, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/1889_1.
+Episode: 1921/10000 (19.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.64s / 14661.45 s
+first_0:                 episode reward: 0.3500,                 loss: 0.0348
+second_0:                 episode reward: -0.3500,                 loss: nan
+Episode: 1941/10000 (19.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 146.68s / 14808.13 s
+first_0:                 episode reward: 2.8000,                 loss: 0.0359
+second_0:                 episode reward: -2.8000,                 loss: nan
+Episode: 1961/10000 (19.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.94s / 14956.07 s
+first_0:                 episode reward: 2.7500,                 loss: 0.0390
+second_0:                 episode reward: -2.7500,                 loss: nan
+Episode: 1981/10000 (19.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.18s / 15104.24 s
+first_0:                 episode reward: 3.6500,                 loss: 0.0404
+second_0:                 episode reward: -3.6500,                 loss: nan
+Episode: 2001/10000 (20.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 197.92s / 15302.16 s
+first_0:                 episode reward: 1.9500,                 loss: 0.0410
+second_0:                 episode reward: -1.9500,                 loss: 0.0613
+Score delta: 10.4, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/1987_0.
+Episode: 2021/10000 (20.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.58s / 15450.74 s
+first_0:                 episode reward: 0.5500,                 loss: nan
+second_0:                 episode reward: -0.5500,                 loss: 0.0564
+Episode: 2041/10000 (20.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.89s / 15599.63 s
+first_0:                 episode reward: 0.0000,                 loss: nan
+second_0:                 episode reward: 0.0000,                 loss: 0.0614
+Episode: 2061/10000 (20.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.14s / 15747.77 s
+first_0:                 episode reward: -2.5500,                 loss: nan
+second_0:                 episode reward: 2.5500,                 loss: 0.0659
+Episode: 2081/10000 (20.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.37s / 15895.13 s
+first_0:                 episode reward: -1.4500,                 loss: nan
+second_0:                 episode reward: 1.4500,                 loss: 0.0673
+Episode: 2101/10000 (21.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.10s / 16045.23 s
+first_0:                 episode reward: -1.6500,                 loss: nan
+second_0:                 episode reward: 1.6500,                 loss: 0.0579
+Episode: 2121/10000 (21.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.53s / 16195.76 s
+first_0:                 episode reward: -1.1500,                 loss: nan
+second_0:                 episode reward: 1.1500,                 loss: 0.0492
+Episode: 2141/10000 (21.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.32s / 16345.08 s
+first_0:                 episode reward: -2.7500,                 loss: nan
+second_0:                 episode reward: 2.7500,                 loss: 0.0597
+Episode: 2161/10000 (21.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.31s / 16494.39 s
+first_0:                 episode reward: -2.0500,                 loss: nan
+second_0:                 episode reward: 2.0500,                 loss: 0.0635
+Episode: 2181/10000 (21.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.38s / 16642.77 swandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.336800384141302 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.357807320494857 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.515054147150668 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.313750662904295 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.024044633070471 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3500236125230627 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2569944463266025 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.732570157219749 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2576810202886985 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.9790311351723435 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.216630388397976 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3840670314902987 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.508662745987034 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0882499305885 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.343099490492047 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2531329791378836 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1776485606656437 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.3415667821212125 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.474846065521788 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.151600571248066 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1482544305953155 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.322564721031002 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.529029466619956 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 19.090226104468677 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2653366094828096 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.509395404031427 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 18.120152987200303 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 38.59778488876734 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0301649623218747 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.929302815082847 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.946467993319688 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 18.55592464966127 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 33.83347247927547 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3737727729161033 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.899694719902301 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.111118177133513 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.0164026762305856 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.39527477077294 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.597833387062919 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.480714321782049 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.336219657338124 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4546723153844545 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.782923817198776 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.028543865599387 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.951760243377194 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.48770911377673 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.16595065587659 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.056528455509413 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.960233386079234 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.086308302655036 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.188913514018275 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4575563051957277 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.39424353287509 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.846303028779921 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2332097877434673 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.101522114437326 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1830850678717484 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.473737531106725 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1912349553712556 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.197220777049941 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3928104108032966 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.348613862335018 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.255097968455869 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.075220194784275 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.207186359369767 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.024014817834149 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.769135022028308 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.306814757466827 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.7108119980743846 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.048604284445303 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.47532232325558 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1917881147001657 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.8123430023603415 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.48887867880297 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3624198380570354 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.112974055310139 seconds), retrying request
+
+first_0:                 episode reward: -1.0000,                 loss: nan
+second_0:                 episode reward: 1.0000,                 loss: 0.0644
+Episode: 2201/10000 (22.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.49s / 16792.26 s
+first_0:                 episode reward: -2.0500,                 loss: nan
+second_0:                 episode reward: 2.0500,                 loss: 0.0599
+Episode: 2221/10000 (22.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.20s / 16941.46 s
+first_0:                 episode reward: -2.9500,                 loss: nan
+second_0:                 episode reward: 2.9500,                 loss: 0.0608
+Episode: 2241/10000 (22.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 200.33s / 17141.79 s
+first_0:                 episode reward: -2.1500,                 loss: nan
+second_0:                 episode reward: 2.1500,                 loss: 0.0584
+Score delta: 10.2, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/2241_1.
+Episode: 2261/10000 (22.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.14s / 17290.93 s
+first_0:                 episode reward: -5.9000,                 loss: 0.0633
+second_0:                 episode reward: 5.9000,                 loss: nan
+Episode: 2281/10000 (22.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.74s / 17440.68 s
+first_0:                 episode reward: -5.3000,                 loss: 0.0464
+second_0:                 episode reward: 5.3000,                 loss: nan
+Episode: 2301/10000 (23.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.14s / 17589.82 s
+first_0:                 episode reward: -2.6000,                 loss: 0.0315
+second_0:                 episode reward: 2.6000,                 loss: nan
+Episode: 2321/10000 (23.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.45s / 17738.27 s
+first_0:                 episode reward: -2.3500,                 loss: 0.0241
+second_0:                 episode reward: 2.3500,                 loss: nan
+Episode: 2341/10000 (23.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.73s / 17889.00 s
+first_0:                 episode reward: -6.0500,                 loss: 0.0249
+second_0:                 episode reward: 6.0500,                 loss: nan
+Episode: 2361/10000 (23.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.32s / 18037.31 s
+first_0:                 episode reward: -2.8000,                 loss: 0.0285
+second_0:                 episode reward: 2.8000,                 loss: nan
+Episode: 2381/10000 (23.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.86s / 18185.17 s
+first_0:                 episode reward: -3.6000,                 loss: 0.0331
+second_0:                 episode reward: 3.6000,                 loss: nan
+Episode: 2401/10000 (24.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.71s / 18333.88 s
+first_0:                 episode reward: -2.4500,                 loss: 0.0356
+second_0:                 episode reward: 2.4500,                 loss: nan
+Episode: 2421/10000 (24.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.56s / 18483.44 s
+first_0:                 episode reward: -3.0500,                 loss: 0.0357
+second_0:                 episode reward: 3.0500,                 loss: nan
+Episode: 2441/10000 (24.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.34s / 18632.78 s
+first_0:                 episode reward: 0.7500,                 loss: 0.0383
+second_0:                 episode reward: -0.7500,                 loss: nan
+Episode: 2461/10000 (24.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.30s / 18783.09 s
+first_0:                 episode reward: -0.6500,                 loss: 0.0403
+second_0:                 episode reward: 0.6500,                 loss: nan
+Episode: 2481/10000 (24.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.15s / 18931.23 s
+first_0:                 episode reward: -0.7500,                 loss: 0.0464
+second_0:                 episode reward: 0.7500,                 loss: nan
+Episode: 2501/10000 (25.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 147.93s / 19079.16 s
+first_0:                 episode reward: 1.6000,                 loss: 0.0505
+second_0:                 episode reward: -1.6000,                 loss: nan
+Episode: 2521/10000 (25.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 150.21s / 19229.37 s
+first_0:                 episode reward: 0.7000,                 loss: 0.0562
+second_0:                 episode reward: -0.7000,                 loss: nan
+Episode: 2541/10000 (25.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.32s / 19378.69 s
+first_0:                 episode reward: 2.9000,                 loss: 0.0542
+second_0:                 episode reward: -2.9000,                 loss: nan
+Episode: 2561/10000 (25.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.65s / 19528.34 s
+first_0:                 episode reward: 1.4000,                 loss: 0.0472
+second_0:                 episode reward: -1.4000,                 loss: nan
+Episode: 2581/10000 (25.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 151.64s / 19679.97 s
+first_0:                 episode reward: 2.8000,                 loss: 0.0463
+second_0:                 episode reward: -2.8000,                 loss: nan
+Episode: 2601/10000 (26.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.45s / 19828.43 s
+first_0:                 episode reward: 2.4500,                 loss: 0.0414
+second_0:                 episode reward: -2.4500,                 loss: nan
+Episode: 2621/10000 (26.2100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.34s / 19977.76 s
+first_0:                 episode reward: 1.4000,                 loss: 0.0450
+second_0:                 episode reward: -1.4000,                 loss: nan
+Episode: 2641/10000 (26.4100%),                 avg. length: 299.0,                last time consumption/overall running time: 149.86s / 20127.62 s
+first_0:                 episode reward: 2.6500,                 loss: 0.0489
+second_0:                 episode reward: -2.6500,                 loss: nan
+Episode: 2661/10000 (26.6100%),                 avg. length: 299.0,                last time consumption/overall running time: 202.45s / 20330.07 s
+first_0:                 episode reward: 0.3500,                 loss: 0.0453
+second_0:                 episode reward: -0.3500,                 loss: 0.0619
+Score delta: 10.8, save the model to .//data/model/202209200232/pettingzoo_pong_v3_psro/2648_0.
+Episode: 2681/10000 (26.8100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.77s / 20478.84 s
+first_0:                 episode reward: -2.3000,                 loss: nan
+second_0:                 episode reward: 2.3000,                 loss: 0.0505
+Episode: 2701/10000 (27.0100%),                 avg. length: 299.0,                last time consumption/overall running time: 148.46s / 20627.30 s
+first_0:                 episode reward: -0.9000,                 loss: nan
+second_0:                 episode reward: 0.9000,                 loss: 0.0512wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3367042918404763 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.455926885189006 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4940594064338635 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0966024650984543 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.619137086997621 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.045054740577807 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.373437874518623 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2754671028993734 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.0590564926165555 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1562973589326613 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.036796817181369 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.7218457638792835 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.368311687691645 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.056726180018188 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.314351368952099 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4655278859867416 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0699702077896545 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2738800223198177 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.466785700948923 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.283215304630081 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1706183494099958 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.628145482224741 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4923304676247793 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3234586048625885 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.446085271574468 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.359020208178307 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.450486040338297 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 9.904723476885298 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 33.56253533309647 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.072355752934766 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.980519704820999 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.288426306178799 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.0811263398418003 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.493002726663226 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4751076873232254 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.61073976684992 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.228632185192255 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4312019161490728 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.752077533843724 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.1886276489301 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.710809452072433 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.4719559696284064 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.2118819187392305 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.561534367928723 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.3652740494252664 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.036999154244826 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.454138880889165 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.555560348807068 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 2.09347670467726 seconds), retrying request
+wandb: 429 encountered (Filestream rate limit exceeded, retrying in 4.615230779866379 seconds), retrying request
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:516: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint8 = np.dtype([("qint8", np.int8, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:517: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:518: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint16 = np.dtype([("qint16", np.int16, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:519: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:520: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint32 = np.dtype([("qint32", np.int32, 1)])
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:525: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np_resource = np.dtype([("resource", np.ubyte, 1)])
+Exception in thread OutRawRd-stderr:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 865, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1012, in _output_raw_reader_thread
+    self._output_raw_flush(stream)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/sender.py", line 1027, in _output_raw_flush
+    self._output_raw_file.write(data.encode("utf-8"))
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/lib/filesystem.py", line 64, in write
+    super().write(b"\n".join(ret) + b"\n")
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/lib/filesystem.py", line 31, in write
+    self.f.flush()
+OSError: [Errno 28] No space left on device
+
+--- Logging error ---
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 987, in emit
+    self.flush()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/logging/__init__.py", line 967, in flush
+    self.stream.flush()
+OSError: [Errno 28] No space left on device
+Call stack:
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 885, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 917, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 865, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/tb_watcher.py", line 278, in _thread_except_body
+    self._thread_body()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/tb_watcher.py", line 287, in _thread_body
+    self._process_events()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/tb_watcher.py", line 263, in _pro
