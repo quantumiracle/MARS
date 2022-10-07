@@ -3,7 +3,7 @@ echo "Running DATE:" $(date +"%Y-%m-%d %H:%M")
 DATE=`date '+%Y%m%d_%H%M'`
 echo "Save as: " $DATE
 
-declare -a envs=('RoboSumo-Ant-vs-Ant-v0' 'RoboSumo-Bug-vs-Bug-v0' 'RoboSumo-Spider-vs-Spider-v0')
+declare -a envs=('robosumo_RoboSumo-Ant-vs-Ant-v0' 'robosumo_RoboSumo-Bug-vs-Bug-v0' 'robosumo_RoboSumo-Spider-vs-Spider-v0')
 declare -a methods=('nash_ppo')
 
 mkdir -p log/$DATE
