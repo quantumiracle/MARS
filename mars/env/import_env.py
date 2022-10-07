@@ -190,8 +190,10 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             mode = 'rgb_array' # this willl return image from render() thus recording, but not render scene
         elif args.render:
             mode = 'human'  # requies: export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so; this will render scene but not return image
+        else:
+            mode = 'rgb_array'
         env = RoboSumoWrapper(env, mode)
-        env = ZeroSumWrapper(env)
+        # env = ZeroSumWrapper(env)
 
     elif env_type == 'gym':
         try:

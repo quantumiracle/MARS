@@ -15,7 +15,7 @@ yaml_file = f'mars/confs/{game_type}/{game}/{game_type}_{game}_nash_ppo' #PATH T
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 
 ### Create env
-args.render = True
+# args.render = True
 env = make_env(args)
 print(env, env.action_spaces)
 
