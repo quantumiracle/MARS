@@ -141,6 +141,8 @@ def get_args():
         if arg == '--method':
             arg_method = sys.argv[1:][i+1]
             parsed_ids.extend([i, i+1])
+        if arg == '-W': # a special one, needs to be handled first
+            parsed_ids.extend([i, i+1])
 
     first_arg = sys.argv[1:][0]
     if first_arg == '--help' or first_arg == '-h':
@@ -149,14 +151,14 @@ def get_args():
     else:
         # get default args
         default_args = get_default_args(arg_env, arg_method)
-        print('default: ', default_args)
-
+        # print('default: ', default_args)
+        
         # overwrite default with user input args
         for i, arg in enumerate(sys.argv[1:]):
             if i not in parsed_ids:
                 if arg.startswith('--'):
                     mapping_path = arg[2:].split('.')
-                else:
+                else:        
                     ind = default_args
                     for p in mapping_path[:-1]:
                         ind = ind[p]
