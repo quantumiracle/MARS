@@ -182,7 +182,8 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         env = LaserTagWrapper(env)
 
     elif env_type == 'robosumo':
-        ## robosumo requires gym==0.16
+        # robosumo requires gym==0.16;
+        # with updated version (https://github.com/Robot-Learning-Library/robosumo_gym23): gym==0.23 can be used
         import robosumo.envs
         env = gym.make(env_name)
 
@@ -299,7 +300,8 @@ def make_env(args, ss_vec=True):
             env = VectorEnv([lambda: single_env for _ in range(args.num_envs)])
             if args.record_video:
                 env.is_vector_env = True
-                env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
+                # record single env if multiple envs are used
+                record_env = gym.wrappers.RecordVideo(single_env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
                         # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
                         episode_trigger=lambda episode: episode % record_video_interval == 0, # record the videos every * episodes
                         video_length=record_video_length) 
@@ -307,7 +309,7 @@ def make_env(args, ss_vec=True):
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents
     
-        # print('metadata: ', env.metadata)
+        print('metadata: ', env.metadata)
         # print(env[0].metadata)
 
     if isinstance(args.seed, (int, list)):
