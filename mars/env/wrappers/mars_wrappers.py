@@ -138,7 +138,6 @@ class RoboSumoWrapper():
         self.action_space = self.env.action_space[0]
         self.action_spaces = {name: self.action_space for name in self.agents}
         self.metadata = env.metadata
-        print(self.metadata)
         self.render_mode = mode
 
     @property
