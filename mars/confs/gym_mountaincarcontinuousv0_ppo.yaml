@@ -28,7 +28,12 @@ train_args:
     log_avg_window: 20 # average window length in logging
     log_interval: 20  # log print interval 
     render: False
-    net_architecture:   
+    net_architecture:  
+        feature:
+            hidden_dim_list:
+            - 64
+            hidden_activation: ReLU
+            output_activation: false   
         policy:
             hidden_dim_list: [64, 64]  
             hidden_activation: ReLU

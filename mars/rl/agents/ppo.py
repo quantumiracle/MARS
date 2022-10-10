@@ -56,12 +56,16 @@ class PPOBase(Agent):
     def _init_model(self, env, args):
 
         if len(self.observation_space.shape) <= 1:
-            self.policy = MLP(env.observation_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
-            self.value = MLP(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+            feature_space = self.observation_space
+            self.feature = MLP(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device)
+            self.policy = MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
+            self.value = MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         else:
-            self.policy = CNN(env.observation_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
-            self.value = CNN(env.observation_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+            feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
+            self.feature = CNN(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device)
+            self.policy = MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
+            self.value = MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
         if args.num_process > 1:
             self.policy.share_memory()
             self.value.share_memory()  
@@ -77,8 +81,9 @@ class PPOBase(Agent):
         :type x: List[StateType]
         :return: the logits/actions
         :rtype: List[ActionType]
-        """  
-        return self.policy.forward(x)
+        """ 
+        feature = self.feature(x)
+        return self.policy.forward(feature)
 
     def v(
         self, 
@@ -90,8 +95,9 @@ class PPOBase(Agent):
         :type x: List[StateType]
         :return: a list of values for each state
         :rtype: List[float]
-        """        
-        return self.value.forward(x)  
+        """    
+        feature = self.feature(x)    
+        return self.value.forward(feature)  
     
     def reinit(self,):
         self.policy.reinit()
@@ -184,7 +190,7 @@ class PPODiscrete(PPOBase):
         :return: the actions
         :rtype: List[ActionType]
         """
-        prob = self.policy(torch.from_numpy(s).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
+        prob = self.pi(torch.from_numpy(s).unsqueeze(0).float().to(self.device)).squeeze()  # make sure input state shape is correct
         if Greedy:
             a = torch.argmax(prob, dim=-1).detach().cpu().numpy()
             return a
@@ -284,7 +290,7 @@ class PPOContinuous(PPOBase):
         :return: the actions
         :rtype: List[ActionType]
         """
-        logits = self.policy(torch.from_numpy(s).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
+        logits = self.pi(torch.from_numpy(s).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
         if len(logits.shape) > 2:
             logits = logits.squeeze()
         mean = logits[:, :self.action_dim]

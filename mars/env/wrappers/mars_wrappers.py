@@ -152,7 +152,7 @@ class RoboSumoWrapper():
         self.env.seed(seed)
         np.random.seed(seed)
 
-    def render(self, mode):
+    def render(self, mode='human'):
         mode = self.render_mode  # force the mode here
         return self.env.render(mode)
 

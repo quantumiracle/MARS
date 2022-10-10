@@ -259,9 +259,9 @@ class ImpalaCNN(NetBase):
 def _get_activation(activation_type):
     """
     Get the activation function.
-        :param str activation_type: like 'ReLU', 'CReLU', 'Softmax', etc
+        :param str activation_type: like 'ReLU', 'LeakyReLU', 'CReLU', 'Softmax', etc
     """
-    if activation_type == 'CReLU':
+    if activation_type == 'CReLU':  # Notice that cReLU will change output dimension
         return cReLU
     else:
         try:

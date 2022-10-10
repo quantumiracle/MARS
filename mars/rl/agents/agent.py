@@ -32,7 +32,7 @@ class Agent(object):
                 self.action_dim = env.action_space.n
             self.action_space = env.action_space
 
-        print(self.policy_type, self.action_dim, self.action_space)
+        # print(self.policy_type, self.action_dim, self.action_space)
 
         self.batch_size = args.batch_size
         self.schedulers = []

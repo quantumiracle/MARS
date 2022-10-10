@@ -182,7 +182,8 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         env = LaserTagWrapper(env)
 
     elif env_type == 'robosumo':
-        ## robosumo requires gym==0.16
+        # robosumo requires gym==0.16;
+        # with updated version (https://github.com/Robot-Learning-Library/robosumo_gym23): gym==0.23 can be used
         import robosumo.envs
         env = gym.make(env_name)
 
@@ -190,8 +191,10 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             mode = 'rgb_array' # this willl return image from render() thus recording, but not render scene
         elif args.render:
             mode = 'human'  # requies: export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so; this will render scene but not return image
+        else:
+            mode = 'rgb_array'
         env = RoboSumoWrapper(env, mode)
-        env = ZeroSumWrapper(env)
+        # env = ZeroSumWrapper(env)
 
     elif env_type == 'gym':
         try:
@@ -264,6 +267,7 @@ def make_env(args, ss_vec=True):
 
     if args.num_process > 1 or args.num_envs == 1: # if multiprocess, each process can only work with one env separately
         env = _create_single_env(env_name, env_type, False, args)  
+        # gym has to be 0.23.1 to successfully record video here!
         if args.record_video: # Ref: https://github.com/openai/gym/pull/2300
             env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
                     # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
@@ -285,7 +289,8 @@ def make_env(args, ss_vec=True):
                 env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
                         # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
                         episode_trigger=lambda episode: episode % record_video_interval == 0, # record the videos every * episodes
-                        video_length=record_video_length)  
+                        video_length=record_video_length
+                        )  
             # print(args.num_envs, env.num_envs)
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents
@@ -297,10 +302,13 @@ def make_env(args, ss_vec=True):
             env = VectorEnv([lambda: single_env for _ in range(args.num_envs)])
             if args.record_video:
                 env.is_vector_env = True
-                env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
+                # record single env if multiple envs are used
+                env.metadata = single_env.metadata
+                single_env = gym.wrappers.RecordVideo(single_env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
                         # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
                         episode_trigger=lambda episode: episode % record_video_interval == 0, # record the videos every * episodes
-                        video_length=record_video_length) 
+                        video_length=record_video_length
+                        ) 
             # avoid duplicating
             env.num_agents = single_env.num_agents
             env.agents = single_env.agents
