@@ -52,7 +52,10 @@ class NashPPOBase(Agent):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self._init_model(env, args)
         self.args = args
-        print(self.feature_nets, self.policies, self.values, self.common_layers,)
+        print(f'Feature networks: ', self.feature_nets,
+                'Policy networks: ', self.policies,
+                'Value networks: ', self.values,
+                'Common layers: ', self.common_layers)
 
         policy_params, value_params, common_val_params, feature_net_param = [], [], [], []
         for p, v, z in zip(self.feature_nets, self.policies, self.values):

@@ -142,7 +142,9 @@ def get_exploiter(exploiter_type: str, env, args):
             ppo_args = LoadYAML2Dict(f'mars/confs/{args.env_type}/continuous_ppo_exploit', toAttr=True, mergeWith=None)
         else:  # discrete action
             ppo_args = LoadYAML2Dict(f'mars/confs/{args.env_type}/ppo_exploit', toAttr=True, mergeWith=None)
-        exploitation_args =  AttrDict(UpdateDictAwithB(args, ppo_args, withOverwrite=True))
+        original_args = copy.deepcopy(args)
+        exploitation_args =  AttrDict(UpdateDictAwithB(original_args, ppo_args, withOverwrite=True))
+        print(f'Exploiter Args: {exploitation_args}')
         exploiter = PPO(env, exploitation_args)
         exploiter.reinit()
 
