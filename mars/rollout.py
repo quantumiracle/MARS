@@ -151,7 +151,6 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     obs_to_store, action_to_store, reward_to_store,
                     obs__to_store, other_info_to_store, done_to_store
                 ]
-
             if other_info is not None or model.nan_filter(sample):  # store sample only if it is valid; cannot filter out None in other info
                 model.store(sample)
 
@@ -180,7 +179,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     done
             ):  # if any player in a game is done, the game episode done; may not be correct for some envs
                 break
-        
+
         ## Epsodic update of the model
         if model.ready_to_update:
             if args.algorithm_spec['episodic_update']:

@@ -32,7 +32,7 @@ import slimevolleygym
 import numpy as np
 
 
-from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, FireResetEnv, wrap_pytorch
+from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, NormalizeReward, TransformObservation, NormalizeObservation, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
      Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper, ZeroSumWrapper, zero_sum_reward_filer
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
@@ -194,6 +194,9 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         else:
             mode = 'rgb_array'
         env = RoboSumoWrapper(env, mode)
+        env = NormalizeObservation(env) # according to original paper: https://arxiv.org/pdf/1710.03641.pdf
+        env = TransformObservation(env, lambda obs: np.clip(obs, -5., 5.))
+        env = NormalizeReward(env)
         # env = ZeroSumWrapper(env)
 
     elif env_type == 'gym':

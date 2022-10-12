@@ -1,3 +1,4 @@
+from cmath import log
 import copy
 import torch
 import torch.nn as nn
@@ -48,7 +49,7 @@ class PPOBase(Agent):
 
         self._init_model(env, args)
 
-        self.optimizer = choose_optimizer(args.optimizer)(list(self.value.parameters())+list(self.policy.parameters()), lr=float(args.learning_rate))
+        self.optimizer = choose_optimizer(args.optimizer)(list(self.feature.parameters())+list(self.value.parameters())+list(self.policy.parameters()), lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
         self._num_channel = args.num_envs*(env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0]) # env.num_agents is a list when using parallel envs 
         self.data = [[] for _ in range(self._num_channel)]
@@ -158,14 +159,17 @@ class PPOBase(Agent):
 
     def save_model(self, path=None):
         try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
+            torch.save(self.feature.state_dict(), path+'_feature', _use_new_zipfile_serialization=False)
             torch.save(self.policy.state_dict(), path+'_policy', _use_new_zipfile_serialization=False)
             torch.save(self.value.state_dict(), path+'_value', _use_new_zipfile_serialization=False)
         except:
+            torch.save(self.feature.state_dict(), path+'_feature')
             torch.save(self.policy.state_dict(), path+'_policy')
             torch.save(self.value.state_dict(), path+'_value')
 
 
     def load_model(self, path=None):
+        self.feature.load_state_dict(torch.load(path+'_feature'))
         self.policy.load_state_dict(torch.load(path+'_policy'))
         self.value.load_state_dict(torch.load(path+'_value'))
 
@@ -293,19 +297,29 @@ class PPOContinuous(PPOBase):
         logits = self.pi(torch.from_numpy(s).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
         if len(logits.shape) > 2:
             logits = logits.squeeze()
-        mean = logits[:, :self.action_dim]
-        var = logits[:, self.action_dim:].exp()
+        mean = torch.tanh(logits[:, :self.action_dim])
+        var = logits[:, self.action_dim:].exp()  # no tanh on log var
 
         if Greedy:
             a = mean.detach().cpu().numpy()
             return a
         else:
-            cov = torch.diag_embed(var)
-            dist = MultivariateNormal(mean, cov)
-            # dist = Normal(mean, var**0.5)
-            a = dist.sample()
-            logprob = dist.log_prob(a)
+            # cov = torch.diag_embed(var)
+            # dist = MultivariateNormal(mean, cov)
+            # a = dist.sample()
+            # logprob = dist.log_prob(a)
+            std = var # here we fake the std
+            normal = Normal(0, 1)
+            z      = normal.sample()
+            a = mean + std*z
+            logprob = Normal(mean, std).log_prob(a)
+            logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
+
+    def get_log_prob(self, mean, std, action):
+        log_prob = Normal(mean, std).log_prob(action)
+        log_prob = log_prob.sum(dim=-1, keepdim=True)  # reduce dim
+        return log_prob
 
     def update(self):
         infos = {}
@@ -351,24 +365,28 @@ class PPOContinuous(PPOBase):
                 logits = self.pi(s)
                 if len(logits.shape) > 2:
                     logits = logits.squeeze()
-                mean = logits[:, :self.action_dim]
+                mean = torch.tanh(logits[:, :self.action_dim])
                 var = logits[:, self.action_dim:].exp()
-                # dist = Normal(mean, var**0.5)  # this does not work with multivariate
-                cov = torch.diag_embed(var)
-                dist = MultivariateNormal(mean, cov)
-                dist_entropy = dist.entropy()
-                logprob = dist.log_prob(a)
-                ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())
+                # cov = torch.diag_embed(var)
+                # dist = MultivariateNormal(mean, cov)
+                # dist_entropy = dist.entropy()
+                # logprob = dist.log_prob(a)
+                std = var # here we fake the std
+                logprob = self.get_log_prob(mean, std, a.squeeze())
+                dist_entropy = Normal(mean, std).entropy()
+                dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
+
+                ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())  # squeeze is important to keep dim
                 surr1 = ratio * advantage
                 surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-                policy_loss = -torch.min(surr1, surr2)
+                policy_loss = -torch.min(surr1, surr2).mean()
                 v_loss = self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach())
                 loss = policy_loss + self.vf_coeff*v_loss - self.entropy_coeff*dist_entropy
 
                 self.optimizer.zero_grad()
                 mean_loss = loss.mean()
                 mean_loss.backward()
-                nn.utils.clip_grad_norm_(list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
+                nn.utils.clip_grad_norm_(list(self.feature.parameters())+list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
                 self.optimizer.step()
 
                 total_loss += mean_loss.item()

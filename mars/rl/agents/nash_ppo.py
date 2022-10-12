@@ -58,13 +58,13 @@ class NashPPOBase(Agent):
                 'Common layers: ', self.common_layers)
 
         policy_params, value_params, common_val_params, feature_net_param = [], [], [], []
-        for p, v, z in zip(self.feature_nets, self.policies, self.values):
+        for f, p, v in zip(self.feature_nets, self.policies, self.values):
+            feature_net_param += list(f.parameters())
             policy_params += list(p.parameters())
             value_params += list(v.parameters())
-            common_val_params += list(z.parameters())
 
-        feature_net_param += list(self.common_layers.parameters())
-        self.all_params = policy_params + value_params + common_val_params + feature_net_param
+        common_val_params = list(self.common_layers.parameters())
+        self.all_params = feature_net_param + policy_params + value_params + common_val_params
         self.optimizer = choose_optimizer(args.optimizer)(self.all_params, lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
         self._num_channel = args.num_envs * (env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0])  # env.num_agents is a list when using parallel envs
@@ -326,8 +326,8 @@ class NashPPODiscrete(NashPPOBase):
                     pi = self.pi(feature_x, i)
                     dist = Categorical(pi)
                     dist_entropy = dist.entropy()
-                    logprob = dist.log_prob(a[:, i])
-                    ratio = torch.exp(logprob - oldlogprob[:, i])
+                    logprob = dist.log_prob(a[:, i].squeeze())
+                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
                     surr1 = ratio * advantage
                     surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
                     policy_loss = -torch.min(surr1, surr2)
@@ -375,8 +375,8 @@ class NashPPODiscrete(NashPPOBase):
                     pi = self.pi(feature_x_list[i], i)
                     dist = Categorical(pi)
                     dist_entropy = dist.entropy()
-                    logprob = dist.log_prob(a[:, i])
-                    ratio = torch.exp(logprob - oldlogprob[:, i])
+                    logprob = dist.log_prob(a[:, i].squeeze())
+                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
                     ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
                 surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
                 surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
@@ -387,8 +387,8 @@ class NashPPODiscrete(NashPPOBase):
                     pi = self.pi(feature_x_list[i], i)
                     dist = Categorical(pi)
                     dist_entropy = dist.entropy()
-                    logprob = dist.log_prob(a[:, i])
-                    ratio = torch.exp(logprob - oldlogprob[:, i])
+                    logprob = dist.log_prob(a[:, i].squeeze())
+                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
                     ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
                 surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
@@ -444,7 +444,7 @@ class NashPPOContinuous(NashPPOBase):
 
                 if len(logits.shape) > 2:
                     logits = logits.squeeze()
-                mean = logits[:, :self.action_dim]
+                mean = torch.tanh(logits[:, :self.action_dim])
                 var = logits[:, self.action_dim:].exp()
                 
                 # feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
@@ -460,19 +460,30 @@ class NashPPOContinuous(NashPPOBase):
                 logits = policy(feature)
                 if len(logits.shape) > 2:
                     logits = logits.squeeze()
-                mean = logits[:, :self.action_dim]
+                mean = torch.tanh(logits[:, :self.action_dim])
                 var = logits[:, self.action_dim:].exp()
-                cov = torch.diag_embed(var)
-                dist = MultivariateNormal(mean, cov)
-                # dist = Normal(mean, var**0.5)
-                a = dist.sample()
-                logprob = dist.log_prob(a)       
+                # cov = torch.diag_embed(var)
+                # dist = MultivariateNormal(mean, cov)
+                # a = dist.sample()
+                # logprob = dist.log_prob(a) 
+      
+                std = var # here we fake the std
+                normal = Normal(0, 1)
+                z      = normal.sample()
+                a = mean + std*z
+                logprob = Normal(mean, std).log_prob(a.squeeze())
+                logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
 
                 actions.append(a.detach().cpu().numpy())
                 logprobs.append(logprob.detach().cpu().numpy())
             actions = np.array(actions)
             logprobs = np.array(logprobs)
             return actions, logprobs
+
+    def get_log_prob(self, mean, std, action):
+        log_prob = Normal(mean, std).log_prob(action)
+        log_prob = log_prob.sum(dim=-1, keepdim=True)  # reduce dim
+        return log_prob
 
     def update(self):
         infos = {}
@@ -522,21 +533,22 @@ class NashPPOContinuous(NashPPOBase):
                     advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
                     advantage = advantage.detach()
 
-                    # value and policy loss for one agent
-                    # pi = self.pi(feature_x, i)
-                    # dist = Categorical(pi)
-
                     logits = self.pi(feature_x, i)
                     if len(logits.shape) > 2:
                         logits = logits.squeeze()
-                    mean = logits[:, :self.action_dim]
+                    mean = torch.tanh(logits[:, :self.action_dim])
                     var = logits[:, self.action_dim:].exp()
-                    cov = torch.diag_embed(var)
-                    dist = MultivariateNormal(mean, cov)
+                    # cov = torch.diag_embed(var)
+                    # dist = MultivariateNormal(mean, cov)
+                    # dist_entropy = dist.entropy()
+                    # logprob = dist.log_prob(a[:, i].squeeze())  # for multivariate normal, sum of log_prob is produce of prob
 
-                    dist_entropy = dist.entropy()
-                    logprob = dist.log_prob(a[:, i].squeeze())  # for multivariate normal, sum of log_prob is produce of prob
-                    ratio = torch.exp(logprob - oldlogprob[:, i])
+                    std = var # here we fake the std
+                    logprob = self.get_log_prob(mean, std, a[:, i].squeeze())
+                    dist_entropy = Normal(mean, std).entropy()
+                    dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
+                        
+                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
                     surr1 = ratio * advantage
                     surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
                     # print(surr1.shape, surr2.shape, vs.squeeze(dim=-1).shape, vs_target.shape, ratio.shape, advantage.shape, dist_entropy.shape)
@@ -586,19 +598,22 @@ class NashPPOContinuous(NashPPOBase):
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
-                    # pi = self.pi(feature_x_list[i], i)
-                    # dist = Categorical(pi)
-
                     logits = self.pi(feature_x_list[i], i)
                     if len(logits.shape) > 2:
                         logits = logits.squeeze()
-                    mean = logits[:, :self.action_dim]
+                    mean = torch.tanh(logits[:, :self.action_dim])
                     var = logits[:, self.action_dim:].exp()
-                    cov = torch.diag_embed(var)
-                    dist = MultivariateNormal(mean, cov)
-                    dist_entropy = dist.entropy()
-                    logprob = dist.log_prob(a[:, i])
-                    ratio = torch.exp(logprob - oldlogprob[:, i])
+                    # cov = torch.diag_embed(var)
+                    # dist = MultivariateNormal(mean, cov)
+                    # dist_entropy = dist.entropy()
+                    # logprob = dist.log_prob(a[:, i])
+
+                    std = var # here we fake the std
+                    logprob = self.get_log_prob(mean, std, a[:, i].squeeze())
+                    dist_entropy = Normal(mean, std).entropy()
+                    dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
+
+                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
                     ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
                 surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
                 surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
@@ -607,19 +622,22 @@ class NashPPOContinuous(NashPPOBase):
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
-                    # pi = self.pi(feature_x_list[i], i)
-                    # dist = Categorical(pi)
-
                     logits = self.pi(feature_x_list[i], i)
                     if len(logits.shape) > 2:
                         logits = logits.squeeze()
-                    mean = logits[:, :self.action_dim]
+                    mean = torch.tanh(logits[:, :self.action_dim])
                     var = logits[:, self.action_dim:].exp()
-                    cov = torch.diag_embed(var)
-                    dist = MultivariateNormal(mean, cov)
-                    dist_entropy = dist.entropy()
-                    logprob = dist.log_prob(a[:, i])
-                    ratio = torch.exp(logprob - oldlogprob[:, i])
+                    # cov = torch.diag_embed(var)
+                    # dist = MultivariateNormal(mean, cov)
+                    # dist_entropy = dist.entropy()
+                    # logprob = dist.log_prob(a[:, i])
+
+                    std = var # here we fake the std
+                    logprob = self.get_log_prob(mean, std, a[:, i].squeeze())
+                    dist_entropy = Normal(mean, std).entropy()
+                    dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
+
+                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
                     ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
                 surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
                 surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)

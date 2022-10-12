@@ -43,8 +43,7 @@ def LoadYAML2Dict(yaml_file: str,
     confs = UpdateDictAwithB(confs, loaded, withOverwrite=True)
 
     if toAttr:
-        concat_dict = {
-        }  # concatenate all types of arguments into one dictionary
+        concat_dict = {}  # concatenate all types of arguments into one dictionary
         for k, v in confs.items():
             concat_dict.update(v)
         return AttrDict(concat_dict)
