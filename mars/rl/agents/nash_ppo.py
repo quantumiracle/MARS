@@ -280,6 +280,7 @@ class NashPPODiscrete(NashPPOBase):
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data:  # iterate over data from different environments
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
+            done_mask_ = torch.flip(done_mask, dims=(0,))
 
             # need to prcess the samples, separate for agents
             if self.args.ram:
@@ -314,8 +315,8 @@ class NashPPODiscrete(NashPPOBase):
                         delta = vs_target - vs.squeeze(dim=-1)
                         advantage_lst = []
                         advantage = 0.0
-                        for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                            advantage = self.gamma * self.lmbda * advantage + delta_t
+                        for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                            advantage = self.gamma * self.lmbda * advantage * mask + delta_t
                             advantage_lst.append(advantage)
                         advantage_lst.reverse()
                         advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
@@ -362,8 +363,8 @@ class NashPPODiscrete(NashPPOBase):
                     delta = delta.detach()
                     advantage_lst = []
                     advantage = 0.0
-                    for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                        advantage = self.gamma * self.lmbda * advantage + delta_t
+                    for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                        advantage = self.gamma * self.lmbda * advantage * mask + delta_t
                         advantage_lst.append(advantage)
                     advantage_lst.reverse()
                     advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
@@ -468,11 +469,15 @@ class NashPPOContinuous(NashPPOBase):
                 # logprob = dist.log_prob(a) 
       
                 std = var # here we fake the std
-                normal = Normal(0, 1)
-                z      = normal.sample()
-                a = mean + std*z
-                logprob = Normal(mean, std).log_prob(a.squeeze())
-                logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
+                # normal = Normal(0, 1)
+                # z      = normal.sample()
+                # a = mean + std*z
+                # logprob = Normal(mean, std).log_prob(a.squeeze())
+                # logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
+
+                normal = Normal(mean, std)
+                a = normal.sample()
+                logprob = normal.log_prob(a).sum(-1)
 
                 actions.append(a.detach().cpu().numpy())
                 logprobs.append(logprob.detach().cpu().numpy())
@@ -491,6 +496,7 @@ class NashPPOContinuous(NashPPOBase):
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data:  # iterate over data from different environments
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
+            done_mask_ = torch.flip(done_mask, dims=(0,))
 
             # need to prcess the samples, separate for agents
             if self.args.ram:
@@ -525,8 +531,8 @@ class NashPPOContinuous(NashPPOBase):
                     delta = vs_target - vs.squeeze(dim=-1)
                     advantage_lst = []
                     advantage = 0.0
-                    for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                        advantage = self.gamma * self.lmbda * advantage + delta_t
+                    for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                        advantage = self.gamma * self.lmbda * advantage * mask + delta_t
                         advantage_lst.append(advantage)
                     advantage_lst.reverse()
                     advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
@@ -588,8 +594,8 @@ class NashPPOContinuous(NashPPOBase):
                 delta = delta.detach()
                 advantage_lst = []
                 advantage = 0.0
-                for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                    advantage = self.gamma * self.lmbda * advantage + delta_t
+                for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                    advantage = self.gamma * self.lmbda * advantage * mask + delta_t
                     advantage_lst.append(advantage)
                 advantage_lst.reverse()
                 advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)

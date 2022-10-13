@@ -138,10 +138,10 @@ class PPOBase(Agent):
         for trajectory in data:
             s, a, r, s_prime, prob_a, done = trajectory
             s_lst.append(s)
-            a_lst.append(a)
+            a_lst.append(a.squeeze())
             r_lst.append(r)
             s_prime_lst.append(s_prime)
-            prob_a_lst.append(prob_a)
+            prob_a_lst.append(prob_a.squeeze())
             done_mask = 0 if done else 1
             done_lst.append(done_mask)
         a_lst = np.array(a_lst)
@@ -206,7 +206,7 @@ class PPODiscrete(PPOBase):
         
     def update(self):
         infos = {}
-        total_loss = 0.
+        total_loss, p_loss, v_loss = 0., 0., 0.
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data: # iterate over data from different environments
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
@@ -254,8 +254,8 @@ class PPODiscrete(PPOBase):
                 surr1 = ratio * advantage
                 surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
                 policy_loss = -torch.min(surr1, surr2)
-                v_loss = self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach())
-                loss = policy_loss + self.vf_coeff*v_loss - self.entropy_coeff*dist_entropy
+                value_loss = self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach())
+                loss = policy_loss + self.vf_coeff*value_loss - self.entropy_coeff*dist_entropy
 
                 self.optimizer.zero_grad()
                 mean_loss = loss.mean()
@@ -264,10 +264,12 @@ class PPODiscrete(PPOBase):
                 self.optimizer.step()
 
                 total_loss += mean_loss.item()
+                p_loss += policy_loss.item()
+                v_loss += value_loss.item()
 
-        infos[f'PPO policy loss'] = policy_loss
+        infos[f'PPO policy loss'] = p_loss
         infos[f'PPO value loss'] = v_loss
-        infos[f'PPO total loss'] = loss
+        infos[f'PPO total loss'] = total_loss
         infos[f'policy entropy'] = dist_entropy
 
         self.data = [[] for _ in range(self._num_channel)]
@@ -308,12 +310,18 @@ class PPOContinuous(PPOBase):
             # dist = MultivariateNormal(mean, cov)
             # a = dist.sample()
             # logprob = dist.log_prob(a)
+            
             std = var # here we fake the std
-            normal = Normal(0, 1)
-            z      = normal.sample()
-            a = mean + std*z
-            logprob = Normal(mean, std).log_prob(a)
-            logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
+            # normal = Normal(0, 1)
+            # z      = normal.sample()
+            # a = mean + std*z
+            # logprob = Normal(mean, std).log_prob(a)
+            # logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
+
+            normal = Normal(mean, std)
+            a = normal.sample()
+            logprob = normal.log_prob(a).sum(-1)
+
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
 
     def get_log_prob(self, mean, std, action):
@@ -323,11 +331,46 @@ class PPOContinuous(PPOBase):
 
     def update(self):
         infos = {}
-        total_loss = 0.
+        total_loss, p_loss, v_loss = 0., 0., 0.
         self.data = [x for x in self.data if x]  # remove empty
+        
+        s,a,r,s_prime,oldlogprob,done_mask = [],[],[],[],[],[]
+        s = torch.tensor(s).to(self.device)
+        a = torch.tensor(a).to(self.device)
+        r = torch.tensor(r).to(self.device)
+        s_prime = torch.tensor(s_prime).to(self.device)
+        oldlogprob = torch.tensor(oldlogprob).to(self.device)
+        done_mask = torch.tensor(done_mask).to(self.device)
+    
         for data in self.data: # iterate over data from different environments
-            s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
-            if not self.GAE:
+            traj_s, traj_a, traj_r, traj_s_prime, traj_oldlogprob, traj_done_mask = self.make_batch(data)
+            s = torch.cat([s, traj_s])
+            a = torch.cat([a, traj_a])
+            r = torch.cat([r, traj_r])
+            s_prime = torch.cat([s_prime, traj_s_prime])
+            oldlogprob = torch.cat([oldlogprob, traj_oldlogprob])
+            done_mask = torch.cat([done_mask, traj_done_mask])
+        
+        done_mask_ = torch.flip(done_mask, dims=(0,))
+        for _ in range(self.K_epoch):
+            vs = self.v(s)
+
+            if self.GAE:
+                # use generalized advantage estimation
+                vs_prime = self.v(s_prime).squeeze(dim=-1)
+                assert vs_prime.shape == done_mask.shape
+                vs_target = r + self.gamma * vs_prime * done_mask
+                delta = vs_target - vs.squeeze(dim=-1)
+                delta = delta.detach()
+                advantage_lst = []
+                advantage = 0.0
+                for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_): # reverse the delta along the time sequence in an episodic data
+                    advantage = self.gamma * self.lmbda * advantage * mask + delta_t
+                    advantage_lst.append(advantage)
+                advantage_lst.reverse()
+                advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+
+            else:
                 rewards = []
                 discounted_r = 0
                 for reward, is_continue in zip(reversed(r), reversed(done_mask)):
@@ -335,65 +378,49 @@ class PPOContinuous(PPOBase):
                         discounted_r = 0
                     discounted_r = reward + self.gamma * discounted_r
                     rewards.insert(0, discounted_r)  # insert in front, cannot use append
-
                 rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
-                rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
-            
-            for _ in range(self.K_epoch):
-                vs = self.v(s)
+                advantage = rewards - vs.squeeze(dim=-1).detach()
+                vs_target = rewards
 
-                if self.GAE:
-                    # use generalized advantage estimation
-                    vs_prime = self.v(s_prime).squeeze(dim=-1)
-                    assert vs_prime.shape == done_mask.shape
-                    vs_target = r + self.gamma * vs_prime * done_mask
-                    delta = vs_target - vs.squeeze(dim=-1)
-                    delta = delta.detach()
-                    advantage_lst = []
-                    advantage = 0.0
-                    for delta_t in torch.flip(delta, [-1]): # reverse the delta along the time sequence in an episodic data
-                        advantage = self.gamma * self.lmbda * advantage + delta_t
-                        advantage_lst.append(advantage)
-                    advantage_lst.reverse()
-                    advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+            advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)
 
-                else:
-                    advantage = rewards - vs.squeeze(dim=-1).detach()
-                    vs_target = rewards
+            logits = self.pi(s)
+            if len(logits.shape) > 2:
+                logits = logits.squeeze()
+            mean = torch.tanh(logits[:, :self.action_dim])
+            var = logits[:, self.action_dim:].exp()
+            # cov = torch.diag_embed(var)
+            # dist = MultivariateNormal(mean, cov)
+            # dist_entropy = dist.entropy()
+            # logprob = dist.log_prob(a)
+            std = var # here we fake the std
+            logprob = self.get_log_prob(mean, std, a.squeeze())
+            dist_entropy = Normal(mean, std).entropy()
+            dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
 
-                logits = self.pi(s)
-                if len(logits.shape) > 2:
-                    logits = logits.squeeze()
-                mean = torch.tanh(logits[:, :self.action_dim])
-                var = logits[:, self.action_dim:].exp()
-                # cov = torch.diag_embed(var)
-                # dist = MultivariateNormal(mean, cov)
-                # dist_entropy = dist.entropy()
-                # logprob = dist.log_prob(a)
-                std = var # here we fake the std
-                logprob = self.get_log_prob(mean, std, a.squeeze())
-                dist_entropy = Normal(mean, std).entropy()
-                dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
+            ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())  # squeeze is important to keep dim
+            surr1 = ratio * advantage
+            surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
+            policy_loss = -torch.min(surr1, surr2).mean()
+            value_loss = self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach())
+            loss = policy_loss + self.vf_coeff*value_loss - self.entropy_coeff*dist_entropy
+            mean_loss = loss.mean()
 
-                ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())  # squeeze is important to keep dim
-                surr1 = ratio * advantage
-                surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-                policy_loss = -torch.min(surr1, surr2).mean()
-                v_loss = self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach())
-                loss = policy_loss + self.vf_coeff*v_loss - self.entropy_coeff*dist_entropy
+            total_loss += mean_loss.item()
+            p_loss += policy_loss.item()
+            v_loss += value_loss.item()
 
-                self.optimizer.zero_grad()
-                mean_loss = loss.mean()
-                mean_loss.backward()
-                nn.utils.clip_grad_norm_(list(self.feature.parameters())+list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
-                self.optimizer.step()
+            self.optimizer.zero_grad()
+            mean_loss.backward()
+            nn.utils.clip_grad_norm_(list(self.feature.parameters())+list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
+            self.optimizer.step()
 
-                total_loss += mean_loss.item()
-
-        infos[f'PPO policy loss'] = policy_loss
+            # if np.abs(total_loss) >1000:
+            #     print(ratio.max(), logprob.shape, oldlogprob.shape)
+        
+        infos[f'PPO policy loss'] = p_loss
         infos[f'PPO value loss'] = v_loss
-        infos[f'PPO total loss'] = loss
+        infos[f'PPO total loss'] = total_loss
         infos[f'policy entropy'] = dist_entropy
         self.data = [[] for _ in range(self._num_channel)]
 

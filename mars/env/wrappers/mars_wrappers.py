@@ -158,7 +158,11 @@ class RoboSumoWrapper():
 
     def step(self, actions):
         actions = np.array(actions).squeeze()
-        obs, reward, done, info = self.env.step(actions)
+        try:
+            obs, reward, done, info = self.env.step(actions)
+        except:
+            print(f'Action exception in Mujoco: {actions}')
+            obs, reward, done, info = self.env.step(np.zeros_like(actions))
         return obs, reward, done, info
 
     def close(self):
