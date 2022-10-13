@@ -8,12 +8,13 @@ env_args:
 agent_args:
     algorithm: PPO
     algorithm_spec:
-        episodic_update: True  # as PPO is on-policy, it uses episodic update instead of update per timestep
+        # episodic_update: True  # as PPO is on-policy, it uses episodic update instead of update per timestep
+        batch_update: 1280
         gamma: 0.99
         lambda: 0.95
         eps_clip: 0.2
-        K_epoch: 4
-        GAE: False  # generalized advantage estimation
+        K_epoch: 20
+        GAE: True  # generalized advantage estimation
         max_grad_norm: 0.5
         entropy_coeff: 0.01
         vf_coeff: 0.5

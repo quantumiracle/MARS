@@ -82,6 +82,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     ## Initialization
     print("Arguments: ", args)
     overall_steps = 0
+    cnt_steps = 0
     logger = init_logger(env, save_id, args)
     if args.exploit:
         logger.add_extr_log('eval')
@@ -95,6 +96,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
+            cnt_steps += 1
             obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
             with torch.no_grad():
                 action_ = model.choose_action(
@@ -161,18 +163,25 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             # Non-epsodic update of the model
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
-                if args.update_itr >= 1:
-                    avg_loss = []
-                    for _ in range(args.update_itr):
-                        loss, infos = model.update(
-                        )
-                        avg_loss.append(loss)
-                    loss = np.mean(avg_loss, axis=0)
-                elif overall_steps * args.update_itr % 1 == 0:
-                    loss, infos = model.update()
-                if loss is not None:
-                    logger.log_loss(loss)
-                    logger.log_info(infos)
+                if args.algorithm_spec['batch_update']:
+                    if cnt_steps >= args.algorithm_spec['batch_update']:
+                        loss, infos = model.update()
+                        logger.log_loss(loss)
+                        logger.log_info(infos)   
+                        cnt_steps = 0 
+                else:    
+                    if args.update_itr >= 1:
+                        avg_loss = []
+                        for _ in range(args.update_itr):
+                            loss, infos = model.update(
+                            )
+                            avg_loss.append(loss)
+                        loss = np.mean(avg_loss, axis=0)
+                    elif overall_steps * args.update_itr % 1 == 0:
+                        loss, infos = model.update()
+                    if loss is not None:
+                        logger.log_loss(loss)
+                        logger.log_info(infos)
 
             ## done break: needs to go after everything else， including the update
             if np.any(
@@ -185,7 +194,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             if args.algorithm_spec['episodic_update']:
                 loss, infos = model.update()
                 logger.log_loss(loss)
-                logger.log_info(infos)
+                logger.log_info(infos)     
             
             if meta_learner is not None and args.marl_method in MetaStepMethods:
                 meta_learner.step(
