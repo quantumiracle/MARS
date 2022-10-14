@@ -44,7 +44,8 @@ class PPOBase(Agent):
         self.K_epoch = args.algorithm_spec['K_epoch']
         self.GAE = args.algorithm_spec['GAE']
         self.max_grad_norm = float(args.algorithm_spec['max_grad_norm'])
-        self.entropy_coeff = float(args.algorithm_spec['entropy_coeff'])
+        self.ini_entropy_coeff = float(args.algorithm_spec['entropy_coeff'])
+        self.entropy_coeff = self.ini_entropy_coeff
         self.vf_coeff = float(args.algorithm_spec['vf_coeff'])
 
         self._init_model(env, args)
@@ -338,7 +339,7 @@ class PPODiscrete(PPOBase):
             new_vs = self.v(s)
             pi = self.pi(s)
             dist = Categorical(pi)
-            dist_entropy = dist.entropy()
+            dist_entropy = dist.entropy().mean()
             logprob = dist.log_prob(a)
             ratio = torch.exp(logprob - oldlogprob)
             surr1 = ratio * advantage
@@ -376,7 +377,8 @@ class PPOContinuous(PPOBase):
             self.target_entropy = -torch.prod(torch.Tensor(env.action_space.shape).to(self.device)).detach()
         except:
             self.target_entropy = -torch.prod(torch.Tensor(env.action_space[0].shape).to(self.device)).detach()
-
+        self.log_std_min = -20
+        self.log_std_max = 2
         # self.log_entropy_coef = torch.zeros(1, requires_grad=True, device=self.device)
         # self.entropy_coeff = self.log_entropy_coef.exp().item()
         # self.coef_optimizer = optim.Adam([self.log_entropy_coef], lr=float(args.learning_rate))
@@ -399,7 +401,9 @@ class PPOContinuous(PPOBase):
         if len(logits.shape) > 2:
             logits = logits.squeeze()
         mean = torch.tanh(logits[:, :self.action_dim])
-        std = logits[:, self.action_dim:].exp()  # no tanh on log var
+        log_std = logits[:, self.action_dim:]  # no tanh on log var
+        log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
+        std = log_std.exp()
 
         if Greedy:
             a = mean.detach().cpu().numpy()
@@ -489,7 +493,10 @@ class PPOContinuous(PPOBase):
             if len(logits.shape) > 2:
                 logits = logits.squeeze()
             mean = torch.tanh(logits[:, :self.action_dim])
-            std = logits[:, self.action_dim:].exp()
+            log_std = logits[:, self.action_dim:]  # no tanh on log var
+            log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
+            std = log_std.exp()            
+            
             # cov = torch.diag_embed(var)
             # dist = MultivariateNormal(mean, cov)
             # dist_entropy = dist.entropy()
@@ -497,7 +504,7 @@ class PPOContinuous(PPOBase):
 
             logprob = self.get_log_prob(mean, std, a.squeeze())
             dist_entropy = Normal(mean, std).entropy()
-            dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
+            dist_entropy = dist_entropy.sum(dim=-1, keepdim=True).mean()  # reduce dim
 
             ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())  # squeeze is important to keep dim
             surr1 = ratio * advantage
@@ -523,10 +530,10 @@ class PPOContinuous(PPOBase):
             # self.coef_optimizer.step()
             
             # avoid entropy blowing up
-            if dist_entropy.mean() > self.target_entropy + 10.:
-                self.entropy_coeff = self.entropy_coeff * 0.1
-            elif dist_entropy.mean() < self.target_entropy - 10.:
-                self.entropy_coeff = self.entropy_coeff * 10.
+            if dist_entropy.mean() > self.target_entropy + 20.:
+                self.entropy_coeff = -self.ini_entropy_coeff
+            else:
+                self.entropy_coeff = self.ini_entropy_coeff
 
             ratios.append(ratio.mean().item())
             values.append(new_vs.mean().item())
@@ -540,7 +547,7 @@ class PPOContinuous(PPOBase):
         infos[f'policy std'] = np.mean(stds)
         infos[f'policy ratio'] = np.mean(ratios)
         infos[f'mean_value'] = np.mean(values)
-        infos[f'log_entropy_coeff'] = torch.log(self.entropy_coeff)
+        infos[f'entropy_coeff'] = self.entropy_coeff
         self.data = [[] for _ in range(self._num_channel)]
 
         return total_loss, infos
