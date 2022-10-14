@@ -371,11 +371,15 @@ class PPOContinuous(PPOBase):
     """ 
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.target_entropy = torch.prod(torch.Tensor(env.action_space.shape).to(self.device)).detach()
-        self.log_entropy_coef = torch.zeros(1, requires_grad=True, device=self.device)
-        self.entropy_coeff = self.log_entropy_coef.exp().item()
+        # target entropy set according to SAC: https://arxiv.org/pdf/1812.05905.pdf
+        try:
+            self.target_entropy = -torch.prod(torch.Tensor(env.action_space.shape).to(self.device)).detach()
+        except:
+            self.target_entropy = -torch.prod(torch.Tensor(env.action_space[0].shape).to(self.device)).detach()
 
-        self.coef_optimizer = optim.Adam([self.log_entropy_coef], lr=float(args.learning_rate))
+        # self.log_entropy_coef = torch.zeros(1, requires_grad=True, device=self.device)
+        # self.entropy_coeff = self.log_entropy_coef.exp().item()
+        # self.coef_optimizer = optim.Adam([self.log_entropy_coef], lr=float(args.learning_rate))
 
     def choose_action(
         self, 
@@ -517,18 +521,18 @@ class PPOContinuous(PPOBase):
             # self.coef_optimizer.zero_grad()
             # coef_loss.backward()
             # self.coef_optimizer.step()
-            if dist_entropy.mean() > self.target_entropy:
+            
+            # avoid entropy blowing up
+            if dist_entropy.mean() > self.target_entropy + 10.:
                 self.entropy_coeff = self.entropy_coeff * 0.1
-            else:
+            elif dist_entropy.mean() < self.target_entropy - 10.:
                 self.entropy_coeff = self.entropy_coeff * 10.
 
             ratios.append(ratio.mean().item())
             values.append(new_vs.mean().item())
             stds.append(std.mean().item())
 
-            # if np.abs(total_loss) >1000:
-            #     print(ratio.max(), logprob.shape, oldlogprob.shape)
-        
+
         infos[f'PPO policy loss'] = p_loss
         infos[f'PPO value loss'] = v_loss
         infos[f'PPO total loss'] = total_loss
@@ -536,6 +540,7 @@ class PPOContinuous(PPOBase):
         infos[f'policy std'] = np.mean(stds)
         infos[f'policy ratio'] = np.mean(ratios)
         infos[f'mean_value'] = np.mean(values)
+        infos[f'log_entropy_coeff'] = torch.log(self.entropy_coeff)
         self.data = [[] for _ in range(self._num_channel)]
 
         return total_loss, infos
