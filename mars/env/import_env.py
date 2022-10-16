@@ -259,7 +259,7 @@ def make_env(args, ss_vec=True):
 
     # video recorder: https://github.com/openai/gym/blob/master/gym/wrappers/record_video.py
     if not 'record_video_interval' in args.keys():
-        record_video_interval = int(1e2) 
+        record_video_interval = int(1e3) 
     else:
         record_video_interval =  int(args.record_video_interval)
     if not 'record_video_length' in args.keys():

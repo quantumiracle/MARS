@@ -55,7 +55,8 @@ train_start_frame = {  # for NFSP method only
 
 
 ppo_algorithm_spec = { # specs for PPO alg.
-    'episodic_update': True,  # as PPO is on-policy, it uses episodic update instead of update per timestep
+    'episodic_update': False,  # use epoch batch update instead of episodic update
+    'batch_update': 8000,
     'gamma': 0.99,
     'lambda': 0.95,
     'eps_clip': 0.2,

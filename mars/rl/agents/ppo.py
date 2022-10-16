@@ -530,10 +530,10 @@ class PPOContinuous(PPOBase):
             # self.coef_optimizer.step()
             
             # avoid entropy blowing up
-            if dist_entropy.mean() > self.target_entropy + 20.:
-                self.entropy_coeff = -self.ini_entropy_coeff
-            else:
-                self.entropy_coeff = self.ini_entropy_coeff
+            # if dist_entropy.mean() > self.target_entropy + 20.:
+            #     self.entropy_coeff = -self.ini_entropy_coeff
+            # else:
+            #     self.entropy_coeff = self.ini_entropy_coeff
 
             ratios.append(ratio.mean().item())
             values.append(new_vs.mean().item())
@@ -549,5 +549,7 @@ class PPOContinuous(PPOBase):
         infos[f'mean_value'] = np.mean(values)
         infos[f'entropy_coeff'] = self.entropy_coeff
         self.data = [[] for _ in range(self._num_channel)]
+
+        print(np.mean(stds), dist_entropy)
 
         return total_loss, infos
