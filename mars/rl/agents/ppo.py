@@ -47,28 +47,34 @@ class PPOBase(Agent):
         self.ini_entropy_coeff = float(args.algorithm_spec['entropy_coeff'])
         self.entropy_coeff = self.ini_entropy_coeff
         self.vf_coeff = float(args.algorithm_spec['vf_coeff'])
-
+        self.policy_logstd = None # only exist for continuous
         self._init_model(env, args)
-
-        self.optimizer = choose_optimizer(args.optimizer)(list(self.feature.parameters())+list(self.value.parameters())+list(self.policy.parameters()), lr=float(args.learning_rate))
+        self.optim_parameters = list(self.feature.parameters())+list(self.value.parameters())+list(self.policy.parameters())
+        if self.policy_logstd is not None:
+            # self.optim_parameters.append(self.policy_logstd)
+            self.optim_parameters += list(self.policy_logstd.parameters())
+        self.optimizer = choose_optimizer(args.optimizer)(self.optim_parameters, lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
         self._num_channel = args.num_envs*(env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0]) # env.num_agents is a list when using parallel envs 
         self.data = [[] for _ in range(self._num_channel)]
 
-    def _init_model(self, env, args):
-
+    def _init_model(self, env, args, policy_type=None):
+        if policy_type is not None:
+            self.policy_type = policy_type
         if len(self.observation_space.shape) <= 1:
-            feature_space = self.observation_space
-            self.feature = MLP(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device)
-            self.policy = MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
-            self.value = MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+            self.feature_space = self.observation_space
+            self.feature = MLP(env.observation_space, self.feature_space, args.net_architecture['feature'], model_for='feature').to(self.device)
+            self.policy = MLP(self.feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
+            self.value = MLP(self.feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         else:
-            feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
-            self.feature = CNN(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device)
-            self.policy = MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
-            self.value = MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+            self.feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
+            self.feature = CNN(env.observation_space, self.feature_space, args.net_architecture['feature'], model_for='feature').to(self.device)
+            self.policy = MLP(self.feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
+            self.value = MLP(self.feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
+        
         if args.num_process > 1:
+            self.feature.share_memory()
             self.policy.share_memory()
             self.value.share_memory()  
 
@@ -84,8 +90,7 @@ class PPOBase(Agent):
         :return: the logits/actions
         :rtype: List[ActionType]
         """ 
-        feature = self.feature(x)
-        return self.policy.forward(feature)
+        pass
 
     def v(
         self, 
@@ -99,7 +104,7 @@ class PPOBase(Agent):
         :rtype: List[float]
         """    
         feature = self.feature(x)    
-        return self.value.forward(feature)  
+        return self.value.forward(feature)   
     
     def reinit(self,):
         self.policy.reinit()
@@ -162,16 +167,22 @@ class PPOBase(Agent):
         try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version
             torch.save(self.feature.state_dict(), path+'_feature', _use_new_zipfile_serialization=False)
             torch.save(self.policy.state_dict(), path+'_policy', _use_new_zipfile_serialization=False)
+            if self.policy_logstd is not None:
+                torch.save(self.policy_logstd, path+'_policy_logstd', _use_new_zipfile_serialization=False)
             torch.save(self.value.state_dict(), path+'_value', _use_new_zipfile_serialization=False)
         except:
             torch.save(self.feature.state_dict(), path+'_feature')
             torch.save(self.policy.state_dict(), path+'_policy')
+            if self.policy_logstd is not None:
+                torch.save(self.policy_logstd, path+'_policy_logstd')
             torch.save(self.value.state_dict(), path+'_value')
 
 
     def load_model(self, path=None):
         self.feature.load_state_dict(torch.load(path+'_feature'))
         self.policy.load_state_dict(torch.load(path+'_policy'))
+        if self.policy_logstd is not None:
+            self.policy_logstd = torch.load(path+'_policy_logstd')
         self.value.load_state_dict(torch.load(path+'_value'))
 
 
@@ -204,6 +215,21 @@ class PPODiscrete(PPOBase):
             a = dist.sample()
             logprob = dist.log_prob(a)
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
+
+    def pi(
+        self, 
+        x: List[StateType]
+        ) -> List[ActionType]:
+        """ Forward the policy network.
+
+        :param x: input of the policy network, i.e. the state
+        :type x: List[StateType]
+        :return: the logits/actions
+        :rtype: List[ActionType]
+        """ 
+        feature = self.feature(x)
+        return self.policy.forward(feature)
+
 
     # def update(self):
     #     infos = {}
@@ -351,7 +377,7 @@ class PPODiscrete(PPOBase):
             self.optimizer.zero_grad()
             mean_loss = loss.mean()
             mean_loss.backward()
-            nn.utils.clip_grad_norm_(list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
+            nn.utils.clip_grad_norm_(self.optim_parameters, self.max_grad_norm)
             self.optimizer.step()
 
             total_loss += mean_loss.item()
@@ -383,6 +409,38 @@ class PPOContinuous(PPOBase):
         # self.entropy_coeff = self.log_entropy_coef.exp().item()
         # self.coef_optimizer = optim.Adam([self.log_entropy_coef], lr=float(args.learning_rate))
 
+    def _init_model(self, env, args):
+        super()._init_model(env, args, policy_type='independent_gaussian_policy')
+        # action_space = env.action_space[0] if isinstance(env.action_space, list) else env.action_space
+        # self.policy_logstd = nn.Parameter(torch.zeros((1, np.prod(action_space.shape)), requires_grad=True, device=self.device))
+        
+        # state-specific std is found to perform much better than parameter only
+        self.policy_logstd = MLP(self.feature_space, env.action_space, args.net_architecture['policy'], model_for='independent_gaussian_policy').to(self.device)
+        if args.num_process > 1:
+            self.policy_logstd.share_memory()
+
+    def pi(
+        self, 
+        x: List[StateType]
+        ) -> List[ActionType]:
+        """ Forward the policy network.
+
+        :param x: input of the policy network, i.e. the state
+        :type x: List[StateType]
+        :return: the logits/actions
+        :rtype: List[ActionType]
+        """ 
+        feature = self.feature(x)
+        policy_mean = self.policy.forward(feature)
+        policy_mean = torch.tanh(policy_mean)
+        if len(policy_mean.shape) > 2:
+            policy_mean = policy_mean.squeeze()
+        # policy_logstd = self.policy_logstd.expand_as(policy_mean)
+        policy_logstd = self.policy_logstd(feature.detach())
+        if len(policy_logstd.shape) > 2:
+            policy_logstd = policy_logstd.squeeze()
+        return policy_mean, policy_logstd
+
     def choose_action(
         self, 
         s: StateType, 
@@ -397,12 +455,8 @@ class PPOContinuous(PPOBase):
         :return: the actions
         :rtype: List[ActionType]
         """
-        logits = self.pi(torch.from_numpy(s).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
-        if len(logits.shape) > 2:
-            logits = logits.squeeze()
-        mean = torch.tanh(logits[:, :self.action_dim])
-        log_std = logits[:, self.action_dim:]  # no tanh on log var
-        log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
+        mean, policy_logstd = self.pi(torch.from_numpy(s).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
+        log_std = torch.clamp(policy_logstd, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
         std = log_std.exp()
 
         if Greedy:
@@ -419,11 +473,9 @@ class PPOContinuous(PPOBase):
             # a = mean + std*z
             # logprob = Normal(mean, std).log_prob(a)
             # logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
-
             normal = Normal(mean, std)
             a = normal.sample()
             logprob = normal.log_prob(a).sum(-1)
-
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
 
     def get_log_prob(self, mean, std, action):
@@ -489,12 +541,8 @@ class PPOContinuous(PPOBase):
         for _ in range(self.K_epoch):
             new_vs = self.v(s)
 
-            logits = self.pi(s)
-            if len(logits.shape) > 2:
-                logits = logits.squeeze()
-            mean = torch.tanh(logits[:, :self.action_dim])
-            log_std = logits[:, self.action_dim:]  # no tanh on log var
-            log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
+            mean, policy_logstd = self.pi(s)
+            log_std = torch.clamp(policy_logstd, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
             std = log_std.exp()            
             
             # cov = torch.diag_embed(var)
@@ -520,7 +568,7 @@ class PPOContinuous(PPOBase):
 
             self.optimizer.zero_grad()
             mean_loss.backward()
-            nn.utils.clip_grad_norm_(list(self.feature.parameters())+list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
+            nn.utils.clip_grad_norm_(self.optim_parameters, self.max_grad_norm)
             self.optimizer.step()
 
             # print(self.entropy_coeff, dist_entropy)
@@ -538,7 +586,6 @@ class PPOContinuous(PPOBase):
             ratios.append(ratio.mean().item())
             values.append(new_vs.mean().item())
             stds.append(std.mean().item())
-
 
         infos[f'PPO policy loss'] = p_loss
         infos[f'PPO value loss'] = v_loss

@@ -51,6 +51,8 @@ class NetBase(nn.Module):
     def _get_output_dim(self, model_for):  
         if model_for == 'gaussian_policy':  # diagonal Gaussian: means and stds
             return 2*self._action_dim 
+        elif model_for == 'independent_gaussian_policy': # std is handled independently
+            return self._action_dim  
         elif model_for == 'discrete_policy':  # categorical
             return self._action_dim
         elif model_for in ['discrete_q', 'feature']: 
