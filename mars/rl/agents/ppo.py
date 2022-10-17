@@ -550,6 +550,4 @@ class PPOContinuous(PPOBase):
         infos[f'entropy_coeff'] = self.entropy_coeff
         self.data = [[] for _ in range(self._num_channel)]
 
-        print(np.mean(stds), dist_entropy)
-
         return total_loss, infos
