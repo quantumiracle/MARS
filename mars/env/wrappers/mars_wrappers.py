@@ -330,6 +330,7 @@ class Gym2AgentAdversarialWrapper():
         self.action_space = self.env.action_space
         self.action_spaces = {name: self.action_space for name in self.agents}
         self.adversarial_coef = 0.1 # adversarial action scale
+        self.metadata = env.metadata
     
     @property
     def spec(self):
