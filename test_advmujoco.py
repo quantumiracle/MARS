@@ -6,7 +6,7 @@ from mars.rollout import rollout
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
 
-game_type = 'adv_mujoco'
+game_type = 'advmujoco'
 
 game = ['ant_v2'][0]
 
