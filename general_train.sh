@@ -10,7 +10,7 @@ declare -a envs=('advmujoco_ant_v2')
 
 # declare -a methods=('selfplay' 'fictitious_selfplay' 'psro' 'nfsp' 'nash_ppo' 'nash_dqn' 'nash_dqn_exploiter')
 
-declare -a methods=('nash_dqn')
+declare -a methods=('nash_ppo')
 
 mkdir -p log/$DATE
 
