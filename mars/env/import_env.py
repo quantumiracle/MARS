@@ -34,7 +34,7 @@ import numpy as np
 
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, NormalizeReward, TransformObservation, NormalizeObservation, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
-     Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper, ZeroSumWrapper, zero_sum_reward_filer
+     Gym2AgentWrapper, Gym2AgentAdversarialWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper, ZeroSumWrapper, zero_sum_reward_filer
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 from .wrappers.lasertag_wrappers import LaserTagWrapper
 from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_mdp
@@ -194,6 +194,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         else:
             mode = 'rgb_array'
         env = RoboSumoWrapper(env, mode)
+        # these wrappers work for multi-agent as well, stats are maintained for each agent individually
         env = NormalizeObservation(env) # according to original paper: https://arxiv.org/pdf/1710.03641.pdf
         env = TransformObservation(env, lambda obs: np.clip(obs, -5., 5.))
         env = NormalizeReward(env)
@@ -206,7 +207,12 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             print(f"Error: No such env in Openai Gym: {env_name}!") 
         # may need more wrappers here, e.g. Pong-ram-v0 need scaled observation!
         # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
-        env = Gym2AgentWrapper(env)
+
+        if args.adversarial:
+            env = Gym2AgentAdversarialWrapper(env)
+        else:
+            env = Gym2AgentWrapper(env)
+     
 
     elif env_type == 'safetygym':
         import safety_gym

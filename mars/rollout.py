@@ -182,7 +182,6 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     if loss is not None:
                         logger.log_loss(loss)
                         logger.log_info(infos)
-
             ## done break: needs to go after everything else， including the update
             if np.any(
                     done

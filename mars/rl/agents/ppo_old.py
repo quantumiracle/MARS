@@ -393,53 +393,41 @@ class PPODiscrete(PPOBase):
 
         return total_loss, infos
 
+
 class PPOContinuous(PPOBase):
     """ PPO agorithm for environments with continuous action space.
     """ 
     def __init__(self, env, args):
         super().__init__(env, args)
-        # target entropy set according to SAC: https://arxiv.org/pdf/1812.05905.pdf
-        try:
-            self.target_entropy = -torch.prod(torch.Tensor(env.action_space.shape).to(self.device)).detach()
-        except:
-            self.target_entropy = -torch.prod(torch.Tensor(env.action_space[0].shape).to(self.device)).detach()
         self.log_std_min = -20
         self.log_std_max = 2
-        # self.log_entropy_coef = torch.zeros(1, requires_grad=True, device=self.device)
-        # self.entropy_coeff = self.log_entropy_coef.exp().item()
-        # self.coef_optimizer = optim.Adam([self.log_entropy_coef], lr=float(args.learning_rate))
-
-    def _init_model(self, env, args):
-        super()._init_model(env, args, policy_type='independent_gaussian_policy')
-        # action_space = env.action_space[0] if isinstance(env.action_space, list) else env.action_space
-        # self.policy_logstd = nn.Parameter(torch.zeros((1, np.prod(action_space.shape)), requires_grad=True, device=self.device))
-        
-        # state-specific std is found to perform much better than parameter only
-        self.policy_logstd = MLP(self.feature_space, env.action_space, args.net_architecture['policy'], model_for='independent_gaussian_policy').to(self.device)
-        if args.num_process > 1:
-            self.policy_logstd.share_memory()
+    
 
     def pi(
         self, 
         x: List[StateType]
         ) -> List[ActionType]:
         """ Forward the policy network.
-
         :param x: input of the policy network, i.e. the state
         :type x: List[StateType]
         :return: the logits/actions
         :rtype: List[ActionType]
         """ 
         feature = self.feature(x)
-        policy_mean = self.policy.forward(feature)
-        policy_mean = torch.tanh(policy_mean)
-        if len(policy_mean.shape) > 2:
-            policy_mean = policy_mean.squeeze()
-        # policy_logstd = self.policy_logstd.expand_as(policy_mean)
-        policy_logstd = self.policy_logstd(feature.detach())
-        if len(policy_logstd.shape) > 2:
-            policy_logstd = policy_logstd.squeeze()
-        return policy_mean, policy_logstd
+        return self.policy.forward(feature)
+
+    def v(
+        self, 
+        x: List[StateType]
+        ) -> List[float]:
+        """ Forward the value network.
+        :param x: input of the value network, i.e. the state
+        :type x: List[StateType]
+        :return: a list of values for each state
+        :rtype: List[float]
+        """    
+        feature = self.feature(x)    
+        return self.value.forward(feature)  
 
     def choose_action(
         self, 
@@ -447,7 +435,6 @@ class PPOContinuous(PPOBase):
         Greedy: bool = False
         ) -> List[ActionType]:
         """Choose action give state.
-
         :param s: observed state from the agent
         :type s: List[StateType]
         :param Greedy: whether adopt greedy policy (no randomness for exploration) or not, defaults to False
@@ -455,9 +442,13 @@ class PPOContinuous(PPOBase):
         :return: the actions
         :rtype: List[ActionType]
         """
-        mean, policy_logstd = self.pi(torch.from_numpy(s).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
-        log_std = torch.clamp(policy_logstd, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
-        std = log_std.exp()
+        logits = self.pi(torch.from_numpy(s).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
+        if len(logits.shape) > 2:
+            logits = logits.squeeze()
+        mean = torch.tanh(logits[:, :self.action_dim])
+        log_std = logits[:, self.action_dim:]  # no tanh on log var
+        log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
+        var = log_std.exp()
 
         if Greedy:
             a = mean.detach().cpu().numpy()
@@ -468,14 +459,17 @@ class PPOContinuous(PPOBase):
             # a = dist.sample()
             # logprob = dist.log_prob(a)
             
+            std = var # here we fake the std
             # normal = Normal(0, 1)
             # z      = normal.sample()
             # a = mean + std*z
             # logprob = Normal(mean, std).log_prob(a)
             # logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
+
             normal = Normal(mean, std)
             a = normal.sample()
             logprob = normal.log_prob(a).sum(-1)
+
             return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
 
     def get_log_prob(self, mean, std, action):
@@ -486,7 +480,6 @@ class PPOContinuous(PPOBase):
     def update(self):
         infos = {}
         total_loss, p_loss, v_loss = 0., 0., 0.
-        ratios, values, stds = [], [], []
         self.data = [x for x in self.data if x]  # remove empty
         
         s,a,r,s_prime,oldlogprob,done_mask = [],[],[],[],[],[]
@@ -496,7 +489,7 @@ class PPOContinuous(PPOBase):
         s_prime = torch.tensor(s_prime).to(self.device)
         oldlogprob = torch.tensor(oldlogprob).to(self.device)
         done_mask = torch.tensor(done_mask).to(self.device)
-
+    
         for data in self.data: # iterate over data from different environments
             traj_s, traj_a, traj_r, traj_s_prime, traj_oldlogprob, traj_done_mask = self.make_batch(data)
             s = torch.cat([s, traj_s])
@@ -505,16 +498,17 @@ class PPOContinuous(PPOBase):
             s_prime = torch.cat([s_prime, traj_s_prime])
             oldlogprob = torch.cat([oldlogprob, traj_oldlogprob])
             done_mask = torch.cat([done_mask, traj_done_mask])
+        
         done_mask_ = torch.flip(done_mask, dims=(0,))
+        for _ in range(self.K_epoch):
+            vs = self.v(s)
 
-        # the target value calculation should be outside epochs of update (more stable)
-        with torch.no_grad():
-            vs = self.v(s).squeeze(dim=-1)
-            vs_prime = self.v(s_prime).squeeze(dim=-1)
             if self.GAE:
                 # use generalized advantage estimation
+                vs_prime = self.v(s_prime).squeeze(dim=-1)
                 assert vs_prime.shape == done_mask.shape
-                delta = r + self.gamma * vs_prime * done_mask - vs
+                vs_target = r + self.gamma * vs_prime * done_mask
+                delta = vs_target - vs.squeeze(dim=-1)
                 delta = delta.detach()
                 advantage_lst = []
                 advantage = 0.0
@@ -523,52 +517,42 @@ class PPOContinuous(PPOBase):
                     advantage_lst.append(advantage)
                 advantage_lst.reverse()
                 advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                vs_target = advantage + vs
 
             else:
                 rewards = []
                 discounted_r = 0
-                for reward, is_continue in zip(reversed(r), done_mask_):
+                for reward, is_continue in zip(reversed(r), reversed(done_mask)):
                     if not is_continue:
                         discounted_r = 0
                     discounted_r = reward + self.gamma * discounted_r
                     rewards.insert(0, discounted_r)  # insert in front, cannot use append
                 rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
-                advantage = rewards - vs.detach()
+                advantage = rewards - vs.squeeze(dim=-1).detach()
                 vs_target = rewards
 
-            advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
+            advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)
 
-        for _ in range(self.K_epoch):
-            new_vs = self.v(s).squeeze(dim=-1)
-
-            mean, policy_logstd = self.pi(s)
-            log_std = torch.clamp(policy_logstd, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
-            std = log_std.exp()            
-            
+            logits = self.pi(s)
+            if len(logits.shape) > 2:
+                logits = logits.squeeze()
+            mean = torch.tanh(logits[:, :self.action_dim])
+            log_std = logits[:, self.action_dim:]  # no tanh on log var
+            log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
+            var = log_std.exp()            
             # cov = torch.diag_embed(var)
             # dist = MultivariateNormal(mean, cov)
             # dist_entropy = dist.entropy()
             # logprob = dist.log_prob(a)
-
+            std = var # here we fake the std
             logprob = self.get_log_prob(mean, std, a.squeeze())
             dist_entropy = Normal(mean, std).entropy()
-            dist_entropy = dist_entropy.sum(dim=-1, keepdim=True).mean()  # reduce dim
+            dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
 
             ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())  # squeeze is important to keep dim
-            surr1 = -ratio * advantage
-            surr2 = -torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-            policy_loss = torch.max(surr1, surr2).mean()
-
-            # value_loss = self.mseLoss(new_vs , vs_target.detach())
-
-            # clipped value loss
-            v_clipped = vs + torch.clamp(new_vs - vs, -self.eps_clip, self.eps_clip)
-            value_loss_clipped = (v_clipped - vs_target.detach()) ** 2
-            value_loss_unclipped = (new_vs - vs_target.detach()) ** 2
-            value_loss_max = torch.max(value_loss_unclipped, value_loss_clipped)
-            value_loss =  0.5 * value_loss_max.mean()
-
+            surr1 = ratio * advantage
+            surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
+            policy_loss = -torch.min(surr1, surr2).mean()
+            value_loss = self.mseLoss(vs.squeeze(dim=-1) , vs_target.detach())
             loss = policy_loss + self.vf_coeff*value_loss - self.entropy_coeff*dist_entropy
             mean_loss = loss.mean()
 
@@ -578,33 +562,16 @@ class PPOContinuous(PPOBase):
 
             self.optimizer.zero_grad()
             mean_loss.backward()
-            nn.utils.clip_grad_norm_(self.optim_parameters, self.max_grad_norm)
+            nn.utils.clip_grad_norm_(list(self.feature.parameters())+list(self.value.parameters())+list(self.policy.parameters()), self.max_grad_norm)
             self.optimizer.step()
 
-            # print(self.entropy_coeff, dist_entropy)
-            # coef_loss = - (self.log_entropy_coef * (logprob + self.target_entropy).detach()).mean() # SAC auto entropy coeff loss
-            # self.coef_optimizer.zero_grad()
-            # coef_loss.backward()
-            # self.coef_optimizer.step()
-            
-            # avoid entropy blowing up
-            # if dist_entropy.mean() > self.target_entropy + 20.:
-            #     self.entropy_coeff = -self.ini_entropy_coeff
-            # else:
-            #     self.entropy_coeff = self.ini_entropy_coeff
-
-            ratios.append(ratio.mean().item())
-            values.append(new_vs.mean().item())
-            stds.append(std.mean().item())
-
+            # if np.abs(total_loss) >1000:
+            #     print(ratio.max(), logprob.shape, oldlogprob.shape)
+        
         infos[f'PPO policy loss'] = p_loss
         infos[f'PPO value loss'] = v_loss
         infos[f'PPO total loss'] = total_loss
         infos[f'policy entropy'] = dist_entropy
-        infos[f'policy std'] = np.mean(stds)
-        infos[f'policy ratio'] = np.mean(ratios)
-        infos[f'mean_value'] = np.mean(values)
-        infos[f'entropy_coeff'] = self.entropy_coeff
         self.data = [[] for _ in range(self._num_channel)]
 
         return total_loss, infos

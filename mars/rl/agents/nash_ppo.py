@@ -53,9 +53,9 @@ class NashPPOBase(Agent):
         self._init_model(env, args)
         self.args = args
         print(f'Feature networks: ', self.feature_nets,
-                'Policy networks: ', self.policies,
-                'Value networks: ', self.values,
-                'Common layers: ', self.common_layers)
+                '\nPolicy networks: ', self.policies,
+                '\nValue networks: ', self.values,
+                '\nCommon layers: ', self.common_layers)
 
         policy_params, value_params, common_val_params, feature_net_param = [], [], [], []
         for f, p, v in zip(self.feature_nets, self.policies, self.values):
@@ -523,7 +523,7 @@ class NashPPOContinuous(NashPPOBase):
         for data in self.data:  # iterate over data from different environments
             traj_s, traj_a, traj_r, traj_s_prime, traj_oldlogprob, traj_done_mask = self.make_batch(data)
             s = torch.cat([s, traj_s])
-            a = torch.cat([a, traj_a])
+            a = torch.cat([a, traj_a.view(traj_a.shape[0],2,-1)])
             r = torch.cat([r, traj_r])
             s_prime = torch.cat([s_prime, traj_s_prime])
             oldlogprob = torch.cat([oldlogprob, traj_oldlogprob])
@@ -536,7 +536,6 @@ class NashPPOContinuous(NashPPOBase):
             else:
                 s_ = s  # shape: (batch, agents, envs, C, H, W)
                 s_prime_ = s_prime   
-            a = a.view(a.shape[0], 2, -1)
 
         done_mask_ = torch.flip(done_mask, dims=(0,))
 
@@ -548,22 +547,24 @@ class NashPPOContinuous(NashPPOBase):
                 feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
             else:
                 feature_x = self.feature_nets[i](s_[:, i])
-                feature_x_prime = self.feature_nets[i](s_prime_[:, i])                        
-            vs = self.v(feature_x, i)  # take the state for the specific agent
-            vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
-            assert vs_prime.shape == done_mask.shape
-            r = r.detach()
-            vs_target = r[:, i] + self.gamma * vs_prime * done_mask
-            delta = vs_target - vs.squeeze(dim=-1)
-            advantage_lst = []
-            advantage = 0.0
-            for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
-                advantage = self.gamma * self.lmbda * advantage * mask + delta_t
-                advantage_lst.append(advantage)
-            advantage_lst.reverse()
-            advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-            advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
-            advantage = advantage.detach()
+                feature_x_prime = self.feature_nets[i](s_prime_[:, i])    
+            with torch.no_grad():                        
+                vs = self.v(feature_x, i)  # take the state for the specific agent
+                vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
+                assert vs_prime.shape == done_mask.shape
+                r = r.detach()
+                vs_target = r[:, i] + self.gamma * vs_prime * done_mask
+                delta = vs_target - vs.squeeze(dim=-1)
+                advantage_lst = []
+                advantage = 0.0
+                for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                    advantage = self.gamma * self.lmbda * advantage * mask + delta_t
+                    advantage_lst.append(advantage)
+                advantage_lst.reverse()
+                advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
+                advantage = advantage.detach()
+                vs_target = advantage + vs
 
         ratios = [[] for _ in range(self.num_agents)]
         values = [[] for _ in range(self.num_agents)]
@@ -593,9 +594,16 @@ class NashPPOContinuous(NashPPOBase):
                 ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
                 surr1 = ratio * advantage
                 surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
-                # print(surr1.shape, surr2.shape, new_vs.squeeze(dim=-1).shape, vs_target.shape, ratio.shape, advantage.shape, dist_entropy.shape)
                 policy_loss = -torch.min(surr1, surr2).mean()
-                value_loss = F.mse_loss(new_vs.squeeze(dim=-1), vs_target.detach())
+                # value_loss = F.mse_loss(new_vs.squeeze(dim=-1), vs_target.detach())
+
+                # clipped value loss
+                v_clipped = vs + torch.clamp(new_vs - vs, -self.eps_clip, self.eps_clip)
+                value_loss_clipped = (v_clipped - vs_target.detach()) ** 2
+                value_loss_unclipped = (new_vs - vs_target.detach()) ** 2
+                value_loss_max = torch.max(value_loss_unclipped, value_loss_clipped)
+                value_loss =  0.5 * value_loss_max.mean()
+
                 ppo_loss = policy_loss + self.vf_coeff * value_loss - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
                 ppo_loss = ppo_loss.mean()
 
@@ -623,22 +631,24 @@ class NashPPOContinuous(NashPPOBase):
                 feature_x_list.append(feature_x)
                 feature_x_prime_list.append(feature_x_prime)     
 
-            vs_prime = self.common_layers(torch.cat(feature_x_prime_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
-            assert vs_prime.shape == done_mask.shape
-            common_vs = self.common_layers(torch.cat(feature_x_list, axis=1))  # TODO just use the first state (assume it has full info)
-            common_vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
-            # calculate generalized advantage with common layer value
-            delta = common_vs_target - common_vs.squeeze(dim=-1)
-            delta = delta.detach()
-            advantage_lst = []
-            advantage = 0.0
-            for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
-                advantage = self.gamma * self.lmbda * advantage * mask + delta_t
-                advantage_lst.append(advantage)
-            advantage_lst.reverse()
-            advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-            advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
-            advantage = advantage.detach()
+            with torch.no_grad():            
+                vs_prime = self.common_layers(torch.cat(feature_x_prime_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
+                assert vs_prime.shape == done_mask.shape
+                common_vs = self.common_layers(torch.cat(feature_x_list, axis=1))  # TODO just use the first state (assume it has full info)
+                common_vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
+                # calculate generalized advantage with common layer value
+                delta = common_vs_target - common_vs.squeeze(dim=-1)
+                delta = delta.detach()
+                advantage_lst = []
+                advantage = 0.0
+                for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                    advantage = self.gamma * self.lmbda * advantage * mask + delta_t
+                    advantage_lst.append(advantage)
+                advantage_lst.reverse()
+                advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
+                advantage = advantage.detach()
+                common_vs_target = advantage + common_vs
 
             new_common_vs = self.common_layers(torch.cat(feature_x_list, axis=1))  # TODO just use the first state (assume it has full info)
             common_layer_loss = F.mse_loss(new_common_vs.squeeze(dim=-1), common_vs_target.detach()).mean()

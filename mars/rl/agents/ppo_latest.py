@@ -508,39 +508,38 @@ class PPOContinuous(PPOBase):
         done_mask_ = torch.flip(done_mask, dims=(0,))
 
         # the target value calculation should be outside epochs of update (more stable)
-        with torch.no_grad():
-            vs = self.v(s).squeeze(dim=-1)
-            vs_prime = self.v(s_prime).squeeze(dim=-1)
-            if self.GAE:
-                # use generalized advantage estimation
-                assert vs_prime.shape == done_mask.shape
-                delta = r + self.gamma * vs_prime * done_mask - vs
-                delta = delta.detach()
-                advantage_lst = []
-                advantage = 0.0
-                for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_): # reverse the delta along the time sequence in an episodic data
-                    advantage = self.gamma * self.lmbda * advantage * mask + delta_t
-                    advantage_lst.append(advantage)
-                advantage_lst.reverse()
-                advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                vs_target = advantage + vs
+        vs = self.v(s)
+        vs_prime = self.v(s_prime).squeeze(dim=-1)
+        if self.GAE:
+            # use generalized advantage estimation
+            assert vs_prime.shape == done_mask.shape
+            delta = r + self.gamma * vs_prime * done_mask - vs.squeeze(dim=-1)
+            delta = delta.detach()
+            advantage_lst = []
+            advantage = 0.0
+            for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_): # reverse the delta along the time sequence in an episodic data
+                advantage = self.gamma * self.lmbda * advantage * mask + delta_t
+                advantage_lst.append(advantage)
+            advantage_lst.reverse()
+            advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+            vs_target = advantage + vs.squeeze(dim=-1) 
 
-            else:
-                rewards = []
-                discounted_r = 0
-                for reward, is_continue in zip(reversed(r), done_mask_):
-                    if not is_continue:
-                        discounted_r = 0
-                    discounted_r = reward + self.gamma * discounted_r
-                    rewards.insert(0, discounted_r)  # insert in front, cannot use append
-                rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
-                advantage = rewards - vs.detach()
-                vs_target = rewards
+        else:
+            rewards = []
+            discounted_r = 0
+            for reward, is_continue in zip(reversed(r), done_mask_):
+                if not is_continue:
+                    discounted_r = 0
+                discounted_r = reward + self.gamma * discounted_r
+                rewards.insert(0, discounted_r)  # insert in front, cannot use append
+            rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
+            advantage = rewards - vs.squeeze(dim=-1).detach()
+            vs_target = rewards
 
-            advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
+        advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
 
         for _ in range(self.K_epoch):
-            new_vs = self.v(s).squeeze(dim=-1)
+            new_vs = self.v(s)
 
             mean, policy_logstd = self.pi(s)
             log_std = torch.clamp(policy_logstd, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
@@ -556,19 +555,10 @@ class PPOContinuous(PPOBase):
             dist_entropy = dist_entropy.sum(dim=-1, keepdim=True).mean()  # reduce dim
 
             ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())  # squeeze is important to keep dim
-            surr1 = -ratio * advantage
-            surr2 = -torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
-            policy_loss = torch.max(surr1, surr2).mean()
-
-            # value_loss = self.mseLoss(new_vs , vs_target.detach())
-
-            # clipped value loss
-            v_clipped = vs + torch.clamp(new_vs - vs, -self.eps_clip, self.eps_clip)
-            value_loss_clipped = (v_clipped - vs_target.detach()) ** 2
-            value_loss_unclipped = (new_vs - vs_target.detach()) ** 2
-            value_loss_max = torch.max(value_loss_unclipped, value_loss_clipped)
-            value_loss =  0.5 * value_loss_max.mean()
-
+            surr1 = ratio * advantage
+            surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
+            policy_loss = -torch.min(surr1, surr2).mean()
+            value_loss = self.mseLoss(new_vs.squeeze(dim=-1) , vs_target.detach())
             loss = policy_loss + self.vf_coeff*value_loss - self.entropy_coeff*dist_entropy
             mean_loss = loss.mean()
 
