@@ -306,6 +306,7 @@ class Gym2AgentWrapper():
         np.random.seed(seed)
 
     def render(self,):
+        print(self.env.render())
         return self.env.render()
 
     def step(self, actions):

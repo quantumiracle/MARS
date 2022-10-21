@@ -176,7 +176,10 @@ def get_args():
         if len(default_args.wandb_group) == 0:
             default_args.wandb_group = str(default_args.save_id)
         if len(default_args.wandb_name) == 0:
-            default_args.wandb_name = '_'.join((default_args.env_type, default_args.env_name, default_args.marl_method, str(default_args.save_id)))
+            try: # multi-agent
+                default_args.wandb_name = '_'.join((default_args.env_type, default_args.env_name, default_args.marl_method, str(default_args.save_id)))
+            except: # single-agent
+                default_args.wandb_name = '_'.join((default_args.env_type, default_args.env_name, default_args.algorithm, str(default_args.save_id)))
         init_wandb(default_args)
         
     return default_args

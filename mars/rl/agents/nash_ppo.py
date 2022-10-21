@@ -634,10 +634,10 @@ class NashPPOContinuous(NashPPOBase):
             with torch.no_grad():            
                 vs_prime = self.common_layers(torch.cat(feature_x_prime_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
                 assert vs_prime.shape == done_mask.shape
-                common_vs = self.common_layers(torch.cat(feature_x_list, axis=1))  # TODO just use the first state (assume it has full info)
+                common_vs = self.common_layers(torch.cat(feature_x_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
                 common_vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
                 # calculate generalized advantage with common layer value
-                delta = common_vs_target - common_vs.squeeze(dim=-1)
+                delta = common_vs_target - common_vs
                 delta = delta.detach()
                 advantage_lst = []
                 advantage = 0.0
@@ -653,7 +653,6 @@ class NashPPOContinuous(NashPPOBase):
             new_common_vs = self.common_layers(torch.cat(feature_x_list, axis=1))  # TODO just use the first state (assume it has full info)
             common_layer_loss = F.mse_loss(new_common_vs.squeeze(dim=-1), common_vs_target.detach()).mean()
             nash_v_loss += common_layer_loss.item()
-
             ratio_list = []
             for i in range(2):  # get the ratio for both
                 logprob, _ = self.get_action_log_prob(a, feature_x_list[i], i)

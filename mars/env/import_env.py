@@ -311,7 +311,7 @@ def make_env(args, ss_vec=True):
             env = VectorEnv([lambda: single_env for _ in range(args.num_envs)])
             if args.record_video:
                 env.is_vector_env = True
-                # record single env if multiple envs are used
+                # record single env if multiple envs are used TODO
                 env.metadata = single_env.metadata
                 single_env = gym.wrappers.RecordVideo(single_env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
                         # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
