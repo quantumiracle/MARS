@@ -56,7 +56,7 @@ train_start_frame = {  # for NFSP method only
 
 ppo_algorithm_spec = { # specs for PPO alg.
     'episodic_update': False,  # use epoch batch update instead of episodic update
-    'batch_update': 8000,
+    'batch_update': 1280,
     'gamma': 0.99,
     'lambda': 0.95,
     'eps_clip': 0.2,
@@ -72,17 +72,17 @@ ppo_algorithm_spec = { # specs for PPO alg.
 ppo_net_architecture = {
     'feature':{
       'hidden_dim_list': [128, 128],
-      'hidden_activation': 'ReLU',
+      'hidden_activation': 'Tanh',
       'output_activation': False,
     },
     'policy':{
       'hidden_dim_list': [128],
-      'hidden_activation': False,
-      'output_activation': 'Tanh',  # for continuous env, action range -1, 1
+      'hidden_activation': 'Tanh',
+      'output_activation': False, 
     },
     'value': {
       'hidden_dim_list': [128],
-      'hidden_activation': 'ReLU',
+      'hidden_activation': 'Tanh',
       'output_activation': False,
     }
 
@@ -94,17 +94,17 @@ cnn_ppo_net_architecture = {
     'channel_list': [32, 64, 64],
     'kernel_size_list': [8, 4, 3],
     'stride_list': [4, 2, 1],
-      'hidden_activation': 'ReLU',
+      'hidden_activation': 'Tanh',
       'output_activation': False,
     },
     'policy':{
       'hidden_dim_list': [512,],
-      'hidden_activation': False,
-      'output_activation': 'Tanh',   # for continuous env, action range -1, 1
+      'hidden_activation': 'Tanh',
+      'output_activation': False,  
     },
     'value': {
       'hidden_dim_list': [512,],
-      'hidden_activation': 'ReLU',
+      'hidden_activation': 'Tanh',
       'output_activation': False,
     }
 
@@ -145,7 +145,7 @@ for game in games:
 
         conf['env_args']['num_envs'] = 5
         conf['train_args']['max_episodes'] = 10000
-        conf['train_args']['max_steps_per_episode'] = 300 # truncated game for speed up
+        conf['train_args']['max_steps_per_episode'] = 10000 # truncated game for speed up
         conf['agent_args']['algorithm_spec']['eps_decay'] = 10*conf['train_args']['max_episodes']  # proper for training 10000 episodes
         conf['agent_args']['algorithm_spec']['multi_step'] = 1
 
