@@ -145,7 +145,7 @@ for game in games:
 
         conf['env_args']['num_envs'] = 5
         conf['train_args']['max_episodes'] = 10000
-        conf['train_args']['max_steps_per_episode'] = 300 # truncated game for speed up
+        conf['train_args']['max_steps_per_episode'] = 10000 # truncated game for speed up
         conf['agent_args']['algorithm_spec']['eps_decay'] = 10*conf['train_args']['max_episodes']  # proper for training 10000 episodes
         conf['agent_args']['algorithm_spec']['multi_step'] = 1
 
