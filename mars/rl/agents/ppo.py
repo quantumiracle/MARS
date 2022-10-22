@@ -77,6 +77,8 @@ class PPOBase(Agent):
             self.feature.share_memory()
             self.policy.share_memory()
             self.value.share_memory()  
+            if self.policy_logstd is not None:
+                self.policy_logstd.share_memory()  
 
 
     def pi(
@@ -152,7 +154,7 @@ class PPOBase(Agent):
             done_lst.append(done_mask)
         a_lst = np.array(a_lst)
         r_lst = np.array(r_lst)
-        done_mask = np.array(done_mask)
+        done_lst = np.array(done_lst)
         prob_a_lst = np.array(prob_a_lst)
         # found this step take some time for Pong (not ram), even if no parallel no multiagent
         s,a,r,s_prime,prob_a,done_mask =    torch.tensor(s_lst, dtype=torch.float).to(self.device), torch.tensor(a_lst).to(self.device), \
@@ -326,7 +328,7 @@ class PPODiscrete(PPOBase):
             r = torch.cat([r, traj_r])
             s_prime = torch.cat([s_prime, traj_s_prime])
             oldlogprob = torch.cat([oldlogprob, traj_oldlogprob])
-            done_mask = torch.cat([done_mask, traj_done_mask])
+            done_mask = torch.cat([done_mask, traj_done_mask])  # 0 if done
         
         done_mask_ = torch.flip(done_mask, dims=(0,))
 
@@ -504,26 +506,40 @@ class PPOContinuous(PPOBase):
             r = torch.cat([r, traj_r])
             s_prime = torch.cat([s_prime, traj_s_prime])
             oldlogprob = torch.cat([oldlogprob, traj_oldlogprob])
-            done_mask = torch.cat([done_mask, traj_done_mask])
+            done_mask = torch.cat([done_mask, traj_done_mask])  # 0 if done
         done_mask_ = torch.flip(done_mask, dims=(0,))
 
         # the target value calculation should be outside epochs of update (more stable)
         with torch.no_grad():
             vs = self.v(s).squeeze(dim=-1)
-            vs_prime = self.v(s_prime).squeeze(dim=-1)
+            advantage = torch.zeros_like(r)
+            lastgaelam = 0
             if self.GAE:
-                # use generalized advantage estimation
-                assert vs_prime.shape == done_mask.shape
-                delta = r + self.gamma * vs_prime * done_mask - vs
-                delta = delta.detach()
-                advantage_lst = []
-                advantage = 0.0
-                for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_): # reverse the delta along the time sequence in an episodic data
-                    advantage = self.gamma * self.lmbda * advantage * mask + delta_t
-                    advantage_lst.append(advantage)
-                advantage_lst.reverse()
-                advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                for t in reversed(range(s.shape[0])):
+                    if not done_mask[t] or t == s.shape[0]-1:   # 0 if done
+                        nextvalues = self.v(s_prime[t]).squeeze()
+                    else:
+                        nextvalues = vs[t+1]      
+
+                    delta = r[t] + self.gamma * nextvalues - vs[t]
+                    advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
+
+                assert advantage.shape == vs.shape
                 vs_target = advantage + vs
+
+                # use generalized advantage estimation
+                # vs_prime = self.v(s_prime).squeeze(dim=-1)
+                # assert vs_prime.shape == done_mask.shape
+                # delta = r + self.gamma * vs_prime * done_mask - vs
+                # delta = delta.detach()
+                # advantage_lst = []
+                # advantage = 0.0
+                # for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_): # reverse the delta along the time sequence in an episodic data
+                #     advantage = self.gamma * self.lmbda * advantage * mask + delta_t
+                #     advantage_lst.append(advantage)
+                # advantage_lst.reverse()
+                # advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                # vs_target = advantage + vs
 
             else:
                 rewards = []

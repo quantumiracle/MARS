@@ -306,12 +306,13 @@ class Gym2AgentWrapper():
         np.random.seed(seed)
 
     def render(self,):
-        print(self.env.render())
         return self.env.render()
 
     def step(self, actions):
         assert len(actions) >= 1
         action = actions[0]
+        noise = np.random.uniform(-1, 1, action.shape[0])
+        action = action + 0. * noise
         obs, reward, done, info = self.env.step(action)
         obs = obs.squeeze() # for continuous gym envs it require squeeze()
         return [obs], [reward], [done], [info]
