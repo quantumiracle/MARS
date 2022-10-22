@@ -557,7 +557,7 @@ class NashPPOContinuous(NashPPOBase):
                         nextvalues = self.v(feature_x_prime[t], i).squeeze()
                     else:
                         nextvalues = vs[t+1]     
-                    assert nextvalues.shape == vs[t].shape
+                    # assert nextvalues.shape == vs[t].shape
                     delta = r[:, i][t] + self.gamma * nextvalues - vs[t]
                     advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
 
@@ -654,8 +654,8 @@ class NashPPOContinuous(NashPPOBase):
                     if not done_mask[t] or t == s_.shape[0]-1:   # 0 if done
                         nextvalues = self.common_layers(torch.cat(feature_x_prime_list, axis=1)[t]).squeeze()
                     else:
-                        nextvalues = common_vs[t+1]      
-                    assert nextvalues.shape == common_vs[t].shape
+                        nextvalues = common_vs[t+1]   
+                    # assert nextvalues.shape == common_vs[t].shape
                     delta = r[:, 0][t] + self.gamma * nextvalues - common_vs[t]
                     advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
 
