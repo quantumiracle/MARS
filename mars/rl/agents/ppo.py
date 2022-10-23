@@ -407,6 +407,7 @@ class PPOContinuous(PPOBase):
             self.target_entropy = -torch.prod(torch.Tensor(env.action_space[0].shape).to(self.device)).detach()
         self.log_std_min = -20
         self.log_std_max = 2
+        self.v_loss_clip = False
         # self.log_entropy_coef = torch.zeros(1, requires_grad=True, device=self.device)
         # self.entropy_coeff = self.log_entropy_coef.exp().item()
         # self.coef_optimizer = optim.Adam([self.log_entropy_coef], lr=float(args.learning_rate))
@@ -478,7 +479,7 @@ class PPOContinuous(PPOBase):
             normal = Normal(mean, std)
             a = normal.sample()
             logprob = normal.log_prob(a).sum(-1)
-            return a.detach().cpu().numpy(), logprob.detach().cpu().numpy()
+            return a.squeeze().detach().cpu().numpy(), logprob.detach().cpu().numpy()
 
     def get_log_prob(self, mean, std, action):
         log_prob = Normal(mean, std).log_prob(action)
@@ -576,14 +577,16 @@ class PPOContinuous(PPOBase):
             surr2 = -torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
             policy_loss = torch.max(surr1, surr2).mean()
 
-            # value_loss = self.mseLoss(new_vs , vs_target.detach())
+            if self.v_loss_clip: # clipped value loss
+                v_clipped = vs + torch.clamp(new_vs - vs, -self.eps_clip, self.eps_clip)
+                value_loss_clipped = (v_clipped - vs_target.detach()) ** 2
+                value_loss_unclipped = (new_vs - vs_target.detach()) ** 2
+                value_loss_max = torch.max(value_loss_unclipped, value_loss_clipped)
+                value_loss =  0.5 * value_loss_max.mean()
 
-            # clipped value loss
-            v_clipped = vs + torch.clamp(new_vs - vs, -self.eps_clip, self.eps_clip)
-            value_loss_clipped = (v_clipped - vs_target.detach()) ** 2
-            value_loss_unclipped = (new_vs - vs_target.detach()) ** 2
-            value_loss_max = torch.max(value_loss_unclipped, value_loss_clipped)
-            value_loss =  0.5 * value_loss_max.mean()
+            else:
+                # value_loss = self.mseLoss(new_vs , vs_target.detach())
+                value_loss = F.smooth_l1_loss(new_vs, vs_target.detach())
 
             loss = policy_loss + self.vf_coeff*value_loss - self.entropy_coeff*dist_entropy
             mean_loss = loss.mean()
@@ -594,7 +597,7 @@ class PPOContinuous(PPOBase):
 
             self.optimizer.zero_grad()
             mean_loss.backward()
-            nn.utils.clip_grad_norm_(self.optim_parameters, self.max_grad_norm)
+            # nn.utils.clip_grad_norm_(self.optim_parameters, self.max_grad_norm)
             self.optimizer.step()
 
             # print(self.entropy_coeff, dist_entropy)

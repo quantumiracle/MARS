@@ -183,7 +183,7 @@ class NashPPOBase(Agent):
         r_lst = np.array(r_lst)
         s_lst = np.array(s_lst)
         s_prime_lst  = np.array(s_prime_lst)
-        done_mask = np.array(done_mask)
+        done_lst = np.array(done_lst)
         prob_a_lst = np.array(prob_a_lst)
         # found this step take some time for Pong (not ram), even if no parallel no multiagent
         s, a, r, s_prime, prob_a, done_mask = torch.tensor(s_lst, dtype=torch.float).to(self.device), torch.tensor(
@@ -336,7 +336,7 @@ class NashPPODiscrete(NashPPOBase):
                     ppo_loss = ppo_loss.mean()
                     self.optimizer.zero_grad()
                     ppo_loss.backward()
-                    nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+                    # nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
                     total_loss += ppo_loss.item()
 
@@ -397,7 +397,7 @@ class NashPPODiscrete(NashPPOBase):
 
                 self.optimizer.zero_grad()
                 loss.backward()
-                nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+                # nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
                 total_loss += loss.item()
 
@@ -557,7 +557,7 @@ class NashPPOContinuous(NashPPOBase):
                         nextvalues = self.v(feature_x_prime[t], i).squeeze()
                     else:
                         nextvalues = vs[t+1]     
-                    assert nextvalues.shape == vs[t].shape
+                    # assert nextvalues.shape == vs[t].shape
                     delta = r[:, i][t] + self.gamma * nextvalues - vs[t]
                     advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
 
@@ -632,7 +632,7 @@ class NashPPOContinuous(NashPPOBase):
 
                 self.optimizer.zero_grad()
                 ppo_loss.backward(retain_graph=True)
-                nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+                # nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
                 total_loss += ppo_loss.item()
                 
@@ -654,8 +654,8 @@ class NashPPOContinuous(NashPPOBase):
                     if not done_mask[t] or t == s_.shape[0]-1:   # 0 if done
                         nextvalues = self.common_layers(torch.cat(feature_x_prime_list, axis=1)[t]).squeeze()
                     else:
-                        nextvalues = common_vs[t+1]      
-                    assert nextvalues.shape == common_vs[t].shape
+                        nextvalues = common_vs[t+1]   
+                    # assert nextvalues.shape == common_vs[t].shape
                     delta = r[:, 0][t] + self.gamma * nextvalues - common_vs[t]
                     advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
 
@@ -707,7 +707,7 @@ class NashPPOContinuous(NashPPOBase):
 
             self.optimizer.zero_grad()
             loss.backward(retain_graph=True)
-            nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+            # nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
             self.optimizer.step()
             total_loss += loss.item()
         # print('loss :', policy_loss1.item(),  policy_loss2.item(), common_layer_loss.item())
