@@ -157,7 +157,7 @@ class RoboSumoWrapper():
         return self.env.render(mode)
 
     def step(self, actions):
-        actions = np.array(actions).squeeze()
+        actions = [a.squeeze() for a in actions]
         try:
             obs, reward, done, info = self.env.step(actions)
         except:

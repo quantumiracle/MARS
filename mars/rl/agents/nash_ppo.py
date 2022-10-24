@@ -306,12 +306,12 @@ class NashPPODiscrete(NashPPOBase):
                             feature_x = self.feature_nets[i](s_[:, i])
                             feature_x_prime = self.feature_nets[i](s_prime_[:, i])
 
-                        vs = self.v(feature_x, i)  # take the state for the specific agent
+                        vs = self.v(feature_x, i).squeeze(dim=-1)  # take the state for the specific agent
                         vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
                         assert vs_prime.shape == done_mask.shape
                         r = r.detach()
                         vs_target = r[:, i] + self.gamma * vs_prime * done_mask
-                        delta = vs_target - vs.squeeze(dim=-1)
+                        delta = vs_target - vs
                         advantage_lst = []
                         advantage = 0.0
                         for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
@@ -319,8 +319,9 @@ class NashPPODiscrete(NashPPOBase):
                             advantage_lst.append(advantage)
                         advantage_lst.reverse()
                         advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                        advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+                        advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
                         advantage = advantage.detach()
+                        vs_target = advantage + vs
 
                     # value and policy loss for one agent
                     pi = self.pi(feature_x, i)
@@ -366,8 +367,9 @@ class NashPPODiscrete(NashPPOBase):
                         advantage_lst.append(advantage)
                     advantage_lst.reverse()
                     advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
                     advantage = advantage.detach()
+                    
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
@@ -562,6 +564,7 @@ class NashPPOContinuous(NashPPOBase):
                     advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
 
                 assert advantage.shape == vs.shape
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
                 vs_target = advantage + vs
                 
  
@@ -660,6 +663,7 @@ class NashPPOContinuous(NashPPOBase):
                     advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
 
                 assert advantage.shape == common_vs.shape
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
                 common_vs_target = advantage + common_vs
 
                 # vs_prime = self.common_layers(torch.cat(feature_x_prime_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
