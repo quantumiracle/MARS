@@ -57,12 +57,14 @@ class PPOBase(Agent):
         self.mseLoss = nn.MSELoss()
         self._num_channel = args.num_envs*(env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0]) # env.num_agents is a list when using parallel envs 
         self.data = [[] for _ in range(self._num_channel)]
+        print(f"Feature net: \n{self.feature}\nValue net: \n{self.value}\nPolicy net: \n{self.policy}\n")
+        if self.policy_logstd is not None: print(f"Policy std net: \n{self.policy_logstd}\n")
 
     def _init_model(self, env, args, policy_type=None):
         if policy_type is not None:
             self.policy_type = policy_type
         if len(self.observation_space.shape) <= 1:
-            self.feature_space = self.observation_space
+            self.feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (args.net_architecture['feature']['hidden_dim_list'][-1],))
             self.feature = MLP(env.observation_space, self.feature_space, args.net_architecture['feature'], model_for='feature').to(self.device)
             self.policy = MLP(self.feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device)
             self.value = MLP(self.feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
@@ -106,11 +108,14 @@ class PPOBase(Agent):
         :rtype: List[float]
         """    
         feature = self.feature(x)    
-        return self.value.forward(feature)   
+        return self.value(feature)   
     
     def reinit(self,):
+        self.feature.reinit()
         self.policy.reinit()
         self.value.reinit()
+        if self.policy_logstd is not None:
+            self.policy_logstd.reinit()
 
     def store(self, transitions: SampleType) -> None:
         """ Store samples in batch.
@@ -434,14 +439,11 @@ class PPOContinuous(PPOBase):
         :rtype: List[ActionType]
         """ 
         feature = self.feature(x)
-        policy_mean = self.policy.forward(feature)
-        policy_mean = torch.tanh(policy_mean)
-        if len(policy_mean.shape) > 2:
-            policy_mean = policy_mean.squeeze()
-        # policy_logstd = self.policy_logstd.expand_as(policy_mean)
-        policy_logstd = self.policy_logstd(feature.detach())
-        if len(policy_logstd.shape) > 2:
-            policy_logstd = policy_logstd.squeeze()
+        policy_mean = self.policy(feature)
+        policy_mean = torch.tanh(policy_mean).squeeze()
+        policy_logstd = self.policy_logstd(feature.detach()).squeeze()
+
+        # policy_logstd = self.policy_logstd.expand_as(policy_mean)  # when self.policy_logstd = nn.Parameter
         return policy_mean, policy_logstd
 
     def choose_action(
@@ -458,7 +460,7 @@ class PPOContinuous(PPOBase):
         :return: the actions
         :rtype: List[ActionType]
         """
-        mean, policy_logstd = self.pi(torch.from_numpy(s).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
+        mean, policy_logstd = self.pi(torch.from_numpy(s).float().to(self.device))
         log_std = torch.clamp(policy_logstd, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
         std = log_std.exp()
 
@@ -524,7 +526,8 @@ class PPOContinuous(PPOBase):
 
                     delta = r[t] + self.gamma * nextvalues - vs[t]
                     advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
-
+                
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
                 assert advantage.shape == vs.shape
                 vs_target = advantage + vs
 
@@ -554,7 +557,7 @@ class PPOContinuous(PPOBase):
                 advantage = rewards - vs.detach()
                 vs_target = rewards
 
-            advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
 
         for _ in range(self.K_epoch):
             new_vs = self.v(s).squeeze(dim=-1)
@@ -571,7 +574,6 @@ class PPOContinuous(PPOBase):
             logprob = self.get_log_prob(mean, std, a.squeeze())
             dist_entropy = Normal(mean, std).entropy()
             dist_entropy = dist_entropy.sum(dim=-1, keepdim=True).mean()  # reduce dim
-
             ratio = torch.exp(logprob.squeeze() - oldlogprob.squeeze())  # squeeze is important to keep dim
             surr1 = -ratio * advantage
             surr2 = -torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * advantage
