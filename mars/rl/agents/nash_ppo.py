@@ -337,7 +337,7 @@ class NashPPODiscrete(NashPPOBase):
                     ppo_loss = ppo_loss.mean()
                     self.optimizer.zero_grad()
                     ppo_loss.backward()
-                    # nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+                    nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                     self.optimizer.step()
                     total_loss += ppo_loss.item()
 
@@ -399,7 +399,7 @@ class NashPPODiscrete(NashPPOBase):
 
                 self.optimizer.zero_grad()
                 loss.backward()
-                # nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+                nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
                 total_loss += loss.item()
 
@@ -635,7 +635,7 @@ class NashPPOContinuous(NashPPOBase):
 
                 self.optimizer.zero_grad()
                 ppo_loss.backward(retain_graph=True)
-                # nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+                nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
                 total_loss += ppo_loss.item()
                 
@@ -711,7 +711,7 @@ class NashPPOContinuous(NashPPOBase):
 
             self.optimizer.zero_grad()
             loss.backward(retain_graph=True)
-            # nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+            nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
             self.optimizer.step()
             total_loss += loss.item()
         # print('loss :', policy_loss1.item(),  policy_loss2.item(), common_layer_loss.item())

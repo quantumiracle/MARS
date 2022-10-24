@@ -599,7 +599,7 @@ class PPOContinuous(PPOBase):
 
             self.optimizer.zero_grad()
             mean_loss.backward()
-            # nn.utils.clip_grad_norm_(self.optim_parameters, self.max_grad_norm)
+            nn.utils.clip_grad_norm_(self.optim_parameters, self.max_grad_norm)
             self.optimizer.step()
 
             # print(self.entropy_coeff, dist_entropy)
