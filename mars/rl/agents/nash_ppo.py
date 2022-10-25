@@ -13,7 +13,8 @@ from ..common.networks import MLP, CNN, get_model
 from ..common.rl_utils import choose_optimizer
 from mars.utils.typing import List, Tuple, StateType, ActionType, SampleType, SingleEnvMultiAgentSampleType
 
-torch.autograd.set_detect_anomaly(True)
+# torch.autograd.set_detect_anomaly(True)
+
 def NashPPO(env, args):
     """ The function returns a proper class for Nash PPO algorithm,
     according to the action space of the environment.
@@ -438,7 +439,6 @@ class NashPPOContinuous(NashPPOBase):
         :return: the actions
         :rtype: List[ActionType]
         """
-        actions = []
         actions = []
         logprobs = []
         if Greedy:

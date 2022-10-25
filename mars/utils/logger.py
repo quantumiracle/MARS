@@ -173,6 +173,7 @@ class Logger(TestLogger):
             self.epi_losses[k].append(np.mean(self.losses[k])) # record the episodic mean of loss
             self.writer.add_scalar(f"RL Loss/{k}", self.epi_losses[k][-1],
                                    np.sum(self.epi_length))
+        self.writer.add_scalar(f"Episode Length", np.mean(self.epi_length[-10:]), np.sum(self.epi_length))
         self.rewards = self._clear_dict(self.keys)
         self.losses = self._clear_dict_as_list(self.keys)
         self.epi_length.append(step)
