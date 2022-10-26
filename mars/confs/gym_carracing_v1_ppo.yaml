@@ -8,7 +8,7 @@ env_args:
 agent_args:
     algorithm: PPO
     algorithm_spec:
-        episodic_update: True  # as PPO is on-policy, it uses episodic update instead of update per timestep
+        episodic_update: false  # as PPO is on-policy, it uses episodic update instead of update per timestep
         gamma: 0.99
         lambda: 0.95
         eps_clip: 0.2
@@ -21,6 +21,7 @@ agent_args:
 train_args:
     max_episodes: 10000
     max_steps_per_episode: 10000
+    batch_size: 1280
     train_start_frame: 1000
     optimizer: adam
     learning_rate: 1e-4

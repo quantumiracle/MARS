@@ -5,7 +5,7 @@ import time
 from .utils.logger import init_logger
 from .utils.typing import Tuple, List, ConfigurationDict
 from .marl import init_meta_learner
-from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods, MetaStepMethods
+from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods, MetaStepMethods, OnPolicyMethods
 
 
 def rollout(env, model, args: ConfigurationDict, save_id='0') -> None:
@@ -100,7 +100,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
             with torch.no_grad():
                 action_ = model.choose_action(
-                    obs_to_store)  # action: (agent, env, action_dim)
+                    obs_to_store)  # action: (agents, env, action_dim)
             if overall_steps % 100 == 0: # do not need to do this for every step
                 model.scheduler_step(overall_steps)
             
@@ -161,8 +161,8 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             # Non-epsodic update of the model
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
-                if args.algorithm_spec['batch_update']:
-                    if cnt_steps >= args.algorithm_spec['batch_update']:
+                if args.marl_method in OnPolicyMethods or args.algorithm == 'PPO':
+                    if cnt_steps >= args.batch_size:
                         loss, infos = model.update()
                         logger.log_loss(loss)
                         logger.log_info(infos)   

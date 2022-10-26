@@ -202,6 +202,7 @@ class MultiAgent(Agent):
             # 'states' (agents, envs, state_dim) -> (envs, agents, state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples
+            actions = np.array(actions)
             try:  # when num_envs > 1. 
                 if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
                     samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]

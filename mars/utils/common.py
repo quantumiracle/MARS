@@ -9,3 +9,6 @@ MetaStepMethods = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', 'fictitiou
 
 # These methods are based on Nash
 NashBasedMethods = ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized', 'nash_ppo', 'nash_actor_critic']
+
+# These methods follow on-policy update
+OnPolicyMethods = ['ppo', 'nash_ppo']

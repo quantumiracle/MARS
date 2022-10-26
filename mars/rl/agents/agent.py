@@ -11,8 +11,11 @@ class Agent(object):
         super(Agent, self).__init__()
         if isinstance(env.observation_space, list):  # when using parallel envs
             self.observation_space = env.observation_space[0]
+            self.num_env = len(env.observation_space[0])
         else:
             self.observation_space = env.observation_space
+            self.num_env = 1
+        self.observation_dim = self.observation_space.shape[0]
 
         if isinstance(env.action_space, list):  # when using parallel envs
             if isinstance(env.action_space[0], gym.spaces.Box):
