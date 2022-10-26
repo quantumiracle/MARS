@@ -11,7 +11,7 @@ class Agent(object):
         super(Agent, self).__init__()
         if isinstance(env.observation_space, list):  # when using parallel envs
             self.observation_space = env.observation_space[0]
-            self.num_env = len(env.observation_space[0])
+            self.num_env = len(env.observation_space)
         else:
             self.observation_space = env.observation_space
             self.num_env = 1
