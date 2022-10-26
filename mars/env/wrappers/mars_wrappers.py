@@ -351,6 +351,7 @@ class Gym2AgentAdversarialWrapper():
 
     def step(self, actions):
         assert len(actions) >= 1
+        actions = [a.squeeze() for a in actions]
         action = actions[0] + self.adversarial_coef * actions[1]  
         obs, reward, done, info = self.env.step(action)
         obs = obs.squeeze() # for continuous gym envs it require squeeze()
