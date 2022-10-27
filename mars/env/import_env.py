@@ -207,7 +207,13 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             print(f"Error: No such env in Openai Gym: {env_name}!") 
         # may need more wrappers here, e.g. Pong-ram-v0 need scaled observation!
         # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
-
+        env = gym.wrappers.RecordEpisodeStatistics(env)  # bypass the reward normalization to record episodic return
+        env = gym.wrappers.ClipAction(env)
+        env = gym.wrappers.NormalizeObservation(env) 
+        env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
+        env = gym.wrappers.NormalizeReward(env)
+        env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
+        
         if args.adversarial:
             env = Gym2AgentAdversarialWrapper(env)
         else:
