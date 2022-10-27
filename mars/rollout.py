@@ -106,16 +106,16 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             
             ## Action processing
             if isinstance(action_, tuple): # Nash PPO: action item contains additional information like log probability
-                (a, info) = action_  # shape: (agents, envs, dim)
+                (a, a_info) = action_  # shape: (agents, envs, dim)
                 action_to_store = a
-                other_info = info
+                other_info = a_info
             elif any(isinstance(a_, tuple) for a_ in action_):  # exploitation with PPO
                 action_to_store, other_info = [], []
                 for a_ in action_:  # loop over agent
                     if isinstance(a_, tuple): # action item contains additional information
-                        (a, info) = a_
+                        (a, a_info) = a_
                         action_to_store.append(a)
-                        other_info.append(info)
+                        other_info.append(a_info)
                     else:
                         action_to_store.append(a_)
                         other_info.append(None)
@@ -163,7 +163,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
                 if args.marl_method in OnPolicyMethods or args.algorithm == 'PPO':
-                    if cnt_steps >= args.batch_size:
+                    if cnt_steps % args.batch_size == 0 and cnt_steps > 1:
                         loss, infos = model.update()
                         logger.log_loss(loss)
                         logger.log_info(infos)   
@@ -181,6 +181,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                     if loss is not None:
                         logger.log_loss(loss)
                         logger.log_info(infos)
+            
             ## done break: needs to go after everything else， including the update
             if np.any(
                     done
@@ -204,7 +205,11 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             # only methods in MetaStrategyMethods (subset of MetaStepMethods) during exploitation
             # requires step()
             model.meta_learner.step()  # meta_learner as the agent to be tested/exploited
+
         logger.log_episode_reward(step)
+        # for item in info:
+        #     if "episode" in item.keys():
+        #         print(item['episode']['r'])
 
         ## Evaluation during exploiter training
         if epi % args.log_interval == 0:

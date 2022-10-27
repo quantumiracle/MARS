@@ -68,6 +68,8 @@ class MultiAgent(Agent):
                     self.not_learnable_list.append(i)
                 if agent.not_learnable or (args.marl_method in MetaStepMethods and i != args.marl_spec['trainable_agent_idx']):  # psro is special, fixed one side at beginning
                     self.not_learnable_list.append(i)
+        if not args.marl_method: # single-agent setting
+            self.not_learnable_list.append(1) # second player is not learnable
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
 

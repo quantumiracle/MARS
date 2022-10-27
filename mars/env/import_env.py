@@ -211,7 +211,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         env = gym.wrappers.ClipAction(env)
         env = gym.wrappers.NormalizeObservation(env) 
         env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
-        env = gym.wrappers.NormalizeReward(env)
+        env = gym.wrappers.NormalizeReward(env)  # this can be critical for algo to work
         env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
         
         if args.adversarial:

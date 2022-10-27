@@ -164,7 +164,7 @@ class Logger(TestLogger):
 
         return post_fix
 
-    def log_episode_reward(self, step: int) -> None:
+    def log_episode_reward(self, step: int, reward=None) -> None:    
         for k, v in self.rewards.items():
             self.epi_rewards[k].append(v)
             self.writer.add_scalar(f"Episode Reward/{k}",

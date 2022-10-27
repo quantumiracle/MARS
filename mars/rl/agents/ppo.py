@@ -468,16 +468,6 @@ class PPOContinuous(PPOBase):
             a = mean.detach().cpu().numpy()
             return a
         else:
-            # cov = torch.diag_embed(var)
-            # dist = MultivariateNormal(mean, cov)
-            # a = dist.sample()
-            # logprob = dist.log_prob(a)
-            
-            # normal = Normal(0, 1)
-            # z      = normal.sample()
-            # a = mean + std*z
-            # logprob = Normal(mean, std).log_prob(a)
-            # logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
             normal = Normal(mean, std)
             a = normal.sample()
             logprob = normal.log_prob(a).sum(-1)
@@ -531,20 +521,6 @@ class PPOContinuous(PPOBase):
                 assert advantage.shape == vs.shape
                 vs_target = advantage + vs
 
-                # use generalized advantage estimation
-                # vs_prime = self.v(s_prime).squeeze(dim=-1)
-                # assert vs_prime.shape == done_mask.shape
-                # delta = r + self.gamma * vs_prime * done_mask - vs
-                # delta = delta.detach()
-                # advantage_lst = []
-                # advantage = 0.0
-                # for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_): # reverse the delta along the time sequence in an episodic data
-                #     advantage = self.gamma * self.lmbda * advantage * mask + delta_t
-                #     advantage_lst.append(advantage)
-                # advantage_lst.reverse()
-                # advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                # vs_target = advantage + vs
-
             else:
                 rewards = []
                 discounted_r = 0
@@ -565,11 +541,6 @@ class PPOContinuous(PPOBase):
             mean, policy_logstd = self.pi(s)
             log_std = torch.clamp(policy_logstd, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
             std = log_std.exp()            
-            
-            # cov = torch.diag_embed(var)
-            # dist = MultivariateNormal(mean, cov)
-            # dist_entropy = dist.entropy()
-            # logprob = dist.log_prob(a)
 
             logprob = self.get_log_prob(mean, std, a.squeeze())
             dist_entropy = Normal(mean, std).entropy()
