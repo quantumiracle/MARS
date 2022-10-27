@@ -353,7 +353,7 @@ class PPODiscrete(PPOBase):
                 advantage_lst.append(advantage)
             advantage_lst.reverse()
             advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-
+            vs_target = advantage + vs
         else:
             rewards = []
             discounted_r = 0
@@ -524,8 +524,8 @@ class PPOContinuous(PPOBase):
                     else:
                         nextvalues = vs[t+1]      
 
-                    delta = r[t] + self.gamma * nextvalues - vs[t]
-                    advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
+                    delta = r[t] + self.gamma * nextvalues * done_mask[t] - vs[t]
+                    advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam * done_mask[t]
                 
                 advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
                 assert advantage.shape == vs.shape

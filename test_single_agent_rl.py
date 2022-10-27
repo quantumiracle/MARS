@@ -5,9 +5,11 @@ from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
 
 
-# yaml_file = 'mars/confs/gym_cartpole_v1_ppo' #PATH TO YAML
-# yaml_file = 'mars/confs/gym_mountaincarcontinuous_v0_ppo' #PATH TO YAML
-yaml_file = 'mars/confs/gym_ant_v2_ppo' #PATH TO YAML
+# yaml_file = 'mars/confs/gym/cartpole_v1/gym_cartpole_v1_ppo' #PATH TO YAML
+# yaml_file = 'mars/confs/gym/mountaincarcontinuous_v0/gym_mountaincarcontinuous_v0_ppo' #PATH TO YAML
+# yaml_file = 'mars/confs/gym/ant_v2/gym_ant_v2_ppo' #PATH TO YAML
+yaml_file = 'mars/confs/gym/hopper_v2/gym_hopper_v2_ppo' #PATH TO YAML
+
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 ### Create env
 env = make_env(args)

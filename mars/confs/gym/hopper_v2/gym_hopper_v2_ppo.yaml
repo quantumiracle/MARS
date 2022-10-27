@@ -1,14 +1,14 @@
 env_args:
-    env_name: Ant-v2
+    env_name: Hopper-v2
     env_type: gym
-    num_envs: 2
+    num_envs: 1
     ram: True
     seed: 1122
 
 agent_args:
     algorithm: PPO
     algorithm_spec:
-        episodic_update: false
+        # episodic_update: True  # as PPO is on-policy, it uses episodic update instead of update per timestep
         gamma: 0.99
         lambda: 0.95
         eps_clip: 0.1
@@ -24,7 +24,7 @@ train_args:
     batch_size: 1280
     train_start_frame: 0
     optimizer: adam
-    learning_rate: 1e-4
+    learning_rate: 3e-4
     device: gpu
     log_avg_window: 20 # average window length in logging
     log_interval: 20  # log print interval 
@@ -39,6 +39,6 @@ train_args:
             hidden_activation: Tanh
             output_activation: False
         value:
-            hidden_dim_list: [64, 64, 64]  
+            hidden_dim_list: [64, 64]  
             hidden_activation: Tanh
             output_activation: False
