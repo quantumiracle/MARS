@@ -75,11 +75,11 @@ class NashActorCritic(Agent):
             # self.feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (args.net_architecture['feature']['hidden_dim_list'][-1],))
             self.sa_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (self.observation_dim+2*self.action_dim,))
         else:
-            self.feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
+            self.feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,)) # two actors share the feature with critic
             self.sa_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256+2*self.action_dim,))
             self.feature = CNN(self.observation_space, self.feature_space, args.net_architecture['feature'], model_for='feature').to(self.device)
         
-        for _ in range(env.num_agents): # two actors share the feature with critic
+        for _ in range(env.num_agents): 
             actor = MLP(self.observation_space, env.action_space, args.net_architecture['actor'], model_for='gaussian_policy').to(self.device)
             self.actors.append(actor)            
             self.target_actors.append(copy.deepcopy(actor).to(self.device))
@@ -174,7 +174,7 @@ class NashActorCritic(Agent):
 
         # update the actors
         new_action = self.choose_action(state, by_target=True, Greedy=True, track_grad=True)
-        new_action = new_action.swapaxes(0,1).reshape(state.shape[0], -1)
+        new_action = new_action.swapaxes(0,1).reshape(state.shape[0], -1)  # (batch_size, #agents * action_dim)
         sa_ = torch.cat([state, new_action], dim=-1)
         new_q_value = self.critic(sa_).mean()
         max_player_loss = - new_q_value
@@ -184,9 +184,9 @@ class NashActorCritic(Agent):
         max_player_loss.backward(retain_graph=True)  # critic graph needs to be used twice
         self.max_player_optimizer.step()
 
-        self.min_player_optimizer.zero_grad()
-        min_player_loss.backward()
-        self.min_player_optimizer.step()
+        # self.min_player_optimizer.zero_grad()
+        # min_player_loss.backward()
+        # self.min_player_optimizer.step()
 
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.critic, self.target_critic)

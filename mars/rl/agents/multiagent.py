@@ -118,7 +118,8 @@ class MultiAgent(Agent):
             # not learnable agent means model to be exploited;
             # both of the above cases should have greedy action.
             for i in self.not_learnable_list:
-                greedy_list[i] = True
+                if i < self.number_of_agents:
+                    greedy_list[i] = True
 
         return greedy_list
     
