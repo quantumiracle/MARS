@@ -58,6 +58,7 @@ ppo_algorithm_spec = { # specs for PPO alg.
     'episodic_update': False,  # use epoch batch update instead of episodic update
     'gamma': 0.99,
     'lambda': 0.95,
+    'mix_num': 6,  # for GMM number of mixture policies
     'eps_clip': 0.2,
     'K_epoch': 4,
     'GAE': True,
@@ -83,8 +84,12 @@ ppo_net_architecture = {
       'hidden_dim_list': [128],
       'hidden_activation': 'Tanh',
       'output_activation': False,
+    },
+    'coefficient': {
+      'hidden_dim_list': [],
+      'hidden_activation': False,
+      'output_activation': 'Softmax',
     }
-
 }
 
 cnn_ppo_net_architecture = {
@@ -105,6 +110,11 @@ cnn_ppo_net_architecture = {
       'hidden_dim_list': [512,],
       'hidden_activation': 'Tanh',
       'output_activation': False,
+    },
+    'coefficient': {
+      'hidden_dim_list': [],
+      'hidden_activation': False,
+      'output_activation': 'Softmax',
     }
 
 }

@@ -10,8 +10,8 @@ game_type = 'advmujoco'
 
 game = ['ant_v2'][0]
 
-# yaml_file = f'mars/confs/{game_type}/{game}/{game_type}_{game}_nash_ppo' #PATH TO YAML
-yaml_file = f'mars/confs/{game_type}/{game}/{game_type}_{game}_nash_actor_critic' #PATH TO YAML
+yaml_file = f'mars/confs/{game_type}/{game}/{game_type}_{game}_nash_ppo' #PATH TO YAML
+# yaml_file = f'mars/confs/{game_type}/{game}/{game_type}_{game}_nash_actor_critic' #PATH TO YAML
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
 

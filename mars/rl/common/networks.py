@@ -59,6 +59,9 @@ class NetBase(nn.Module):
             return self._action_dim
         elif model_for in ['continuous_q', 'value']:
             return 1
+        else:
+            return self._action_dim
+
 
     def _construct_net(self, args):
         pass
@@ -102,7 +105,7 @@ class NetBase(nn.Module):
 
 
 class MLP(NetBase):
-    def __init__(self, input_space, output_space, net_args, model_for):
+    def __init__(self, input_space, output_space, net_args, model_for=None):
         super().__init__(input_space, output_space)
         layers_config = copy.deepcopy(net_args)
         layers_config['hidden_dim_list'].insert(0, self._observation_dim)
@@ -133,7 +136,7 @@ class MLP(NetBase):
 
 
 class CNN(NetBase):
-    def __init__(self, input_space, output_space, net_args, model_for):
+    def __init__(self, input_space, output_space, net_args, model_for=None):
         super().__init__(input_space, output_space)
         layers_config = copy.deepcopy(net_args)
         layers_config['channel_list'].insert(0, self._observation_shape[0])
@@ -187,7 +190,7 @@ class ImpalaCNN(NetBase):
     Model used in the paper "IMPALA: Scalable Distributed Deep-RL with
     Importance Weighted Actor-Learner Architectures" https://arxiv.org/abs/1802.01561
     """
-    def __init__(self, input_space, output_space, net_args, model_for):
+    def __init__(self, input_space, output_space, net_args, model_for=None):
         super().__init__(input_space, output_space)
         self.ResidualRepeat = 2  # repeat residual blocks in one conv sequence
 
