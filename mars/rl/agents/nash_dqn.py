@@ -226,7 +226,7 @@ class NashDQN(DQN):
         action = torch.IntTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
-
+        print(state.shape)
         # Q-Learning with target network
         q_values = self.model(state)
         target_next_q_values_ = self.model(next_state) if DoubleTrick else self.target(next_state)

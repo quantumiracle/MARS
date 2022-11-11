@@ -1,16 +1,17 @@
 env_args:
   env_name: RoboSumo-Ant-vs-Ant-v0
   env_type: robosumo
-  num_envs: 1
+  num_envs: 5
   against_baseline: false
   ram: true
   seed: random
 agent_args:
   algorithm: NashPPO
   algorithm_spec:
-    episodic_update: true
+    episodic_update: false
     gamma: 0.99
     lambda: 0.95
+    mix_num: 6
     eps_clip: 0.2
     K_epoch: 4
     GAE: true
@@ -19,9 +20,9 @@ agent_args:
     vf_coeff: 0.5
     policy_loss_coeff: 0.08
 train_args:
-  batch_size: 128
-  max_episodes: 500000
-  max_steps_per_episode: 300
+  batch_size: 1280
+  max_episodes: 10000
+  max_steps_per_episode: 10000
   train_start_frame: 0
   optimizer: adam
   learning_rate: 1e-4
@@ -35,18 +36,22 @@ train_args:
       hidden_dim_list:
       - 128
       - 128
-      hidden_activation: ReLU
+      hidden_activation: Tanh
       output_activation: false
     policy:
       hidden_dim_list:
       - 128
-      hidden_activation: false
-      output_activation: Tanh
+      hidden_activation: Tanh
+      output_activation: false
     value:
       hidden_dim_list:
       - 128
-      hidden_activation: ReLU
+      hidden_activation: Tanh
       output_activation: false
+    coefficient:
+      hidden_dim_list: []
+      hidden_activation: false
+      output_activation: Softmax
   marl_spec:
     global_state: true
   marl_method: nash_ppo

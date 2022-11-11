@@ -5,7 +5,7 @@ import time
 from .utils.logger import init_logger
 from .utils.typing import Tuple, List, ConfigurationDict
 from .marl import init_meta_learner
-from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods, MetaStepMethods
+from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods, MetaStepMethods, OnPolicyMethods
 
 
 def rollout(env, model, args: ConfigurationDict, save_id='0') -> None:
@@ -82,6 +82,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
     ## Initialization
     print("Arguments: ", args)
     overall_steps = 0
+    cnt_steps = 0
     logger = init_logger(env, save_id, args)
     if args.exploit:
         logger.add_extr_log('eval')
@@ -95,25 +96,26 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
         obs = env.reset()
         for step in range(args.max_steps_per_episode):
             overall_steps += 1
+            cnt_steps += 1
             obs_to_store = obs.swapaxes(0, 1) if args.num_envs > 1 else obs  # transform from (envs, agents, dim) to (agents, envs, dim)
             with torch.no_grad():
                 action_ = model.choose_action(
-                    obs_to_store)  # action: (agent, env, action_dim)
+                    obs_to_store)  # action: (agents, env, action_dim)
             if overall_steps % 100 == 0: # do not need to do this for every step
                 model.scheduler_step(overall_steps)
             
             ## Action processing
             if isinstance(action_, tuple): # Nash PPO: action item contains additional information like log probability
-                (a, info) = action_  # shape: (agents, envs, dim)
+                (a, a_info) = action_  # shape: (agents, envs, dim)
                 action_to_store = a
-                other_info = info
+                other_info = a_info
             elif any(isinstance(a_, tuple) for a_ in action_):  # exploitation with PPO
                 action_to_store, other_info = [], []
                 for a_ in action_:  # loop over agent
                     if isinstance(a_, tuple): # action item contains additional information
-                        (a, info) = a_
+                        (a, a_info) = a_
                         action_to_store.append(a)
-                        other_info.append(info)
+                        other_info.append(a_info)
                     else:
                         action_to_store.append(a_)
                         other_info.append(None)
@@ -126,7 +128,6 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
                 action = action_to_store
 
             obs_, reward, done, info = env.step(action)  # required action shape: (envs, agents, dim)
-
             if args.render:
                 env.render()
 
@@ -161,19 +162,26 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             # Non-epsodic update of the model
             if not args.algorithm_spec['episodic_update'] and \
                  model.ready_to_update and overall_steps > args.train_start_frame:
-                if args.update_itr >= 1:
-                    avg_loss = []
-                    for _ in range(args.update_itr):
-                        loss, infos = model.update(
-                        )
-                        avg_loss.append(loss)
-                    loss = np.mean(avg_loss, axis=0)
-                elif overall_steps * args.update_itr % 1 == 0:
-                    loss, infos = model.update()
-                if loss is not None:
-                    logger.log_loss(loss)
-                    logger.log_info(infos)
-
+                if args.marl_method in OnPolicyMethods or args.algorithm == 'PPO':
+                    if cnt_steps % args.batch_size == 0 and cnt_steps > 1:
+                        loss, infos = model.update()
+                        logger.log_loss(loss)
+                        logger.log_info(infos)   
+                        cnt_steps = 0 
+                else:    
+                    if args.update_itr >= 1:
+                        # avg_loss = []
+                        for _ in range(args.update_itr):
+                            loss, infos = model.update(
+                            )
+                            # avg_loss.append(loss)
+                        # loss = np.mean(avg_loss, axis=0)
+                    elif overall_steps * args.update_itr % 1 == 0:
+                        loss, infos = model.update()
+                    if loss is not None:
+                        logger.log_loss(loss)
+                        logger.log_info(infos)
+            
             ## done break: needs to go after everything else， including the update
             if np.any(
                     done
@@ -185,7 +193,7 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             if args.algorithm_spec['episodic_update']:
                 loss, infos = model.update()
                 logger.log_loss(loss)
-                logger.log_info(infos)
+                logger.log_info(infos)     
             
             if meta_learner is not None and args.marl_method in MetaStepMethods:
                 meta_learner.step(
@@ -197,7 +205,11 @@ def rollout_normal(env, model, save_id, args: ConfigurationDict) -> None:
             # only methods in MetaStrategyMethods (subset of MetaStepMethods) during exploitation
             # requires step()
             model.meta_learner.step()  # meta_learner as the agent to be tested/exploited
+
         logger.log_episode_reward(step)
+        # for item in info:
+        #     if "episode" in item.keys():
+        #         print(item['episode']['r'])
 
         ## Evaluation during exploiter training
         if epi % args.log_interval == 0:

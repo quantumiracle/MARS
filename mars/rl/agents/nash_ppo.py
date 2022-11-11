@@ -13,6 +13,7 @@ from ..common.networks import MLP, CNN, get_model
 from ..common.rl_utils import choose_optimizer
 from mars.utils.typing import List, Tuple, StateType, ActionType, SampleType, SingleEnvMultiAgentSampleType
 
+# torch.autograd.set_detect_anomaly(True)
 
 def NashPPO(env, args):
     """ The function returns a proper class for Nash PPO algorithm,
@@ -53,18 +54,18 @@ class NashPPOBase(Agent):
         self._init_model(env, args)
         self.args = args
         print(f'Feature networks: ', self.feature_nets,
-                'Policy networks: ', self.policies,
-                'Value networks: ', self.values,
-                'Common layers: ', self.common_layers)
+                '\nPolicy networks: ', self.policies,
+                '\nValue networks: ', self.values,
+                '\nCommon layers: ', self.common_layers)
 
-        policy_params, value_params, common_val_params, feature_net_param = [], [], [], []
+        policy_params, value_params, common_val_params, feature_net_params = [], [], [], []
         for f, p, v in zip(self.feature_nets, self.policies, self.values):
-            feature_net_param += list(f.parameters())
+            feature_net_params += list(f.parameters())
             policy_params += list(p.parameters())
             value_params += list(v.parameters())
 
         common_val_params = list(self.common_layers.parameters())
-        self.all_params = feature_net_param + policy_params + value_params + common_val_params
+        self.all_params = feature_net_params + policy_params + value_params + common_val_params
         self.optimizer = choose_optimizer(args.optimizer)(self.all_params, lr=float(args.learning_rate))
         self.mseLoss = nn.MSELoss()
         self._num_channel = args.num_envs * (env.num_agents if isinstance(env.num_agents, int) else env.num_agents[0])  # env.num_agents is a list when using parallel envs
@@ -72,33 +73,25 @@ class NashPPOBase(Agent):
 
     def _init_model(self, env, args):
         self.policies, self.values, self.feature_nets = [], [], []
-        # try:
-        #     merged_action_space_dim = env.action_space.n + env.action_space.n
-        #     [low, high] = [env.action_space.low, env.action_space.high]
-        # except:
-        #     merged_action_space_dim = env.action_space[0].n + env.action_space[0].n
-        #     [low, high] = [env.action_space[0].low, env.action_space[0].high]
-        # merged_action_space = gym.spaces.Box(low=low, high=high, shape=(merged_action_space_dim,))
-        # merged_action_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(merged_action_space_dim,))
 
         if len(self.observation_space.shape) <= 1:
-            feature_space = self.observation_space
-            double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
+            self.feature_space = self.observation_space
+            double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (self.feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
             for _ in range(env.num_agents):
-                self.feature_nets.append(MLP(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
-                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device))
-                self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
+                self.feature_nets.append(MLP(env.observation_space, self.feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
+                self.policies.append(MLP(self.feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device))
+                self.values.append(MLP(self.feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
             
             self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
 
         else:
-            feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
-            double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
+            self.feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (256,))
+            double_feature_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (self.feature_space.shape[0]*2,)) # TODO other types of spaces like discrete etc
 
             for _ in range(env.num_agents):
-                self.feature_nets.append(CNN(env.observation_space, feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
-                self.policies.append(MLP(feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device))
-                self.values.append(MLP(feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
+                self.feature_nets.append(CNN(env.observation_space, self.feature_space, args.net_architecture['feature'], model_for='feature').to(self.device))
+                self.policies.append(MLP(self.feature_space, env.action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device))
+                self.values.append(MLP(self.feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device))
 
             self.common_layers = MLP(double_feature_space, env.action_space, args.net_architecture['value'], model_for='value').to(self.device)
         
@@ -183,7 +176,7 @@ class NashPPOBase(Agent):
         r_lst = np.array(r_lst)
         s_lst = np.array(s_lst)
         s_prime_lst  = np.array(s_prime_lst)
-        done_mask = np.array(done_mask)
+        done_lst = np.array(done_lst)
         prob_a_lst = np.array(prob_a_lst)
         # found this step take some time for Pong (not ram), even if no parallel no multiagent
         s, a, r, s_prime, prob_a, done_mask = torch.tensor(s_lst, dtype=torch.float).to(self.device), torch.tensor(
@@ -280,6 +273,7 @@ class NashPPODiscrete(NashPPOBase):
         self.data = [x for x in self.data if x]  # remove empty
         for data in self.data:  # iterate over data from different environments
             s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
+            done_mask_ = torch.flip(done_mask, dims=(0,))
 
             # need to prcess the samples, separate for agents
             if self.args.ram:
@@ -291,7 +285,6 @@ class NashPPODiscrete(NashPPOBase):
 
             for _ in range(self.K_epoch):
                 loss = 0.0
-                ppo_loss_total = 0.0
                 feature_x_list = []
                 feature_x_prime_list = []
 
@@ -306,21 +299,22 @@ class NashPPODiscrete(NashPPOBase):
                             feature_x = self.feature_nets[i](s_[:, i])
                             feature_x_prime = self.feature_nets[i](s_prime_[:, i])
 
-                        vs = self.v(feature_x, i)  # take the state for the specific agent
+                        vs = self.v(feature_x, i).squeeze(dim=-1)  # take the state for the specific agent
                         vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
                         assert vs_prime.shape == done_mask.shape
                         r = r.detach()
                         vs_target = r[:, i] + self.gamma * vs_prime * done_mask
-                        delta = vs_target - vs.squeeze(dim=-1)
+                        delta = vs_target - vs
                         advantage_lst = []
                         advantage = 0.0
-                        for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                            advantage = self.gamma * self.lmbda * advantage + delta_t
+                        for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                            advantage = self.gamma * self.lmbda * advantage * mask + delta_t
                             advantage_lst.append(advantage)
                         advantage_lst.reverse()
                         advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                        advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+                        advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
                         advantage = advantage.detach()
+                        vs_target = advantage + vs
 
                     # value and policy loss for one agent
                     pi = self.pi(feature_x, i)
@@ -334,7 +328,6 @@ class NashPPODiscrete(NashPPOBase):
                     v_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach())
                     ppo_loss = policy_loss + self.vf_coeff * v_loss - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
                     ppo_loss = ppo_loss.mean()
-                    ppo_loss_total += ppo_loss
                     self.optimizer.zero_grad()
                     ppo_loss.backward()
                     nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
@@ -362,13 +355,14 @@ class NashPPODiscrete(NashPPOBase):
                     delta = delta.detach()
                     advantage_lst = []
                     advantage = 0.0
-                    for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                        advantage = self.gamma * self.lmbda * advantage + delta_t
+                    for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                        advantage = self.gamma * self.lmbda * advantage * mask + delta_t
                         advantage_lst.append(advantage)
                     advantage_lst.reverse()
                     advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
+                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
                     advantage = advantage.detach()
+                    
 
                 ratio_list = []
                 for i in range(2):  # get the ratio for both
@@ -419,7 +413,61 @@ class NashPPOContinuous(NashPPOBase):
     """ Nash-PPO agorithm for environments with discrete action space.
     """
     def __init__(self, env, args):
+        self.mix_num = int(args.algorithm_spec['mix_num'])
         super().__init__(env, args)
+        self.num_agents = 2
+        self.log_std_min = -20
+        self.log_std_max = 2
+        self.gmm_action_dim =  self.action_dim * self.mix_num
+
+        policy_params, value_params, common_val_params, feature_net_params, coef_params, q_params = [], [], [], [], [], []
+        for f, p, v, m, q in zip(self.feature_nets, self.policies, self.values, self.mixing_coefs, self.qs):
+            feature_net_params += list(f.parameters())
+            policy_params += list(p.parameters())
+            value_params += list(v.parameters())
+            coef_params += list(m.parameters())
+            q_params += list(q.parameters())
+
+        print(f'Coefficient networks: \n', self.mixing_coefs)
+
+        common_val_params = list(self.common_layers.parameters())
+        self.all_params = feature_net_params + policy_params + value_params + common_val_params + coef_params + q_params
+        self.optimizer = choose_optimizer(args.optimizer)(self.all_params, lr=float(args.learning_rate))
+
+    def _init_model(self, env, args):
+        super()._init_model(env, args)
+        self.mixing_coefs = []
+        self.policies = []
+        self.qs = []
+        coef_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (self.mix_num,))
+        gmm_action_space = gym.spaces.Box(low=np.array(list(self.action_space.low)*self.mix_num), high=np.array(list(self.action_space.high)*self.mix_num), shape = (self.action_space.shape[0]*self.mix_num,))
+        self.sa_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = (self.observation_dim+self.action_dim,))
+        for _ in range(env.num_agents):
+            self.policies.append(MLP(self.feature_space, gmm_action_space, args.net_architecture['policy'], model_for=self.policy_type).to(self.device))
+            self.mixing_coefs.append(MLP(self.feature_space, coef_space, args.net_architecture['coefficient']).to(self.device))            
+            self.qs.append(MLP(self.sa_space, env.action_space, args.net_architecture['value'], model_for='continuous_q').to(self.device))
+
+    def q(
+            self,
+            state: List[StateType],
+            action,
+            idx,
+            match_shape=False,
+    ) -> List[float]:
+        """ Forward the Q-value network.
+        :param x: input of the value network, i.e. the state
+        :type x: List[StateType]
+        :return: a list of values for each state
+        :rtype: List[float]
+        """
+        if match_shape:
+            state = state.unsqueeze(1).repeat(1, action.shape[1], 1)
+        x = torch.cat([state, action], -1)  # the dim 0 is number of samples
+        x = self.qs[idx].forward(x)
+        if match_shape:
+            return x.reshape(-1, action.shape[1])
+        else:
+            return x 
 
     def choose_action(
             self,
@@ -435,44 +483,43 @@ class NashPPOContinuous(NashPPOBase):
         :rtype: List[ActionType]
         """
         actions = []
-        actions = []
         logprobs = []
         if Greedy:
-            for policy, feature_net, state_per_agent in zip(self.policies, self.feature_nets, s):
+            for policy, feature_net, mix_coef, state_per_agent in zip(self.policies, self.feature_nets, self.mixing_coefs, s):
                 feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))  # make sure input state shape is correct
                 logits = policy(feature)
-
+                logits = logits.reshape(*logits.shape[:2], self.mix_num, -1)  # (batch, env, mixture, agents*action_dim)
+                mix_probs = mix_coef(feature)
+                index = mix_probs.argmax(-1)  # most probably policy from the mixture, mix_probs shape: (env, mixture)
                 if len(logits.shape) > 2:
                     logits = logits.squeeze()
-                mean = torch.tanh(logits[:, :self.action_dim])
-                var = logits[:, self.action_dim:].exp()
-                
-                # feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
-                # prob = policy(feature).squeeze()  # make sure input state shape is correct
-                # a = torch.argmax(prob, dim=-1)
-                # a = mean
+                mean = torch.tanh(logits[:, :, :self.action_dim]) 
+                a = mean[torch.arange(len(mean)),index.view(-1)] # gather action along the mixture dimension from tensor (env, mixture, action_dim)
+          
                 actions.append(mean.detach().cpu().numpy())
             actions = np.array(actions)
             return actions
         else:
-            for policy, feature_net, state_per_agent in zip(self.policies, self.feature_nets, s):
+            for policy, feature_net, mix_coef, state_per_agent in zip(self.policies, self.feature_nets, self.mixing_coefs, s):
                 feature = feature_net(torch.from_numpy(np.array(state_per_agent)).unsqueeze(0).float().to(self.device))
                 logits = policy(feature)
+                logits = logits.reshape(*logits.shape[:2], self.mix_num, -1)  # (batch, env, mixture, agents*action_dim)
+                mix_probs = mix_coef(feature).squeeze()
+                mix_dist = Categorical(mix_probs)
+                index = mix_dist.sample()
                 if len(logits.shape) > 2:
                     logits = logits.squeeze()
-                mean = torch.tanh(logits[:, :self.action_dim])
-                var = logits[:, self.action_dim:].exp()
-                # cov = torch.diag_embed(var)
-                # dist = MultivariateNormal(mean, cov)
-                # a = dist.sample()
-                # logprob = dist.log_prob(a) 
-      
-                std = var # here we fake the std
-                normal = Normal(0, 1)
-                z      = normal.sample()
-                a = mean + std*z
-                logprob = Normal(mean, std).log_prob(a.squeeze())
-                logprob = logprob.sum(dim=-1, keepdim=True)  # reduce dim
+                mean = torch.tanh(logits[:, :, :self.action_dim])
+                log_std = logits[:, :, self.action_dim:]  # no tanh on log var
+                log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
+                std = log_std.exp()
+
+                normal = Normal(mean, std)
+                full_a = normal.sample()
+                a = full_a[torch.arange(len(full_a)),index.view(-1)] # gather action along the mixture dimension from tensor (env, mixture, action_dim)
+                a_for_prob = a.unsqueeze(-2) # to (1, action_dim), matching with mean and std (K, action_dim)
+                logprob = torch.einsum('ij,ij->i', mix_probs, normal.log_prob(a_for_prob).sum(-1).exp()).log()
+                # logprob = normal.log_prob(a).sum(-1)
 
                 actions.append(a.detach().cpu().numpy())
                 logprobs.append(logprob.detach().cpu().numpy())
@@ -485,12 +532,58 @@ class NashPPOContinuous(NashPPOBase):
         log_prob = log_prob.sum(dim=-1, keepdim=True)  # reduce dim
         return log_prob
 
+    def get_action_log_prob(self, x, i, action=None, select_from_mixture=True):
+        logits = self.pi(x, i)
+        logits = logits.reshape(logits.shape[0], self.mix_num, -1)  # (batch, env, mixture, agents*action_dim)
+        mix_probs = self.mixing_coefs[i](x).squeeze()
+        mix_dist = Categorical(mix_probs)
+        if len(logits.shape) > 2:
+            logits = logits.squeeze()
+        mean = torch.tanh(logits[:, :, :self.action_dim])
+        log_std = logits[:, :, self.action_dim:]  # no tanh on log var
+        log_std = torch.clamp(log_std, self.log_std_min, self.log_std_max)  # clipped to prevent blowing std
+        std = log_std.exp()
+        normal = Normal(mean, std)
+        full_a = normal.sample()
+        if select_from_mixture:
+            mix_dist = Categorical(mix_probs)
+            index = mix_dist.sample()
+            a = full_a[index]
+        else:
+            a = full_a
+
+        if action is None:
+            a_for_prob = a.unsqueeze(-2)
+        else:
+            a_for_prob = action[:, i].unsqueeze(-2) # to (1, action_dim), matching with mean and std (K, action_dim)
+
+        logprob = torch.einsum('ij,ij->i', mix_probs, normal.log_prob(a_for_prob).sum(-1).exp()).log()
+        mix_entropy = mix_dist.entropy()
+        normal_entropy = normal.entropy()
+        dist_entropy = normal_entropy.sum(dim=-1, keepdim=True).mean() + mix_entropy.mean() # reduce dim
+        return a, logprob, dist_entropy, mix_probs
+
     def update(self):
         infos = {}
         total_loss = 0.
         self.data = [x for x in self.data if x]  # remove empty
+
+        s,a,r,s_prime,oldlogprob,done_mask = [],[],[],[],[],[]
+        s = torch.tensor(s).to(self.device)
+        a = torch.tensor(a).to(self.device)
+        r = torch.tensor(r).to(self.device)
+        s_prime = torch.tensor(s_prime).to(self.device)
+        oldlogprob = torch.tensor(oldlogprob).to(self.device)
+        done_mask = torch.tensor(done_mask).to(self.device)   # 0 if done
+
         for data in self.data:  # iterate over data from different environments
-            s, a, r, s_prime, oldlogprob, done_mask = self.make_batch(data)
+            traj_s, traj_a, traj_r, traj_s_prime, traj_oldlogprob, traj_done_mask = self.make_batch(data)
+            s = torch.cat([s, traj_s])
+            a = torch.cat([a, traj_a.view(traj_a.shape[0],2,-1)])
+            r = torch.cat([r, traj_r])
+            s_prime = torch.cat([s_prime, traj_s_prime])
+            oldlogprob = torch.cat([oldlogprob, traj_oldlogprob])
+            done_mask = torch.cat([done_mask, traj_done_mask])
 
             # need to prcess the samples, separate for agents
             if self.args.ram:
@@ -499,159 +592,192 @@ class NashPPOContinuous(NashPPOBase):
             else:
                 s_ = s  # shape: (batch, agents, envs, C, H, W)
                 s_prime_ = s_prime   
-            a = a.view(a.shape[0], 2, -1)
 
-            for _ in range(self.K_epoch):
-                loss = 0.0
-                ppo_loss_total = 0.0
-                feature_x_list = []
-                feature_x_prime_list = []
+        done_mask_ = torch.flip(done_mask, dims=(0,))
 
-                # standard PPO
-                for i in range(2):  # for each agent
-                    # shared feature extraction
-                    if self.args.ram:
-                        feature_x = self.feature_nets[i](s_[:, i, :])
-                        feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
+        # standard PPO
+        for i in range(self.num_agents):  # for each agent
+            # shared feature extraction
+            if self.args.ram:
+                feature_x = self.feature_nets[i](s_[:, i, :])
+                feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
+            else:
+                feature_x = self.feature_nets[i](s_[:, i])
+                feature_x_prime = self.feature_nets[i](s_prime_[:, i])    
+            with torch.no_grad():                        
+                vs = self.v(feature_x, i).squeeze(dim=-1)  # take the state for the specific agent
+                advantage = torch.zeros_like(r[:, i])
+                lastgaelam = 0
+                for t in reversed(range(s_.shape[0])):
+                    if not done_mask[t] or t == s_.shape[0]-1:   # 0 if done
+                        nextvalues = self.v(feature_x_prime[t], i).squeeze()
                     else:
-                        feature_x = self.feature_nets[i](s_[:, i])
-                        feature_x_prime = self.feature_nets[i](s_prime_[:, i])                        
+                        nextvalues = vs[t+1]     
+                    # assert nextvalues.shape == vs[t].shape
+                    delta = r[:, i][t] + self.gamma * nextvalues - vs[t]
+                    advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
 
-                    vs = self.v(feature_x, i)  # take the state for the specific agent
-                    vs_prime = self.v(feature_x_prime, i).squeeze(dim=-1)
-                    assert vs_prime.shape == done_mask.shape
-                    r = r.detach()
-                    vs_target = r[:, i] + self.gamma * vs_prime * done_mask
-                    delta = vs_target - vs.squeeze(dim=-1)
-                    advantage_lst = []
-                    advantage = 0.0
-                    for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                        advantage = self.gamma * self.lmbda * advantage + delta_t
-                        advantage_lst.append(advantage)
-                    advantage_lst.reverse()
-                    advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                    advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
-                    advantage = advantage.detach()
+                assert advantage.shape == vs.shape
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
+                vs_target = advantage + vs
 
-                    logits = self.pi(feature_x, i)
-                    if len(logits.shape) > 2:
-                        logits = logits.squeeze()
-                    mean = torch.tanh(logits[:, :self.action_dim])
-                    var = logits[:, self.action_dim:].exp()
-                    # cov = torch.diag_embed(var)
-                    # dist = MultivariateNormal(mean, cov)
-                    # dist_entropy = dist.entropy()
-                    # logprob = dist.log_prob(a[:, i].squeeze())  # for multivariate normal, sum of log_prob is produce of prob
+        ratios = [[] for _ in range(self.num_agents)]
+        values = [[] for _ in range(self.num_agents)]
+        stds = [[] for _ in range(self.num_agents)]
+        ppo_total_loss = [0. for _ in range(self.num_agents)]
+        p_loss = [0. for _ in range(self.num_agents)]
+        q_loss = [0. for _ in range(self.num_agents)]
+        coef_loss = [0. for _ in range(self.num_agents)]
+        v_loss = [0. for _ in range(self.num_agents)]
+        nash_v_loss = 0.
+        nash_policy_loss = [0. for _ in range(self.num_agents)]
 
-                    std = var # here we fake the std
-                    logprob = self.get_log_prob(mean, std, a[:, i].squeeze())
-                    dist_entropy = Normal(mean, std).entropy()
-                    dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
-                        
-                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
-                    surr1 = ratio * advantage
-                    surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
-                    # print(surr1.shape, surr2.shape, vs.squeeze(dim=-1).shape, vs_target.shape, ratio.shape, advantage.shape, dist_entropy.shape)
-                    policy_loss = -torch.min(surr1, surr2)
-                    v_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach())
-                    ppo_loss = policy_loss + self.vf_coeff * v_loss - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
-                    ppo_loss = ppo_loss.mean()
-                    ppo_loss_total += ppo_loss
-                    self.optimizer.zero_grad()
-                    ppo_loss.backward()
-                    nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
-                    self.optimizer.step()
-                    total_loss += ppo_loss.item()
-                    infos[f'PPO policy loss player {i}'] = policy_loss
-                    infos[f'PPO value loss player {i}'] = v_loss
-                    infos[f'PPO total loss player {i}'] = ppo_loss
-                    infos[f'policy entropy player {i}'] = dist_entropy
+        dist_entropies = [[] for _ in range(self.num_agents)]
 
-                # loss for common layers (value function)
-                feature_x_list = []
-                feature_x_prime_list = []
-                # standard PPO
-                for i in range(2):  # for each agent
+        for _ in range(self.K_epoch):
+            loss = 0.0
+            # Standard PPO
+            for i in range(self.num_agents):  # for each agent
+                if self.args.ram:
                     feature_x = self.feature_nets[i](s_[:, i, :])
                     feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
-                    feature_x_list.append(feature_x)
-                    feature_x_prime_list.append(feature_x_prime)
-                vs = self.common_layers(torch.cat(feature_x_list, axis=1))  # TODO just use the first state (assume it has full info)
-                vs_prime = self.common_layers(torch.cat(feature_x_prime_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
-                assert vs_prime.shape == done_mask.shape
-                vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
-                common_layer_loss = F.mse_loss(vs.squeeze(dim=-1), vs_target.detach()).mean()
-                infos[f'Nash value loss'] = common_layer_loss
+                else:
+                    feature_x = self.feature_nets[i](s_[:, i])
+                    feature_x_prime = self.feature_nets[i](s_prime_[:, i])                        
 
-                # calculate generalized advantage with common layer value
-                delta = vs_target - vs.squeeze(dim=-1)
-                delta = delta.detach()
-                advantage_lst = []
-                advantage = 0.0
-                for delta_t in torch.flip(delta, [-1]):  # reverse the delta along the time sequence in an episodic data
-                    advantage = self.gamma * self.lmbda * advantage + delta_t
-                    advantage_lst.append(advantage)
-                advantage_lst.reverse()
-                advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
-                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-5)  # this can have significant improvement (efficiency, stability) on performance
-                advantage = advantage.detach()
+                # get mixing coefficients loss                
+                new_a, logprob, dist_entropy, new_mix_coef = self.get_action_log_prob(feature_x, i, a, select_from_mixture=False)
+                new_q = self.q(feature_x, new_a, i, match_shape=True)
+                _, best_index = new_q.max(-1)
+                mix_coef_loss = F.mse_loss(new_mix_coef, F.one_hot(best_index, self.mix_num).float()).mean()
 
-                ratio_list = []
-                for i in range(2):  # get the ratio for both
-                    logits = self.pi(feature_x_list[i], i)
-                    if len(logits.shape) > 2:
-                        logits = logits.squeeze()
-                    mean = torch.tanh(logits[:, :self.action_dim])
-                    var = logits[:, self.action_dim:].exp()
-                    # cov = torch.diag_embed(var)
-                    # dist = MultivariateNormal(mean, cov)
-                    # dist_entropy = dist.entropy()
-                    # logprob = dist.log_prob(a[:, i])
+                # Q-net loss
+                pred_q = self.q(feature_x, a[:, i], i).squeeze()
+                qvalue_loss = F.mse_loss(pred_q, vs_target).mean()
 
-                    std = var # here we fake the std
-                    logprob = self.get_log_prob(mean, std, a[:, i].squeeze())
-                    dist_entropy = Normal(mean, std).entropy()
-                    dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
+                new_vs = self.v(feature_x, i)  # take the state for the specific agent 
+                ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
+                surr1 = ratio * advantage
+                surr2 = torch.clamp(ratio, 1 - self.eps_clip, 1 + self.eps_clip) * advantage
+                policy_loss = -torch.min(surr1, surr2).mean()
+                # value_loss = F.mse_loss(new_vs.squeeze(dim=-1), vs_target.detach())
 
-                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
-                    ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
-                surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
-                surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
-                policy_loss1 = -torch.min(surr1, surr2).mean()
-                infos[f'Nash policy loss player 1'] = policy_loss1
+                # clipped value loss
+                v_clipped = vs + torch.clamp(new_vs - vs, -self.eps_clip, self.eps_clip)
+                value_loss_clipped = (v_clipped - vs_target.detach()) ** 2
+                value_loss_unclipped = (new_vs - vs_target.detach()) ** 2
+                value_loss_max = torch.max(value_loss_unclipped, value_loss_clipped)
+                value_loss =  0.5 * value_loss_max.mean()
 
-                ratio_list = []
-                for i in range(2):  # get the ratio for both
-                    logits = self.pi(feature_x_list[i], i)
-                    if len(logits.shape) > 2:
-                        logits = logits.squeeze()
-                    mean = torch.tanh(logits[:, :self.action_dim])
-                    var = logits[:, self.action_dim:].exp()
-                    # cov = torch.diag_embed(var)
-                    # dist = MultivariateNormal(mean, cov)
-                    # dist_entropy = dist.entropy()
-                    # logprob = dist.log_prob(a[:, i])
-
-                    std = var # here we fake the std
-                    logprob = self.get_log_prob(mean, std, a[:, i].squeeze())
-                    dist_entropy = Normal(mean, std).entropy()
-                    dist_entropy = dist_entropy.sum(dim=-1, keepdim=True)  # reduce dim
-
-                    ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
-                    ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
-                surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
-                surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
-                policy_loss2 = torch.min(surr1, surr2).mean()
-                infos[f'Nash policy loss player 2'] = policy_loss2
-
-                loss = self.policy_loss_coeff * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
+                ppo_loss = mix_coef_loss + qvalue_loss + policy_loss + self.vf_coeff * value_loss - self.entropy_coeff * dist_entropy  # TODO vec + scalar + vec, is this valid?
+                ppo_loss = ppo_loss.mean()
+                
+                ppo_total_loss[i] += ppo_loss.item()
+                q_loss[i] += qvalue_loss.item()
+                coef_loss[i] += mix_coef_loss.item()
+                p_loss[i] += policy_loss.item()
+                v_loss[i] += value_loss.item()
+                dist_entropies[i].append(dist_entropy.item())
+                ratios[i].append(ratio.mean().item())
+                values[i].append(new_vs.mean().item())
+                # stds[i].append(std.mean().item())
 
                 self.optimizer.zero_grad()
-                loss.backward()
+                ppo_loss.backward(retain_graph=True)
                 nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
                 self.optimizer.step()
-                total_loss += loss.item()
+                total_loss += ppo_loss.item()
+                
+            # loss for common layers (value function)
+            # common layers
+            feature_x_list = []
+            feature_x_prime_list = []
+            for i in range(2):  # for each agent
+                feature_x = self.feature_nets[i](s_[:, i, :])
+                feature_x_prime = self.feature_nets[i](s_prime_[:, i, :])
+                feature_x_list.append(feature_x)
+                feature_x_prime_list.append(feature_x_prime)     
+
+            with torch.no_grad():   
+                common_vs = self.common_layers(torch.cat(feature_x_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
+                advantage = torch.zeros_like(r[:, 0])
+                lastgaelam = 0
+                for t in reversed(range(s_.shape[0])):
+                    if not done_mask[t] or t == s_.shape[0]-1:   # 0 if done
+                        nextvalues = self.common_layers(torch.cat(feature_x_prime_list, axis=1)[t]).squeeze()
+                    else:
+                        nextvalues = common_vs[t+1]   
+                    # assert nextvalues.shape == common_vs[t].shape
+                    delta = r[:, 0][t] + self.gamma * nextvalues - common_vs[t]
+                    advantage[t] = lastgaelam = delta + self.gamma * self.lmbda * lastgaelam
+
+                assert advantage.shape == common_vs.shape
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
+                common_vs_target = advantage + common_vs
+
+                # vs_prime = self.common_layers(torch.cat(feature_x_prime_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
+                # assert vs_prime.shape == done_mask.shape
+                # common_vs = self.common_layers(torch.cat(feature_x_list, axis=1)).squeeze(dim=-1)  # TODO just use the first state (assume it has full info)
+                # common_vs_target = r[:, 0] + self.gamma * vs_prime * done_mask  # r is the first player's here
+                # # calculate generalized advantage with common layer value
+                # delta = common_vs_target - common_vs
+                # delta = delta.detach()
+                # advantage_lst = []
+                # advantage = 0.0
+                # for delta_t, mask in zip(torch.flip(delta, [-1]), done_mask_):  # reverse the delta along the time sequence in an episodic data
+                #     advantage = self.gamma * self.lmbda * advantage * mask + delta_t
+                #     advantage_lst.append(advantage)
+                # advantage_lst.reverse()
+                # advantage = torch.tensor(advantage_lst, dtype=torch.float).to(self.device)
+                # advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)  # this can have significant improvement (efficiency, stability) on performance
+                # advantage = advantage.detach()
+                # common_vs_target = advantage + common_vs
+
+            new_common_vs = self.common_layers(torch.cat(feature_x_list, axis=1))  # TODO just use the first state (assume it has full info)
+            common_layer_loss = F.mse_loss(new_common_vs.squeeze(dim=-1), common_vs_target.detach()).mean()
+            nash_v_loss += common_layer_loss.item()
+            ratio_list = []
+            for i in range(2):  # get the ratio for both
+                _, logprob, _, _ = self.get_action_log_prob(feature_x_list[i], i, a)
+                ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
+                ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
+            surr1 = ratio_list[0] * ratio_list[1].detach() * advantage
+            surr2 = torch.clamp(ratio_list[0] * (ratio_list[1].detach()), 1 - self.eps_clip, 1 + self.eps_clip)
+            policy_loss1 = -torch.min(surr1, surr2).mean()
+            nash_policy_loss[0] += policy_loss1.item()
+
+            ratio_list = []
+            for i in range(2):  # get the ratio for both
+                _, logprob, _, _ = self.get_action_log_prob(feature_x_list[i], i, a)
+                ratio = torch.exp(logprob.squeeze() - oldlogprob[:, i].squeeze())
+                ratio_list.append(ratio)  # the ratios need to be newly computed to have policy gradients
+            surr1 = ratio_list[0].detach() * ratio_list[1] * advantage
+            surr2 = torch.clamp((ratio_list[0].detach()) * ratio_list[1], 1 - self.eps_clip, 1 + self.eps_clip)
+            policy_loss2 = torch.min(surr1, surr2).mean()
+            nash_policy_loss[1] += policy_loss2.item()
+
+            loss = self.policy_loss_coeff * (policy_loss1 + policy_loss2) + 1.0 * (common_layer_loss)
+
+            self.optimizer.zero_grad()
+            loss.backward(retain_graph=True)
+            nn.utils.clip_grad_norm_(self.all_params, self.max_grad_norm)
+            self.optimizer.step()
+            total_loss += loss.item()
         # print('loss :', policy_loss1.item(),  policy_loss2.item(), common_layer_loss.item())
+
+        infos[f'PPO Q-value loss player {i}'] = q_loss[i]
+        infos[f'PPO coefficient loss player {i}'] = coef_loss[i]
+        infos[f'PPO policy loss player {i}'] = p_loss[i]
+        infos[f'PPO value loss player {i}'] = v_loss[i]
+        infos[f'PPO total loss player {i}'] = ppo_total_loss[i]
+        infos[f'policy entropy player {i}'] = np.mean(dist_entropies[i])
+        # infos[f'PPO policy std player {i}'] = np.mean(stds[i])
+        infos[f'PPO policy ratio player {i}'] = np.mean(ratios[i])
+        infos[f'PPO mean_value player {i}'] = np.mean(values[i])
+        infos[f'Nash value loss'] = nash_v_loss
+        infos[f'Nash policy loss player 1'] = nash_policy_loss[0]
+        infos[f'Nash policy loss player 2'] = nash_policy_loss[1]
+
         self.data = [[] for _ in range(self._num_channel)]
 
         return total_loss, infos

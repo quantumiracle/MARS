@@ -34,7 +34,7 @@ import numpy as np
 
 from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, NormalizeReward, TransformObservation, NormalizeObservation, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
-     Gym2AgentWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper, ZeroSumWrapper, zero_sum_reward_filer
+     Gym2AgentWrapper, Gym2AgentAdversarialWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper, ZeroSumWrapper, zero_sum_reward_filer
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
 from .wrappers.lasertag_wrappers import LaserTagWrapper
 from .mdp import attack, combinatorial_lock, arbitrary_mdp, arbitrary_richobs_mdp
@@ -194,6 +194,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         else:
             mode = 'rgb_array'
         env = RoboSumoWrapper(env, mode)
+        # these wrappers work for multi-agent as well, stats are maintained for each agent individually
         env = NormalizeObservation(env) # according to original paper: https://arxiv.org/pdf/1710.03641.pdf
         env = TransformObservation(env, lambda obs: np.clip(obs, -5., 5.))
         env = NormalizeReward(env)
@@ -206,7 +207,18 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
             print(f"Error: No such env in Openai Gym: {env_name}!") 
         # may need more wrappers here, e.g. Pong-ram-v0 need scaled observation!
         # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
-        env = Gym2AgentWrapper(env)
+        env = gym.wrappers.RecordEpisodeStatistics(env)  # bypass the reward normalization to record episodic return
+        env = gym.wrappers.ClipAction(env)
+        env = gym.wrappers.NormalizeObservation(env) 
+        env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
+        env = gym.wrappers.NormalizeReward(env)  # this can be critical for algo to work
+        env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
+        
+        if args.adversarial:
+            env = Gym2AgentAdversarialWrapper(env)
+        else:
+            env = Gym2AgentWrapper(env)
+     
 
     elif env_type == 'safetygym':
         import safety_gym
@@ -259,7 +271,7 @@ def make_env(args, ss_vec=True):
 
     # video recorder: https://github.com/openai/gym/blob/master/gym/wrappers/record_video.py
     if not 'record_video_interval' in args.keys():
-        record_video_interval = int(1e2) 
+        record_video_interval = int(1e3) 
     else:
         record_video_interval =  int(args.record_video_interval)
     if not 'record_video_length' in args.keys():
@@ -305,7 +317,7 @@ def make_env(args, ss_vec=True):
             env = VectorEnv([lambda: single_env for _ in range(args.num_envs)])
             if args.record_video:
                 env.is_vector_env = True
-                # record single env if multiple envs are used
+                # record single env if multiple envs are used TODO
                 env.metadata = single_env.metadata
                 single_env = gym.wrappers.RecordVideo(single_env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
                         # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps

@@ -1,0 +1,338 @@
+2022-10-20 21:04:33.426538: I tensorflow/core/util/util.cc:169] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+/home/zihan/research/MARS/mars/env/mdp/arbitrary_richobs_mdp.py:19: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  self.observation_space = Box(low=0.0, high=1.0, shape=(self.observation_dim,),dtype=np.float)
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/flatbuffers/compat.py:19: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
+  import imp
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/keras/utils/image_utils.py:36: DeprecationWarning: NEAREST is deprecated and will be removed in Pillow 10 (2023-07-01). Use Resampling.NEAREST or Dither.NONE instead.
+  'nearest': pil_image.NEAREST,
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/keras/utils/image_utils.py:37: DeprecationWarning: BILINEAR is deprecated and will be removed in Pillow 10 (2023-07-01). Use Resampling.BILINEAR instead.
+  'bilinear': pil_image.BILINEAR,
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/keras/utils/image_utils.py:38: DeprecationWarning: BICUBIC is deprecated and will be removed in Pillow 10 (2023-07-01). Use Resampling.BICUBIC instead.
+  'bicubic': pil_image.BICUBIC,
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/keras/utils/image_utils.py:39: DeprecationWarning: HAMMING is deprecated and will be removed in Pillow 10 (2023-07-01). Use Resampling.HAMMING instead.
+  'hamming': pil_image.HAMMING,
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/keras/utils/image_utils.py:40: DeprecationWarning: BOX is deprecated and will be removed in Pillow 10 (2023-07-01). Use Resampling.BOX instead.
+  'box': pil_image.BOX,
+/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/keras/utils/image_utils.py:41: DeprecationWarning: LANCZOS is deprecated and will be removed in Pillow 10 (2023-07-01). Use Resampling.LANCZOS instead.
+  'lanczos': pil_image.LANCZOS,
+wandb: Currently logged in as: quantumiracle (use `wandb login --relogin` to force relogin)
+advmujoco_ant_v2
+{'env_name': 'Ant-v2', 'env_type': 'gym', 'num_envs': 5, 'ram': True, 'seed': 'random', 'adversarial': True, 'record_video': True, 'against_baseline': False, 'algorithm': 'NashPPO', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 30000, 'batch_update': 1280, 'lambda': 0.95, 'eps_clip': 0.2, 'K_epoch': 4, 'GAE': True, 'max_grad_norm': 0.5, 'entropy_coeff': 0.01, 'vf_coeff': 0.5, 'policy_loss_coeff': 0.08}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202210202104, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': '', 'wandb_group': '', 'wandb_name': '', 'net_architecture': {'hidden_dim_list': [128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False, 'feature': {'hidden_dim_list': [128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'policy': {'hidden_dim_list': [128], 'hidden_activation': False, 'output_activation': 'Tanh'}, 'value': {'hidden_dim_list': [128], 'hidden_activation': 'ReLU', 'output_activation': False}}, 'marl_method': 'nash_ppo', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': True}, 'record_video_interval': 2000}
+2022-10-20 21:04:36.369875: I tensorflow/core/util/util.cc:169] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+wandb: wandb version 0.13.4 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.12.11
+wandb: Run data is saved locally in /home/zihan/research/MARS/wandb/run-20221020_210435-18a9cjbz
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run gym_Ant-v2_nash_ppo_202210202104
+wandb: ⭐️ View project at https://wandb.ai/quantumiracle/Pettingzoo_MARS
+wandb: 🚀 View run at https://wandb.ai/quantumiracle/Pettingzoo_MARS/runs/18a9cjbz
+args:  {'env_name': 'Ant-v2', 'env_type': 'gym', 'num_envs': 5, 'ram': True, 'seed': 'random', 'adversarial': True, 'record_video': True, 'against_baseline': False, 'algorithm': 'NashPPO', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 30000, 'batch_update': 1280, 'lambda': 0.95, 'eps_clip': 0.2, 'K_epoch': 4, 'GAE': True, 'max_grad_norm': 0.5, 'entropy_coeff': 0.01, 'vf_coeff': 0.5, 'policy_loss_coeff': 0.08}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202210202104, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': 'Pettingzoo_MARS', 'wandb_group': '202210202104', 'wandb_name': 'gym_Ant-v2_nash_ppo_202210202104', 'net_architecture': {'hidden_dim_list': [128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False, 'feature': {'hidden_dim_list': [128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'policy': {'hidden_dim_list': [128], 'hidden_activation': False, 'output_activation': 'Tanh'}, 'value': {'hidden_dim_list': [128], 'hidden_activation': 'ReLU', 'output_activation': False}}, 'marl_method': 'nash_ppo', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': True}, 'record_video_interval': 2000}
+Ant-v2 gym
+record video: interval 2000, length 300
+Load Ant-v2 environment in type gym.
+Env observation space: Box(-inf, inf, (111,), float64) action space: Box(-1.0, 1.0, (8,), float32)
+random seed: [636, 516, 682, 727, 490]
+<SubprocVectorEnv instance>
+Feature networks:  [MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=111, bias=True)
+  )
+), MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=111, bias=True)
+  )
+)] 
+Policy networks:  [MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): Linear(in_features=128, out_features=16, bias=True)
+    (2): Tanh()
+  )
+), MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): Linear(in_features=128, out_features=16, bias=True)
+    (2): Tanh()
+  )
+)] 
+Value networks:  [MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=1, bias=True)
+  )
+), MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=1, bias=True)
+  )
+)] 
+Common layers:  MLP(
+  (body): Sequential(
+    (0): Linear(in_features=222, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=1, bias=True)
+  )
+)
+Feature networks:  [MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=111, bias=True)
+  )
+), MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=111, bias=True)
+  )
+)] 
+Policy networks:  [MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): Linear(in_features=128, out_features=16, bias=True)
+    (2): Tanh()
+  )
+), MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): Linear(in_features=128, out_features=16, bias=True)
+    (2): Tanh()
+  )
+)] 
+Value networks:  [MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=1, bias=True)
+  )
+), MLP(
+  (body): Sequential(
+    (0): Linear(in_features=111, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=1, bias=True)
+  )
+)] 
+Common layers:  MLP(
+  (body): Sequential(
+    (0): Linear(in_features=222, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=1, bias=True)
+  )
+)
+Agents No. [1] (index starting from 0) are not learnable.
+Arguments:  {'env_name': 'Ant-v2', 'env_type': 'gym', 'num_envs': 5, 'ram': True, 'seed': 'random', 'adversarial': True, 'record_video': True, 'against_baseline': False, 'algorithm': 'NashPPO', 'algorithm_spec': {'episodic_update': False, 'dueling': False, 'replay_buffer_size': '1e5', 'gamma': 0.99, 'multi_step': 1, 'target_update_interval': 1000, 'eps_start': 1.0, 'eps_final': 0.001, 'eps_decay': 30000, 'batch_update': 1280, 'lambda': 0.95, 'eps_clip': 0.2, 'K_epoch': 4, 'GAE': True, 'max_grad_norm': 0.5, 'entropy_coeff': 0.01, 'vf_coeff': 0.5, 'policy_loss_coeff': 0.08}, 'num_process': 1, 'batch_size': 128, 'max_episodes': 10000, 'max_steps_per_episode': 300, 'train_start_frame': 0, 'save_id': 202210202104, 'optimizer': 'adam', 'learning_rate': '1e-4', 'device': 'gpu', 'update_itr': 1, 'log_avg_window': 20, 'log_interval': 20, 'render': False, 'test': False, 'exploit': False, 'load_model_idx': False, 'load_model_full_path': False, 'multiprocess': False, 'eval_models': False, 'save_path': '', 'save_interval': 2000, 'wandb_activate': True, 'wandb_entity': 'quantumiracle', 'wandb_project': 'Pettingzoo_MARS', 'wandb_group': '202210202104', 'wandb_name': 'gym_Ant-v2_nash_ppo_202210202104', 'net_architecture': {'hidden_dim_list': [128, 128, 128], 'hidden_activation': 'ReLU', 'output_activation': False, 'feature': {'hidden_dim_list': [128, 128], 'hidden_activation': 'ReLU', 'output_activation': False}, 'policy': {'hidden_dim_list': [128], 'hidden_activation': False, 'output_activation': 'Tanh'}, 'value': {'hidden_dim_list': [128], 'hidden_activation': 'ReLU', 'output_activation': False}}, 'marl_method': 'nash_ppo', 'marl_spec': {'min_update_interval': 20, 'score_avg_window': 10, 'global_state': True}, 'record_video_interval': 2000}
+Save models to : /home/zihan/research/MARS/data/model/202210202104/gym_Ant-v2_nash_ppo. 
+ Save logs to: /home/zihan/research/MARS/data/log/202210202104/gym_Ant-v2_nash_ppo.
+Episode: 1/10000 (0.0100%),                 avg. length: 21.0,                last time consumption/overall running time: 0.53s / 0.53 s
+player:                 episode reward: -80.0643,                 loss: nan
+adversarial:                 episode reward: 80.0643,                 loss: nan
+Episode: 21/10000 (0.2100%),                 avg. length: 17.0,                last time consumption/overall running time: 3.13s / 3.66 s
+player:                 episode reward: -60.3159,                 loss: nan
+adversarial:                 episode reward: 60.3159,                 loss: nan
+Episode: 41/10000 (0.4100%),                 avg. length: 20.1,                last time consumption/overall running time: 3.48s / 7.14 s
+player:                 episode reward: -68.6464,                 loss: nan
+adversarial:                 episode reward: 68.6464,                 loss: nan
+Episode: 61/10000 (0.6100%),                 avg. length: 22.2,                last time consumption/overall running time: 3.75s / 10.90 s
+player:                 episode reward: -74.3738,                 loss: nan
+adversarial:                 episode reward: 74.3738,                 loss: nan
+Episode: 81/10000 (0.8100%),                 avg. length: 16.6,                last time consumption/overall running time: 5.49s / 16.38 s
+player:                 episode reward: -62.0767,                 loss: 5.1212
+adversarial:                 episode reward: 62.0767,                 loss: nan
+Episode: 101/10000 (1.0100%),                 avg. length: 20.15,                last time consumption/overall running time: 3.34s / 19.72 s
+player:                 episode reward: -70.6549,                 loss: nan
+adversarial:                 episode reward: 70.6549,                 loss: nan
+Episode: 121/10000 (1.2100%),                 avg. length: 18.25,                last time consumption/overall running time: 3.14s / 22.86 s
+player:                 episode reward: -61.9800,                 loss: nan
+adversarial:                 episode reward: 61.9800,                 loss: nan
+Episode: 141/10000 (1.4100%),                 avg. length: 20.3,                last time consumption/overall running time: 5.93s / 28.79 s
+player:                 episode reward: -62.5059,                 loss: 5.0813
+adversarial:                 episode reward: 62.5059,                 loss: nan
+Episode: 161/10000 (1.6100%),                 avg. length: 17.2,                last time consumption/overall running time: 3.03s / 31.82 s
+player:                 episode reward: -54.4979,                 loss: nan
+adversarial:                 episode reward: 54.4979,                 loss: nan
+Episode: 181/10000 (1.8100%),                 avg. length: 15.65,                last time consumption/overall running time: 2.85s / 34.67 s
+player:                 episode reward: -47.9699,                 loss: nan
+adversarial:                 episode reward: 47.9699,                 loss: nan
+Episode: 201/10000 (2.0100%),                 avg. length: 19.25,                last time consumption/overall running time: 5.93s / 40.60 s
+player:                 episode reward: -60.8123,                 loss: 5.0813
+adversarial:                 episode reward: 60.8123,                 loss: nanException in thread Thread-18:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 926, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 56, in run
+    success = self.push()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 112, in push
+    _, upload_headers, result = self._api.upload_urls(project, [self.save_name])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 62, in wrapper
+    six.reraise(CommError, CommError(message, err), sys.exc_info()[2])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+Exception in thread Thread-19:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 926, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 56, in run
+    success = self.push()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 112, in push
+    _, upload_headers, result = self._api.upload_urls(project, [self.save_name])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 62, in wrapper
+    six.reraise(CommError, CommError(message, err), sys.exc_info()[2])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+Exception in thread Thread-23:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 926, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 56, in run
+    success = self.push()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 112, in push
+    _, upload_headers, result = self._api.upload_urls(project, [self.save_name])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 62, in wrapper
+    six.reraise(CommError, CommError(message, err), sys.exc_info()[2])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+Exception in thread Thread-22:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 926, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 56, in run
+    success = self.push()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 112, in push
+    _, upload_headers, result = self._api.upload_urls(project, [self.save_name])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 62, in wrapper
+    six.reraise(CommError, CommError(message, err), sys.exc_info()[2])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+Exception in thread Thread-21:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 926, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 56, in run
+    success = self.push()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 112, in push
+    _, upload_headers, result = self._api.upload_urls(project, [self.save_name])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 62, in wrapper
+    six.reraise(CommError, CommError(message, err), sys.exc_info()[2])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+Exception in thread Thread-20:
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/threading.py", line 926, in _bootstrap_inner
+    self.run()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 56, in run
+    success = self.push()
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/filesync/upload_job.py", line 112, in push
+    _, upload_headers, result = self._api.upload_urls(project, [self.save_name])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 62, in wrapper
+    six.reraise(CommError, CommError(message, err), sys.exc_info()[2])
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/apis/normalize.py", line 24, in wrapper
+    return func(*args, **kwargs)
+  File "/home/zihan/anaconda3/envs/x/lib/python3.7/site-packages/wandb/sdk/internal/internal_api.py", line 1412, in upload_urls
+    "Run does not exist {}/{}/{}.".format(entity, project, run_id)
+wandb.errors.CommError: Run does not exist quantumiracle/Pettingzoo_MARS/18a9cjbz.
+
+wandb: ERROR Dropped streaming file chunk (see wandb/debug-internal.log)
+ERROR:root:dropped chunk 404 Client Error: Not Found for url: https://api.wandb.ai/files/quantumiracle/Pettingzoo_MARS/18a9cjbz/file_stream
+NoneType: None

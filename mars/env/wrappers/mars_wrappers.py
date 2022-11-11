@@ -157,8 +157,12 @@ class RoboSumoWrapper():
         return self.env.render(mode)
 
     def step(self, actions):
-        actions = np.array(actions).squeeze()
-        obs, reward, done, info = self.env.step(actions)
+        actions = [a.squeeze() for a in actions]
+        try:
+            obs, reward, done, info = self.env.step(actions)
+        except:
+            print(f'Action exception in Mujoco: {actions}')
+            obs, reward, done, info = self.env.step(np.zeros_like(actions))
         return obs, reward, done, info
 
     def close(self):
@@ -307,9 +311,51 @@ class Gym2AgentWrapper():
     def step(self, actions):
         assert len(actions) >= 1
         action = actions[0]
+        noise = np.random.uniform(-1, 1, action.shape[0])
+        action = action + 0. * noise
         obs, reward, done, info = self.env.step(action)
         obs = obs.squeeze() # for continuous gym envs it require squeeze()
         return [obs], [reward], [done], [info]
+
+    def close(self):
+        self.env.close()
+
+class Gym2AgentAdversarialWrapper():
+    """ Wrap single agent OpenAI gym game to be multi-agent (one adversarial) version """
+    def __init__(self, env):
+        super(Gym2AgentAdversarialWrapper, self).__init__()
+        self.env = env
+        self.agents = ['player', 'adversarial']
+        self.num_agents = len(self.agents)
+        self.observation_space = self.env.observation_space
+        self.observation_spaces = {name: self.env.observation_space for name in self.agents}
+        self.action_space = self.env.action_space
+        self.action_spaces = {name: self.action_space for name in self.agents}
+        self.adversarial_coef = 0.1 # adversarial action scale
+        self.metadata = env.metadata
+    
+    @property
+    def spec(self):
+        return self.env.spec
+
+    def reset(self):
+        obs = self.env.reset()
+        return [obs, obs]
+
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
+
+    def render(self,):
+        return self.env.render()
+
+    def step(self, actions):
+        assert len(actions) >= 1
+        actions = [a.squeeze() for a in actions]
+        action = actions[0] + self.adversarial_coef * actions[1]  
+        obs, reward, done, info = self.env.step(action)
+        obs = obs.squeeze() # for continuous gym envs it require squeeze()
+        return [obs, obs], [reward, -reward], [done, done], [info, info]
 
     def close(self):
         self.env.close()
