@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mars.rl.agents.ppo &mdash; MARS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> MARS
+            <img src="../../../../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/marl_background.html">MARL Backgrounds</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">MARS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>mars.rl.agents.ppo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mars.rl.agents.ppo</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Categorical</span><span class="p">,</span> <span class="n">Normal</span><span class="p">,</span> <span class="n">MultivariateNormal</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">Agent</span>
+<span class="kn">from</span> <span class="nn">..common.networks</span> <span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">CNN</span><span class="p">,</span> <span class="n">get_model</span>
+<span class="kn">from</span> <span class="nn">..common.rl_utils</span> <span class="kn">import</span> <span class="n">choose_optimizer</span>
+<span class="kn">from</span> <span class="nn">mars.utils.typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">ActionType</span><span class="p">,</span> <span class="n">SampleType</span><span class="p">,</span> <span class="n">SingleEnvMultiAgentSampleType</span>
+
+<div class="viewcode-block" id="PPO"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPO">[docs]</a><span class="k">def</span> <span class="nf">PPO</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The function returns a proper class for Proximal Policy Optimization (PPO) algorithm,</span>
+<span class="sd">    according to the action space of the environment.</span>
+
+<span class="sd">    :param env: environment instance</span>
+<span class="sd">    :type env: object</span>
+<span class="sd">    :param args: arguments</span>
+<span class="sd">    :type args: ConfigurationDict</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">PPOContinuous</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PPODiscrete</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">PPOContinuous</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PPODiscrete</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PPOBase"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase">[docs]</a><span class="k">class</span> <span class="nc">PPOBase</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; PPO agorithm for environments with continuous action space.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eps_clip</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;eps_clip&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K_epoch</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;K_epoch&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GAE</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;GAE&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_grad_norm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;max_grad_norm&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entropy_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;entropy_coeff&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vf_coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">algorithm_spec</span><span class="p">[</span><span class="s1">&#39;vf_coeff&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_model</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">num_process</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">share_memory</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">share_memory</span><span class="p">()</span>  
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">choose_optimizer</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">optimizer</span><span class="p">)(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">()),</span> <span class="n">lr</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mseLoss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_channel</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">num_envs</span><span class="o">*</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">num_agents</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">num_agents</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="n">env</span><span class="o">.</span><span class="n">num_agents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># env.num_agents is a list when using parallel envs </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_channel</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">_init_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">[</span><span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="n">model_for</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_type</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="n">model_for</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">[</span><span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="n">model_for</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_type</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">net_architecture</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="n">model_for</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PPOBase.pi"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.pi">[docs]</a>    <span class="k">def</span> <span class="nf">pi</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StateType</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Forward the policy network.</span>
+
+<span class="sd">        :param x: input of the policy network, i.e. the state</span>
+<span class="sd">        :type x: List[StateType]</span>
+<span class="sd">        :return: the logits/actions</span>
+<span class="sd">        :rtype: List[ActionType]</span>
+<span class="sd">        &quot;&quot;&quot;</span>  
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PPOBase.v"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.v">[docs]</a>    <span class="k">def</span> <span class="nf">v</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StateType</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Forward the value network.</span>
+
+<span class="sd">        :param x: input of the value network, i.e. the state</span>
+<span class="sd">        :type x: List[StateType]</span>
+<span class="sd">        :return: a list of values for each state</span>
+<span class="sd">        :rtype: List[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  </div>
+    
+<div class="viewcode-block" id="PPOBase.reinit"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.reinit">[docs]</a>    <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PPOBase.store"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transitions</span><span class="p">:</span> <span class="n">SampleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Store samples in batch.</span>
+
+<span class="sd">        :param transitions: a list of samples from different environments (if using parallel env)</span>
+<span class="sd">        :type transitions: SampleType</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="c1"># If several transitions are pushed at the same time,</span>
+        <span class="c1"># they are not from the same trajectory, therefore they need</span>
+        <span class="c1"># to be stored separately since PPO is on-policy.</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">transition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transitions</span><span class="p">):</span> <span class="c1"># iterate over the list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transition</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PPOBase.choose_action"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">s</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> 
+        <span class="n">Greedy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">]:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="PPOBase.make_batch"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.make_batch">[docs]</a>    <span class="k">def</span> <span class="nf">make_batch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">data</span><span class="p">:</span> <span class="n">SampleType</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SingleEnvMultiAgentSampleType</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Reshape the data and put it into the computational device, cpu or gpu.</span>
+
+<span class="sd">        :param data: unstructured data</span>
+<span class="sd">        :type data: SampleType</span>
+<span class="sd">        :return: structured data</span>
+<span class="sd">        :rtype: SingleEnvMultiAgentSampleType</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s_lst</span><span class="p">,</span> <span class="n">a_lst</span><span class="p">,</span> <span class="n">r_lst</span><span class="p">,</span> <span class="n">s_prime_lst</span><span class="p">,</span> <span class="n">prob_a_lst</span><span class="p">,</span> <span class="n">done_lst</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">trajectory</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s_prime</span><span class="p">,</span> <span class="n">prob_a</span><span class="p">,</span> <span class="n">done</span> <span class="o">=</span> <span class="n">trajectory</span>
+            <span class="n">s_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">a_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="n">r_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">s_prime_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s_prime</span><span class="p">)</span>
+            <span class="n">prob_a_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prob_a</span><span class="p">)</span>
+            <span class="n">done_mask</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">done</span> <span class="k">else</span> <span class="mi">1</span>
+            <span class="n">done_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">done_mask</span><span class="p">)</span>
+        <span class="n">a_lst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a_lst</span><span class="p">)</span>
+        <span class="n">r_lst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_lst</span><span class="p">)</span>
+        <span class="n">done_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">done_mask</span><span class="p">)</span>
+        <span class="n">prob_a_lst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prob_a_lst</span><span class="p">)</span>
+        <span class="c1"># found this step take some time for Pong (not ram), even if no parallel no multiagent</span>
+        <span class="n">s</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">s_prime</span><span class="p">,</span><span class="n">prob_a</span><span class="p">,</span><span class="n">done_mask</span> <span class="o">=</span>    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">s_lst</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">a_lst</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> \
+                                            <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">r_lst</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">s_prime_lst</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> \
+                                            <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">prob_a_lst</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">done_lst</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s_prime</span><span class="p">,</span> <span class="n">prob_a</span><span class="p">,</span> <span class="n">done_mask</span></div>
+        
+<div class="viewcode-block" id="PPOBase.update"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="PPOBase.save_model"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.save_model">[docs]</a>    <span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># for PyTorch &gt;= 1.7 to be compatible with loading models from any lower version</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_policy&#39;</span><span class="p">,</span> <span class="n">_use_new_zipfile_serialization</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_value&#39;</span><span class="p">,</span> <span class="n">_use_new_zipfile_serialization</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_policy&#39;</span><span class="p">)</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">path</span><span class="o">+</span><span class="s1">&#39;_value&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PPOBase.load_model"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOBase.load_model">[docs]</a>    <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_policy&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;_value&#39;</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="PPODiscrete"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete">[docs]</a><span class="k">class</span> <span class="nc">PPODiscrete</span><span class="p">(</span><span class="n">PPOBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; PPO agorithm for environments with discrete action space.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PPODiscrete.choose_action"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">s</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> 
+        <span class="n">Greedy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Choose action give state.</span>
+
+<span class="sd">        :param s: observed state from the agent</span>
+<span class="sd">        :type s: List[StateType]</span>
+<span class="sd">        :param Greedy: whether adopt greedy policy (no randomness for exploration) or not, defaults to False</span>
+<span class="sd">        :type Greedy: bool, optional</span>
+<span class="sd">        :return: the actions</span>
+<span class="sd">        :rtype: List[ActionType]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>  <span class="c1"># make sure input state shape is correct</span>
+        <span class="k">if</span> <span class="n">Greedy</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">a</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">Categorical</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+            <span class="n">logprob</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">logprob</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+        
+<div class="viewcode-block" id="PPODiscrete.update"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPODiscrete.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>  <span class="c1"># remove empty</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="c1"># iterate over data from different environments</span>
+            <span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s_prime</span><span class="p">,</span> <span class="n">oldlogprob</span><span class="p">,</span> <span class="n">done_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_batch</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAE</span><span class="p">:</span>
+                <span class="n">rewards</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">discounted_r</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">reward</span><span class="p">,</span> <span class="n">is_continue</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">done_mask</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_continue</span><span class="p">:</span>
+                        <span class="n">discounted_r</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">discounted_r</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">discounted_r</span>
+                    <span class="n">rewards</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">discounted_r</span><span class="p">)</span>  <span class="c1"># insert in front, cannot use append</span>
+
+                <span class="c1">## reward normalization is not common: by Costa Huang</span>
+                <span class="c1"># rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)</span>
+                <span class="c1"># rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)</span>
+            
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K_epoch</span><span class="p">):</span>
+                <span class="n">vs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAE</span><span class="p">:</span>
+                    <span class="c1"># use generalized advantage estimation</span>
+                    <span class="n">vs_prime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">(</span><span class="n">s_prime</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">vs_prime</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">done_mask</span><span class="o">.</span><span class="n">shape</span>
+                    <span class="n">vs_target</span> <span class="o">=</span> <span class="n">r</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">vs_prime</span> <span class="o">*</span> <span class="n">done_mask</span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="n">vs_target</span> <span class="o">-</span> <span class="n">vs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+                    <span class="n">advantage_lst</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">advantage</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="k">for</span> <span class="n">delta_t</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span> <span class="c1"># reverse the delta along the time sequence in an episodic data</span>
+                        <span class="n">advantage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">*</span> <span class="n">advantage</span> <span class="o">+</span> <span class="n">delta_t</span>
+                        <span class="n">advantage_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">advantage</span><span class="p">)</span>
+                    <span class="n">advantage_lst</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+                    <span class="n">advantage</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">advantage_lst</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                    <span class="n">advantage</span> <span class="o">=</span> <span class="p">(</span><span class="n">advantage</span> <span class="o">-</span> <span class="n">advantage</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">advantage</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-5</span><span class="p">)</span>  <span class="c1"># this can have significant improvement (efficiency, stability) on performance</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">advantage</span> <span class="o">=</span> <span class="n">rewards</span> <span class="o">-</span> <span class="n">vs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+                    <span class="n">vs_target</span> <span class="o">=</span> <span class="n">rewards</span>
+
+                <span class="n">pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pi</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">Categorical</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+                <span class="n">dist_entropy</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">entropy</span><span class="p">()</span>
+                <span class="n">logprob</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                <span class="n">ratio</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logprob</span> <span class="o">-</span> <span class="n">oldlogprob</span><span class="p">)</span>
+                <span class="n">surr1</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">advantage</span>
+                <span class="n">surr2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_clip</span><span class="p">,</span> <span class="mi">1</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_clip</span><span class="p">)</span> <span class="o">*</span> <span class="n">advantage</span>
+                <span class="c1"># loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - 0.01*dist_entropy</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surr1</span><span class="p">,</span> <span class="n">surr2</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">vf_coeff</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">mseLoss</span><span class="p">(</span><span class="n">vs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="p">,</span> <span class="n">vs_target</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">entropy_coeff</span><span class="o">*</span><span class="n">dist_entropy</span>
+
+                <span class="c1">## for debug</span>
+                <span class="c1"># print(&#39;vs: &#39;, vs.shape, vs)</span>
+                <span class="c1"># print(&#39;logprob&#39;, logprob.shape, logprob)</span>
+                <span class="c1"># print(&#39;oldlogprob&#39;, oldlogprob.shape, oldlogprob)</span>
+                <span class="c1"># print(&#39;advantage: &#39;, advantage.shape, advantage)</span>
+                <span class="c1"># print(&#39;loss&#39;, loss)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">mean_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+                <span class="n">mean_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">()),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_grad_norm</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+                <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">mean_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_channel</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">total_loss</span></div></div>
+
+<div class="viewcode-block" id="PPOContinuous"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOContinuous">[docs]</a><span class="k">class</span> <span class="nc">PPOContinuous</span><span class="p">(</span><span class="n">PPOBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; PPO agorithm for environments with continuous action space.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PPOContinuous.choose_action"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOContinuous.choose_action">[docs]</a>    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">s</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> 
+        <span class="n">Greedy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionType</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Choose action give state.</span>
+
+<span class="sd">        :param s: observed state from the agent</span>
+<span class="sd">        :type s: List[StateType]</span>
+<span class="sd">        :param Greedy: whether adopt greedy policy (no randomness for exploration) or not, defaults to False</span>
+<span class="sd">        :type Greedy: bool, optional</span>
+<span class="sd">        :return: the actions</span>
+<span class="sd">        :rtype: List[ActionType]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>  <span class="c1"># make sure input state shape is correct</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">action_dim</span><span class="p">]</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_dim</span><span class="p">:]</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">Greedy</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">mean</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">a</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag_embed</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">)</span>
+            <span class="c1"># dist = Normal(mean, var**0.5)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+            <span class="n">logprob</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">logprob</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PPOContinuous.update"><a class="viewcode-back" href="../../../../mars/rl/ppo.html#mars.rl.agents.ppo.PPOContinuous.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>  <span class="c1"># remove empty</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="c1"># iterate over data from different environments</span>
+            <span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">s_prime</span><span class="p">,</span> <span class="n">oldlogprob</span><span class="p">,</span> <span class="n">done_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_batch</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAE</span><span class="p">:</span>
+                <span class="n">rewards</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">discounted_r</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">reward</span><span class="p">,</span> <span class="n">is_continue</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">done_mask</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_continue</span><span class="p">:</span>
+                        <span class="n">discounted_r</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">discounted_r</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">discounted_r</span>
+                    <span class="n">rewards</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">discounted_r</span><span class="p">)</span>  <span class="c1"># insert in front, cannot use append</span>
+
+                <span class="n">rewards</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">rewards</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewards</span> <span class="o">-</span> <span class="n">rewards</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">rewards</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-5</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K_epoch</span><span class="p">):</span>
+                <span class="n">vs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAE</span><span class="p">:</span>
+                    <span class="c1"># use generalized advantage estimation</span>
+                    <span class="n">vs_prime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">(</span><span class="n">s_prime</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">vs_prime</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">done_mask</span><span class="o">.</span><span class="n">shape</span>
+                    <span class="n">vs_target</span> <span class="o">=</span> <span class="n">r</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">vs_prime</span> <span class="o">*</span> <span class="n">done_mask</span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="n">vs_target</span> <span class="o">-</span> <span class="n">vs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+                    <span class="n">advantage_lst</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">advantage</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="k">for</span> <span class="n">delta_t</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span> <span class="c1"># reverse the delta along the time sequence in an episodic data</span>
+                        <span class="n">advantage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">*</span> <span class="n">advantage</span> <span class="o">+</span> <span class="n">delta_t</span>
+                        <span class="n">advantage_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">advantage</span><span class="p">)</span>
+                    <span class="n">advantage_lst</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+                    <span class="n">advantage</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">advantage_lst</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                    <span class="n">advantage</span> <span class="o">=</span> <span class="p">(</span><span class="n">advantage</span> <span class="o">-</span> <span class="n">advantage</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">advantage</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-5</span><span class="p">)</span>  <span class="c1"># this can have significant improvement (efficiency, stability) on performance</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">advantage</span> <span class="o">=</span> <span class="n">rewards</span> <span class="o">-</span> <span class="n">vs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+                    <span class="n">vs_target</span> <span class="o">=</span> <span class="n">rewards</span>
+
+                <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pi</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+                <span class="n">mean</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">action_dim</span><span class="p">]</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_dim</span><span class="p">:]</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span>
+                <span class="c1"># dist = Normal(mean, var**0.5)  # this does not work with multivariate</span>
+                <span class="n">cov</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag_embed</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">)</span>
+                <span class="n">dist_entropy</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">entropy</span><span class="p">()</span>
+                <span class="n">logprob</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                <span class="n">ratio</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logprob</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="o">-</span> <span class="n">oldlogprob</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+                <span class="n">surr1</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">advantage</span>
+                <span class="n">surr2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_clip</span><span class="p">,</span> <span class="mi">1</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_clip</span><span class="p">)</span> <span class="o">*</span> <span class="n">advantage</span>
+                <span class="c1"># loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(vs.squeeze(dim=-1) , vs_target.detach()) - self.entropy_coeff*dist_entropy</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surr1</span><span class="p">,</span> <span class="n">surr2</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">vf_coeff</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">mseLoss</span><span class="p">(</span><span class="n">vs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="p">,</span> <span class="n">vs_target</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">entropy_coeff</span><span class="o">*</span><span class="n">dist_entropy</span>
+                
+                <span class="c1"># print(&#39;vs: &#39;, vs.squeeze(dim=-1).shape, vs_target.shape)</span>
+                <span class="c1"># print(&#39;logprob&#39;, logprob.shape, ratio.shape, surr1.shape, surr2.shape)</span>
+                <span class="c1"># print(&#39;oldlogprob&#39;, oldlogprob.shape)</span>
+                <span class="c1"># print(&#39;advantage: &#39;, advantage.shape)</span>
+                <span class="c1"># print(&#39;loss&#39;, loss)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">mean_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+                <span class="n">mean_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">()),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_grad_norm</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+                <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">mean_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_channel</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">total_loss</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Zihan Ding.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MARL Backgrounds &mdash; MARS 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installation" href="../installation/install.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> MARS
+            <img src="../_static/mars_label.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MARL Backgrounds</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cooperative-games">Cooperative Games</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#competitive-games">Competitive Games</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#matrix-game">Matrix Game</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extensive-form-game">Extensive-form Game</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#markov-game">Markov Game</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Install MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation/install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quick_start.html">A Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/general.html">General Description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/sarl.html">Single-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/marl.html">Multi-Agent RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/notes.html">Some Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">MARS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/dqn.html">DQN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/rl/ppo.html">PPO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/marl/meta_learner.html">MARL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/equilibrium_solver/solvers.html">Equilibrium Solvers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/utils/data_struct.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/utils/func.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/utils/logger.html">Logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mars/env/env.html">Environment</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Primal Experiments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../experiments/single_agent.html">Single-Agent Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../experiments/exploit.html">Exploitability Test</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MARS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>MARL Backgrounds</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/introduction/marl_background.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="marl-backgrounds">
+<h1>MARL Backgrounds<a class="headerlink" href="#marl-backgrounds" title="Permalink to this headline">¶</a></h1>
+<section id="cooperative-games">
+<h2>Cooperative Games<a class="headerlink" href="#cooperative-games" title="Permalink to this headline">¶</a></h2>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
+<th class="head"><p>Critic</p></th>
+<th class="head"><p>Actor</p></th>
+<th class="head"><p>Training</p></th>
+<th class="head"><p>Note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>VDN</p></td>
+<td><p><span class="math notranslate nohighlight">\(Q(\mathbf{o}, \mathbf{u})\)</span></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>value decomposition</p></td>
+</tr>
+<tr class="row-odd"><td><p>QMIX</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Weighted-QMIX</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>QTRAN</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>QAtten</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>MAVEN</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>MATD3</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>CoMIX</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>FacMADDPG</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>COMA</p></td>
+<td><p><span class="math notranslate nohighlight">\(Q(\mathbf{x}, \mathbf{u})\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\pi_i(u_i|o_i)\)</span></p></td>
+<td><p>CTDE</p></td>
+<td><p>counterfactual baseline</p></td>
+</tr>
+<tr class="row-even"><td><p>MADDPG</p></td>
+<td><p><span class="math notranslate nohighlight">\(Q(\mathbf{x}, \mathbf{u})\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mu_i(u_i|o_i)\)</span></p></td>
+<td><p>CTDE/DT</p></td>
+<td><p>approximate policies of other agents as <span class="math notranslate nohighlight">\(\hat{\mu}^j_i(o_j)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>MAAC</p></td>
+<td><p><span class="math notranslate nohighlight">\(Q(\mathbf{o}, \mathbf{u})\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\pi_i(u_i|o_i)\)</span></p></td>
+<td><p>CTDE</p></td>
+<td><p>centralized critics share an attention mechanism</p></td>
+</tr>
+<tr class="row-even"><td><p>IPPO</p></td>
+<td><p><span class="math notranslate nohighlight">\(V_i(o_i)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\pi_i(u_i|o_i)\)</span></p></td>
+<td><p>DT</p></td>
+<td><p>use the team reward <span class="math notranslate nohighlight">\(r(\mathbf{x}, \mathbf{u})\)</span> to approximate <span class="math notranslate nohighlight">\(r(o_i , u_i )\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>MAPPO</p></td>
+<td><p><span class="math notranslate nohighlight">\(V(\mathbf{x} \text{ or } \mathbf{o})\)</span> (actually <span class="math notranslate nohighlight">\(V(\mathbf{x}_i\)</span>))</p></td>
+<td><p><span class="math notranslate nohighlight">\(\pi_i(u_i|o_i)\)</span></p></td>
+<td><p>CTDE</p></td>
+<td><p>the critic and actor can be shared across agents; the global state <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> can be agent-specific <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>MATRPO</p></td>
+<td><p><span class="math notranslate nohighlight">\(V_i(o_i)\)</span> (<span class="math notranslate nohighlight">\(A_i(o_i, \mathbf{u})\)</span>)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\pi_i(u_i|o_i)\)</span></p></td>
+<td><p>DT</p></td>
+<td><p>share local likelihood ratio $\Upsilon_n(\theta_i)=\frac{\pi_i(u_n</p></td>
+</tr>
+<tr class="row-odd"><td><p>MADDPG</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>DT</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>HAPPO</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p><em>Notes</em>:</p>
+<ul class="simple">
+<li><p>CTDE: centralized training, decentralized execution</p></li>
+<li><p>DT: decentralized training</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}\)</span>: some underlying true state of the environment;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{o}\)</span>: concatenation of observations from all agents;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{u}\)</span>: vector of actions by all agents;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu_i\)</span>: deterministic policy of agent <span class="math notranslate nohighlight">\(i\)</span>;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_i\)</span>: stochastic policy of agent <span class="math notranslate nohighlight">\(i\)</span>;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span>: an agent <span class="math notranslate nohighlight">\(i\)</span> specific global state used in MAPPO;</p></li>
+</ul>
+</section>
+<section id="competitive-games">
+<h2>Competitive Games<a class="headerlink" href="#competitive-games" title="Permalink to this headline">¶</a></h2>
+<section id="matrix-game">
+<h3>Matrix Game<a class="headerlink" href="#matrix-game" title="Permalink to this headline">¶</a></h3>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
+<th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GDA</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>OGDA</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>EG</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>OMWU</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>GDmax</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>MGDA</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>two time-scale GDA</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>SGDA</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Self-Play</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fictitious Play</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Double Oracle</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="extensive-form-game">
+<h3>Extensive-form Game<a class="headerlink" href="#extensive-form-game" title="Permalink to this headline">¶</a></h3>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
+<th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NFSP</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>PSRO</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="markov-game">
+<h3>Markov Game<a class="headerlink" href="#markov-game" title="Permalink to this headline">¶</a></h3>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
+<th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Nash Q-learning</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Nash Value Iteration</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Nash V-learning</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Nash DQN</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Nash DQN with Exploiter</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../installation/install.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Zihan Ding.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

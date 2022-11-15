@@ -1,0 +1,58 @@
+env_args:
+  env_name: Ant-v2
+  env_type: gym
+  num_envs: 5
+  against_baseline: false
+  ram: true
+  adversarial: true
+  seed: random
+agent_args:
+  algorithm: NashPPO
+  algorithm_spec:
+    episodic_update: false
+    gamma: 0.99
+    lambda: 0.95
+    mix_num: 6
+    eps_clip: 0.2
+    K_epoch: 4
+    GAE: true
+    max_grad_norm: 0.5
+    entropy_coeff: 0.01
+    vf_coeff: 0.5
+    policy_loss_coeff: 0.08
+train_args:
+  batch_size: 1280
+  max_episodes: 50000
+  max_steps_per_episode: 10000
+  train_start_frame: 0
+  optimizer: adam
+  learning_rate: 1e-4
+  device: gpu
+  update_itr: 1
+  log_avg_window: 20
+  log_interval: 20
+  multiprocess: false
+  net_architecture:
+    feature:
+      hidden_dim_list:
+      - 128
+      - 128
+      hidden_activation: Tanh
+      output_activation: false
+    policy:
+      hidden_dim_list:
+      - 128
+      hidden_activation: Tanh
+      output_activation: false
+    value:
+      hidden_dim_list:
+      - 128
+      hidden_activation: Tanh
+      output_activation: false
+    coefficient:
+      hidden_dim_list: []
+      hidden_activation: false
+      output_activation: Softmax
+  marl_spec:
+    global_state: true
+  marl_method: nash_ppo
