@@ -26,7 +26,14 @@ If you have any question (propose an ISSUE if it's general problem) or want to c
 **MARS** is a comprehensive library for benchmarking multi-player zero-sum Markov games, including our proposed **Nash-DQN** algorithm, as well as other baselines methods like **Self-play, Fictitious Self-play, Neural Fictitious Self-play, Policy Space Response Oracle**, etc. An independent implementation of **Nash-DQN** algorithm is provided in [another repo](https://github.com/quantumiracle/nash-dqn) if you wanna have a quick understanding.
 
 ## Installation
-Use Python 3.7 (Python 3.6 is not supported after Pettingzoo 1.12)
+```
+git clone https://github.com/quantumiracle/MARS.git
+cd MARS
+conda env create -f conda_env_mars.yml
+conda activate mars
+```
+
+<!-- Use Python 3.7 (Python 3.6 is not supported after Pettingzoo 1.12)
 ```
 pip install -r requirements.txt
 ```
@@ -34,7 +41,7 @@ pip install -r requirements.txt
 Run the following for installing [Atari ROM](https://github.com/Farama-Foundation/AutoROM) as a dependency of PettingZoo:
 ```
 https://github.com/Farama-Foundation/AutoROM
-```
+``` -->
 
 
 ## Usage
@@ -179,25 +186,26 @@ Those bash scripts to run multiple tasks on servers are provided in `./server_ba
 Basic single-agent RL algorithms (for best response, etc) to do:
 - [x] DQN
 - [x] PPO
-- [x] Genetic Algorithm
-- [ ] PMOE
+<!-- - [x] Genetic Algorithm -->
+<!-- - [ ] PMOE
 - [ ] DDPG
 - [ ] TD3
-- [ ] SAC
+- [ ] SAC -->
 
-MARL algorithms to do:
+MARL algorithms:
 - [x] Self-Play
 - [x] [Fictitious Self-Play](http://proceedings.mlr.press/v37/heinrich15.pdf)
 - [x] [Neural Fictitious Self-Play](https://arxiv.org/abs/1603.01121)
 - [x] [Policy Space Responce Oracle](https://proceedings.neurips.cc/paper/2017/file/3323fe11e9595c09af38fe67567a9394-Paper.pdf)
-- [ ] [Joint Policy Space Responce Oracle](http://proceedings.mlr.press/v139/marris21a.html)
-- [ ] [MADDPG](https://arxiv.org/abs/1706.02275)
-- [ ] QMIX
-- [ ] QTRAN
-- [ ] MAPPO
-<!-- - [x] Nash-DQN
+- [x] Nash-DQN
 - [x] Nash-DQN-Exploiter
- -->
+<!-- - [ ] [Joint Policy Space Responce Oracle](http://proceedings.mlr.press/v139/marris21a.html)
+- [ ] [MADDPG](https://arxiv.org/abs/1706.02275) -->
+<!-- - [ ] QMIX
+- [ ] QTRAN
+- [ ] MAPPO -->
+
+
   Supported environments:
 - [x] [Openai Gym](https://github.com/openai/gym)
 - [x] [PettingZoo](https://www.pettingzoo.ml)
@@ -205,7 +213,7 @@ MARL algorithms to do:
 - [x] [SlimeVolley](https://github.com/hardmaru/slimevolleygym)
 - [x] [Robosumo](https://github.com/openai/robosumo) (requiring gym==0.16)
 - [x] [Matrix Markov Game](https://github.com/quantumiracle/MARS/tree/master/mars/env/mdp)
-- [ ] SMAC
+<!-- - [ ] SMAC -->
 
 ## Primary Results
 
