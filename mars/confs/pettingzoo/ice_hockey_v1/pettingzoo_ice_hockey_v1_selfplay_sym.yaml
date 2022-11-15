@@ -2,7 +2,7 @@ env_args:
   env_name: ice_hockey_v1
   env_type: pettingzoo
   num_envs: 5
-  ram: true
+  ram: false
   seed: random
 agent_args:
   algorithm: DQN
@@ -31,10 +31,17 @@ train_args:
     hidden_dim_list:
     - 128
     - 128
-    - 128
-    - 128
+    channel_list:
+    - 32
+    - 16
+    kernel_size_list:
+    - 4
+    - 4
+    stride_list:
+    - 1
+    - 1
     hidden_activation: ReLU
-    output_activation: false
+    output_activation: Softmax
   marl_method: selfplay_sym
   marl_spec:
     selfplay_score_delta: 2

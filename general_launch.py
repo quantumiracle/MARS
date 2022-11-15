@@ -8,14 +8,17 @@ from multiprocessing import Process, Queue
 from mars.env.import_env import make_env
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
-from mars.utils.func import get_general_args, multiprocess_conf
+from mars.utils.func import multiprocess_conf
 from mars.rolloutExperience import rolloutExperience
 from mars.updateModel import updateModel
+from mars.utils.args_parser import get_args
 
 parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
 
-def launch_rollout(env, method, save_id):
-    args = get_general_args(env, method)
+def launch():
+    args = get_args()
+    env = args.env_name
+    method = args.marl_method
     multiprocess_conf(args, method)
 
     ### Create env
@@ -38,13 +41,13 @@ def launch_rollout(env, method, save_id):
     # launch multiple sample rollout processes
     info_queue = Queue()
     for pro_id in range(1):  
-        play_process = Process(target=rolloutExperience, args = (model, info_queue, args, save_id+'-'+str(pro_id)))
+        play_process = Process(target=rolloutExperience, args = (model, info_queue, args, str(args.save_id)+'-'+str(pro_id)))
         play_process.daemon = True  # sub processes killed when main process finish
         processes.append(play_process)
 
     # launch update process (single or multiple)
     for pro_id in range(args.num_process):  
-        update_process = Process(target=updateModel, args= (model, info_queue, args, save_id+'-'+str(pro_id)))
+        update_process = Process(target=updateModel, args= (model, info_queue, args, str(args.save_id)+'-'+str(pro_id)))
         update_process.daemon = True
         processes.append(update_process)
 
@@ -56,8 +59,4 @@ def launch_rollout(env, method, save_id):
 
         
 if __name__ == '__main__':
-    parser.add_argument('--env', type=str, default=None, help='environment')
-    parser.add_argument('--method', type=str, default=None, help='method name')
-    parser.add_argument('--save_id', type=str, default='0', help='identification number for each run')
-    parser_args = parser.parse_args()
-    launch_rollout(parser_args.env, parser_args.method, parser_args.save_id)
+    launch()

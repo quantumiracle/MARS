@@ -7,12 +7,12 @@ import itertools
 
 transition = namedtuple('transition', 'state, action, reward, next_state, is_terminal')
 
-# def ReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size):
-#     """ Function to choose a proper replay buffer"""
-#     if n_multi_step == 1:
-#         return SimpleReplayBuffer(capacity)  # this one is simple and quick
-#     else:
-#         return ReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size)
+def ReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size):
+    """ Function to choose a proper replay buffer"""
+    if n_multi_step == 1:
+        return SimpleReplayBuffer(capacity)  # this one is simple and quick
+    else:
+        return MultiStepReplayBuffer(capacity, n_multi_step, gamma, num_envs, batch_size)
 
 class SimpleReplayBuffer(object):
     """Replay Buffer class for one-step return. This is the
@@ -31,7 +31,7 @@ class SimpleReplayBuffer(object):
 
     def sample(self, batch_size):
         state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
-        return state, action, reward, next_state, done
+        return np.array(state, dtype=np.float32), action, np.array(reward, dtype=np.float32), np.array(next_state, dtype=np.float32), done
 
     def clear(self,):
         self.buffer.clear()
@@ -39,7 +39,10 @@ class SimpleReplayBuffer(object):
     def get_len(self):
         return len(self.buffer)
 
-class ReplayBuffer(object):
+    def __len__(self):
+        return self.get_len()
+
+class MultiStepReplayBuffer(object):
     """Replay Buffer class for multi-step return.
 
     :param capacity: number of samples stored in total

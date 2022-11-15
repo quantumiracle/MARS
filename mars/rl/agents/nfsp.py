@@ -15,16 +15,7 @@ class NFSP(Agent):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.rl_agent = DQN(env, args)  # TODO can also use other RL agents
-        if isinstance(env.observation_space, list):  # when using parallel envs
-            observation_space = env.observation_space[0]
-        else:
-            observation_space = env.observation_space
-
-        if len(observation_space.shape) <= 1: # not image
-            self.policy = get_model('mlp')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
-        else:
-            self.policy = get_model('impala_cnn')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+        self._init_model(env, args)
 
         if args.num_process > 1:
             self.rl_agent.share_memory()
@@ -41,6 +32,19 @@ class NFSP(Agent):
 
         self.eta = 0. if args.test else float(args.marl_spec['eta'])  # in test mode, only use average policy
         self.args = args
+
+    def _init_model(self, env, args):
+        self.rl_agent = DQN(env, args)  # TODO can also use other RL agents
+        if isinstance(env.observation_space, list):  # when using parallel envs
+            observation_space = env.observation_space[0]
+        else:
+            observation_space = env.observation_space
+
+        if len(observation_space.shape) <= 1: # not image
+            self.policy = get_model('mlp')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+        else:
+            self.policy = get_model('impala_cnn')(env.observation_space, env.action_space, args.net_architecture['policy'], model_for='discrete_policy').to(self.device)
+
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         self.is_best_response = False
@@ -75,7 +79,7 @@ class NFSP(Agent):
 
     def update(self):
         ### reinforcement learning (RL) update ###
-        rl_loss = self.rl_agent.update()
+        rl_loss, infos = self.rl_agent.update()
 
         ### supervised learning (SL) update ###
         state, action, _, _, _ = self.reservoir_buffer.sample(self.batch_size)
@@ -92,8 +96,9 @@ class NFSP(Agent):
         self.sl_optimizer.zero_grad()
         sl_loss.backward()
         self.sl_optimizer.step()
-
-        return rl_loss + sl_loss.item()
+        infos[f'RL loss'] = rl_loss
+        infos[f'SL loss'] = sl_loss
+        return rl_loss + sl_loss.item(), infos
 
     def save_model(self, path):
         self.rl_agent.save_model(path)

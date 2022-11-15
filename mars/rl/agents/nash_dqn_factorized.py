@@ -204,6 +204,7 @@ class NashDQNFactorized(DQN):
             return np.array(all_actions), all_dists, all_ne_values  # Nash actions, Nash distributions, Nash values
 
     def update(self):
+        infos = {}
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
@@ -264,7 +265,12 @@ class NashDQNFactorized(DQN):
             self.update_target(self.q_net_2, self.target_q_net_2)
             self.update_target(self.nash_q, self.target_nash_q)
         self.update_cnt += 1
-        return q1_loss.item() + q2_loss.item() + nash_loss.item()
+        infos[f'Q value'] = q_value
+        infos[f'Q1 loss'] = q1_loss
+        infos[f'Q2 loss'] = q2_loss
+        infos[f'Nash Q loss'] = nash_loss
+
+        return q1_loss.item() + q2_loss.item() + nash_loss.item(), infos
 
     def save_model(self, path):
         try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version

@@ -39,11 +39,14 @@ class PettingzooClassicWrapper():
             return obs
 
     def seed(self, seed):
-        self.env.seed(seed)
+        try:
+            self.env.seed(seed)
+        except:
+            self.env.reset(seed=seed) # gym update for seeding
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def close(self):
         self.env.close()
@@ -90,11 +93,14 @@ class PettingzooClassic_Iterate2Parallel():
                 return {a: obs[a]['observation'] for a in self.agents}
 
     def seed(self, seed):
-        self.env.seed(seed)
+        try:
+            self.env.seed(seed)
+        except:
+            self.env.reset(seed=seed) # gym update for seeding
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def close(self):
         self.env.close()
@@ -119,10 +125,166 @@ class PettingzooClassic_Iterate2Parallel():
 
         return obs_dict, reward_dict, done_dict, info_dict
 
-class Atari2AgentWrapper():
-    """ Wrap single agent OpenAI gym atari game to be multi-agent version """
+
+class RoboSumoWrapper():
+    """ Wrap robosumo environments """
+    def __init__(self, env, mode):
+        super(RoboSumoWrapper, self).__init__()
+        self.env = env
+        self.agents = ['first_0', 'second_0']
+        self.num_agents = len(self.agents)
+        self.observation_space = self.env.observation_space[0]
+        self.observation_spaces = {name: self.observation_space for name in self.agents}
+        self.action_space = self.env.action_space[0]
+        self.action_spaces = {name: self.action_space for name in self.agents}
+        self.metadata = env.metadata
+        self.render_mode = mode
+
+    @property
+    def spec(self):
+        return self.env.spec
+
+    def reset(self):
+        obs = self.env.reset()
+        return obs
+
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
+
+    def render(self, mode='human'):
+        mode = self.render_mode  # force the mode here
+        return self.env.render(mode)
+
+    def step(self, actions):
+        actions = [a.squeeze() for a in actions]
+        try:
+            obs, reward, done, info = self.env.step(actions)
+        except:
+            print(f'Action exception in Mujoco: {actions}')
+            obs, reward, done, info = self.env.step(np.zeros_like(actions))
+        return obs, reward, done, info
+
+    def close(self):
+        self.env.close()
+
+class ZeroSumWrapper():
+    """ Filter non-zero-sum rewards to be zero-sum """
     def __init__(self, env):
-        super(Atari2AgentWrapper, self).__init__()
+        super(ZeroSumWrapper, self).__init__()
+        self.env = env
+        self.agents = env.agents
+        self.num_agents = env.num_agents
+        self.observation_space = self.env.observation_space
+        self.observation_spaces = self.env.observation_spaces
+        self.action_space = self.env.action_space
+        self.action_spaces = self.env.action_spaces
+        self.metadata = env.metadata
+
+    @property
+    def unwrapped(self,):
+        return self.env
+
+    @property
+    def spec(self):
+        return self.env.spec
+
+    def _zerosum_filter(self, r):
+        ## zero-sum filter: 
+        # added for making non-zero sum game to be zero-sum, e.g. tennis_v2, pong_v3
+        r = np.array(r)
+        if np.sum(r) != 0:
+            nonzero_idx = np.nonzero(r)[0][0]
+            r[1-nonzero_idx] = -r[nonzero_idx]
+        return r
+
+    def reset(self):
+        obs = self.env.reset()
+        return obs
+
+    def seed(self, seed):
+        self.env.seed(seed)
+
+    def render(self, mode='rgb_array'):
+        return self.env.render(mode)
+
+    def step(self, actions):
+        obs, reward, done, info = self.env.step(actions)
+        return obs, self._zerosum_filter(reward), done, info
+
+    def close(self):
+        self.env.close()
+
+def zero_sum_reward_filer(r):
+    ## zero-sum filter: 
+    # added for making non-zero sum game to be zero-sum, e.g. tennis_v2, pong_v3
+    r = np.array(r)
+    if np.sum(r) != 0:
+        nonzero_idx = np.nonzero(r)[0][0]
+        r[1-nonzero_idx] = -r[nonzero_idx]
+    return r    
+
+
+
+class SSVecWrapper():
+    """ Wrap after supersuit vector env """
+    def __init__(self, env):
+        super(SSVecWrapper, self).__init__()
+        self.env = env
+        if len(env.observation_space.shape) > 1: # image, obs space: (H, W, C) -> (C, H, W)
+            old_shape = env.observation_space.shape
+            self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(old_shape[-1], old_shape[0], old_shape[1]), dtype=np.uint8)
+            self.obs_type = 'rgb_image'
+        else:
+            self.observation_space = env.observation_space
+            self.obs_type = 'ram'
+
+        self.action_space = env.action_space
+        self.num_agents = env.num_agents
+        self.agents = env.agents
+        self.true_num_envs = self.env.num_envs//self.env.num_agents
+        self.num_envs = self.true_num_envs
+    
+    @property
+    def spec(self):
+        return self.env.spec
+
+    def reset(self):
+        obs = self.env.reset() 
+        if len(self.observation_space.shape) >= 3:
+            obs = np.moveaxis(obs, -1, 1) # (N, H, W, C) -> (N, C, H, W)
+            obs = obs.reshape(self.true_num_envs, self.env.num_agents, obs.shape[-3], obs.shape[-2], obs.shape[-1])
+        else:
+            obs = obs.reshape(self.true_num_envs, self.env.num_agents, -1)
+        return obs
+
+    def seed(self, seed):
+        self.env.seed(seed)
+
+    def render(self, mode='rgb_array'):
+        return self.env.render(mode)
+
+    def step(self, actions):
+        actions = actions.reshape(-1)
+        obs, reward, done, info = self.env.step(actions)
+        if len(self.observation_space.shape) >= 3:
+            obs = np.moveaxis(obs, -1, 1) # (N, H, W, C) -> (N, C, H, W)
+            obs = obs.reshape(self.true_num_envs, self.env.num_agents, obs.shape[-3], obs.shape[-2], obs.shape[-1])
+        else:
+            obs = obs.reshape(self.true_num_envs, self.env.num_agents, -1)
+        reward = reward.reshape(self.true_num_envs, self.env.num_agents)
+        done = done.reshape(self.true_num_envs, self.env.num_agents)
+        info = [info[:self.true_num_envs], info[self.true_num_envs:]]
+        return obs, reward, done, info
+
+    def close(self):
+        self.env.close()
+
+
+class Gym2AgentWrapper():
+    """ Wrap single agent OpenAI gym game to be multi-agent version """
+    def __init__(self, env):
+        super(Gym2AgentWrapper, self).__init__()
         self.env = env
         self.agents = ['first_0']
         self.num_agents = len(self.agents)
@@ -144,13 +306,56 @@ class Atari2AgentWrapper():
         np.random.seed(seed)
 
     def render(self,):
-        self.env.render()
+        return self.env.render()
 
     def step(self, actions):
         assert len(actions) >= 1
         action = actions[0]
+        noise = np.random.uniform(-1, 1, action.shape[0])
+        action = action + 0. * noise
         obs, reward, done, info = self.env.step(action)
+        obs = obs.squeeze() # for continuous gym envs it require squeeze()
         return [obs], [reward], [done], [info]
+
+    def close(self):
+        self.env.close()
+
+class Gym2AgentAdversarialWrapper():
+    """ Wrap single agent OpenAI gym game to be multi-agent (one adversarial) version """
+    def __init__(self, env):
+        super(Gym2AgentAdversarialWrapper, self).__init__()
+        self.env = env
+        self.agents = ['player', 'adversarial']
+        self.num_agents = len(self.agents)
+        self.observation_space = self.env.observation_space
+        self.observation_spaces = {name: self.env.observation_space for name in self.agents}
+        self.action_space = self.env.action_space
+        self.action_spaces = {name: self.action_space for name in self.agents}
+        self.adversarial_coef = 0.1 # adversarial action scale
+        self.metadata = env.metadata
+    
+    @property
+    def spec(self):
+        return self.env.spec
+
+    def reset(self):
+        obs = self.env.reset()
+        return [obs, obs]
+
+    def seed(self, seed):
+        self.env.seed(seed)
+        np.random.seed(seed)
+
+    def render(self,):
+        return self.env.render()
+
+    def step(self, actions):
+        assert len(actions) >= 1
+        actions = [a.squeeze() for a in actions]
+        action = actions[0] + self.adversarial_coef * actions[1]  
+        obs, reward, done, info = self.env.step(action)
+        obs = obs.squeeze() # for continuous gym envs it require squeeze()
+        return [obs, obs], [reward, -reward], [done, done], [info, info]
 
     def close(self):
         self.env.close()
@@ -233,7 +438,8 @@ class Atari2AgentWrapper():
 #         self.env.close()
 
 
-class SlimeVolleyWrapper(gym.Wrapper):
+# class SlimeVolleyWrapper(gym.Wrapper):
+class SlimeVolleyWrapper():
     """ 
     Wrapper to transform SlimeVolley environment (https://github.com/hardmaru/slimevolleygym) 
     into PettingZoo (https://github.com/PettingZoo-Team/PettingZoo) env style. 
@@ -252,7 +458,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
                     [0, 1, 0]] # RIGHT (backward)
 
     def __init__(self, env, against_baseline=False):
-        super().__init__(env)
+        # super().__init__(env)
         self.env = env
         self.agents = ['second_0'] if against_baseline else ['first_0', 'second_0'] # when against baseline the learnable agent is on the right side (second)
         self.num_agents = len(self.agents)
@@ -261,6 +467,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
         self.action_space = gym.spaces.Discrete(len(self.action_table))
         self.action_spaces = {name: self.action_space for name in self.agents}
         self.against_baseline = against_baseline
+        self.metadata = env.metadata
 
     @property
     def spec(self):
@@ -294,7 +501,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
     def render(self,):
         """ Render the scene.
         """        
-        self.env.render()
+        return self.env.render()
 
     def step(self, actions):
         obss, rewards, dones, infos = {},{},{},{}
@@ -311,7 +518,7 @@ class SlimeVolleyWrapper(gym.Wrapper):
                 # for image-based env, fake the action list as one input to pass through NoopResetEnv, etc wrappers
                 obs0, reward, done, info = self.env.step(actions_)
             else:
-                obs0, reward, done, info = self.env.step(*actions_)
+                obs0, reward, done, info = self.env.step(*actions_)  # gym!=0.18 will break this line
             obs1 = info['otherObs']
             rewards[self.agents[0]] = reward
             rewards[self.agents[1]] = -reward 
@@ -334,6 +541,8 @@ class Dict2TupleWrapper():
         self.env = env
         self.num_agents = env.num_agents
         self.keep_info = keep_info  # if True keep info as dict
+        self.metadata = env.metadata
+
         if len(env.observation_space.shape) > 1: # image
             old_shape = env.observation_space.shape
             self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(old_shape[-1], old_shape[0], old_shape[1]), dtype=np.uint8)
@@ -342,8 +551,8 @@ class Dict2TupleWrapper():
             self.observation_space = env.observation_space
             self.obs_type = 'ram'
         self.action_space = env.action_space
-        self.observation_spaces = env.observation_spaces
-        self.action_spaces = env.action_spaces
+        # self.observation_spaces = env.observation_spaces
+        # self.action_spaces = env.action_spaces
         try:   # both pettingzoo and slimevolley can work with this
             self.agents = env.agents
         except:
@@ -381,25 +590,27 @@ class Dict2TupleWrapper():
         else:
             info = list(infos.values())
         del obs,rewards, dones, infos
-        
-        r = self._zerosum_filter(r)
+        # r = self._zerosum_filter(r)
 
         return o, r, d, info
 
-    def _zerosum_filter(self, r):
-        ## zero-sum filter: 
-        # added for making non-zero sum game to be zero-sum, e.g. tennis_v2
-        if np.sum(r) != 0:
-            nonzero_idx = np.nonzero(r)[0][0]
-            r[1-nonzero_idx] = -r[nonzero_idx]
-        return r
+    # def _zerosum_filter(self, r):
+    #     ## zero-sum filter: 
+    #     # added for making non-zero sum game to be zero-sum, e.g. tennis_v2
+    #     if np.sum(r) != 0:
+    #         nonzero_idx = np.nonzero(r)[0][0]
+    #         r[1-nonzero_idx] = -r[nonzero_idx]
+    #     return r
 
     def seed(self, seed):
-        self.env.seed(seed)
-        # np.random.seed(seed)
+        try:
+            self.env.seed(seed)
+        except:
+            self.env.reset(seed=seed)
 
-    def render(self,):
-        self.env.render()
+    def render(self, mode='rgb_array'):
+        frame = self.env.render(mode)
+        return frame
 
     def close(self):
         self.env.close()

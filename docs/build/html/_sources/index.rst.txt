@@ -13,13 +13,14 @@ Welcome to MARS's documentation!
 MARS is a multi-agent reinforcement learning research library for multi-agent games.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
    :caption: Introduction
 
    /introduction/intro
+   /introduction/marl_background
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
    :caption: Install MARS
 
    installation/install

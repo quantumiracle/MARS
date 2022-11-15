@@ -68,6 +68,8 @@ class MultiAgent(Agent):
                     self.not_learnable_list.append(i)
                 if agent.not_learnable or (args.marl_method in MetaStepMethods and i != args.marl_spec['trainable_agent_idx']):  # psro is special, fixed one side at beginning
                     self.not_learnable_list.append(i)
+        if not args.marl_method: # single-agent setting
+            self.not_learnable_list.append(1) # second player is not learnable
         if len(self.not_learnable_list) < 1:
             prefix = 'No agent'
 
@@ -116,7 +118,8 @@ class MultiAgent(Agent):
             # not learnable agent means model to be exploited;
             # both of the above cases should have greedy action.
             for i in self.not_learnable_list:
-                greedy_list[i] = True
+                if i < self.number_of_agents:
+                    greedy_list[i] = True
 
         return greedy_list
     
@@ -202,6 +205,7 @@ class MultiAgent(Agent):
             # 'states' (agents, envs, state_dim) -> (envs, agents, state_dim), similar for 'actions', 'rewards' take the first one in all agents,
             # if np.all(d) is True, the 'states' and 'rewards' will be absent for some environments, so remove such sample.
             [states, actions, rewards, next_states, dones] = samples
+            actions = np.array(actions)
             try:  # when num_envs > 1. 
                 if self.args.marl_spec['global_state']:  # use concatenated observation from both agents
                     samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[0, j], next_states[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
@@ -220,16 +224,19 @@ class MultiAgent(Agent):
 
         elif self.args.marl_method == 'nash_ppo' and not self.args.exploit:
             [states, actions, rewards, next_states, logprobs, dones] = samples
+            assert self.args.marl_spec['global_state'],  'Error: Nash PPO should use global state'# this has to be true for Nash PPO
             if self.args.num_envs > 1:  # Used when num_envs > 1. 
-                assert self.args.marl_spec['global_state']  # this has to be true for Nash PPO
-                samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[:, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
-                
-            else:  # when num_envs = 1 
-                if self.args.marl_spec['global_state']: 
-                    samples = [[np.array(states).reshape(-1), actions, rewards, np.array(next_states).reshape(-1), np.array(logprobs).reshape(-1), np.all(dones)]]
-                else:
-                    samples = [[np.array(states[0]), actions, rewards, np.array(next_states[0]), logprobs, np.all(dones)]]
+                if self.args.ram: # shape of state: (agents, envs, obs_dim)
+                    samples = [[states[:, j].reshape(-1), actions[:, j].reshape(-1), rewards[:, j], next_states[:, j].reshape(-1), logprobs[:, j].reshape(-1), np.any(d)] for j, d in enumerate(np.array(dones).T)]
+                else: # shape of state: (agents, envs, C, H, W)
+                    samples = [[np.array(states)[:, j], actions[:, j], rewards[:, j], np.array(next_states)[:, j], np.array(logprobs[:, j]), np.any(d)] for j, d in enumerate(np.array(dones).T)]
 
+            else:  # when num_envs = 1 
+                if self.args.ram:
+                    samples = [[np.array(states).reshape(-1), actions, rewards, np.array(next_states).reshape(-1), np.array(logprobs).reshape(-1), np.all(dones)]]
+                else:  # TODO
+                    samples = [[np.array(states), actions, rewards, np.array(next_states), np.array(logprobs), np.all(dones)]]
+ 
             # one model for all agents, the model is the first one
             # of self.agents, it directly stores the sample constaining all
             for agent in self.agents[:1]: # actually only one agent in list
@@ -276,13 +283,16 @@ class MultiAgent(Agent):
 
     def update(self) -> List[float]:
         losses = []
+        infos = []
         for i, agent in enumerate(self.agents):
             if i not in self.not_learnable_list:
-                loss = agent.update()
+                loss, info = agent.update()
                 losses.append(loss)
+                infos.append(info)
             else:
                 losses.append(np.nan)
-        return losses
+                infos.append({})
+        return losses, infos
 
     def save_model(self, path: str = None) -> None:
         for idx, agent in enumerate(self.agents):
@@ -299,8 +309,11 @@ class MultiAgent(Agent):
             if self.args.exploit:
                 # in EXPLOIT mode, the exploiter is learnable, thus not loaded from anywhere
                 if i in self.not_learnable_list:
-                    agent.load_model(spec_path, eval)
-                    print(f'Agent No. [{i}] loads model from: ', spec_path)
+                    try:
+                        agent.load_model(spec_path, eval)
+                        print(f'Agent No. [{i}] loads model from: ', spec_path)
+                    except:
+                        print(f'Load model failed for the {i} agent.')
             else:
                 agent.load_model(spec_path, eval)
                 print(f'Agent No. [{i}] loads model from: ', spec_path)

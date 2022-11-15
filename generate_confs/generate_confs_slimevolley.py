@@ -23,6 +23,8 @@ self_play_method_marl_specs = {
 selfplay_based_methods = {'selfplay', 'selfplay_sym', 'fictitious_selfplay', \
                             'fictitious_selfplay_sym', 'psro_sym', 'psro'}
 
+ram = True
+
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:
         self_play_method_marl_specs_ = copy.deepcopy(self_play_method_marl_specs)
@@ -56,6 +58,11 @@ ppo_algorithm_spec = { # specs for PPO alg.
     'eps_clip': 0.2,
     'K_epoch': 4,
     'GAE': True,
+    'max_grad_norm': 0.5,
+    'entropy_coeff': 0.01,
+    'vf_coeff': 0.5,
+    'policy_loss_coeff': 0.08,
+
 }
 
 ppo_net_architecture = {
@@ -77,8 +84,39 @@ ppo_net_architecture = {
 
 }
 
+cnn_ppo_net_architecture = {
+    'feature':{
+    'hidden_dim_list': [512,],
+    'channel_list': [32, 64, 64],
+    'kernel_size_list': [8, 4, 3],
+    'stride_list': [4, 2, 1],
+      'hidden_activation': 'ReLU',
+      'output_activation': False,
+    },
+    'policy':{
+      'hidden_dim_list': [512,],
+      'hidden_activation': False,
+      'output_activation': 'Softmax',
+    },
+    'value': {
+      'hidden_dim_list': [512,],
+      'hidden_activation': 'ReLU',
+      'output_activation': False,
+    }
+
+}
+
 standard_net_architecture = {
     'hidden_dim_list': [128, 128, 128],
+    'hidden_activation': 'ReLU',
+    'output_activation': False,
+}
+
+cnn_net_architecture = {
+    'hidden_dim_list': [512, 512],
+    'channel_list': [32, 64, 64],
+    'kernel_size_list': [8, 4, 3],
+    'stride_list': [4, 2, 1],
     'hidden_activation': 'ReLU',
     'output_activation': False,
 }
@@ -107,10 +145,16 @@ for game in games:
         conf['agent_args']['algorithm_spec']['eps_decay'] = 10*conf['train_args']['max_episodes']  # proper for training 10000 episodes
         conf['agent_args']['algorithm_spec']['multi_step'] = 1
 
+        # image-based input
+        if not ram:
+            conf['env_args']['ram'] = False
+            conf['train_args']['net_architecture'] = copy.deepcopy(cnn_net_architecture)  # copy to make original not changed        
+
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
-            conf['env_args']['num_envs'] = 1
-            conf['train_args']['max_episodes'] = 50000
+            # conf['env_args']['num_envs'] = 1
+            # conf['train_args']['max_episodes'] = 50000
+            conf['train_args']['max_episodes'] = 10000
             conf['agent_args']['algorithm_spec']['eps_decay'] = 100*conf['train_args']['max_episodes']  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1  # 0.1
             conf['train_args']['marl_spec']['global_state'] = False
@@ -128,13 +172,20 @@ for game in games:
             conf['train_args']['marl_spec']['global_state'] = True
             conf['agent_args']['algorithm'] = 'NashPPO'
             conf['agent_args']['algorithm_spec'] = ppo_algorithm_spec
-            conf['train_args']['net_architecture'] = ppo_net_architecture
+            if not ram:
+                conf['train_args']['net_architecture'] = cnn_ppo_net_architecture
+            else:
+                conf['train_args']['net_architecture'] = ppo_net_architecture
 
         elif method == 'nfsp':
             conf['agent_args']['algorithm'] = 'NFSP'
-            conf['train_args']['net_architecture']['policy'] = standard_net_architecture
+            if not ram:
+                conf['train_args']['net_architecture']['policy'] = cnn_net_architecture
+            else:
+                conf['train_args']['net_architecture']['policy'] = standard_net_architecture
             conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
             conf['train_args']['train_start_frame'] = train_start_frame[game]
+
 
         output_path = target_path+f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:

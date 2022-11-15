@@ -4,13 +4,14 @@ import torch.nn.functional as F
 
 import numpy as np
 import gym
+import time
 import operator
 import random, copy
 from ..common.rl_utils import choose_optimizer, EpsilonScheduler
 from ..common.networks import NetBase, get_model
 from .dqn import DQN, DQNBase
 from .debug import Debugger, to_one_hot
-from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
+from mars.equilibrium_solver import NashEquilibriumECOSSolver, NashEquilibriumECOSParallelSolver, NashEquilibriumMWUSolver, NashEquilibriumParallelMWUSolver
 
 DEBUG = False
 class NashDQN(DQN):
@@ -19,26 +20,31 @@ class NashDQN(DQN):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.num_envs = args.num_envs
-        self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
-        self.target = copy.deepcopy(self.model).to(self.device)
-
-        if args.num_process > 1:
-            self.model.share_memory()
-            self.target.share_memory()
         self.num_agents = env.num_agents[0] if isinstance(env.num_agents, list) else env.num_agents
-        try:
-            self.action_dims = env.action_space[0].n
-        except:
-            self.action_dims = env.action_space.n
         self.env = env
+        self.args = args
+
         # don't forget to instantiate an optimizer although there is one in DQN
-        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
+        self._init_optimizer(args)
         # lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=50, gamma=0.95)    
         # self.schedulers.append(lr_scheduler)
 
         if DEBUG:
             self.debugger = Debugger(env, "./data/nash_dqn_test/nash_dqn_simple_mdp_log_target_itr100_5step_1033.pkl")
+
+    def _init_model(self, env, args):
+        """Overwrite DQN's models
+
+        :param env: environment
+        :type env: object
+        :param args: arguments
+        :type args: dict
+        """
+        self.model = NashDQNBase(env, args.net_architecture, args.num_envs, two_side_obs = args.marl_spec['global_state']).to(self.device)
+        self.target = copy.deepcopy(self.model).to(self.device)
+        if args.num_process > 1:
+            self.model.share_memory()
+            self.target.share_memory()
 
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
@@ -47,11 +53,19 @@ class NashDQN(DQN):
             epsilon = self.epsilon_scheduler.get_epsilon()
         if not isinstance(state, torch.Tensor):
             state = torch.Tensor(state).to(self.device)
-        if self.num_envs == 1: # state: (agents, state_dim)
-            state = state.unsqueeze(0).view(1, -1) # change state from (agents, state_dim) to (1, agents*state_dim)
-        else: # state: (agents, envs, state_dim)
-            state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
-            state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
+        if self.args.ram:
+            if self.args.num_envs == 1: # state: (agents, state_dim)
+                state = state.unsqueeze(0).view(1, -1) # change state from (agents, state_dim) to (1, agents*state_dim)
+            else: # state: (agents, envs, state_dim)
+                state = torch.transpose(state, 0, 1) # to state: (envs, agents, state_dim)
+                state = state.view(state.shape[0], -1) # to state: (envs, agents*state_dim)
+        else:  # image-based input
+            if self.args.num_envs == 1: # state: (agents, C, H, W)
+                state = state.unsqueeze(0).view(1, -1, state.shape[-2], state.shape[-1])  #   (1, agents*C, H, W)
+
+            else: # state: (agents, envs, C, H, W)
+                state = torch.transpose(state, 0, 1) # state: (envs, agents, C, H, W)
+                state = state.view(state.shape[0], -1, state.shape[-2], state.shape[-1]) # state: (envs, agents*C, H, W)
 
         if random.random() > epsilon:  # NoisyNet does not use e-greedy
             with torch.no_grad():
@@ -63,7 +77,7 @@ class NashDQN(DQN):
                 actions, dists, ne_vs = self.compute_nash(q_values)
             except:
                 print("Invalid nash computation.")
-                actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))
+                actions = np.random.randint(self.action_dim, size=(state.shape[0], self.num_agents))
 
             if DEBUG: ## test on arbitrary MDP
                 if self.update_cnt % 111 == 0: # skip some steps, 111 is not divided by number of transitions
@@ -75,80 +89,78 @@ class NashDQN(DQN):
                         for s in states:
                             one_hot_states.append(to_one_hot(s, range))
                         test_states = torch.FloatTensor(np.repeat(one_hot_states, 2, axis=0).reshape(-1, 2*range)).to(self.device)
-                        # print(test_states)
                     else:
                         test_states = torch.FloatTensor(np.repeat(np.arange(total_states_num), 2, axis=0).reshape(-1, 2)).to(self.device)
                     ne_q_vs = self.model(test_states) # Nash Q values
-                    ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dims, self.action_dims).detach().cpu().numpy()
+                    ne_q_vs = ne_q_vs.view(self.env.env.max_transition, self.env.env.num_states, self.action_dim, self.action_dim).detach().cpu().numpy()
 
                     self.debugger.compare_with_oracle(state, dists, ne_vs, ne_q_vs, verbose=False)
 
         else:
-            actions = np.random.randint(self.action_dims, size=(state.shape[0], self.num_agents))  # (envs, agents)
+            actions = np.random.randint(self.action_dim, size=(state.shape[0], self.num_agents))  # (envs, agents)
         
-        if self.num_envs == 1:
+        if self.args.num_envs == 1:
             actions = actions[0]  # list of actions to its item
         else:
             actions = np.array(actions).T  # to shape: (agents, envs, action_dim)
         return actions
 
-    def compute_nash_deprecated(self, q_values, update=False):
-        """
-        Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
-        """
-        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
-        all_actions = []
-        all_dists = []
-        all_ne_values = []
-        for qs in q_tables:  # iterate over envs
-            # Solve Nash equilibrium with solver
-            try:
-                # ne = NashEquilibriaSolver(qs)
-                # ne = ne[0]  # take the first Nash equilibria found
-                # print(np.linalg.det(qs))
-                # ne = NashEquilibriumSolver(qs)
-                # ne = NashEquilibriumLPSolver(qs)
-                # ne = NashEquilibriumCVXPYSolver(qs)
-                # ne = NashEquilibriumGUROBISolver(qs)
-                ne, ne_v = NashEquilibriumECOSSolver(qs)
-                ne_v = ne[0]@qs@ne[1].T
-                # ne, ne_v = NashEquilibriumMWUSolver(qs)
-            except:  # some cases NE cannot be solved
-                print('No Nash solution for: ', np.linalg.det(qs), qs)
-                ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
-                ne_v = 0
+    # def compute_nash_deprecated(self, q_values, update=False):
+    #     """
+    #     Return actions as Nash equilibrium of given payoff matrix, shape: [env, agent]
+    #     """
+    #     q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
+    #     all_actions = []
+    #     all_dists = []
+    #     all_ne_values = []
+    #     for qs in q_tables:  # iterate over envs
+    #         # Solve Nash equilibrium with solver
+    #         try:
+    #             # ne = NashEquilibriaSolver(qs)
+    #             # ne = ne[0]  # take the first Nash equilibria found
+    #             # print(np.linalg.det(qs))
+    #             # ne = NashEquilibriumSolver(qs)
+    #             # ne = NashEquilibriumLPSolver(qs)
+    #             # ne = NashEquilibriumCVXPYSolver(qs)
+    #             # ne = NashEquilibriumGUROBISolver(qs)
+    #             ne, ne_v = NashEquilibriumECOSSolver(qs)
+    #             ne_v = ne[0]@qs@ne[1].T
+    #             # ne, ne_v = NashEquilibriumMWUSolver(qs)
+    #         except:  # some cases NE cannot be solved
+    #             print('No Nash solution for: ', np.linalg.det(qs), qs)
+    #             ne = self.num_agents*[1./qs.shape[0]*np.ones(qs.shape[0])]  # use uniform distribution if no NE is found
+    #             ne_v = 0
                 
-            all_dists.append(ne)
-            all_ne_values.append(ne_v)
+    #         all_dists.append(ne)
+    #         all_ne_values.append(ne_v)
 
-            # Sample actions from Nash strategies
-            actions = []
-            for dist in ne:  # iterate over agents
-                try:
-                    sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
-                except:
-                    print('Not a valid distribution from Nash equilibrium solution.')
-                    print(sum(ne[0]), sum(ne[1]))
-                    print(qs, ne)
-                    print(dist)
-                a = np.where(sample_hist>0)
-                actions.append(a)
-            all_actions.append(np.array(actions).reshape(-1))
+    #         # Sample actions from Nash strategies
+    #         actions = []
+    #         for dist in ne:  # iterate over agents
+    #             try:
+    #                 sample_hist = np.random.multinomial(1, dist)  # return one-hot vectors as sample from multinomial
+    #             except:
+    #                 print('Not a valid distribution from Nash equilibrium solution.')
+    #                 print(sum(ne[0]), sum(ne[1]))
+    #                 print(qs, ne)
+    #                 print(dist)
+    #             a = np.where(sample_hist>0)
+    #             actions.append(a)
+    #         all_actions.append(np.array(actions).reshape(-1))
 
-        if update:
-            return all_dists, all_ne_values
-        else: # return samples actions, nash strategies, nash values
-            return np.array(all_actions), all_dists, all_ne_values
+    #     if update:
+    #         return all_dists, all_ne_values
+    #     else: # return samples actions, nash strategies, nash values
+    #         return np.array(all_actions), all_dists, all_ne_values
 
     def compute_nash(self, q_values, update=False):
-        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
+        q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
         all_actions = []
         all_dists = []
         all_ne_values = []
-        # import time
-        # time.sleep(0.01)
 
         # all_dists, all_ne_values = NashEquilibriumParallelMWUSolver(q_tables)
+        # all_dists, all_ne_values = NashEquilibriumECOSParallelSolver(q_tables)
         for q_table in q_tables:
             dist, value = NashEquilibriumECOSSolver(q_table)
             all_dists.append(dist)
@@ -178,7 +190,7 @@ class NashDQN(DQN):
         """
         Return actions as coarse correlated equilibrium of given payoff matrix, shape: [env, agent]
         """
-        q_tables = q_values.reshape(-1, self.action_dims,  self.action_dims)
+        q_tables = q_values.reshape(-1, self.action_dim,  self.action_dim)
         all_actions = []
         all_dists = []
         for qs in q_tables:  # iterate over envs
@@ -195,7 +207,7 @@ class NashDQN(DQN):
                 print('Not a valid distribution from Nash equilibrium solution.')
                 print(sum(jnt_probs), sum(abs(jnt_probs)))
                 print(qs, jnt_probs)
-            sample_hist = sample_hist.reshape(self.action_dims,  self.action_dims)
+            sample_hist = sample_hist.reshape(self.action_dim,  self.action_dim)
             a = np.where(sample_hist>0)  # the actions for two players
             all_actions.append(np.array(a).reshape(-1))
             all_dists.append(jnt_probs)
@@ -205,21 +217,22 @@ class NashDQN(DQN):
             return np.array(all_actions)
 
     def update(self):
+        infos = {}
         DoubleTrick = False
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
 
-        state = torch.FloatTensor(np.float32(state)).to(self.device)
-        next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
-        action = torch.LongTensor(action).to(self.device)
+        state = torch.FloatTensor(state).to(self.device)
+        next_state = torch.FloatTensor(next_state).to(self.device)
+        action = torch.IntTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
-
+        print(state.shape)
         # Q-Learning with target network
         q_values = self.model(state)
         target_next_q_values_ = self.model(next_state) if DoubleTrick else self.target(next_state)
         target_next_q_values = target_next_q_values_.detach().cpu().numpy()
 
-        action_ = torch.LongTensor([a[0]*self.action_dims+a[1] for a in action]).to(self.device)
+        action_ = torch.LongTensor([a[0]*self.action_dim+a[1] for a in action]).to(self.device)
         q_value = q_values.gather(1, action_.unsqueeze(1)).squeeze(1)
 
         # compute CCE or NE
@@ -238,7 +251,7 @@ class NashDQN(DQN):
 
         if DoubleTrick: # calculate next_q_value using double DQN trick
             next_dist = np.array(next_dist)  # shape: (#batch, #agent, #action)
-            target_next_q_values = target_next_q_values.reshape((-1, self.action_dims, self.action_dims))
+            target_next_q_values = target_next_q_values.reshape((-1, self.action_dim, self.action_dim))
             left_multi = np.einsum('na,nab->nb', next_dist[:, 0], target_next_q_values) # shape: (#batch, #action)
             next_q_value = np.einsum('nb,nb->n', left_multi, next_dist[:, 1]) 
 
@@ -258,7 +271,9 @@ class NashDQN(DQN):
         if self.update_cnt % self.target_update_interval == 0:
             self.update_target(self.model, self.target)
         self.update_cnt += 1
-        return loss.item()
+        infos[f'Q value'] = q_value
+
+        return loss.item(), infos
 
 class NashDQNBase(DQNBase):
     """
@@ -291,4 +306,4 @@ class NashDQNBase(DQNBase):
             if len(self._observation_shape) <= 1: # not 3d image
                 self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')
             else:
-                self.net = get_model('cnn')(input_space, output_space, net_args, model_for='discrete_q')
+                self.net = get_model('impala_cnn')(input_space, output_space, net_args, model_for='discrete_q')

@@ -35,19 +35,23 @@ release = '0.0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'myst_parser',  # parse md as well
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.coverage',
-    'sphinx.ext.imgmath',
-    'sphinx.ext.mathjax',
+    # 'sphinx.ext.imgmath',
+    # 'sphinx.ext.mathjax',
+    # 'sphinx_math_dollar',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'myst_parser'  # parse md as well
     # 'sphinxcontrib.bibtex',
     # 'recommonmark'
 ]
+
+myst_enable_extensions = ["dollarmath", "amsmath"]  # https://myst-parser.readthedocs.io/en/latest/syntax/optional.html#math-shortcuts
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

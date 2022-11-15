@@ -4,6 +4,8 @@ env_args:
     num_envs: 1
     ram: True
     seed: 1122
+    adversarial: False
+    record_video: False
 
 agent_args:
     algorithm: DQN
@@ -25,6 +27,7 @@ train_args:
     max_episodes: 10000
     max_steps_per_episode: 10000
     train_start_frame: 0
+    save_id: 0
     optimizer: adam
     learning_rate: 1e-4
     device: gpu
@@ -40,6 +43,11 @@ train_args:
     eval_models: False   # evalutation models during training (only for specific methods)
     save_path: ''       # path to save models and logs
     save_interval: 2000 # episode interval to save models
+    wandb_activate: False # wandb for logging
+    wandb_entity: ''
+    wandb_project: ''
+    wandb_group: ''
+    wandb_name: ''
     net_architecture: 
         hidden_dim_list: [128, 128, 128] 
         hidden_activation: ReLU  # use torch.nn (in Sequential) style rather than torch.nn.functional (in forward)

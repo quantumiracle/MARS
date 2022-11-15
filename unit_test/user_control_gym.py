@@ -1,4 +1,7 @@
-### Test user input control for Openai Gym enviroments ###
+### 
+# Test user input control for Openai Gym enviroments 
+# work with gym==0.18.0, higher versions of gym may not work.
+# ###
 
 #!/usr/bin/env python
 from __future__ import print_function

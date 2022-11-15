@@ -3,6 +3,7 @@ from datetime import datetime
 import time
 import os
 import json
+import torch
 from torch.utils.tensorboard import SummaryWriter
 from .typing import Union, Dict, Any, List, ConfigurationDict
 
@@ -72,6 +73,9 @@ class TestLogger():
     def log_loss(self, *args):
         pass
 
+    def log_info(self, *args):
+        pass
+
     def add_extr_log(self, extr_log_name: str):
         """ Create extra directionary for logging.
         
@@ -97,7 +101,7 @@ class TestLogger():
         print(
             f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
                 avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
-                last time consumption/overall training time: {time_taken}s / {current_time-self.init_time} s'
+                last time consumption/overall training time: {time_taken:.2f}s / {current_time-self.init_time:.2f} s'
         )
 
         for k in self.keys:
@@ -160,15 +164,16 @@ class Logger(TestLogger):
 
         return post_fix
 
-    def log_episode_reward(self, step: int) -> None:
+    def log_episode_reward(self, step: int, reward=None) -> None:    
         for k, v in self.rewards.items():
             self.epi_rewards[k].append(v)
             self.writer.add_scalar(f"Episode Reward/{k}",
                                    self.epi_rewards[k][-1],
-                                   self.current_episode)
+                                   np.sum(self.epi_length))  # track based on steps instead of episodes
             self.epi_losses[k].append(np.mean(self.losses[k])) # record the episodic mean of loss
             self.writer.add_scalar(f"RL Loss/{k}", self.epi_losses[k][-1],
-                                   self.current_episode)
+                                   np.sum(self.epi_length))
+        self.writer.add_scalar(f"Episode Length", np.mean(self.epi_length[-10:]), np.sum(self.epi_length))
         self.rewards = self._clear_dict(self.keys)
         self.losses = self._clear_dict_as_list(self.keys)
         self.epi_length.append(step)
@@ -178,7 +183,17 @@ class Logger(TestLogger):
         for k, l in zip(self.losses.keys(), loss):
             self.losses[k].append(l)
             # self.writer.add_scalar(f"RL Loss/{k}", self.losses[k][-1],
-            #                        self.current_episode)
+            #                        np.sum(self.epi_length))
+
+    def log_info(self, infos: List[dict]) -> None:
+        for i, info in enumerate(infos):
+            if len(info)>0: # valid learner
+                for k, v in info.items():
+                    if isinstance(v, torch.Tensor):
+                        mean_v = torch.mean(v)
+                    else:
+                        mean_v = np.mean(v)
+                    self.writer.add_scalar(f"Metric_{i}/{k}", mean_v, np.sum(self.epi_length))
 
     def print_and_save(self):
         """ Print out information and save the logging data. """
@@ -189,7 +204,7 @@ class Logger(TestLogger):
         print(
             f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
                 avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
-                last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
+                last time consumption/overall running time: {time_taken:.2f}s / {current_time-self.init_time:.2f} s'
         )
 
         for k in self.keys:
@@ -259,7 +274,7 @@ class DummyLogger(Logger):
             f'Episode: {self.current_episode}/{self.args.max_episodes} ({100*self.current_episode/self.args.max_episodes:.4f}%), \
                 avg. reward: {np.mean(self.epi_rewards[-self.avg_window:]):.4f}, \
                 avg. length: {np.mean(self.epi_length[-self.avg_window:])},\
-                last time consumption/overall running time: {time_taken:.4f}s / {current_time-self.init_time:.4f} s'
+                last time consumption/overall running time: {time_taken:.2f}s / {current_time-self.init_time:.2f} s'
         )
 
 

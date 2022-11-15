@@ -1,0 +1,44 @@
+env_args:
+    env_name: Hopper-v2
+    env_type: gym
+    num_envs: 1
+    ram: True
+    seed: 1122
+
+agent_args:
+    algorithm: PPO
+    algorithm_spec:
+        # episodic_update: True  # as PPO is on-policy, it uses episodic update instead of update per timestep
+        gamma: 0.99
+        lambda: 0.95
+        eps_clip: 0.1
+        K_epoch: 10
+        GAE: True  # generalized advantage estimation
+        max_grad_norm: 0.5
+        entropy_coeff: 0.0
+        vf_coeff: 0.5
+
+train_args:
+    max_episodes: 50000
+    max_steps_per_episode: 10000
+    batch_size: 1280
+    train_start_frame: 0
+    optimizer: adam
+    learning_rate: 3e-4
+    device: gpu
+    log_avg_window: 20 # average window length in logging
+    log_interval: 20  # log print interval 
+    render: False
+    net_architecture:  
+        feature:
+            hidden_dim_list: [64, 64]
+            hidden_activation: Tanh
+            output_activation: False   
+        policy:
+            hidden_dim_list: [64, 64]  
+            hidden_activation: Tanh
+            output_activation: False
+        value:
+            hidden_dim_list: [64, 64]  
+            hidden_activation: Tanh
+            output_activation: False

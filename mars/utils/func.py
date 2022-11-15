@@ -3,6 +3,10 @@ from .data_struct import AttrDict
 from .typing import Dict, Any
 import collections.abc
 import copy, os
+import numpy as np
+import gym
+import torch
+import random
 from mars.utils.common import SelfplayBasedMethods, MetaStrategyMethods
 from mars.rl.agents  import *
 from multiprocessing.managers import BaseManager, NamespaceProxy
@@ -39,8 +43,7 @@ def LoadYAML2Dict(yaml_file: str,
     confs = UpdateDictAwithB(confs, loaded, withOverwrite=True)
 
     if toAttr:
-        concat_dict = {
-        }  # concatenate all types of arguments into one dictionary
+        concat_dict = {}  # concatenate all types of arguments into one dictionary
         for k, v in confs.items():
             concat_dict.update(v)
         return AttrDict(concat_dict)
@@ -94,12 +97,6 @@ def InDepthUpdateDictAwithB(
             A[k] = v
     return A
 
-def get_general_args(env, method):
-    [env_type, env_name] = env.split('_', 1) # only split at the first '_'
-    path = f'mars/confs/{env_type}/{env_name}/'
-    yaml_file = f'{env_type}_{env_name}_{method}'
-    args = LoadYAML2Dict(path+yaml_file, toAttr=True, mergeWith='mars/confs/default.yaml')
-    return args
 
 def get_latest_file_in_folder(folder, id=None):
     idx_list = []
@@ -134,14 +131,19 @@ def get_exploiter(exploiter_type: str, env, args):
         args.algorithm_spec['episodic_update'] = False  # nash ppo has this as true, should be false since using DQN
         args.update_itr = 1  # nash-dqn has this 0.1, has to make it 1 for fair comparison with other methods
         if 'PPO' in args.algorithm:  # in PPO conf there is not network specification for DQN
-            args.net_architecture = args.net_architecture['value']  # make exploiter same net as the value net in PPO
+            args.net_architecture = args.net_architecture['feature']  # make exploiter same net as the feature net in PPO
         exploiter = DQN(env, args)
         exploiter.reinit()
         exploitation_args = args
 
     elif exploiter_type == 'PPO':
-        ppo_args = LoadYAML2Dict(f'mars/confs/{args.env_type}/ppo_exploit', toAttr=True, mergeWith=None)
-        exploitation_args =  AttrDict(UpdateDictAwithB(args, ppo_args, withOverwrite=True))
+        if isinstance(env.action_space, gym.spaces.Box): # continuous action
+            ppo_args = LoadYAML2Dict(f'mars/confs/{args.env_type}/continuous_ppo_exploit', toAttr=True, mergeWith=None)
+        else:  # discrete action
+            ppo_args = LoadYAML2Dict(f'mars/confs/{args.env_type}/ppo_exploit', toAttr=True, mergeWith=None)
+        original_args = copy.deepcopy(args)
+        exploitation_args =  AttrDict(UpdateDictAwithB(original_args, ppo_args, withOverwrite=True))
+        print(f'Exploiter Args: {exploitation_args}')
         exploiter = PPO(env, exploitation_args)
         exploiter.reinit()
 
@@ -177,3 +179,33 @@ def multiprocess_conf(args, method):
     args.num_process = 5
 
     return args
+
+def set_seed(seed, torch_deterministic=False, rank=0):
+    """ set seed across modules """
+    if seed == -1 and torch_deterministic:
+        seed = 42 + rank
+    elif seed == -1:
+        seed = np.random.randint(0, 10000)
+    else:
+        seed = seed + rank
+
+    print("Setting seed: {}".format(seed))
+
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+    if torch_deterministic:
+        # refer to https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility
+        os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
+        torch.use_deterministic_algorithms(True)
+    else:
+        torch.backends.cudnn.benchmark = True
+        torch.backends.cudnn.deterministic = False
+
+    return seed

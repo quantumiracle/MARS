@@ -40,10 +40,11 @@ def update_normal(env, model, info_queue, save_id, args: ConfigurationDict) -> N
     loss = None
     for itr in range(max_update_itr):
         if model.ready_to_update:
-            loss = model.update()
+            loss, infos = model.update()
         
         if loss is not None:
             logger.log_loss(loss)
+            logger.log_info(infos)
 
         if meta_learner is not None \
             and args.marl_method in MetaStepMethods \

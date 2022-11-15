@@ -4,12 +4,11 @@
 import os
 import yaml, copy
 
-
 target_path = '../'  # from the root of the MARS
 
-two_player_zero_sum_games = ['combat_plane_v1', 'combat_tank_v1', 'surround_v1', \
-                            'space_war_v1', 'pong_v2', 'basketball_pong_v2', 'boxing_v1', \
-                            'tennis_v2', 'ice_hockey_v1', 'double_dunk_v2']
+two_player_zero_sum_games = ['combat_jet_v1', 'combat_tank_v2', 'surround_v2', \
+                            'space_war_v2', 'pong_v3', 'basketball_pong_v3', 'boxing_v2', \
+                            'tennis_v3', 'ice_hockey_v2', 'double_dunk_v3']
 
 methods = ['selfplay', 'selfplay_sym', 'fictitious_selfplay', \
             'fictitious_selfplay_sym', 'nfsp', 'nash_dqn', \
@@ -29,6 +28,7 @@ selfplay_based_methods = {'selfplay', 'selfplay_sym', 'fictitious_selfplay', \
 # large_nets_envs = {'tennis_v2'}
 large_nets_envs = {}
 
+ram = False
 
 def get_method_env_marl_spec(method, env):
     if method in selfplay_based_methods:
@@ -49,44 +49,44 @@ def get_method_env_marl_spec(method, env):
 
 # for full episode length
 # selfplay_score_deltas = { # specific for each environment
-#     'surround_v1': 16,
-#     'boxing_v1': 80,
-#     'combat_plane_v1': 10, # this need to be tuned
-#     'combat_tank_v1': 10,  # this need to be tuned
-#     'space_war_v1': 10,
-#     'pong_v2': 30,
-#     'basketball_pong_v2': 30,
-#     'tennis_v2': 50,
-#     'ice_hockey_v1': 10,
-#     'double_dunk_v2': 50,
+#     'surround_v2': 16,
+#     'boxing_v2': 80,
+#     'combat_jet_v1': 10, # this need to be tuned
+#     'combat_tank_v2': 10,  # this need to be tuned
+#     'space_war_v2': 10,
+#     'pong_v3': 30,
+#     'basketball_pong_v3': 30,
+#     'tennis_v3': 50,
+#     'ice_hockey_v2': 10,
+#     'double_dunk_v3': 50,
 # }
 
 # for truncated games with 300 episode length
 selfplay_score_deltas = { # specific for each environment
-    'surround_v1': 3,
-    'boxing_v1': 80,
-    'combat_plane_v1': 5, # this need to be tuned
-    'combat_tank_v1': 5,  # this need to be tuned
-    'space_war_v1': 3,
-    'pong_v2': 10,
-    'basketball_pong_v2': 5,
-    'tennis_v2': 7,
-    'ice_hockey_v1': 2,
-    'double_dunk_v2': 15,
+    'surround_v2': 3,
+    'boxing_v2': 80,
+    'combat_jet_v1': 5, # this need to be tuned
+    'combat_tank_v2': 5,  # this need to be tuned
+    'space_war_v2': 3,
+    'pong_v3': 10,
+    'basketball_pong_v3': 5,
+    'tennis_v3': 7,
+    'ice_hockey_v2': 2,
+    'double_dunk_v3': 15,
 }
 
 train_start_frame = {  # for NFSP method only
     'slimevolley': 1000,
-    'boxing_v1': 10000,
-    'surround_v1': 10000,
-    'combat_plane_v1': 10000,
-    'combat_tank_v1': 10000,
-    'space_war_v1': 10000,
-    'pong_v2': 10000,
-    'basketball_pong_v2': 10000,
-    'tennis_v2': 10000,
-    'ice_hockey_v1': 10000,
-    'double_dunk_v2': 10000,
+    'boxing_v2': 10000,
+    'surround_v2': 10000,
+    'combat_jet_v1': 10000,
+    'combat_tank_v2': 10000,
+    'space_war_v2': 10000,
+    'pong_v3': 10000,
+    'basketball_pong_v3': 10000,
+    'tennis_v3': 10000,
+    'ice_hockey_v2': 10000,
+    'double_dunk_v3': 10000,
 }
 
 
@@ -97,6 +97,11 @@ ppo_algorithm_spec = { # specs for PPO alg.
     'eps_clip': 0.2,
     'K_epoch': 4,
     'GAE': True,
+    'max_grad_norm': 0.5,
+    'entropy_coeff': 0.01,
+    'vf_coeff': 0.5,
+    'policy_loss_coeff': 0.08,
+
 }
 
 ppo_net_architecture = {
@@ -137,6 +142,28 @@ large_ppo_net_architecture = {
 
 }
 
+cnn_ppo_net_architecture = {
+    'feature':{
+    'hidden_dim_list': [512,],
+    'channel_list': [32, 64, 64],
+    'kernel_size_list': [8, 4, 3],
+    'stride_list': [4, 2, 1],
+      'hidden_activation': 'ReLU',
+      'output_activation': False,
+    },
+    'policy':{
+      'hidden_dim_list': [512,],
+      'hidden_activation': False,
+      'output_activation': 'Softmax',
+    },
+    'value': {
+      'hidden_dim_list': [512,],
+      'hidden_activation': 'ReLU',
+      'output_activation': False,
+    }
+
+}
+
 standard_net_architecture = {
     'hidden_dim_list': [128, 128, 128, 128],
     'hidden_activation': 'ReLU',
@@ -148,6 +175,17 @@ large_net_architecture = {
     'hidden_activation': 'ReLU',
     'output_activation': False,
 }
+
+cnn_net_architecture = {
+    'hidden_dim_list': [512, 512],
+    'channel_list': [32, 64, 64],
+    'kernel_size_list': [8, 4, 3],
+    'stride_list': [4, 2, 1],
+    'hidden_activation': 'ReLU',
+    'output_activation': False,
+}
+
+
 
 
 # creat folders for holding confs
@@ -174,17 +212,20 @@ for game in two_player_zero_sum_games:
         conf['agent_args']['algorithm_spec']['eps_decay'] = 10*conf['train_args']['max_episodes']  # decay faster
         conf['agent_args']['algorithm_spec']['multi_step'] = 1
 
+        # image-based input
+        if not ram:
+            conf['env_args']['ram'] = False
+            conf['train_args']['net_architecture'] = copy.deepcopy(cnn_net_architecture)  # copy to make original not changed        
+
         # some game specific confs
         if game in large_nets_envs:  # it requires a larger net
-            if method == 'nash_ppo':
-                conf['train_args']['net_architecture'] = large_ppo_net_architecture
-            else:
-                conf['train_args']['net_architecture'] = large_net_architecture
+            conf['train_args']['net_architecture'] = copy.deepcopy(large_net_architecture)
 
         # some method specific confs
         if method in ['nash_dqn', 'nash_dqn_exploiter', 'nash_dqn_factorized']:
-            conf['env_args']['num_envs'] = 1
-            conf['train_args']['max_episodes'] = 50000
+            # conf['env_args']['num_envs'] = 1
+            # conf['train_args']['max_episodes'] = 50000
+            conf['train_args']['max_episodes'] = 10000
             conf['agent_args']['algorithm_spec']['eps_decay'] = 100*conf['train_args']['max_episodes'] # 1000000  # proper for training 10000 episodes
             conf['train_args']['update_itr'] = 1
             conf['train_args']['marl_spec']['global_state'] = False
@@ -202,18 +243,27 @@ for game in two_player_zero_sum_games:
             conf['train_args']['marl_spec']['global_state'] = True
             conf['agent_args']['algorithm'] = 'NashPPO'
             conf['agent_args']['algorithm_spec'] = ppo_algorithm_spec
-            conf['train_args']['net_architecture'] = ppo_net_architecture
+            if not ram:
+                conf['train_args']['net_architecture'] = cnn_ppo_net_architecture
+            else:
+                conf['train_args']['net_architecture'] = large_ppo_net_architecture if game in large_nets_envs else ppo_net_architecture
 
         elif method == 'nfsp':
             conf['agent_args']['algorithm'] = 'NFSP'
-            if game in large_nets_envs:
-                conf['train_args']['net_architecture']['policy'] = large_net_architecture
+            if not ram:
+                conf['train_args']['net_architecture']['policy'] = cnn_net_architecture
             else:
-                conf['train_args']['net_architecture']['policy'] = standard_net_architecture
-                conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
+                if game in large_nets_envs:
+                    conf['train_args']['net_architecture']['policy'] = large_net_architecture
+                else:
+                    conf['train_args']['net_architecture']['policy'] = standard_net_architecture
+            conf['train_args']['net_architecture']['policy']['output_activation'] = 'Softmax'
             conf['train_args']['train_start_frame'] = train_start_frame[game]
 
         output_path = target_path+f"mars/confs/{game_type}/{game}/{game_type}_{game}_{method}.yaml"
         with open(output_path, 'w') as outfile:
             yaml.dump(conf, outfile, default_flow_style=False, sort_keys=False)
             print(f'Dump confs: {output_path}.')
+
+        del conf
+print(general_confs)

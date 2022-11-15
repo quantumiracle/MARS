@@ -16,21 +16,15 @@ class DQN(Agent):
     """
     def __init__(self, env, args):
         super().__init__(env, args)
-        self.model = self._select_type(env, args).to(self.device)
-        print(self.model)
-        self.target = copy.deepcopy(self.model).to(self.device)
-        
+        self._init_model(env, args)
         if args.num_process > 1:
-            self.model.share_memory()
-            self.target.share_memory()
             self.buffer = args.add_components['replay_buffer']
         else:
             self.buffer = ReplayBuffer(int(float(args.algorithm_spec['replay_buffer_size'])), \
                 args.algorithm_spec['multi_step'], args.algorithm_spec['gamma'], args.num_envs, args.batch_size) # first float then int to handle the scientific number like 1e5
 
         self.update_target(self.model, self.target)
-
-        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
+        self._init_optimizer(args)
         self.epsilon_scheduler = EpsilonScheduler(args.algorithm_spec['eps_start'], args.algorithm_spec['eps_final'], args.algorithm_spec['eps_decay'])
         self.schedulers.append(self.epsilon_scheduler)
 
@@ -39,6 +33,16 @@ class DQN(Agent):
         self.target_update_interval = args.algorithm_spec['target_update_interval']
 
         self.update_cnt = 1
+
+    def _init_model(self, env, args):
+        self.model = self._select_type(env, args).to(self.device)
+        self.target = copy.deepcopy(self.model).to(self.device)
+        if args.num_process > 1:
+            self.model.share_memory()
+            self.target.share_memory()
+
+    def _init_optimizer(self, args):
+        self.optimizer = choose_optimizer(args.optimizer)(self.model.parameters(), lr=float(args.learning_rate))
 
     def _select_type(self, env, args):
         if args.num_envs == 1:
@@ -97,24 +101,21 @@ class DQN(Agent):
         :param sample: a list of samples from different environments (if using parallel env)
         :type sample: SampleType
         """ 
-        # self.buffer.push(*sample)
         self.buffer.push(sample)
 
     @property
     def ready_to_update(self):
-        # return True if len(self.buffer) > self.batch_size else False
         return True if self.buffer.get_len() > self.batch_size else False
 
     def update(self):
+        infos = {}
         state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
-        # weights = torch.ones(self.batch_size)
 
         state = torch.FloatTensor(np.float32(state)).to(self.device)
         next_state = torch.FloatTensor(np.float32(next_state)).to(self.device)
         action = torch.LongTensor(action).to(self.device)
         reward = torch.FloatTensor(reward).to(self.device)
         done = torch.FloatTensor(np.float32(done)).to(self.device)
-        # weights = torch.FloatTensor(weights).to(self.device)
 
         # reward normalization
         # reward =  (reward - reward.mean(dim=0)) / (reward.std(dim=0) + 1e-6)
@@ -129,13 +130,10 @@ class DQN(Agent):
         expected_q_value = reward + (self.gamma ** self.multi_step) * next_q_value * (1 - done)
         # additional value normalization (this effectively prevent increasing Q/loss value)
         expected_q_value =  (expected_q_value - expected_q_value.mean(dim=0)) / (expected_q_value.std(dim=0) + 1e-6)
-
-        # Huber Loss
-        loss = F.smooth_l1_loss(q_value, expected_q_value.detach(), reduction='none')  # slimevolley env only works with this!
-        # loss = F.mse_loss(q_value, expected_q_value.detach())
+        
+        loss = F.mse_loss(q_value, expected_q_value.detach())
 
         loss = loss.mean()
-        # loss = (loss * weights).mean()
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
@@ -144,7 +142,9 @@ class DQN(Agent):
             self.update_target(self.model, self.target)
         self.update_cnt += 1
 
-        return loss.detach().item()
+        infos[f'Q value'] = q_value
+
+        return loss.detach().item(), infos
 
     def save_model(self, path):
         try:  # for PyTorch >= 1.7 to be compatible with loading models from any lower version

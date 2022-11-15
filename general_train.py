@@ -3,12 +3,12 @@ from mars.env.import_env import make_env
 from mars.rollout import rollout
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
-from mars.utils.func import get_general_args
-import argparse
-parser = argparse.ArgumentParser(description='Arguments of the general launching script for MARS.')
+from mars.utils.args_parser import get_args
+from mars.utils.data_struct import AttrDict
 
-def launch_rollout(env, method, save_id):
-    args = get_general_args(env, method)
+def launch():
+    args = get_args()
+    print('args: ', args)
 
     ### Create env
     env = make_env(args)
@@ -21,11 +21,7 @@ def launch_rollout(env, method, save_id):
     model = MultiAgent(env, [model1, model2], args)
 
     ### Rollout
-    rollout(env, model, args, save_id)
+    rollout(env, model, args, args.save_id)
 
 if __name__ == '__main__':
-    parser.add_argument('--env', type=str, default=None, help='environment')
-    parser.add_argument('--method', type=str, default=None, help='method name')
-    parser.add_argument('--save_id', type=str, default='0', help='identification number for each run')
-    parser_args = parser.parse_args()
-    launch_rollout(parser_args.env, parser_args.method, parser_args.save_id)
+    launch()  # vars: Namespace -> dict
