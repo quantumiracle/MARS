@@ -216,7 +216,7 @@ for game in two_player_zero_sum_games:
         if not ram:
             conf['env_args']['ram'] = False
             conf['train_args']['net_architecture'] = copy.deepcopy(cnn_net_architecture)  # copy to make original not changed        
-
+        print(game, method, conf['train_args']['net_architecture'])
         # some game specific confs
         if game in large_nets_envs:  # it requires a larger net
             conf['train_args']['net_architecture'] = copy.deepcopy(large_net_architecture)
@@ -251,7 +251,7 @@ for game in two_player_zero_sum_games:
         elif method == 'nfsp':
             conf['agent_args']['algorithm'] = 'NFSP'
             if not ram:
-                conf['train_args']['net_architecture']['policy'] = cnn_net_architecture
+                conf['train_args']['net_architecture']['policy'] = copy.deepcopy(cnn_net_architecture)
             else:
                 if game in large_nets_envs:
                     conf['train_args']['net_architecture']['policy'] = large_net_architecture
