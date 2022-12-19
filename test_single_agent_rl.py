@@ -17,7 +17,7 @@ args = LoadYAML2Dict(yaml_file, toAttr=True)
 args.record_video = True
 args.wandb_activate = True
 args.wandb_entity = 'quantumiracle'
-init_wandb(args)
+# init_wandb(args)
 ### Create env
 env = make_env(args)
 print(env)
