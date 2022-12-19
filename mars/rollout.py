@@ -2,6 +2,7 @@ import numpy as np
 from numpy.lib.arraysetops import isin
 import torch
 import time
+import warnings
 from .utils.logger import init_logger
 from .utils.typing import Tuple, List, ConfigurationDict
 from .marl import init_meta_learner
@@ -15,6 +16,7 @@ def rollout(env, model, args: ConfigurationDict, save_id='0') -> None:
     Due to the strong heterogeneity of Genetic algorithm and Reinforcement Learning
     algorithm, the function is separeted into two types. 
     """
+    warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
     if args.algorithm == 'GA':
         rollout_ga(env, model, save_id, args)
     else:
