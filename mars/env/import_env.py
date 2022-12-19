@@ -203,7 +203,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
     elif env_type == 'gym':
         try:
             if args.ram:
-                env = gym.make(env_name + '-ram')  # requires gym==0.25.2
+                env = gym.make(env_name + '-ram')  # requires gym==0.25.1
             else:
                 env = gym.make(env_name)
         except:
@@ -214,12 +214,14 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         env = gym.wrappers.ClipAction(env) if isinstance(env.action_space, gym.spaces.Box) else env
 
         if len(env.observation_space.shape) < 3: # not for Atari
-            env = gym.wrappers.NormalizeObservation(env) 
-            env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
-  
-        env = gym.wrappers.NormalizeReward(env)  # this can be critical for algo to work
-        env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
 
+            env = gym.wrappers.NormalizeReward(env)  # this can be critical for algo to work
+            env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
+        
+        env = gym.wrappers.NormalizeObservation(env) 
+        env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
+        env = gym.wrappers.TimeLimit(env.env, max_episode_steps=None if args.max_steps_per_episode <= 0 else args.max_steps_per_episode)
+ 
         if args.adversarial:
             env = Gym2AgentAdversarialWrapper(env)
         else:

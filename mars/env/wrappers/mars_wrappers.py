@@ -300,6 +300,7 @@ class Gym2AgentWrapper():
         self.action_space = self.env.action_space
         self.action_spaces = {name: self.action_space for name in self.agents}
         self.metadata = env.metadata
+        self.render_mode = env.render_mode
 
     @property
     def spec(self):
@@ -307,7 +308,8 @@ class Gym2AgentWrapper():
 
     def reset(self):
         if self.image_obs:
-            obs, info = self.env.reset()  # after 0.23: newest gym has info for reset
+            # obs, info = self.env.reset()  # after 0.23: newest gym has info for reset
+            obs = self.env.reset()
             obs = np.moveaxis(obs, 2, 0)  # CHW to HWC
         else:
             obs = self.env.reset()
@@ -317,8 +319,8 @@ class Gym2AgentWrapper():
         self.env.seed(seed)
         np.random.seed(seed)
 
-    def render(self,):
-        return self.env.render()
+    def render(self,mode='rgb_array'):
+        return self.env.render(mode)
 
     def step(self, actions):
         assert len(actions) >= 1
