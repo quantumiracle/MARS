@@ -288,17 +288,29 @@ class Gym2AgentWrapper():
         self.env = env
         self.agents = ['first_0']
         self.num_agents = len(self.agents)
-        self.observation_space = self.env.observation_space
+        if len(env.observation_space.shape) >= 3:  # image observation for Atari
+            self.image_obs = True
+            # CHW to WHC
+            old_shape = env.observation_space.shape
+            self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(old_shape[-1], old_shape[0], old_shape[1]), dtype=np.uint8)
+        else:
+            self.image_obs = False
+            self.observation_space = self.env.observation_space
         self.observation_spaces = {name: self.env.observation_space for name in self.agents}
         self.action_space = self.env.action_space
         self.action_spaces = {name: self.action_space for name in self.agents}
-    
+        self.metadata = env.metadata
+
     @property
     def spec(self):
         return self.env.spec
 
     def reset(self):
-        obs = self.env.reset()
+        if self.image_obs:
+            obs, info = self.env.reset()  # after 0.23: newest gym has info for reset
+            obs = np.moveaxis(obs, 2, 0)  # CHW to HWC
+        else:
+            obs = self.env.reset()
         return [obs]
 
     def seed(self, seed):
@@ -311,9 +323,9 @@ class Gym2AgentWrapper():
     def step(self, actions):
         assert len(actions) >= 1
         action = actions[0]
-        noise = np.random.uniform(-1, 1, action.shape[0])
-        action = action + 0. * noise
-        obs, reward, done, info = self.env.step(action)
+        obs, reward, done, info = self.env.step(action) 
+        if self.image_obs:
+            obs = np.moveaxis(obs, 2, 0)  # CHW to HWC
         obs = obs.squeeze() # for continuous gym envs it require squeeze()
         return [obs], [reward], [done], [info]
 

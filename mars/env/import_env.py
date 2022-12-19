@@ -32,7 +32,7 @@ import slimevolleygym
 import numpy as np
 
 
-from .wrappers.gym_wrappers import NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, NormalizeReward, TransformObservation, NormalizeObservation, FireResetEnv, wrap_pytorch
+from .wrappers.gym_wrappers import ImageToPyTorchOriginal, NoopResetEnv, MaxAndSkipEnv, WarpFrame, FrameStack, NormalizeReward, TransformObservation, NormalizeObservation, FireResetEnv, wrap_pytorch
 from .wrappers.mars_wrappers import PettingzooClassicWrapper, PettingzooClassic_Iterate2Parallel,\
      Gym2AgentWrapper, Gym2AgentAdversarialWrapper, SlimeVolleyWrapper, Dict2TupleWrapper, RoboSumoWrapper, SSVecWrapper, ZeroSumWrapper, zero_sum_reward_filer
 from .wrappers.vecenv_wrappers import DummyVectorEnv, SubprocVectorEnv
@@ -96,7 +96,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
     :return: the instantiation of an environment
     :rtype: object
     """
-    if env_type not in ['robosumo', 'slimevolley']: # robosumo uses a different version of gym (0.16), slimevolley requires gym<=0.19 (0.18), conflicting with supersuit (gym==0.22)
+    if env_type in ['pettingzoo']: # robosumo uses a different version of gym (0.16), slimevolley requires gym<=0.19 (0.18), conflicting with supersuit (gym==0.22)
         from .wrappers.pettingzoo_parallel_reward_lambda import reward_lambda_v1
 
     if args.num_envs > 1:
@@ -202,18 +202,24 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
 
     elif env_type == 'gym':
         try:
-            env = gym.make(env_name)
+            if args.ram:
+                env = gym.make(env_name + '-ram')  # requires gym==0.25.2
+            else:
+                env = gym.make(env_name)
         except:
             print(f"Error: No such env in Openai Gym: {env_name}!") 
         # may need more wrappers here, e.g. Pong-ram-v0 need scaled observation!
         # Ref: https://towardsdatascience.com/deep-q-network-dqn-i-bce08bdf2af
         env = gym.wrappers.RecordEpisodeStatistics(env)  # bypass the reward normalization to record episodic return
-        env = gym.wrappers.ClipAction(env)
-        env = gym.wrappers.NormalizeObservation(env) 
-        env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
+        env = gym.wrappers.ClipAction(env) if isinstance(env.action_space, gym.spaces.Box) else env
+
+        if len(env.observation_space.shape) < 3: # not for Atari
+            env = gym.wrappers.NormalizeObservation(env) 
+            env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
+  
         env = gym.wrappers.NormalizeReward(env)  # this can be critical for algo to work
         env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
-        
+
         if args.adversarial:
             env = Gym2AgentAdversarialWrapper(env)
         else:

@@ -3,6 +3,18 @@ import numpy as np
 from collections import deque
 import cv2
 from typing import Any, Callable
+class ImageToPyTorchOriginal(gym.ObservationWrapper):
+    """
+    Image shape to num_channels x weight x height
+    """
+    def __init__(self, env):
+        super(ImageToPyTorchOriginal, self).__init__(env)
+        old_shape = self.observation_space.shape
+        self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(old_shape[-1], old_shape[0], old_shape[1]), dtype=np.uint8)
+
+    def observation(self, observation):
+        return np.moveaxis(observation, 2, 0)
+    
 class ImageToPyTorch(gym.ObservationWrapper):
     """
     Image shape to num_channels x weight x height
@@ -13,8 +25,7 @@ class ImageToPyTorch(gym.ObservationWrapper):
         self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(old_shape[-1], old_shape[0], old_shape[1]), dtype=np.uint8)
 
     def observation(self, observation):
-        return (np.swapaxes(observation[0], 2, 0), np.swapaxes(observation[1], 2, 0))
-    
+        return (np.moveaxis(observation[0], 2, 0), np.moveaxis(observation[1], 2, 0))
 
 def wrap_pytorch(env):
     return ImageToPyTorch(env)
