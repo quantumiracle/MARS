@@ -280,7 +280,6 @@ class SSVecWrapper():
     def close(self):
         self.env.close()
 
-
 class Gym2AgentWrapper():
     """ Wrap single agent OpenAI gym game to be multi-agent version """
     def __init__(self, env):
@@ -308,8 +307,10 @@ class Gym2AgentWrapper():
 
     def reset(self):
         if self.image_obs:
-            # obs, info = self.env.reset()  # after 0.23: newest gym has info for reset
-            obs = self.env.reset()
+            try: # this captures a wierd bug even exists for the same gym version on different machines (0.25.1 or 0.25.2)
+                obs, info = self.env.reset()  # after 0.23: newest gym has info for reset
+            except:
+                obs = self.env.reset()
             obs = np.moveaxis(obs, 2, 0)  # CHW to HWC
         else:
             obs = self.env.reset()
