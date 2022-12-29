@@ -14,15 +14,15 @@ yaml_file = f'mars/confs/gym/{env}/gym_{env}_dqn' #PATH TO YAML
 
 
 args = LoadYAML2Dict(yaml_file, toAttr=True)
-args.record_video = True
-args.wandb_activate = True
-args.wandb_project = env
-args.wandb_entity = 'quantumiracle'
-init_wandb(args)
+# args.record_video = True
+# args.wandb_activate = True
+# args.wandb_project = env
+# args.wandb_entity = 'quantumiracle'
+# init_wandb(args)
 ### Create env
 env = make_env(args)
 print(env)
-
+print('ars: ', args)
 ### Specify models for each agent
 model = eval(args.algorithm)(env, args)
 

@@ -203,7 +203,7 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
     elif env_type == 'gym':
         try:
             if args.ram:
-                env = gym.make(env_name + '-ram')  # requires gym==0.25.1
+                env = gym.make(env_name + '-ram')  # requires gym==0.25.1, ale-py==0.7.5
             else:
                 env = gym.make(env_name)
         except:
@@ -214,7 +214,6 @@ def _create_single_env(env_name: str, env_type: str, ss_vec: True, args: Dict):
         env = gym.wrappers.ClipAction(env) if isinstance(env.action_space, gym.spaces.Box) else env
 
         if len(env.observation_space.shape) < 3: # not for Atari
-
             env = gym.wrappers.NormalizeReward(env)  # this can be critical for algo to work
             env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
         
