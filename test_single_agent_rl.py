@@ -5,7 +5,7 @@ from mars.rollout import rollout
 from mars.rl.agents import *
 from mars.rl.agents.multiagent import MultiAgent
 
-env = ['pong_v5', 'boxing_v5'][1]
+env = ['pong_v5', 'boxing_v5'][0]
 # yaml_file = 'mars/confs/gym/cartpole_v1/gym_cartpole_v1_ppo' #PATH TO YAML
 # yaml_file = 'mars/confs/gym/mountaincarcontinuous_v0/gym_mountaincarcontinuous_v0_ppo' #PATH TO YAML
 # yaml_file = 'mars/confs/gym/ant_v2/gym_ant_v2_ppo' #PATH TO YAML

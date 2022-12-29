@@ -290,7 +290,7 @@ def make_env(args, ss_vec=True):
 
     if args.num_process > 1 or args.num_envs == 1: # if multiprocess, each process can only work with one env separately
         env = _create_single_env(env_name, env_type, False, args)  
-        # gym has to be 0.23.1 to successfully record video here!
+        # gym has to be at least 0.23.1 to successfully record video here!
         if args.record_video: # Ref: https://github.com/openai/gym/pull/2300
             env = gym.wrappers.RecordVideo(env, f"data/videos/{args.env_type}_{args.env_name}_{args.algorithm}_{args.save_id}",\
                     # step_trigger=lambda step: step % record_video_interval == 0, # record the videos every 10000 steps
