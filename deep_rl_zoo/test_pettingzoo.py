@@ -198,10 +198,13 @@ def run_env_loop(
     trained_agent_role = 'first_0'
     learning_agent_role = 'second_0'
     learning_agent = None
+    test = True
 
     agent_args = LoadYAML2Dict(f'gym_{env_name}_dqn', toAttr=True, mergeWith=None)
     print('learning agent args: ', agent_args)
     learning_agent = DQN(env, agent_args)
+    if test:
+        learning_agent.load_model(f'models/DQN_{env_name}_{agent_args.max_steps_per_episode}')
     overall_steps = 0 
     # while True:  # For each episode.
     for episode in range(agent_args.max_episodes):
@@ -245,8 +248,8 @@ def run_env_loop(
                       observation_dict_[learning_agent_role],
                       done_dict[learning_agent_role],
                         ]
-            if learning_agent is not None:
-                loss = 0
+            loss = 0
+            if learning_agent is not None and not test:
                 learning_agent.store([sample]) 
                 if overall_steps > agent_args.batch_size:
                     for _ in range(agent_args.update_itr):
@@ -285,7 +288,8 @@ def run_env_loop(
                 break
         if episode % 20 == 0:
             print(f'Episode {episode} finished after {step} steps with reward {epi_reward}, loss {loss}.')
-            learning_agent.save_model(f'models/DQN_{env_name}')
+            if not test:
+                learning_agent.save_model(f'models/DQN_{env_name}_{agent_args.max_steps_per_episode}')
 if __name__ == '__main__':
     app.run(main)
     # create_env()
