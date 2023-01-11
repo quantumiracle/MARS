@@ -1,0 +1,7 @@
+ln -s -f ~/research/deep_rl_zoo/deep_rl_zoo deep_rl_zoo/
+
+python test_pettingzoo.py --environment_name=Boxing --load_checkpoint_file=models/Agent57_Boxing_50.ckpt
+
+python test_pettingzoo.py --environment_name=Pong --load_checkpoint_file=models/Agent57_Pong_21.ckpt
+
+nohup python test_pettingzoo.py --environment_name=Pong --load_checkpoint_file=models/Agent57_Pong_21.ckpt >>pong.log &

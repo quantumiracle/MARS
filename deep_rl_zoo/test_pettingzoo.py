@@ -193,7 +193,7 @@ def run_env_loop(
     if not isinstance(agent, types_lib.Agent):
         raise RuntimeError('Expect agent to be an instance of types_lib.Agent.')
 
-    env_name = ['pong_v3', 'boxing_v2'][1]
+    env_name = ['pong_v3', 'boxing_v2'][0]
     env = create_env(env_name)
     trained_agent_role = 'first_0'
     learning_agent_role = 'second_0'
@@ -202,6 +202,7 @@ def run_env_loop(
     agent_args = LoadYAML2Dict(f'gym_{env_name}_dqn', toAttr=True, mergeWith=None)
     print('learning agent args: ', agent_args)
     learning_agent = DQN(env, agent_args)
+    learning_agent.load_model(f'models/DQN_{env_name}_{agent_args.max_steps_per_episode}', eval=False)
     overall_steps = 0 
     # while True:  # For each episode.
     for episode in range(agent_args.max_episodes):
@@ -283,9 +284,9 @@ def run_env_loop(
                 unused_a = agent.step(timestep_t)  # noqa: F841
                 # yield env, timestep_t, agent, None
                 break
-        if episode % 20 == 0:
+        if episode % 100 == 0:
             print(f'Episode {episode} finished after {step} steps with reward {epi_reward}, loss {loss}.')
-            learning_agent.save_model(f'models/DQN_{env_name}')
+            learning_agent.save_model(f'models/DQN_{env_name}_{agent_args.max_steps_per_episode}_3')
 if __name__ == '__main__':
     app.run(main)
     # create_env()
