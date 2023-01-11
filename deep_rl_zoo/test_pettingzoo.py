@@ -198,6 +198,7 @@ def run_env_loop(
     trained_agent_role = 'first_0'
     learning_agent_role = 'second_0'
     learning_agent = None
+    test = True
 
     agent_args = LoadYAML2Dict(f'gym_{env_name}_dqn', toAttr=True, mergeWith=None)
     print('learning agent args: ', agent_args)
@@ -246,8 +247,8 @@ def run_env_loop(
                       observation_dict_[learning_agent_role],
                       done_dict[learning_agent_role],
                         ]
-            if learning_agent is not None:
-                loss = 0
+            loss = 0
+            if learning_agent is not None and not test:
                 learning_agent.store([sample]) 
                 if overall_steps > agent_args.batch_size:
                     for _ in range(agent_args.update_itr):
