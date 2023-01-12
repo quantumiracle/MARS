@@ -45,7 +45,8 @@ class NashDQN(DQN):
         if args.num_process > 1:
             self.model.share_memory()
             self.target.share_memory()
-
+        print(self.model)
+    
     def choose_action(self, state, Greedy=False, epsilon=None):
         if Greedy:
             epsilon = 0.
@@ -301,9 +302,9 @@ class NashDQNBase(DQNBase):
         self._construct_net(env, net_args)
 
     def _construct_net(self, env, net_args):
-            input_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = self._observation_shape)
-            output_space = gym.spaces.Discrete(self._action_shape)
-            if len(self._observation_shape) <= 1: # not 3d image
-                self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')
-            else:
-                self.net = get_model('impala_cnn')(input_space, output_space, net_args, model_for='discrete_q')
+        input_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape = self._observation_shape)
+        output_space = gym.spaces.Discrete(self._action_shape)
+        if len(self._observation_shape) <= 1: # not 3d image
+            self.net = get_model('mlp')(input_space, output_space, net_args, model_for='discrete_q')
+        else:
+            self.net = get_model('cnn')(input_space, output_space, net_args, model_for='discrete_q')
