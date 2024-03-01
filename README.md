@@ -18,8 +18,7 @@
 - [Citation](#citation)
 - [Primary Results](#primary-results)
 
-## Status
-WIP. Not released yet.
+## Description
 
 If you have any question (propose an ISSUE if it's general problem) or want to contribute to this repository, feel free to contact me: *zhding96@gmail.com*
 
