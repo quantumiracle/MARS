@@ -235,7 +235,14 @@ See [Apache License](https://github.com/quantumiracle/MARS/blob/master/LICENSE) 
 ## Citation
 
 If you find MARS useful, please cite it in your publications.
-
+```
+@article{ding2022deep,
+title={A Deep Reinforcement Learning Approach for Finding Non-Exploitable Strategies in Two-Player Atari Games},
+author={Ding, Zihan and Su, Dijia and Liu, Qinghua and Jin, Chi},
+journal={arXiv preprint arXiv:2207.08894},
+year={2022}
+}
+```
 ```
 @software{MARS,
   author = {Zihan Ding, Andy Su, Qinghua Liu, Chi Jin},
